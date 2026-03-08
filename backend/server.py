@@ -734,27 +734,52 @@ async def generate_lesson_content(request: GenerateLessonContentRequest, _: str 
 - En bloque: $$formula$$
 - Ejemplos: $f(x) = x^2$, $$\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$$
 
-📊 HERRAMIENTA DE VISUALIZACIÓN:
+📊 VISUALIZACIONES - CUÁNDO USAR CADA TIPO:
 
-**DESMOS** - Gráficos 2D interactivos (TU ÚNICA HERRAMIENTA DE GRÁFICOS):
+**DESMOS (Interactivo)** - Usa SOLO cuando el estudiante DEBE explorar:
+✅ USAR Desmos cuando:
+- El estudiante necesita mover un slider para entender (ej: ver cómo cambia la pendiente)
+- Comparar múltiples funciones superpuestas
+- Explorar qué pasa cuando un valor cambia (límites, parámetros)
+- Ver animaciones de conceptos (secante → tangente)
 
-IMPORTANTE: Para gráficos con múltiples ecuaciones/sliders, usa UN SOLO tag con punto y coma:
-[DESMOS:y = x^2; a=1; y = a*x]
+❌ NO usar Desmos cuando:
+- Necesitas mostrar círculos ABIERTOS (○) o CERRADOS (●) en puntos específicos
+- Es un diagrama de discontinuidad con saltos visuales
+- Necesitas anotaciones, flechas o líneas punteadas
+- Es una ilustración conceptual, no exploratoria
 
-Ejemplos:
-- Función simple: [DESMOS:y = sin(x)]
-- Con slider: [DESMOS:a=2; y = a*x^2]
-- Comparar funciones: [DESMOS:y = x^2; y = x^3; y = sqrt(x)]
-- Secante a tangente: [DESMOS:y=x^2; a=1; h=0.5; m=((a+h)^2-a^2)/h; y=m*(x-a)+a^2]
-- Puntos discretos: [DESMOS:(1,1); (2,4); (3,9); (4,16)]
-- Recta tangente: [DESMOS:y=x^2; a=1; y=2a(x-a)+a^2]
-- Área bajo curva: [DESMOS:y=x^2; 0<y<x^2{0<x<2}]
+Formato Desmos (UN SOLO tag con punto y coma):
+[DESMOS:y = x^2; a=1; h=0.5; m=((a+h)^2-a^2)/h; y=m*(x-a)+a^2]
 
-NO hagas esto (MAL):
-[DESMOS:y=x^2]
-[DESMOS:a=1]  <- ERROR: variables separadas no se conectan
+**IMAGEN_GPAI (Para ilustraciones estáticas)** - Usa para gráficas con detalles precisos:
+⚠️ OBLIGATORIO usar IMAGEN_GPAI cuando:
+- Hay discontinuidades de salto (necesitas mostrar círculos abiertos/cerrados)
+- Hay huecos en la gráfica (puntos donde la función no existe)
+- Necesitas mostrar límites laterales diferentes
+- Requieres anotaciones con flechas o líneas punteadas
 
-Usa Desmos para TODO: funciones, límites, derivadas, integrales, geometría simple, sliders, animaciones
+Formato:
+[IMAGEN_GPAI:
+**Título descriptivo**
+- Eje X: de ___ a ___
+- Eje Y: de ___ a ___
+- Elemento 1: descripción con coordenadas
+- Elemento 2: descripción (usar ○ para abierto, ● para cerrado)
+- Líneas punteadas: desde ___ hasta ___
+- Visual clave: qué debe notar el estudiante
+]
+
+EJEMPLO OBLIGATORIO para discontinuidad de salto:
+[IMAGEN_GPAI:
+**Discontinuidad de Salto en x=1**
+- Eje X: de 0 a 3
+- Eje Y: de 0 a 5
+- Rama izquierda (x<1): línea desde (0,1) hasta punto (1,2) con círculo ABIERTO ○
+- Rama derecha (x≥1): línea desde punto (1,4) con círculo CERRADO ● hasta (3,2)
+- Visual clave: Salto vertical de 2 unidades entre y=2 y y=4 en x=1
+- El límite por izquierda (2) ≠ límite por derecha (4)
+]
 
 📋 TABLAS - Para comparaciones y resúmenes:
 | Concepto | Fórmula | Ejemplo |
@@ -776,7 +801,9 @@ Usa Desmos para TODO: funciones, límites, derivadas, integrales, geometría sim
 (Con explicación de cada símbolo y cuándo usarlas)
 
 ## 👀 Visualízalo
-(Gráficos interactivos - USA AL MENOS 2 tipos diferentes de visualización)
+(Usa Desmos para exploración interactiva O [IMAGEN_GPAI:...] para ilustraciones estáticas detalladas)
+- Si el concepto requiere EXPLORAR con sliders → Desmos
+- Si el concepto requiere ver puntos específicos, discontinuidades, anotaciones → IMAGEN_GPAI
 
 ## ✍️ Ejemplos Resueltos
 (Mínimo 3 ejemplos, del más fácil al más difícil, paso a paso)
@@ -801,12 +828,16 @@ Material de referencia:
 {request.pdf_content[:10000]}
 
 REQUISITOS OBLIGATORIOS:
-✅ Al menos 2 tipos diferentes de visualización interactiva (Desmos, GeoGebra, Plotly o 3D)
+✅ En la sección "Visualízalo": decide inteligentemente entre Desmos (interactivo) o IMAGEN_GPAI (descripción para generar imagen)
 ✅ Mínimo 3 ejemplos resueltos paso a paso
 ✅ Ejemplos de la vida cotidiana
 ✅ Una tabla comparativa o de resumen
 ✅ Tips específicos para aprobar el examen
 ✅ Tono amigable pero profesional
+
+RECUERDA:
+- Desmos = cuando el estudiante debe MOVER/EXPLORAR algo
+- IMAGEN_GPAI = cuando necesitas mostrar algo estático con detalles precisos (discontinuidades, puntos específicos, anotaciones)
 
 ¡Haz que el estudiante disfrute aprendiendo!"""
         
