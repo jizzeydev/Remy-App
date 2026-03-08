@@ -173,7 +173,19 @@ class FormulaSearchRequest(BaseModel):
     course_id: Optional[str] = None
 
 # Helper functions
+def get_gpt_chat(system_message: str):
+    """Get GPT 5.2 chat instance for high-quality educational content generation"""
+    api_key = os.environ.get('EMERGENT_LLM_KEY')
+    session_id = str(uuid.uuid4())
+    chat = LlmChat(
+        api_key=api_key,
+        session_id=session_id,
+        system_message=system_message
+    ).with_model("openai", "gpt-5.2")
+    return chat
+
 def get_gemini_chat(system_message: str):
+    """Legacy Gemini chat - kept for backwards compatibility"""
     api_key = os.environ.get('GEMINI_API_KEY')
     session_id = str(uuid.uuid4())
     chat = LlmChat(
@@ -516,19 +528,26 @@ async def upload_pdf(
 @admin_router.post("/generate-summary")
 async def generate_summary(request: GenerateSummaryRequest, _: str = Depends(verify_admin_token)):
     try:
-        system_message = f"""Eres un experto en educación creando resúmenes concisos para el curso: {request.course_title}.
-        
-Crea un resumen estructurado del material proporcionado que incluya:
-- Conceptos clave
-- Fórmulas importantes (en formato LaTeX cuando sea necesario)
-- Puntos principales a recordar
-- Aplicaciones prácticas
+        system_message = f"""Eres un profesor experto de Se Remonta creando resúmenes educativos para el curso: {request.course_title}.
 
-El resumen debe ser claro, conciso y enfocado en lo más importante para estudiantes universitarios.
-        """
+Crea un resumen ESTRUCTURADO y COMPLETO que incluya:
+
+1. **Visión General** - Contexto y relevancia del tema
+2. **Conceptos Fundamentales** - Ideas principales explicadas claramente
+3. **Fórmulas Clave** - En formato LaTeX ($$formula$$)
+4. **Relaciones Importantes** - Cómo se conectan los conceptos
+5. **Aplicaciones Prácticas** - Ejemplos del mundo real
+6. **Puntos para Recordar** - Lista de lo más importante
+
+FORMATO:
+- Usa Markdown con ## para secciones
+- Fórmulas en bloque: $$formula$$
+- Fórmulas en línea: $formula$
+- Listas con viñetas para puntos clave
+"""
         
-        chat = get_gemini_chat(system_message)
-        user_message = UserMessage(text=f"Resume el siguiente material educativo:\n\n{request.pdf_content[:15000]}")
+        chat = get_gpt_chat(system_message)
+        user_message = UserMessage(text=f"Resume el siguiente material educativo de forma completa y estructurada:\n\n{request.pdf_content[:12000]}")
         response = await chat.send_message(user_message)
         
         return {"summary": response}
@@ -539,42 +558,70 @@ El resumen debe ser claro, conciso y enfocado en lo más importante para estudia
 @admin_router.post("/generate-questions")
 async def generate_questions(request: GenerateQuestionsRequest, _: str = Depends(verify_admin_token)):
     try:
-        system_message = f"""Eres un experto en educación creando preguntas de examen de opción múltiple.
-        
-Genera {request.num_questions} preguntas basadas EXCLUSIVAMENTE en el material proporcionado.
+        system_message = """Eres un experto en evaluación educativa de Se Remonta, especializado en crear preguntas de examen de opción múltiple para estudiantes universitarios.
 
-Cada pregunta debe tener:
-- Enunciado claro
-- 4 opciones (A, B, C, D)
-- Una respuesta correcta
-- Explicación detallada de por qué es correcta
-- Si es necesario, incluir LaTeX para fórmulas matemáticas
+REGLAS ESTRICTAS:
 
-Formato JSON requerido:
-{{
+1. Genera preguntas que evalúen COMPRENSIÓN, no solo memorización
+2. Cada pregunta debe tener exactamente 4 opciones (A, B, C, D)
+3. Los distractores (opciones incorrectas) deben ser plausibles
+4. La explicación debe ser educativa y detallada
+
+FORMATO DE SALIDA - JSON ESTRICTO:
+```json
+{
   "questions": [
-    {{
-      "question_text": "texto de la pregunta",
-      "options": ["A) opción 1", "B) opción 2", "C) opción 3", "D) opción 4"],
+    {
+      "question_text": "Enunciado claro de la pregunta. Si incluye fórmulas usar $formula$ o $$formula$$",
+      "options": [
+        "A) Primera opción",
+        "B) Segunda opción", 
+        "C) Tercera opción",
+        "D) Cuarta opción"
+      ],
       "correct_answer": "A",
-      "explanation": "explicación detallada",
-      "latex_content": "contenido LaTeX si aplica",
-      "difficulty": "medio"
-    }}
+      "explanation": "Explicación detallada de por qué A es correcta y por qué las otras son incorrectas",
+      "difficulty": "fácil|medio|difícil",
+      "latex_content": "Fórmula principal si aplica, ej: \\\\frac{d}{dx}[x^n] = nx^{n-1}"
+    }
   ]
-}}
-        """
+}
+```
+
+IMPORTANTE: Responde SOLO con el JSON, sin texto adicional antes o después."""
+
+        user_prompt = f"""Genera exactamente {request.num_questions} preguntas de opción múltiple sobre el tema "{request.topic}".
+
+Material de referencia:
+{request.pdf_content[:12000]}
+
+Distribución de dificultad sugerida:
+- 30% fácil (conceptos básicos)
+- 50% medio (aplicación de conceptos)
+- 20% difícil (análisis y síntesis)
+
+Responde SOLO con el JSON válido."""
         
-        chat = get_gemini_chat(system_message)
-        user_message = UserMessage(
-            text=f"Genera {request.num_questions} preguntas sobre el tema '{request.topic}' del siguiente material:\n\n{request.pdf_content[:15000]}"
-        )
+        chat = get_gpt_chat(system_message)
+        user_message = UserMessage(text=user_prompt)
         response = await chat.send_message(user_message)
         
+        # Clean and parse JSON response
         try:
-            questions_data = json.loads(response)
+            # Remove markdown code blocks if present
+            clean_response = response.strip()
+            if clean_response.startswith("```json"):
+                clean_response = clean_response[7:]
+            if clean_response.startswith("```"):
+                clean_response = clean_response[3:]
+            if clean_response.endswith("```"):
+                clean_response = clean_response[:-3]
+            clean_response = clean_response.strip()
+            
+            questions_data = json.loads(clean_response)
             questions = questions_data.get("questions", [])
-        except:
+        except json.JSONDecodeError as je:
+            logging.error(f"JSON parse error: {je}, response: {response[:500]}")
             questions = []
         
         return {"questions": questions}
@@ -650,45 +697,68 @@ async def delete_lesson(lesson_id: str, _: str = Depends(verify_admin_token)):
 @admin_router.post("/generate-lesson-content")
 async def generate_lesson_content(request: GenerateLessonContentRequest, _: str = Depends(verify_admin_token)):
     try:
-        system_message = f"""Eres un experto en educación creando contenido interactivo para lecciones.
+        system_message = """Eres un profesor experto de Se Remonta, especializado en crear contenido educativo de alta calidad para estudiantes universitarios de matemáticas, física e ingeniería.
 
-Crea contenido educativo para la lección "{request.lesson_title}" del capítulo "{request.chapter_title}".
+INSTRUCCIONES DE FORMATO ESTRICTAS:
 
-El contenido debe:
-- Ser claro y didáctico
-- Incluir explicaciones paso a paso
-- Usar LaTeX para fórmulas matemáticas (formato: $$formula$$)
-- Incluir ejemplos prácticos
-- Si es relevante, sugerir gráficos con Desmos (formato: [DESMOS:equation])
-- Estar estructurado en secciones
+1. USA MARKDOWN PURO con estas reglas:
+   - Títulos: # para H1, ## para H2, ### para H3
+   - Listas: * o - para viñetas, 1. 2. 3. para numeradas
+   - Negrita: **texto**
+   - Cursiva: *texto*
 
-Formato Markdown con LaTeX:
-# Título de la lección
+2. FÓRMULAS LATEX - MUY IMPORTANTE:
+   - Fórmulas en línea: $formula$ (un solo símbolo de dólar)
+   - Fórmulas en bloque centradas: $$formula$$ (doble símbolo de dólar)
+   - SIEMPRE usa LaTeX para cualquier expresión matemática
+   - Ejemplos correctos:
+     * En línea: "donde $x$ es la variable"
+     * Bloque: $$\\lim_{x \\to a} f(x) = L$$
+     * Fracción: $$\\frac{d}{dx}[x^n] = nx^{n-1}$$
 
-## Introducción
-Texto introductorio...
+3. TABLAS - Formato Markdown estricto:
+   | Columna 1 | Columna 2 | Columna 3 |
+   |-----------|-----------|-----------|
+   | dato 1    | dato 2    | dato 3    |
+   
+   - NO uses LaTeX dentro de celdas de tabla, usa texto plano
+   - Alinea las columnas con espacios
 
-## Conceptos Clave
-- Concepto 1
-- Concepto 2
+4. GRÁFICOS INTERACTIVOS DESMOS:
+   - Formato: [DESMOS:ecuación]
+   - La ecuación debe estar en formato que Desmos entienda
+   - Ejemplos:
+     * [DESMOS:y = x^2]
+     * [DESMOS:y = sin(x)]
+     * [DESMOS:y = (x^2 - 1)/(x - 1)]
+   - NO uses LaTeX en Desmos, usa notación simple
 
-## Fórmulas Importantes
-$$formula en LaTeX$$
+5. ESTRUCTURA DEL CONTENIDO:
+   - Introducción motivadora
+   - Objetivos de aprendizaje claros
+   - Desarrollo teórico paso a paso
+   - Ejemplos resueltos detallados
+   - Gráficos interactivos donde sea útil
+   - Ejercicios de práctica
+   - Resumen de puntos clave
 
-## Ejemplos
-Ejemplo 1: ...
+IMPORTANTE: Genera contenido COMPLETO y DIDÁCTICO. El estudiante debe poder aprender el tema solo con este material."""
 
-## Gráficos Interactivos
-[DESMOS:y=x^2]
+        user_prompt = f"""Crea una lección completa y detallada para:
+- Título de la lección: "{request.lesson_title}"
+- Capítulo: "{request.chapter_title}"
 
-## Práctica
-Ejercicios sugeridos...
-        """
+Material de referencia del curso:
+{request.pdf_content[:12000]}
+
+Genera el contenido educativo siguiendo EXACTAMENTE las instrucciones de formato. Incluye al menos:
+- 2-3 fórmulas importantes en bloque ($$formula$$)
+- 1 tabla de valores o comparación
+- 2 gráficos interactivos [DESMOS:ecuación]
+- 3 ejemplos resueltos paso a paso"""
         
-        chat = get_gemini_chat(system_message)
-        user_message = UserMessage(
-            text=f"Genera contenido educativo basado en este material:\n\n{request.pdf_content[:15000]}"
-        )
+        chat = get_gpt_chat(system_message)
+        user_message = UserMessage(text=user_prompt)
         response = await chat.send_message(user_message)
         
         return {"content": response}
