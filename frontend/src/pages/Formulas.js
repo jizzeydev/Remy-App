@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import 'katex/dist/katex.min.css';
+import { InlineMath, BlockMath } from 'react-katex';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -90,7 +92,7 @@ const Formulas = () => {
             className="pl-10"
           />
         </div>
-        <Select value={selectedCourse} onValueChange={setSelectedCourse}>
+        <Select value={selectedCourse} onValueChange={(value) => setSelectedCourse(value === 'all' ? '' : value)}>
           <SelectTrigger data-testid="formula-course-filter">
             <SelectValue placeholder="Filtrar por curso" />
           </SelectTrigger>
@@ -140,8 +142,8 @@ const Formulas = () => {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="bg-white border-2 border-cyan-200 rounded-lg p-4 font-mono text-center text-lg">
-                  {formula.latex}
+                <div className="bg-white border-2 border-cyan-200 rounded-lg p-4 text-center overflow-x-auto">
+                  <BlockMath math={formula.latex} />
                 </div>
                 <p className="text-slate-600 leading-relaxed">{formula.description}</p>
                 {formula.example && (

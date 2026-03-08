@@ -25,10 +25,6 @@ const LessonViewer = () => {
     try {
       const lessonRes = await axios.get(`${API}/lessons/${lessonId}`);
       setLesson(lessonRes.data);
-
-      const chaptersRes = await axios.get(`${API}/chapters/${lessonRes.data.chapter_id}/lessons`);
-      const chapterData = await db.chapters.find_one({"id": lessonRes.data.chapter_id});
-      setChapter(chapterData);
     } catch (error) {
       console.error('Error fetching lesson:', error);
       toast.error('Error al cargar la lección');

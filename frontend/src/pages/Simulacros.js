@@ -46,10 +46,11 @@ const Simulacros = () => {
   const fetchQuizzes = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${API}/quizzes/${userId}`);
+      const response = await axios.get(`${API}/quiz/history/${userId}`);
       setQuizzes(response.data);
     } catch (error) {
       console.error('Error fetching quizzes:', error);
+      setQuizzes([]);
     } finally {
       setLoading(false);
     }
@@ -63,25 +64,38 @@ const Simulacros = () => {
 
     setGenerating(true);
     try {
-      const response = await axios.post(`${API}/quiz/generate`, {
+      const response = await axios.post(`${API}/quiz/start`, {
         user_id: userId,
-        ...formData
+        course_id: formData.course_id,
+        topic: formData.topic,
+        num_questions: formData.num_questions
       });
 
-      setQuizzes(prev => [response.data, ...prev]);
-      toast.success('Simulacro generado exitosamente!');
+      // Start quiz immediately with the returned data
+      setActiveQuiz({
+        id: response.data.quiz_id,
+        title: `Simulacro de ${formData.topic}`,
+        questions: response.data.questions
+      });
+      toast.success('¡Simulacro iniciado!');
       setOpen(false);
       setFormData({ course_id: '', topic: '', num_questions: 5 });
     } catch (error) {
       console.error('Error generating quiz:', error);
-      toast.error('Error al generar el simulacro. Intenta nuevamente.');
+      const errorMsg = error.response?.data?.detail || 'Error al generar el simulacro. Verifica que haya preguntas disponibles para este tema.';
+      toast.error(errorMsg);
     } finally {
       setGenerating(false);
     }
   };
 
   const handleStartQuiz = (quiz) => {
-    setActiveQuiz(quiz);
+    // If quiz comes from history, it has the full structure
+    setActiveQuiz({
+      id: quiz.id,
+      title: `Simulacro de ${quiz.topic}`,
+      questions: quiz.questions
+    });
     setAnswers({});
     setShowResults(false);
   };
@@ -90,13 +104,25 @@ const Simulacros = () => {
     setAnswers(prev => ({ ...prev, [questionIndex]: answer }));
   };
 
-  const handleSubmitQuiz = () => {
+  const handleSubmitQuiz = async () => {
     setShowResults(true);
     const correct = activeQuiz.questions.filter(
-      (q, i) => answers[i] === q.correct_answer
+      (q, i) => answers[i] === (q.correct_answer || q.correct_option)
     ).length;
     const percentage = ((correct / activeQuiz.questions.length) * 100).toFixed(0);
     toast.success(`¡Completado! Obtuviste ${percentage}% (${correct}/${activeQuiz.questions.length})`);
+    
+    // Submit to backend if quiz has an id
+    if (activeQuiz.id) {
+      try {
+        await axios.post(`${API}/quiz/submit`, {
+          quiz_id: activeQuiz.id,
+          answers: answers
+        });
+      } catch (error) {
+        console.error('Error submitting quiz:', error);
+      }
+    }
   };
 
   if (activeQuiz) {
@@ -113,13 +139,13 @@ const Simulacros = () => {
             {activeQuiz.questions.map((question, index) => (
               <div key={index} className="space-y-3" data-testid={`quiz-question-${index}`}>
                 <h3 className="font-semibold text-lg">
-                  {index + 1}. {question.question}
+                  {index + 1}. {question.question_text || question.question}
                 </h3>
                 <div className="space-y-2">
                   {question.options.map((option, optIndex) => {
                     const optionLetter = option.charAt(0);
                     const isSelected = answers[index] === optionLetter;
-                    const isCorrect = optionLetter === question.correct_answer;
+                    const isCorrect = optionLetter === (question.correct_answer || question.correct_option);
                     const showCorrect = showResults && isCorrect;
                     const showIncorrect = showResults && isSelected && !isCorrect;
 
