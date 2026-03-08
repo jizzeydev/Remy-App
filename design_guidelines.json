@@ -1,0 +1,122 @@
+{
+  "brand_identity": {
+    "name": "Remy",
+    "tagline": "Tu tutor inteligente 24/7",
+    "style": "Modern, Educational, Friendly, Gen-Z Tech",
+    "theme_mode": "light"
+  },
+  "typography": {
+    "font_family": {
+      "headings": "Outfit, sans-serif",
+      "body": "Manrope, sans-serif",
+      "mono": "JetBrains Mono, monospace"
+    },
+    "scale": {
+      "h1": "text-4xl md:text-5xl font-bold tracking-tight",
+      "h2": "text-3xl font-semibold tracking-tight",
+      "h3": "text-2xl font-semibold",
+      "p": "text-base leading-relaxed text-slate-600",
+      "small": "text-sm font-medium text-slate-500"
+    },
+    "imports": [
+      "@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Outfit:wght@400;500;700;800&display=swap');"
+    ]
+  },
+  "colors": {
+    "palette": {
+      "primary": {
+        "hex": "#00BCD4",
+        "hsl": "187 100% 42%",
+        "usage": "Main buttons, active states, key brand elements"
+      },
+      "secondary": {
+        "hex": "#E0F7FA",
+        "hsl": "186 70% 93%",
+        "usage": "Backgrounds for cards, subtle highlights"
+      },
+      "accent": {
+        "hex": "#FFC107",
+        "hsl": "45 100% 51%",
+        "usage": "Streaks, trophies, gamification elements"
+      },
+      "background": {
+        "hex": "#FFFFFF",
+        "hsl": "0 0% 100%",
+        "usage": "Main app background"
+      },
+      "text": {
+        "primary": "#0F172A",
+        "secondary": "#64748B"
+      }
+    },
+    "css_vars": {
+      "root": {
+        "--background": "0 0% 100%",
+        "--foreground": "222 47% 11%",
+        "--card": "0 0% 100%",
+        "--card-foreground": "222 47% 11%",
+        "--popover": "0 0% 100%",
+        "--popover-foreground": "222 47% 11%",
+        "--primary": "187 100% 42%",
+        "--primary-foreground": "0 0% 100%",
+        "--secondary": "186 70% 93%",
+        "--secondary-foreground": "187 100% 30%",
+        "--muted": "210 40% 96.1%",
+        "--muted-foreground": "215.4 16.3% 46.9%",
+        "--accent": "45 100% 51%",
+        "--accent-foreground": "0 0% 10%",
+        "--destructive": "0 84.2% 60.2%",
+        "--destructive-foreground": "210 40% 98%",
+        "--border": "214.3 31.8% 91.4%",
+        "--input": "214.3 31.8% 91.4%",
+        "--ring": "187 100% 42%",
+        "--radius": "0.75rem"
+      }
+    }
+  },
+  "visual_enhancers": {
+    "glassmorphism": "backdrop-blur-md bg-white/70 border border-white/20 shadow-sm",
+    "shadows": {
+      "card": "shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(0,188,212,0.15)] transition-all duration-300",
+      "button": "shadow-[0_4px_14px_rgba(0,188,212,0.3)]"
+    },
+    "gradients": {
+      "primary": "bg-gradient-to-r from-cyan-400 to-cyan-600",
+      "subtle": "bg-gradient-to-b from-white to-cyan-50/30"
+    },
+    "borders": "border-slate-100"
+  },
+  "layout_strategy": {
+    "type": "Dashboard with Sidebar (Desktop) / Bottom Nav (Mobile)",
+    "container": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+    "grid_system": "grid grid-cols-1 md:grid-cols-12 gap-6",
+    "bento_grid": {
+      "hero": "col-span-12 md:col-span-8 lg:col-span-9",
+      "sidebar": "col-span-12 md:col-span-4 lg:col-span-3",
+      "stat_card": "col-span-6 md:col-span-4 lg:col-span-3"
+    }
+  },
+  "components_to_use": {
+    "icons": "lucide-react",
+    "charts": "recharts (wrapped in Shadcn Chart)",
+    "calendar": "react-day-picker (Shadcn Calendar)",
+    "toast": "sonner",
+    "animations": "framer-motion"
+  },
+  "image_urls": {
+    "hero_student": "https://images.unsplash.com/photo-1758521541622-d1e6be8c39bb",
+    "collaboration": "https://images.pexels.com/photos/5306449/pexels-photo-5306449.jpeg",
+    "tutor_context": "https://images.unsplash.com/photo-1674916974247-64a74f1ee042",
+    "abstract_bg": "https://images.unsplash.com/photo-1728741517403-58e7f08280de"
+  },
+  "universal_guidelines": [
+    "Always use 'Outfit' font for headings and 'Manrope' for body.",
+    "Buttons must have the 'pill' shape (rounded-full) or 'soft rect' (rounded-xl).",
+    "Use plenty of negative space (p-6 or p-8) inside cards.",
+    "Never use pure black (#000000). Use Slate-900 (#0F172A) instead.",
+    "For the 'AI Tutor' chat interface, use a distinct bubble style: Cyan for AI, Gray for User.",
+    "Mobile responsiveness is critical. Ensure touch targets are 44px+.",
+    "Use data-testid attributes for all interactive elements."
+  ],
+  "instructions_to_main_agent": "1. Update index.css with the provided CSS variables FIRST. 2. Install 'lucide-react', 'recharts', 'framer-motion', 'sonner' if missing. 3. Create a Layout component that handles the responsive Sidebar/BottomNav structure. 4. Build the Dashboard using the Bento Grid strategy."
+}
