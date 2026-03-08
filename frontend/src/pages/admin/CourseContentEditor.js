@@ -288,86 +288,86 @@ const CourseContentEditor = () => {
   if (!course) return <div>Cargando...</div>;
 
   return (
-    <div className=\"space-y-6\">
-      <div className=\"flex items-center gap-4\">
-        <Button variant=\"ghost\" onClick={() => navigate('/admin/courses')}>
-          <ArrowLeft size={20} className=\"mr-2\" />
+    <div className="space-y-6">
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" onClick={() => navigate('/admin/courses')}>
+          <ArrowLeft size={20} className="mr-2" />
           Volver
         </Button>
-        <div className=\"flex-1\">
-          <h1 className=\"text-3xl font-bold\">{course.title}</h1>
-          <p className=\"text-slate-600\">Editar contenido del curso</p>
+        <div className="flex-1">
+          <h1 className="text-3xl font-bold">{course.title}</h1>
+          <p className="text-slate-600">Editar contenido del curso</p>
         </div>
         <Button onClick={openAddChapter}>
-          <Plus size={20} className=\"mr-2\" />
+          <Plus size={20} className="mr-2" />
           Nuevo Capítulo
         </Button>
       </div>
 
-      <div className=\"space-y-4\">
+      <div className="space-y-4">
         {chapters.length === 0 ? (
           <Card>
-            <CardContent className=\"text-center py-12\">
-              <BookOpen className=\"mx-auto mb-4 text-slate-400\" size={48} />
-              <h3 className=\"text-xl font-semibold mb-2\">No hay capítulos</h3>
-              <p className=\"text-slate-500 mb-4\">Comienza agregando el primer capítulo</p>
+            <CardContent className="text-center py-12">
+              <BookOpen className="mx-auto mb-4 text-slate-400" size={48} />
+              <h3 className="text-xl font-semibold mb-2">No hay capítulos</h3>
+              <p className="text-slate-500 mb-4">Comienza agregando el primer capítulo</p>
               <Button onClick={openAddChapter}>Crear Capítulo</Button>
             </CardContent>
           </Card>
         ) : (
           chapters.map((chapter, chapterIndex) => (
             <Card key={chapter.id}>
-              <CardHeader className=\"bg-slate-50\">
-                <div className=\"flex items-center justify-between\">
-                  <div className=\"flex items-center gap-3\">
-                    <GripVertical className=\"text-slate-400\" size={20} />
+              <CardHeader className="bg-slate-50">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <GripVertical className="text-slate-400" size={20} />
                     <div>
-                      <CardTitle className=\"text-lg\">
+                      <CardTitle className="text-lg">
                         Capítulo {chapter.order}: {chapter.title}
                       </CardTitle>
-                      <p className=\"text-sm text-slate-600 mt-1\">{chapter.description}</p>
+                      <p className="text-sm text-slate-600 mt-1">{chapter.description}</p>
                     </div>
                   </div>
-                  <div className=\"flex gap-2\">
-                    <Button size=\"sm\" variant=\"outline\" onClick={() => openAddLesson(chapter)}>
-                      <Plus size={16} className=\"mr-1\" />
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" onClick={() => openAddLesson(chapter)}>
+                      <Plus size={16} className="mr-1" />
                       Lección
                     </Button>
-                    <Button size=\"sm\" variant=\"outline\" onClick={() => openEditChapter(chapter)}>
+                    <Button size="sm" variant="outline" onClick={() => openEditChapter(chapter)}>
                       <Edit size={16} />
                     </Button>
-                    <Button size=\"sm\" variant=\"destructive\" onClick={() => handleDeleteChapter(chapter.id)}>
+                    <Button size="sm" variant="destructive" onClick={() => handleDeleteChapter(chapter.id)}>
                       <Trash2 size={16} />
                     </Button>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className=\"pt-4\">
+              <CardContent className="pt-4">
                 {chapter.lessons?.length === 0 ? (
-                  <div className=\"text-center py-8 text-slate-500\">
-                    <FileText className=\"mx-auto mb-2 text-slate-400\" size={32} />
-                    <p className=\"text-sm\">No hay lecciones en este capítulo</p>
+                  <div className="text-center py-8 text-slate-500">
+                    <FileText className="mx-auto mb-2 text-slate-400" size={32} />
+                    <p className="text-sm">No hay lecciones en este capítulo</p>
                   </div>
                 ) : (
-                  <div className=\"space-y-2\">
+                  <div className="space-y-2">
                     {chapter.lessons?.map((lesson) => (
                       <div
                         key={lesson.id}
-                        className=\"flex items-center justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-50\"
+                        className="flex items-center justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-50"
                       >
-                        <div className=\"flex items-center gap-3\">
-                          <GripVertical className=\"text-slate-400\" size={16} />
-                          <FileText className=\"text-primary\" size={20} />
+                        <div className="flex items-center gap-3">
+                          <GripVertical className="text-slate-400" size={16} />
+                          <FileText className="text-primary" size={20} />
                           <div>
-                            <p className=\"font-medium\">{lesson.title}</p>
-                            <p className=\"text-xs text-slate-500\">{lesson.duration_minutes} min</p>
+                            <p className="font-medium">{lesson.title}</p>
+                            <p className="text-xs text-slate-500">{lesson.duration_minutes} min</p>
                           </div>
                         </div>
-                        <div className=\"flex gap-2\">
-                          <Button size=\"sm\" variant=\"ghost\" onClick={() => openEditLesson(chapter, lesson)}>
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="ghost" onClick={() => openEditLesson(chapter, lesson)}>
                             <Edit size={14} />
                           </Button>
-                          <Button size=\"sm\" variant=\"ghost\" onClick={() => handleDeleteLesson(lesson.id)}>
+                          <Button size="sm" variant="ghost" onClick={() => handleDeleteLesson(lesson.id)}>
                             <Trash2 size={14} />
                           </Button>
                         </div>
@@ -387,7 +387,7 @@ const CourseContentEditor = () => {
           <DialogHeader>
             <DialogTitle>{editingChapter ? 'Editar Capítulo' : 'Nuevo Capítulo'}</DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleSaveChapter} className=\"space-y-4\">
+          <form onSubmit={handleSaveChapter} className="space-y-4">
             <div>
               <Label>Título</Label>
               <Input
@@ -407,14 +407,14 @@ const CourseContentEditor = () => {
             <div>
               <Label>Orden</Label>
               <Input
-                type=\"number\"
+                type="number"
                 value={chapterForm.order}
                 onChange={(e) => setChapterForm({ ...chapterForm, order: parseInt(e.target.value) })}
                 min={1}
                 required
               />
             </div>
-            <Button type=\"submit\" className=\"w-full\" disabled={loading}>
+            <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Guardando...' : editingChapter ? 'Actualizar' : 'Crear'}
             </Button>
           </form>
@@ -423,14 +423,14 @@ const CourseContentEditor = () => {
 
       {/* Lesson Dialog */}
       <Dialog open={lessonDialogOpen} onOpenChange={setLessonDialogOpen}>
-        <DialogContent className=\"max-w-5xl max-h-[90vh] overflow-y-auto\">
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {editingLesson ? 'Editar Lección' : 'Nueva Lección'} - {selectedChapter?.title}
             </DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleSaveLesson} className=\"space-y-4\">
-            <div className=\"grid grid-cols-2 gap-4\">
+          <form onSubmit={handleSaveLesson} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label>Título de la Lección</Label>
                 <Input
@@ -442,7 +442,7 @@ const CourseContentEditor = () => {
               <div>
                 <Label>Duración (minutos)</Label>
                 <Input
-                  type=\"number\"
+                  type="number"
                   value={lessonForm.duration_minutes}
                   onChange={(e) => setLessonForm({ ...lessonForm, duration_minutes: parseInt(e.target.value) })}
                   min={1}
@@ -451,25 +451,25 @@ const CourseContentEditor = () => {
               </div>
             </div>
 
-            <div className=\"border-t pt-4\">
-              <Label className=\"flex items-center gap-2 mb-2\">
-                <Sparkles size={16} className=\"text-primary\" />
+            <div className="border-t pt-4">
+              <Label className="flex items-center gap-2 mb-2">
+                <Sparkles size={16} className="text-primary" />
                 Generar contenido con IA (opcional)
               </Label>
-              <div className=\"space-y-2\">
+              <div className="space-y-2">
                 <Input
-                  type=\"file\"
-                  accept=\".pdf\"
+                  type="file"
+                  accept=".pdf"
                   onChange={(e) => setPdfFile(e.target.files[0])}
                 />
-                <div className=\"flex gap-2\">
-                  <Button type=\"button\" onClick={handlePdfUpload} size=\"sm\" variant=\"outline\" disabled={!pdfFile}>
+                <div className="flex gap-2">
+                  <Button type="button" onClick={handlePdfUpload} size="sm" variant="outline" disabled={!pdfFile}>
                     Procesar PDF
                   </Button>
                   <Button
-                    type=\"button\"
+                    type="button"
                     onClick={handleGenerateContent}
-                    size=\"sm\"
+                    size="sm"
                     disabled={!pdfText || generatingContent}
                   >
                     {generatingContent ? 'Generando...' : 'Generar con Gemini'}
@@ -478,27 +478,27 @@ const CourseContentEditor = () => {
               </div>
             </div>
 
-            <div className=\"grid grid-cols-2 gap-4\">
+            <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label>Contenido (Markdown + LaTeX)</Label>
                 <Textarea
                   value={lessonForm.content}
                   onChange={(e) => setLessonForm({ ...lessonForm, content: e.target.value })}
-                  placeholder=\"# Título\n\n## Sección\n\nTexto con fórmulas $$x^2$$\n\n[DESMOS:y=x^2]\"
-                  className=\"font-mono text-sm\"
+                  placeholder="# Título\n\n## Sección\n\nTexto con fórmulas $$x^2$$\n\n[DESMOS:y=x^2]"
+                  className="font-mono text-sm"
                   rows={20}
                   required
                 />
               </div>
               <div>
                 <Label>Vista Previa</Label>
-                <div className=\"border rounded-lg p-4 h-[500px] overflow-y-auto bg-white\">
+                <div className="border rounded-lg p-4 h-[500px] overflow-y-auto bg-white">
                   <MarkdownRenderer content={lessonForm.content} />
                 </div>
               </div>
             </div>
 
-            <Button type=\"submit\" className=\"w-full\" disabled={loading}>
+            <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Guardando...' : editingLesson ? 'Actualizar Lección' : 'Crear Lección'}
             </Button>
           </form>
