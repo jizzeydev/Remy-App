@@ -180,7 +180,7 @@ def get_gemini_chat(system_message: str):
         api_key=api_key,
         session_id=session_id,
         system_message=system_message
-    ).with_model("gemini", "gemini-3-pro-preview")
+    ).with_model("gemini", "gemini-2.5-flash")
     return chat
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
