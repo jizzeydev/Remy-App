@@ -1,34 +1,82 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+.App {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #ffffff 0%, #e0f7fa 100%);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+.chat-bubble {
+  max-width: 75%;
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
+  word-wrap: break-word;
+  animation: fadeIn 0.3s ease-in;
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+.chat-bubble.user {
+  background: #f1f5f9;
+  margin-left: auto;
+  border-bottom-right-radius: 0.25rem;
 }
 
-.App-link {
-    color: #61dafb;
+.chat-bubble.assistant {
+  background: linear-gradient(135deg, #00BCD4 0%, #0097A7 100%);
+  color: white;
+  border-bottom-left-radius: 0.25rem;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.course-card {
+  transition: all 0.3s ease;
+}
+
+.course-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 188, 212, 0.15);
+}
+
+.formula-card {
+  background: linear-gradient(135deg, rgba(0, 188, 212, 0.05) 0%, rgba(224, 247, 250, 0.3) 100%);
+  border: 1px solid rgba(0, 188, 212, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.quiz-option {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.quiz-option:hover {
+  background: rgba(0, 188, 212, 0.05);
+  border-color: #00BCD4;
+}
+
+.quiz-option.selected {
+  background: rgba(0, 188, 212, 0.1);
+  border-color: #00BCD4;
+  border-width: 2px;
+}
+
+.quiz-option.correct {
+  background: rgba(34, 197, 94, 0.1);
+  border-color: #22c55e;
+}
+
+.quiz-option.incorrect {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: #ef4444;
 }
