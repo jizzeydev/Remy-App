@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,13 +9,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, FileText, Sparkles } from 'lucide-react';
+import { Plus, Edit, Trash2, FileText, Sparkles, BookOpen, Image as ImageIcon } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 const ADMIN_API = `${BACKEND_URL}/api/admin`;
 
 const AdminCourses = () => {
+  const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -33,7 +35,8 @@ const AdminCourses = () => {
     modules_count: 0,
     instructor: 'Jesus Bravo',
     rating: 4.8,
-    summary: ''
+    summary: '',
+    cover_image_url: ''
   });
 
   useEffect(() => {
@@ -107,9 +110,34 @@ const AdminCourses = () => {
       modules_count: course.modules_count,
       instructor: course.instructor,
       rating: course.rating,
-      summary: course.summary || ''
+      summary: course.summary || '',
+      cover_image_url: course.cover_image_url || ''
     });
     setDialogOpen(true);
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      const token = localStorage.getItem('admin_token');
+      const formDataImg = new FormData();
+      formDataImg.append('file', file);
+
+      const response = await axios.post(`${ADMIN_API}/upload-course-image`, formDataImg, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      setFormData({ ...formData, cover_image_url: response.data.image_url });
+      toast.success('Imagen cargada');
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast.error('Error al cargar imagen');
+    }
   };
 
   const resetForm = () => {
@@ -122,7 +150,8 @@ const AdminCourses = () => {
       modules_count: 0,
       instructor: 'Jesus Bravo',
       rating: 4.8,
-      summary: ''
+      summary: '',
+      cover_image_url: ''
     });
   };
 
@@ -351,6 +380,23 @@ const AdminCourses = () => {
                   </div>
                 </div>
                 <div>
+                  <Label htmlFor="cover_image">Portada del Curso</Label>
+                  <Input
+                    id="cover_image"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="mb-2"
+                  />
+                  {formData.cover_image_url && (
+                    <img
+                      src={formData.cover_image_url}
+                      alt="Portada"
+                      className="w-full h-32 object-cover rounded-lg"
+                    />
+                  )}
+                </div>
+                <div>
                   <Label htmlFor="summary">Resumen (opcional)</Label>
                   <Textarea
                     id="summary"
@@ -372,6 +418,13 @@ const AdminCourses = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {courses.map((course) => (
           <Card key={course.id}>
+            {course.cover_image_url && (
+              <img
+                src={course.cover_image_url}
+                alt={course.title}
+                className="w-full h-48 object-cover rounded-t-lg"
+              />
+            )}
             <CardHeader>
               <CardTitle className="text-lg">{course.title}</CardTitle>
               <div className="flex items-center gap-2 text-sm text-slate-600">
@@ -390,23 +443,33 @@ const AdminCourses = () => {
                   ✓ Resumen generado con IA
                 </p>
               )}
-              <div className="flex gap-2">
+              <div className="flex flex-col gap-2">
                 <Button
                   size="sm"
-                  variant="outline"
-                  onClick={() => handleEdit(course)}
-                  className="flex-1"
+                  onClick={() => navigate(`/admin/courses/${course.id}/content`)}
+                  className="w-full"
                 >
-                  <Edit size={16} className="mr-1" />
-                  Editar
+                  <BookOpen size={16} className="mr-2" />
+                  Editar Contenido
                 </Button>
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  onClick={() => handleDelete(course.id)}
-                >
-                  <Trash2 size={16} />
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleEdit(course)}
+                    className="flex-1"
+                  >
+                    <Edit size={16} className="mr-1" />
+                    Editar
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => handleDelete(course.id)}
+                  >
+                    <Trash2 size={16} />
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>

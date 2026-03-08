@@ -14,6 +14,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminCourses from './pages/admin/AdminCourses';
 import AdminFormulas from './pages/admin/AdminFormulas';
 import AdminQuestions from './pages/admin/AdminQuestions';
+import CourseContentEditor from './pages/admin/CourseContentEditor';
 import '@/App.css';
 
 function ProtectedRoute({ children }) {
@@ -51,6 +52,7 @@ function App() {
             <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/courses" element={<AdminCourses />} />
+            <Route path="/admin/courses/:courseId/content" element={<CourseContentEditor />} />
             <Route path="/admin/formulas" element={<AdminFormulas />} />
             <Route path="/admin/questions" element={<AdminQuestions />} />
           </Route>
