@@ -9,6 +9,8 @@ import Simulacros from './pages/Simulacros';
 import Biblioteca from './pages/Biblioteca';
 import Formulas from './pages/Formulas';
 import Progreso from './pages/Progreso';
+import CourseViewer from './pages/student/CourseViewer';
+import LessonViewer from './pages/student/LessonViewer';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminCourses from './pages/admin/AdminCourses';
@@ -42,6 +44,8 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/simulacros" element={<Simulacros />} />
             <Route path="/biblioteca" element={<Biblioteca />} />
+            <Route path="/course/:courseId" element={<CourseViewer />} />
+            <Route path="/lesson/:lessonId" element={<LessonViewer />} />
             <Route path="/formulas" element={<Formulas />} />
             <Route path="/progreso" element={<Progreso />} />
           </Route>

@@ -207,10 +207,16 @@ const Biblioteca = () => {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center justify-between text-sm mb-3">
                       <span className="text-slate-600">{course.instructor}</span>
                       <span className="font-semibold">⭐ {course.rating}</span>
                     </div>
+                    <Button
+                      className="w-full"
+                      onClick={() => navigate(`/course/${course.id}`)}
+                    >
+                      Ver Curso
+                    </Button>
                   </CardContent>
                 </Card>
               ))}
