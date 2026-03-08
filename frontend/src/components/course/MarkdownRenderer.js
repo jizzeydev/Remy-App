@@ -18,6 +18,17 @@ const VisualizationLoader = ({ type }) => (
   </div>
 );
 
+// KaTeX options to handle errors gracefully
+const katexOptions = {
+  throwOnError: false,
+  errorColor: '#cc0000',
+  strict: false,
+  trust: true,
+  macros: {
+    "\\cases": "\\begin{cases}",
+  }
+};
+
 const MarkdownRenderer = ({ content }) => {
   if (!content) return null;
 
@@ -125,7 +136,7 @@ const MarkdownRenderer = ({ content }) => {
           <ReactMarkdown
             key={`md-${index}`}
             remarkPlugins={[remarkGfm, remarkMath]}
-            rehypePlugins={[rehypeKatex]}
+            rehypePlugins={[[rehypeKatex, katexOptions]]}
             components={{
               // Headings with nice styling
               h1: ({ node, ...props }) => (
