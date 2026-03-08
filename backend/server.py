@@ -9,8 +9,11 @@ from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional, Dict, Any
 import uuid
+import base64
+import aiofiles
 from datetime import datetime, timezone, timedelta
 from emergentintegrations.llm.chat import LlmChat, UserMessage
+from emergentintegrations.llm.openai.image_generation import OpenAIImageGeneration
 import PyPDF2
 import io
 import json
@@ -18,6 +21,9 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 
 ROOT_DIR = Path(__file__).parent
+UPLOADS_DIR = ROOT_DIR / 'uploads'
+UPLOADS_DIR.mkdir(exist_ok=True)
+
 load_dotenv(ROOT_DIR / '.env')
 
 mongo_url = os.environ['MONGO_URL']
@@ -890,6 +896,64 @@ Recuerda: Si agregas un gráfico Desmos, incluye sliders para hacerlo interactiv
         return {"content": response}
     except Exception as e:
         logging.error(f"Error editing lesson content: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Image generation with AI
+class GenerateImageRequest(BaseModel):
+    prompt: str
+    style: str = "educativo"  # educativo, diagrama, ilustracion
+
+@admin_router.post("/generate-image")
+async def generate_image(request: GenerateImageRequest, _: str = Depends(verify_admin_token)):
+    try:
+        api_key = os.environ.get('EMERGENT_LLM_KEY')
+        if not api_key:
+            raise HTTPException(status_code=500, detail="API key no configurada")
+        
+        # Enhance prompt for educational context
+        enhanced_prompt = f"""Create an educational illustration for a math/science course.
+Style: {request.style}, clean, professional, suitable for university students.
+Content: {request.prompt}
+Requirements: Clear labels if needed, high contrast, easy to understand, no text unless necessary."""
+        
+        image_gen = OpenAIImageGeneration(api_key=api_key)
+        images = await image_gen.generate_images(
+            prompt=enhanced_prompt,
+            model="gpt-image-1",
+            number_of_images=1
+        )
+        
+        if images and len(images) > 0:
+            image_base64 = base64.b64encode(images[0]).decode('utf-8')
+            image_url = f"data:image/png;base64,{image_base64}"
+            return {"image_url": image_url}
+        else:
+            raise HTTPException(status_code=500, detail="No se pudo generar la imagen")
+    except Exception as e:
+        logging.error(f"Error generating image: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Upload image from file
+@admin_router.post("/upload-image")
+async def upload_image(
+    file: UploadFile = File(...),
+    _: str = Depends(verify_admin_token)
+):
+    try:
+        if not file.content_type.startswith('image/'):
+            raise HTTPException(status_code=400, detail="Solo se permiten archivos de imagen")
+        
+        # Read and convert to base64
+        image_data = await file.read()
+        image_base64 = base64.b64encode(image_data).decode('utf-8')
+        
+        # Determine mime type
+        mime_type = file.content_type or 'image/png'
+        image_url = f"data:{mime_type};base64,{image_base64}"
+        
+        return {"image_url": image_url}
+    except Exception as e:
+        logging.error(f"Error uploading image: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @admin_router.post("/upload-course-image")

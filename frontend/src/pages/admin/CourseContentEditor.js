@@ -7,8 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, ArrowLeft, GripVertical, BookOpen, FileText, Sparkles, Send, MessageSquare, X } from 'lucide-react';
+import { Plus, Edit, Trash2, ArrowLeft, GripVertical, BookOpen, FileText, Sparkles, Send, MessageSquare, X, Image, Upload, Wand2 } from 'lucide-react';
 import MarkdownRenderer from '@/components/course/MarkdownRenderer';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -35,6 +36,14 @@ const CourseContentEditor = () => {
   const [chatLoading, setChatLoading] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
   const chatEndRef = useRef(null);
+  
+  // Image insertion state
+  const [imageDialogOpen, setImageDialogOpen] = useState(false);
+  const [imagePrompt, setImagePrompt] = useState('');
+  const [imageStyle, setImageStyle] = useState('educativo');
+  const [generatingImage, setGeneratingImage] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef(null);
 
   const [chapterForm, setChapterForm] = useState({
     title: '',
@@ -316,6 +325,79 @@ Estoy listo para mejorar la lección "${lessonForm.title}".
     }]);
   };
 
+  // Image functions
+  const handleGenerateImage = async () => {
+    if (!imagePrompt.trim()) {
+      toast.error('Escribe una descripción para la imagen');
+      return;
+    }
+    
+    setGeneratingImage(true);
+    try {
+      const token = localStorage.getItem('admin_token');
+      const response = await axios.post(
+        `${ADMIN_API}/generate-image`,
+        { prompt: imagePrompt, style: imageStyle },
+        { headers: { Authorization: `Bearer ${token}` }, timeout: 120000 }
+      );
+      
+      const imageUrl = response.data.image_url;
+      const imageMarkdown = `\n\n![${imagePrompt}](${imageUrl})\n\n`;
+      setLessonForm({ ...lessonForm, content: lessonForm.content + imageMarkdown });
+      
+      toast.success('¡Imagen generada e insertada!');
+      setImageDialogOpen(false);
+      setImagePrompt('');
+    } catch (error) {
+      console.error('Error generating image:', error);
+      toast.error('Error al generar imagen. Intenta con otra descripción.');
+    } finally {
+      setGeneratingImage(false);
+    }
+  };
+
+  const handleUploadImage = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    if (!file.type.startsWith('image/')) {
+      toast.error('Solo se permiten archivos de imagen');
+      return;
+    }
+    
+    setUploadingImage(true);
+    try {
+      const token = localStorage.getItem('admin_token');
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await axios.post(
+        `${ADMIN_API}/upload-image`,
+        formData,
+        { 
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+      
+      const imageUrl = response.data.image_url;
+      const imageName = file.name.replace(/\.[^/.]+$/, '');
+      const imageMarkdown = `\n\n![${imageName}](${imageUrl})\n\n`;
+      setLessonForm({ ...lessonForm, content: lessonForm.content + imageMarkdown });
+      
+      toast.success('¡Imagen subida e insertada!');
+      setImageDialogOpen(false);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast.error('Error al subir imagen');
+    } finally {
+      setUploadingImage(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
   const openAddChapter = () => {
     resetChapterForm();
     setChapterDialogOpen(true);
@@ -561,18 +643,30 @@ Estoy listo para mejorar la lección "${lessonForm.title}".
               <div className="relative">
                 <div className="flex items-center justify-between mb-2">
                   <Label>Contenido (Markdown + LaTeX)</Label>
-                  {lessonForm.content && (
+                  <div className="flex gap-2">
                     <Button 
                       type="button" 
                       size="sm" 
-                      variant={chatOpen ? "default" : "outline"}
-                      onClick={() => chatOpen ? setChatOpen(false) : openChatEditor()}
+                      variant="outline"
+                      onClick={() => setImageDialogOpen(true)}
                       className="gap-1"
                     >
-                      <MessageSquare size={14} />
-                      {chatOpen ? 'Cerrar Chat' : 'Editar con IA'}
+                      <Image size={14} />
+                      Insertar Imagen
                     </Button>
-                  )}
+                    {lessonForm.content && (
+                      <Button 
+                        type="button" 
+                        size="sm" 
+                        variant={chatOpen ? "default" : "outline"}
+                        onClick={() => chatOpen ? setChatOpen(false) : openChatEditor()}
+                        className="gap-1"
+                      >
+                        <MessageSquare size={14} />
+                        {chatOpen ? 'Cerrar Chat' : 'Editar con IA'}
+                      </Button>
+                    )}
+                  </div>
                 </div>
                 <Textarea
                   value={lessonForm.content}
@@ -655,6 +749,107 @@ Estoy listo para mejorar la lección "${lessonForm.title}".
               {loading ? 'Guardando...' : editingLesson ? 'Actualizar Lección' : 'Crear Lección'}
             </Button>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Image Insertion Dialog */}
+      <Dialog open={imageDialogOpen} onOpenChange={setImageDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Image size={20} />
+              Insertar Imagen
+            </DialogTitle>
+          </DialogHeader>
+          
+          <Tabs defaultValue="generate" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="generate" className="gap-2">
+                <Wand2 size={14} />
+                Generar con IA
+              </TabsTrigger>
+              <TabsTrigger value="upload" className="gap-2">
+                <Upload size={14} />
+                Subir Archivo
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="generate" className="space-y-4 mt-4">
+              <div className="space-y-2">
+                <Label>Describe la imagen que necesitas</Label>
+                <Textarea
+                  value={imagePrompt}
+                  onChange={(e) => setImagePrompt(e.target.value)}
+                  placeholder="Ej: Diagrama que muestre la relación entre una función y su derivada, con flechas indicando la pendiente en diferentes puntos"
+                  rows={3}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Estilo</Label>
+                <select
+                  value={imageStyle}
+                  onChange={(e) => setImageStyle(e.target.value)}
+                  className="w-full border rounded-md p-2 text-sm"
+                >
+                  <option value="educativo">Educativo (limpio, profesional)</option>
+                  <option value="diagrama">Diagrama técnico</option>
+                  <option value="ilustracion">Ilustración colorida</option>
+                  <option value="minimalista">Minimalista</option>
+                </select>
+              </div>
+              
+              <Button 
+                onClick={handleGenerateImage} 
+                disabled={generatingImage || !imagePrompt.trim()}
+                className="w-full gap-2"
+              >
+                {generatingImage ? (
+                  <>
+                    <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
+                    Generando imagen... (puede tomar ~30s)
+                  </>
+                ) : (
+                  <>
+                    <Wand2 size={16} />
+                    Generar Imagen con IA
+                  </>
+                )}
+              </Button>
+              
+              <p className="text-xs text-slate-500 text-center">
+                La imagen se generará con GPT Image y se insertará al final del contenido
+              </p>
+            </TabsContent>
+            
+            <TabsContent value="upload" className="space-y-4 mt-4">
+              <div className="border-2 border-dashed border-slate-200 rounded-lg p-8 text-center hover:border-cyan-400 transition-colors">
+                <Upload className="mx-auto mb-4 text-slate-400" size={40} />
+                <p className="text-slate-600 mb-2">Arrastra una imagen o haz clic para seleccionar</p>
+                <p className="text-xs text-slate-400 mb-4">PNG, JPG, GIF hasta 10MB</p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleUploadImage}
+                  className="hidden"
+                  id="image-upload"
+                />
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingImage}
+                >
+                  {uploadingImage ? 'Subiendo...' : 'Seleccionar Archivo'}
+                </Button>
+              </div>
+              
+              <p className="text-xs text-slate-500 text-center">
+                La imagen se convertirá a base64 y se insertará al final del contenido
+              </p>
+            </TabsContent>
+          </Tabs>
         </DialogContent>
       </Dialog>
     </div>
