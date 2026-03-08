@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, ArrowLeft, GripVertical, BookOpen, FileText, Sparkles } from 'lucide-react';
+import { Plus, Edit, Trash2, ArrowLeft, GripVertical, BookOpen, FileText, Sparkles, Send, MessageSquare, X } from 'lucide-react';
 import MarkdownRenderer from '@/components/course/MarkdownRenderer';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -28,6 +28,13 @@ const CourseContentEditor = () => {
   const [pdfFile, setPdfFile] = useState(null);
   const [pdfText, setPdfText] = useState('');
   const [generatingContent, setGeneratingContent] = useState(false);
+  
+  // AI Chat state
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatMessage, setChatMessage] = useState('');
+  const [chatLoading, setChatLoading] = useState(false);
+  const [chatHistory, setChatHistory] = useState([]);
+  const chatEndRef = useRef(null);
 
   const [chapterForm, setChapterForm] = useState({
     title: '',
@@ -240,6 +247,54 @@ const CourseContentEditor = () => {
     }
   };
 
+  // AI Chat functions
+  const handleSendChatMessage = async () => {
+    if (!chatMessage.trim() || !lessonForm.content) return;
+    
+    const userMsg = chatMessage.trim();
+    setChatMessage('');
+    setChatHistory(prev => [...prev, { role: 'user', content: userMsg }]);
+    setChatLoading(true);
+    
+    try {
+      const token = localStorage.getItem('admin_token');
+      const response = await axios.post(
+        `${ADMIN_API}/edit-lesson-content`,
+        {
+          current_content: lessonForm.content,
+          user_instruction: userMsg,
+          lesson_title: lessonForm.title
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      setLessonForm({ ...lessonForm, content: response.data.content });
+      setChatHistory(prev => [...prev, { 
+        role: 'assistant', 
+        content: '✅ Contenido actualizado según tu instrucción.' 
+      }]);
+      toast.success('Contenido actualizado');
+    } catch (error) {
+      console.error('Error editing content:', error);
+      setChatHistory(prev => [...prev, { 
+        role: 'assistant', 
+        content: '❌ Error al procesar la instrucción. Intenta de nuevo.' 
+      }]);
+      toast.error('Error al editar contenido');
+    } finally {
+      setChatLoading(false);
+      setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+    }
+  };
+
+  const openChatEditor = () => {
+    setChatOpen(true);
+    setChatHistory([{
+      role: 'assistant',
+      content: '¡Hola! Soy Remy 🎓 Dime qué quieres cambiar, añadir o quitar de la lección. Por ejemplo:\n\n• "Añade un ejemplo más sobre derivadas"\n• "Quita el gráfico de GeoGebra"\n• "Cambia la explicación del límite por algo más simple"\n• "Agrega un tip para el examen al final"'
+    }]);
+  };
+
   const openAddChapter = () => {
     resetChapterForm();
     setChapterDialogOpen(true);
@@ -283,6 +338,9 @@ const CourseContentEditor = () => {
     setPdfFile(null);
     setPdfText('');
     setLessonForm({ title: '', content: '', order: 1, duration_minutes: 30 });
+    setChatOpen(false);
+    setChatHistory([]);
+    setChatMessage('');
   };
 
   if (!course) return <div>Cargando...</div>;
@@ -479,8 +537,22 @@ const CourseContentEditor = () => {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Contenido (Markdown + LaTeX)</Label>
+              <div className="relative">
+                <div className="flex items-center justify-between mb-2">
+                  <Label>Contenido (Markdown + LaTeX)</Label>
+                  {lessonForm.content && (
+                    <Button 
+                      type="button" 
+                      size="sm" 
+                      variant={chatOpen ? "default" : "outline"}
+                      onClick={() => chatOpen ? setChatOpen(false) : openChatEditor()}
+                      className="gap-1"
+                    >
+                      <MessageSquare size={14} />
+                      {chatOpen ? 'Cerrar Chat' : 'Editar con IA'}
+                    </Button>
+                  )}
+                </div>
                 <Textarea
                   value={lessonForm.content}
                   onChange={(e) => setLessonForm({ ...lessonForm, content: e.target.value })}
@@ -489,6 +561,60 @@ const CourseContentEditor = () => {
                   rows={20}
                   required
                 />
+                
+                {/* AI Chat Panel */}
+                {chatOpen && (
+                  <div className="absolute top-10 right-0 w-80 bg-white border rounded-lg shadow-xl z-10">
+                    <div className="p-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-t-lg flex items-center justify-between">
+                      <span className="font-medium flex items-center gap-2">
+                        <Sparkles size={16} />
+                        Chat con Remy
+                      </span>
+                      <button onClick={() => setChatOpen(false)} className="hover:bg-white/20 rounded p-1">
+                        <X size={16} />
+                      </button>
+                    </div>
+                    <div className="h-64 overflow-y-auto p-3 space-y-3 bg-slate-50">
+                      {chatHistory.map((msg, i) => (
+                        <div 
+                          key={i} 
+                          className={`p-2 rounded-lg text-sm ${
+                            msg.role === 'user' 
+                              ? 'bg-cyan-100 ml-8 text-slate-800' 
+                              : 'bg-white border mr-8 text-slate-700'
+                          }`}
+                        >
+                          <pre className="whitespace-pre-wrap font-sans">{msg.content}</pre>
+                        </div>
+                      ))}
+                      {chatLoading && (
+                        <div className="bg-white border mr-8 p-2 rounded-lg text-sm flex items-center gap-2">
+                          <div className="animate-spin w-4 h-4 border-2 border-cyan-500 border-t-transparent rounded-full"></div>
+                          <span className="text-slate-500">Procesando...</span>
+                        </div>
+                      )}
+                      <div ref={chatEndRef} />
+                    </div>
+                    <div className="p-2 border-t flex gap-2">
+                      <Input
+                        value={chatMessage}
+                        onChange={(e) => setChatMessage(e.target.value)}
+                        placeholder="Escribe tu instrucción..."
+                        onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSendChatMessage()}
+                        disabled={chatLoading}
+                        className="text-sm"
+                      />
+                      <Button 
+                        type="button" 
+                        size="sm" 
+                        onClick={handleSendChatMessage}
+                        disabled={chatLoading || !chatMessage.trim()}
+                      >
+                        <Send size={14} />
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
               <div>
                 <Label>Vista Previa</Label>

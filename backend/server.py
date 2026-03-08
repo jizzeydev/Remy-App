@@ -811,6 +811,58 @@ REQUISITOS OBLIGATORIOS:
         logging.error(f"Error generating lesson content: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# New: Edit lesson content with AI chat
+class EditLessonContentRequest(BaseModel):
+    current_content: str
+    user_instruction: str
+    lesson_title: str = ""
+
+@admin_router.post("/edit-lesson-content")
+async def edit_lesson_content(request: EditLessonContentRequest, _: str = Depends(verify_admin_token)):
+    try:
+        system_message = """Eres REMY, el asistente de edición de contenido educativo de Se Remonta.
+
+Tu tarea es MODIFICAR el contenido existente según las instrucciones del administrador.
+
+REGLAS IMPORTANTES:
+1. MANTÉN todo el contenido que NO se mencione en la instrucción
+2. SOLO modifica, añade o elimina lo que el usuario pida específicamente
+3. Mantén el mismo formato y estilo del contenido original
+4. Si el usuario pide añadir algo, intégralo naturalmente en el contenido existente
+5. Si el usuario pide quitar algo, elimínalo limpiamente
+6. Si el usuario pide cambiar algo, hazlo manteniendo coherencia con el resto
+
+FORMATOS A MANTENER:
+- Fórmulas LaTeX: $inline$ o $$bloque$$
+- Desmos: [DESMOS:ecuaciones separadas por punto y coma]
+- GeoGebra: [GEOGEBRA:comandos separados por punto y coma]
+- Three.js: [3D:type=...;shape=...;color=...]
+- Markdown estándar para el resto
+
+Responde SOLO con el contenido modificado, sin explicaciones adicionales."""
+
+        user_prompt = f"""CONTENIDO ACTUAL DE LA LECCIÓN "{request.lesson_title}":
+
+{request.current_content}
+
+---
+
+INSTRUCCIÓN DEL ADMINISTRADOR:
+{request.user_instruction}
+
+---
+
+Genera el contenido MODIFICADO según la instrucción. Mantén todo lo demás igual."""
+        
+        chat = get_gpt_chat(system_message)
+        user_message = UserMessage(text=user_prompt)
+        response = await chat.send_message(user_message)
+        
+        return {"content": response}
+    except Exception as e:
+        logging.error(f"Error editing lesson content: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @admin_router.post("/upload-course-image")
 async def upload_course_image(
     file: UploadFile = File(...),

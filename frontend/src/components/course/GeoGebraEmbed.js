@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-const GeoGebraEmbed = ({ config, height = 400 }) => {
+const GeoGebraEmbed = ({ config, height = 450 }) => {
   const containerRef = useRef(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -9,16 +9,19 @@ const GeoGebraEmbed = ({ config, height = 400 }) => {
   useEffect(() => {
     if (!containerRef.current || !config) return;
 
+    let mounted = true;
+
     const loadGeoGebra = () => {
-      // Load GeoGebra API if not already loaded
       if (!window.GGBApplet) {
         const script = document.createElement('script');
         script.src = 'https://www.geogebra.org/apps/deployggb.js';
         script.async = true;
-        script.onload = initGeoGebra;
+        script.onload = () => mounted && initGeoGebra();
         script.onerror = () => {
-          setError('Error cargando GeoGebra');
-          setLoading(false);
+          if (mounted) {
+            setError('Error cargando GeoGebra');
+            setLoading(false);
+          }
         };
         document.body.appendChild(script);
       } else {
@@ -27,61 +30,88 @@ const GeoGebraEmbed = ({ config, height = 400 }) => {
     };
 
     function initGeoGebra() {
+      if (!mounted) return;
+      
       try {
-        // Parse config - can be material ID, commands, or JSON config
-        let params = {
+        // Determine app type based on commands
+        const hasAdvancedCommands = /Tangent|Derivative|Integral|Polygon|Circle|Line|Segment|Vector|Point/i.test(config);
+        const hasFunction = /[a-z]\s*\([a-z]\)\s*=/i.test(config);
+        
+        // Use 'classic' for advanced commands, 'graphing' for simple
+        const appName = (hasAdvancedCommands || hasFunction) ? 'classic' : 'graphing';
+        
+        const params = {
           id: appletId.current,
           width: containerRef.current.offsetWidth || 700,
           height: height,
           showToolBar: false,
-          showAlgebraInput: false,
+          showAlgebraInput: true,
           showMenuBar: false,
-          enableRightClick: false,
+          enableRightClick: true,
           enableShiftDragZoom: true,
           showResetIcon: true,
           language: 'es',
           borderColor: '#e2e8f0',
+          appName: appName,
+          showAlgebraInput: false,
+          algebraInputPosition: 'bottom',
           preventFocus: true,
-        };
-
-        // Check if config is a material ID (like "abc123")
-        if (/^[a-zA-Z0-9]+$/.test(config) && config.length < 20) {
-          params.material_id = config;
-        } 
-        // Check if config is GeoGebra commands
-        else if (config.includes('=') || config.includes('(')) {
-          params.appName = 'graphing';
-          params.appletOnLoad = function() {
+          appletOnLoad: function() {
+            if (!mounted) return;
+            
             const app = window[appletId.current];
             if (app) {
-              // Split by semicolon and execute each command
+              // Split commands by semicolon and execute each
               const commands = config.split(';').map(c => c.trim()).filter(c => c);
-              commands.forEach(cmd => {
+              
+              commands.forEach((cmd, index) => {
                 try {
-                  app.evalCommand(cmd);
+                  // Small delay between commands for stability
+                  setTimeout(() => {
+                    if (window[appletId.current]) {
+                      window[appletId.current].evalCommand(cmd);
+                    }
+                  }, index * 100);
                 } catch (e) {
                   console.warn('GeoGebra command error:', cmd, e);
                 }
               });
+              
+              // Zoom to fit after all commands
+              setTimeout(() => {
+                if (window[appletId.current]) {
+                  try {
+                    window[appletId.current].setCoordSystem(-5, 5, -3, 5);
+                  } catch (e) {}
+                }
+              }, commands.length * 100 + 200);
             }
-          };
-        }
+            setLoading(false);
+          }
+        };
 
         const applet = new window.GGBApplet(params, true);
         applet.inject(containerRef.current);
-        setLoading(false);
         setError(null);
+        
+        // Fallback timeout in case onLoad doesn't fire
+        setTimeout(() => {
+          if (mounted) setLoading(false);
+        }, 5000);
+        
       } catch (err) {
         console.error('GeoGebra error:', err);
-        setError(`Error: ${err.message}`);
-        setLoading(false);
+        if (mounted) {
+          setError(`Error: ${err.message}`);
+          setLoading(false);
+        }
       }
     }
 
     loadGeoGebra();
 
     return () => {
-      // Cleanup
+      mounted = false;
       if (window[appletId.current]) {
         try {
           window[appletId.current] = null;
@@ -94,7 +124,7 @@ const GeoGebraEmbed = ({ config, height = 400 }) => {
 
   return (
     <div className="my-6">
-      <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
+      <div className="bg-slate-50 rounded-lg p-3 border border-slate-200 shadow-sm">
         <div className="flex items-center gap-2 mb-2 text-sm text-slate-600">
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <circle cx="12" cy="12" r="10" strokeWidth="2"/>
@@ -111,8 +141,11 @@ const GeoGebraEmbed = ({ config, height = 400 }) => {
         ) : (
           <>
             {loading && (
-              <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+              <div className="flex items-center justify-center py-12 bg-white rounded-lg">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
+                  <span className="text-slate-500 text-sm">Cargando GeoGebra...</span>
+                </div>
               </div>
             )}
             <div 
@@ -124,7 +157,7 @@ const GeoGebraEmbed = ({ config, height = 400 }) => {
         )}
         
         <div className="mt-2 text-xs text-slate-500">
-          <span>💡 Tip: Arrastra los puntos para explorar la figura</span>
+          💡 Arrastra los puntos para explorar. Click derecho para más opciones.
         </div>
       </div>
     </div>
