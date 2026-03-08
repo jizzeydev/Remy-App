@@ -258,12 +258,18 @@ const CourseContentEditor = () => {
     
     try {
       const token = localStorage.getItem('admin_token');
+      
+      // Get chapter title for context
+      const currentChapter = chapters.find(ch => ch.id === selectedChapter);
+      const chapterTitle = currentChapter?.title || '';
+      
       const response = await axios.post(
         `${ADMIN_API}/edit-lesson-content`,
         {
           current_content: lessonForm.content,
           user_instruction: userMsg,
-          lesson_title: lessonForm.title
+          lesson_title: lessonForm.title,
+          chapter_title: chapterTitle
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -271,14 +277,14 @@ const CourseContentEditor = () => {
       setLessonForm({ ...lessonForm, content: response.data.content });
       setChatHistory(prev => [...prev, { 
         role: 'assistant', 
-        content: '✅ Contenido actualizado según tu instrucción.' 
+        content: '✅ ¡Listo! He actualizado el contenido. Revisa la vista previa para ver los cambios.' 
       }]);
       toast.success('Contenido actualizado');
     } catch (error) {
       console.error('Error editing content:', error);
       setChatHistory(prev => [...prev, { 
         role: 'assistant', 
-        content: '❌ Error al procesar la instrucción. Intenta de nuevo.' 
+        content: '❌ Hubo un error. Intenta ser más específico en tu instrucción.' 
       }]);
       toast.error('Error al editar contenido');
     } finally {
@@ -291,7 +297,22 @@ const CourseContentEditor = () => {
     setChatOpen(true);
     setChatHistory([{
       role: 'assistant',
-      content: '¡Hola! Soy Remy 🎓 Dime qué quieres cambiar, añadir o quitar de la lección. Por ejemplo:\n\n• "Añade un ejemplo más sobre derivadas"\n• "Quita el gráfico de GeoGebra"\n• "Cambia la explicación del límite por algo más simple"\n• "Agrega un tip para el examen al final"'
+      content: `¡Hola! Soy Remy 🎓
+
+Estoy listo para mejorar la lección "${lessonForm.title}".
+
+**Puedo ayudarte a:**
+• Agregar ejemplos más claros
+• Mejorar explicaciones confusas
+• Añadir gráficos Desmos interactivos
+• Quitar contenido innecesario
+• Agregar tips para el examen
+
+**Ejemplos de instrucciones:**
+"Agrega un ejemplo paso a paso de cómo derivar x³"
+"Mejora la explicación del límite, está confusa"
+"Pon un Desmos donde se vea la tangente moviéndose"
+"Quita el segundo ejemplo y pon uno más fácil"`
     }]);
   };
 
@@ -564,54 +585,60 @@ const CourseContentEditor = () => {
                 
                 {/* AI Chat Panel */}
                 {chatOpen && (
-                  <div className="absolute top-10 right-0 w-80 bg-white border rounded-lg shadow-xl z-10">
+                  <div className="absolute top-10 right-0 w-96 bg-white border rounded-lg shadow-2xl z-10">
                     <div className="p-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-t-lg flex items-center justify-between">
                       <span className="font-medium flex items-center gap-2">
                         <Sparkles size={16} />
-                        Chat con Remy
+                        Chat con Remy - Editar Lección
                       </span>
                       <button onClick={() => setChatOpen(false)} className="hover:bg-white/20 rounded p-1">
                         <X size={16} />
                       </button>
                     </div>
-                    <div className="h-64 overflow-y-auto p-3 space-y-3 bg-slate-50">
+                    <div className="h-80 overflow-y-auto p-3 space-y-3 bg-slate-50">
                       {chatHistory.map((msg, i) => (
                         <div 
                           key={i} 
-                          className={`p-2 rounded-lg text-sm ${
+                          className={`p-3 rounded-lg text-sm ${
                             msg.role === 'user' 
-                              ? 'bg-cyan-100 ml-8 text-slate-800' 
-                              : 'bg-white border mr-8 text-slate-700'
+                              ? 'bg-cyan-500 text-white ml-8' 
+                              : 'bg-white border shadow-sm mr-4 text-slate-700'
                           }`}
                         >
-                          <pre className="whitespace-pre-wrap font-sans">{msg.content}</pre>
+                          <div className="whitespace-pre-wrap leading-relaxed">{msg.content}</div>
                         </div>
                       ))}
                       {chatLoading && (
-                        <div className="bg-white border mr-8 p-2 rounded-lg text-sm flex items-center gap-2">
+                        <div className="bg-white border shadow-sm mr-4 p-3 rounded-lg text-sm flex items-center gap-2">
                           <div className="animate-spin w-4 h-4 border-2 border-cyan-500 border-t-transparent rounded-full"></div>
-                          <span className="text-slate-500">Procesando...</span>
+                          <span className="text-slate-500">Remy está trabajando...</span>
                         </div>
                       )}
                       <div ref={chatEndRef} />
                     </div>
-                    <div className="p-2 border-t flex gap-2">
-                      <Input
-                        value={chatMessage}
-                        onChange={(e) => setChatMessage(e.target.value)}
-                        placeholder="Escribe tu instrucción..."
-                        onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSendChatMessage()}
-                        disabled={chatLoading}
-                        className="text-sm"
-                      />
-                      <Button 
-                        type="button" 
-                        size="sm" 
-                        onClick={handleSendChatMessage}
-                        disabled={chatLoading || !chatMessage.trim()}
-                      >
-                        <Send size={14} />
-                      </Button>
+                    <div className="p-3 border-t bg-white rounded-b-lg">
+                      <div className="flex gap-2">
+                        <Input
+                          value={chatMessage}
+                          onChange={(e) => setChatMessage(e.target.value)}
+                          placeholder="Ej: Agrega un ejemplo de derivada de x³..."
+                          onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSendChatMessage()}
+                          disabled={chatLoading}
+                          className="text-sm"
+                        />
+                        <Button 
+                          type="button" 
+                          size="sm" 
+                          onClick={handleSendChatMessage}
+                          disabled={chatLoading || !chatMessage.trim()}
+                          className="bg-cyan-500 hover:bg-cyan-600"
+                        >
+                          <Send size={14} />
+                        </Button>
+                      </div>
+                      <p className="text-xs text-slate-400 mt-2">
+                        Tip: Sé específico. "Agrega un Desmos interactivo que muestre cómo la pendiente cambia"
+                      </p>
                     </div>
                   </div>
                 )}
