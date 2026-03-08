@@ -718,35 +718,27 @@ async def generate_lesson_content(request: GenerateLessonContentRequest, _: str 
 - En bloque: $$formula$$
 - Ejemplos: $f(x) = x^2$, $$\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$$
 
-📊 HERRAMIENTAS DE VISUALIZACIÓN DISPONIBLES:
+📊 HERRAMIENTA DE VISUALIZACIÓN:
 
-1. **DESMOS** - Gráficos 2D interactivos (TU HERRAMIENTA PRINCIPAL):
-   IMPORTANTE: Para gráficos con múltiples ecuaciones/sliders, usa UN SOLO tag con punto y coma:
-   [DESMOS:y = x^2; a=1; y = a*x]
-   
-   Ejemplos correctos:
-   - Función simple: [DESMOS:y = sin(x)]
-   - Con slider: [DESMOS:a=2; y = a*x^2]
-   - Secante a tangente: [DESMOS:y=x^2; a=1; h=0.5; m=((a+h)^2-a^2)/h; y=m*(x-a)+a^2]
-   - Comparar funciones: [DESMOS:y = x^2; y = x^3; y = sqrt(x)]
-   - Datos discretos: [DESMOS:(1,1); (2,4); (3,9); (4,16)]
-   
-   NO hagas esto (MAL):
-   [DESMOS:y=x^2]
-   [DESMOS:a=1]  <- ERROR: variables separadas no se conectan
-   
-   Usa Desmos para: funciones, límites, derivadas, integrales, sliders interactivos, puntos, comparaciones
+**DESMOS** - Gráficos 2D interactivos (TU ÚNICA HERRAMIENTA DE GRÁFICOS):
 
-2. **GEOGEBRA** - Geometría interactiva:
-   [GEOGEBRA:A = (0,0); B = (3,0); C = (1.5, 2.6); Polygon(A,B,C)]
-   Usa para: figuras geométricas, construcciones, ángulos, transformaciones
+IMPORTANTE: Para gráficos con múltiples ecuaciones/sliders, usa UN SOLO tag con punto y coma:
+[DESMOS:y = x^2; a=1; y = a*x]
 
-3. **THREE.JS** - Visualizaciones 3D:
-   [3D:type=geometry;shape=sphere;color=#0891b2]
-   [3D:type=surface;func=paraboloid;color=#22c55e]
-   Formas: box, sphere, cone, cylinder, torus, tetrahedron, octahedron
-   Superficies: sin, cos, saddle, paraboloid, wave
-   Usa para: geometría 3D, superficies, visualizar funciones de 2 variables
+Ejemplos:
+- Función simple: [DESMOS:y = sin(x)]
+- Con slider: [DESMOS:a=2; y = a*x^2]
+- Comparar funciones: [DESMOS:y = x^2; y = x^3; y = sqrt(x)]
+- Secante a tangente: [DESMOS:y=x^2; a=1; h=0.5; m=((a+h)^2-a^2)/h; y=m*(x-a)+a^2]
+- Puntos discretos: [DESMOS:(1,1); (2,4); (3,9); (4,16)]
+- Recta tangente: [DESMOS:y=x^2; a=1; y=2a(x-a)+a^2]
+- Área bajo curva: [DESMOS:y=x^2; 0<y<x^2{0<x<2}]
+
+NO hagas esto (MAL):
+[DESMOS:y=x^2]
+[DESMOS:a=1]  <- ERROR: variables separadas no se conectan
+
+Usa Desmos para TODO: funciones, límites, derivadas, integrales, geometría simple, sliders, animaciones
 
 📋 TABLAS - Para comparaciones y resúmenes:
 | Concepto | Fórmula | Ejemplo |

@@ -5,10 +5,8 @@ import remarkGfm from 'remark-gfm';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 
-// Lazy load visualization components
+// Only Desmos for visualizations
 const DesmosEmbed = lazy(() => import('./DesmosEmbed'));
-const GeoGebraEmbed = lazy(() => import('./GeoGebraEmbed'));
-const ThreeJSEmbed = lazy(() => import('./ThreeJSEmbed'));
 
 // Loading fallback for visualizations
 const VisualizationLoader = ({ type }) => (
@@ -103,36 +101,21 @@ const MarkdownRenderer = ({ content }) => {
   const renderVisualization = (part, index) => {
     const key = `viz-${index}`;
     
-    switch (part.type) {
-      case 'DESMOS':
-        return (
-          <Suspense key={key} fallback={<VisualizationLoader type="Desmos" />}>
-            <DesmosEmbed equation={part.config} />
-          </Suspense>
-        );
-      case 'GEOGEBRA':
-        return (
-          <Suspense key={key} fallback={<VisualizationLoader type="GeoGebra" />}>
-            <GeoGebraEmbed config={part.config} />
-          </Suspense>
-        );
-      case 'PLOTLY':
-        // Plotly disabled - show message instead
-        return (
-          <div key={key} className="my-4 p-4 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-sm">
-            <span className="font-medium">📊 Visualización de datos:</span> Este contenido usa Plotly. 
-            Para ver gráficos interactivos, usa Desmos.
-          </div>
-        );
-      case 'THREE':
-        return (
-          <Suspense key={key} fallback={<VisualizationLoader type="3D" />}>
-            <ThreeJSEmbed config={part.config} />
-          </Suspense>
-        );
-      default:
-        return null;
+    if (part.type === 'DESMOS') {
+      return (
+        <Suspense key={key} fallback={<VisualizationLoader type="Desmos" />}>
+          <DesmosEmbed equation={part.config} />
+        </Suspense>
+      );
     }
+    
+    // For any other visualization type (GeoGebra, Plotly, 3D), show a message
+    return (
+      <div key={key} className="my-4 p-4 bg-slate-100 border border-slate-200 rounded-lg text-slate-600 text-sm">
+        <span className="font-medium">📊 Visualización:</span> Este contenido requiere actualización. 
+        Usa [DESMOS:ecuación] para gráficos interactivos.
+      </div>
+    );
   };
 
   return (
