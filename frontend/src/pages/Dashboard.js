@@ -32,10 +32,10 @@ const Dashboard = () => {
   };
 
   const quickActions = [
-    { icon: MessageSquare, label: 'Pregunta a Remy', path: '/chat', color: 'bg-cyan-500', testId: 'quick-action-chat' },
     { icon: ClipboardCheck, label: 'Crear Simulacro', path: '/simulacros', color: 'bg-blue-500', testId: 'quick-action-quiz' },
     { icon: Calculator, label: 'Buscar Fórmula', path: '/formulas', color: 'bg-emerald-500', testId: 'quick-action-formula' },
     { icon: BookOpen, label: 'Mis Cursos', path: '/biblioteca', color: 'bg-purple-500', testId: 'quick-action-courses' },
+    { icon: TrendingUp, label: 'Ver Progreso', path: '/progreso', color: 'bg-orange-500', testId: 'quick-action-progress' },
   ];
 
   return (

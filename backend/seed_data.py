@@ -265,7 +265,7 @@ async def seed_database():
     print(f"✅ Insertadas {len(questions)} preguntas de ejemplo")
     
     print("🎉 Base de datos poblada exitosamente!")
-    print("📝 Nota: Inicia sesión en /admin con username: admin, password: admin123")
+    print("📝 Nota: Inicia sesión en /admin con username: admin, password: #Alex060625")
 
 if __name__ == "__main__":
     asyncio.run(seed_database())
