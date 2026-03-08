@@ -29,32 +29,63 @@ const MarkdownRenderer = ({ content }) => {
     const parts = [];
     
     // Unified regex for all visualization types
-    // Matches: [DESMOS:...], [GEOGEBRA:...], [PLOTLY:...], [3D:...], [THREE:...]
     const vizRegex = /\[(DESMOS|GEOGEBRA|PLOTLY|3D|THREE):([^\]]+)\]/gi;
     
     let lastIndex = 0;
     let match;
+    let pendingDesmos = []; // Collect consecutive Desmos for combining
+
+    const flushDesmos = () => {
+      if (pendingDesmos.length > 0) {
+        // Combine all pending Desmos equations into one
+        const combined = pendingDesmos.join(';');
+        parts.push({
+          type: 'DESMOS',
+          config: combined
+        });
+        pendingDesmos = [];
+      }
+    };
 
     while ((match = vizRegex.exec(text)) !== null) {
-      // Add markdown content before this match
-      if (match.index > lastIndex) {
-        parts.push({
-          type: 'markdown',
-          content: text.substring(lastIndex, match.index)
-        });
-      }
-      
-      // Add visualization
       const vizType = match[1].toUpperCase();
       const vizConfig = match[2].trim();
       
-      parts.push({
-        type: vizType === '3D' ? 'THREE' : vizType,
-        config: vizConfig
-      });
+      // Check if there's meaningful markdown content before this match
+      const contentBefore = text.substring(lastIndex, match.index).trim();
+      
+      if (vizType === 'DESMOS') {
+        // If there's significant content between Desmos blocks, flush and add content
+        if (contentBefore.length > 20) {
+          flushDesmos();
+          parts.push({
+            type: 'markdown',
+            content: text.substring(lastIndex, match.index)
+          });
+        }
+        pendingDesmos.push(vizConfig);
+      } else {
+        // Non-Desmos visualization - flush any pending Desmos first
+        flushDesmos();
+        
+        if (match.index > lastIndex) {
+          parts.push({
+            type: 'markdown',
+            content: text.substring(lastIndex, match.index)
+          });
+        }
+        
+        parts.push({
+          type: vizType === '3D' ? 'THREE' : vizType,
+          config: vizConfig
+        });
+      }
       
       lastIndex = match.index + match[0].length;
     }
+    
+    // Flush any remaining Desmos
+    flushDesmos();
     
     // Add remaining markdown content
     if (lastIndex < text.length) {

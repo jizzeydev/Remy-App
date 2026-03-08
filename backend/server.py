@@ -720,10 +720,20 @@ async def generate_lesson_content(request: GenerateLessonContentRequest, _: str 
 
 📊 HERRAMIENTAS DE VISUALIZACIÓN DISPONIBLES:
 
-1. **DESMOS** - Gráficos 2D de funciones:
-   [DESMOS:y = x^2]
-   [DESMOS:y = sin(x)]
-   Usa para: funciones, límites, derivadas, comportamiento de curvas
+1. **DESMOS** - Gráficos 2D interactivos:
+   IMPORTANTE: Para gráficos con múltiples ecuaciones/sliders, usa UN SOLO tag con punto y coma:
+   [DESMOS:y = x^2; a=1; y = a*x]
+   
+   Ejemplos correctos:
+   - Simple: [DESMOS:y = sin(x)]
+   - Con slider: [DESMOS:a=2; y = a*x^2]
+   - Secante a tangente: [DESMOS:y=x^2; a=1; h=0.5; m=((a+h)^2-a^2)/h; y=m*(x-a)+a^2]
+   
+   NO hagas esto (MAL):
+   [DESMOS:y=x^2]
+   [DESMOS:a=1]  <- ERROR: variables separadas no se conectan
+   
+   Usa para: funciones, límites, derivadas, comportamiento de curvas, sliders interactivos
 
 2. **GEOGEBRA** - Geometría interactiva:
    [GEOGEBRA:A = (0,0); B = (3,0); C = (1.5, 2.6); Polygon(A,B,C)]
