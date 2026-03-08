@@ -736,50 +736,47 @@ async def generate_lesson_content(request: GenerateLessonContentRequest, _: str 
 
 📊 VISUALIZACIONES - CUÁNDO USAR CADA TIPO:
 
-**DESMOS (Interactivo)** - Usa SOLO cuando el estudiante DEBE explorar:
+**DESMOS (Interactivo)** - Usa cuando el estudiante DEBE explorar:
 ✅ USAR Desmos cuando:
-- El estudiante necesita mover un slider para entender (ej: ver cómo cambia la pendiente)
+- El estudiante necesita mover un slider para entender
 - Comparar múltiples funciones superpuestas
-- Explorar qué pasa cuando un valor cambia (límites, parámetros)
-- Ver animaciones de conceptos (secante → tangente)
+- Ver animaciones (secante → tangente, parámetros cambiando)
+- Explorar comportamiento dinámico
 
-❌ NO usar Desmos cuando:
-- Necesitas mostrar círculos ABIERTOS (○) o CERRADOS (●) en puntos específicos
-- Es un diagrama de discontinuidad con saltos visuales
-- Necesitas anotaciones, flechas o líneas punteadas
-- Es una ilustración conceptual, no exploratoria
+Formato: [DESMOS:ecuaciones separadas por punto y coma]
+Ejemplo: [DESMOS:y=x^2; a=1; h=0.5; m=((a+h)^2-a^2)/h; y=m*(x-a)+a^2]
 
-Formato Desmos (UN SOLO tag con punto y coma):
-[DESMOS:y = x^2; a=1; h=0.5; m=((a+h)^2-a^2)/h; y=m*(x-a)+a^2]
+**INSERTAR IMAGEN** - Usa para ilustraciones estáticas que requieren precisión:
+❌ NO usar Desmos cuando necesites:
+- Círculos abiertos (○) o cerrados (●) en puntos específicos
+- Discontinuidades de salto con visual del "hueco"
+- Anotaciones, flechas, etiquetas específicas
+- Líneas punteadas auxiliares
 
-**IMAGEN_GPAI (Para ilustraciones estáticas)** - Usa para gráficas con detalles precisos:
-⚠️ OBLIGATORIO usar IMAGEN_GPAI cuando:
-- Hay discontinuidades de salto (necesitas mostrar círculos abiertos/cerrados)
-- Hay huecos en la gráfica (puntos donde la función no existe)
-- Necesitas mostrar límites laterales diferentes
-- Requieres anotaciones con flechas o líneas punteadas
+Formato: Inserta directamente en el flujo del texto así:
+**[INSERTAR IMAGEN: descripción breve pero clara de qué debe mostrar la imagen]**
 
-Formato:
-[IMAGEN_GPAI:
-**Título descriptivo**
-- Eje X: de ___ a ___
-- Eje Y: de ___ a ___
-- Elemento 1: descripción con coordenadas
-- Elemento 2: descripción (usar ○ para abierto, ● para cerrado)
-- Líneas punteadas: desde ___ hasta ___
-- Visual clave: qué debe notar el estudiante
-]
+EJEMPLOS de cómo insertar imágenes en el texto:
 
-EJEMPLO OBLIGATORIO para discontinuidad de salto:
-[IMAGEN_GPAI:
-**Discontinuidad de Salto en x=1**
-- Eje X: de 0 a 3
-- Eje Y: de 0 a 5
-- Rama izquierda (x<1): línea desde (0,1) hasta punto (1,2) con círculo ABIERTO ○
-- Rama derecha (x≥1): línea desde punto (1,4) con círculo CERRADO ● hasta (3,2)
-- Visual clave: Salto vertical de 2 unidades entre y=2 y y=4 en x=1
-- El límite por izquierda (2) ≠ límite por derecha (4)
-]
+"Al graficar la función, observamos el comportamiento cerca de x=1:
+
+**[INSERTAR IMAGEN: Gráfica de f(x) = (x²-1)/(x-1) mostrando una línea recta y=x+1 con un círculo abierto ○ en el punto (1,2)]**
+
+Como vemos en la imagen, aunque f(1) no existe, la función se acerca a 2."
+
+Otro ejemplo:
+
+"La discontinuidad de salto se visualiza claramente:
+
+**[INSERTAR IMAGEN: Función a trozos g(x) con rama izquierda terminando en círculo abierto ○ en (1,2) y rama derecha iniciando con círculo cerrado ● en (1,3), mostrando el salto vertical]**
+
+El salto de 1 unidad entre y=2 e y=3 demuestra que el límite no existe."
+
+⚠️ IMPORTANTE SOBRE VISUALIZACIONES:
+- Puedes combinar Desmos + imágenes en la misma lección
+- Usa Desmos para lo interactivo (explorar con sliders)
+- Usa **[INSERTAR IMAGEN:]** para lo estático (discontinuidades, huecos, anotaciones)
+- Las descripciones de imagen deben ser claras pero breves (1-2 líneas)
 
 📋 TABLAS - Para comparaciones y resúmenes:
 | Concepto | Fórmula | Ejemplo |
