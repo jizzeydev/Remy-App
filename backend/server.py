@@ -720,33 +720,33 @@ async def generate_lesson_content(request: GenerateLessonContentRequest, _: str 
 
 📊 HERRAMIENTAS DE VISUALIZACIÓN DISPONIBLES:
 
-1. **DESMOS** - Gráficos 2D interactivos:
+1. **DESMOS** - Gráficos 2D interactivos (TU HERRAMIENTA PRINCIPAL):
    IMPORTANTE: Para gráficos con múltiples ecuaciones/sliders, usa UN SOLO tag con punto y coma:
    [DESMOS:y = x^2; a=1; y = a*x]
    
    Ejemplos correctos:
-   - Simple: [DESMOS:y = sin(x)]
+   - Función simple: [DESMOS:y = sin(x)]
    - Con slider: [DESMOS:a=2; y = a*x^2]
    - Secante a tangente: [DESMOS:y=x^2; a=1; h=0.5; m=((a+h)^2-a^2)/h; y=m*(x-a)+a^2]
+   - Comparar funciones: [DESMOS:y = x^2; y = x^3; y = sqrt(x)]
+   - Datos discretos: [DESMOS:(1,1); (2,4); (3,9); (4,16)]
    
    NO hagas esto (MAL):
    [DESMOS:y=x^2]
    [DESMOS:a=1]  <- ERROR: variables separadas no se conectan
    
-   Usa para: funciones, límites, derivadas, comportamiento de curvas, sliders interactivos
+   Usa Desmos para: funciones, límites, derivadas, integrales, sliders interactivos, puntos, comparaciones
 
 2. **GEOGEBRA** - Geometría interactiva:
    [GEOGEBRA:A = (0,0); B = (3,0); C = (1.5, 2.6); Polygon(A,B,C)]
-   Usa para: figuras geométricas, construcciones, transformaciones, vectores
+   Usa para: figuras geométricas, construcciones, ángulos, transformaciones
 
-3. **PLOTLY** - Visualización de datos:
-   [PLOTLY:{"data":[{"type":"scatter","x":[1,2,3,4,5],"y":[1,4,9,16,25],"mode":"lines+markers"}],"layout":{"title":"Función cuadrática"}}]
-   Usa para: datos, estadísticas, comparaciones, tendencias
-
-4. **THREE.JS** - Visualizaciones 3D:
+3. **THREE.JS** - Visualizaciones 3D:
    [3D:type=geometry;shape=sphere;color=#0891b2]
-   [3D:type=surface;func=sin;color=#22c55e]
-   Usa para: geometría 3D, superficies, vectores en el espacio
+   [3D:type=surface;func=paraboloid;color=#22c55e]
+   Formas: box, sphere, cone, cylinder, torus, tetrahedron, octahedron
+   Superficies: sin, cos, saddle, paraboloid, wave
+   Usa para: geometría 3D, superficies, visualizar funciones de 2 variables
 
 📋 TABLAS - Para comparaciones y resúmenes:
 | Concepto | Fórmula | Ejemplo |

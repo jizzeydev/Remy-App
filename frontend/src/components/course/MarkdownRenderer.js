@@ -5,10 +5,9 @@ import remarkGfm from 'remark-gfm';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 
-// Lazy load heavy visualization components
+// Lazy load visualization components
 const DesmosEmbed = lazy(() => import('./DesmosEmbed'));
 const GeoGebraEmbed = lazy(() => import('./GeoGebraEmbed'));
-const PlotlyEmbed = lazy(() => import('./PlotlyEmbed'));
 const ThreeJSEmbed = lazy(() => import('./ThreeJSEmbed'));
 
 // Loading fallback for visualizations
@@ -118,10 +117,12 @@ const MarkdownRenderer = ({ content }) => {
           </Suspense>
         );
       case 'PLOTLY':
+        // Plotly disabled - show message instead
         return (
-          <Suspense key={key} fallback={<VisualizationLoader type="Plotly" />}>
-            <PlotlyEmbed config={part.config} />
-          </Suspense>
+          <div key={key} className="my-4 p-4 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-sm">
+            <span className="font-medium">📊 Visualización de datos:</span> Este contenido usa Plotly. 
+            Para ver gráficos interactivos, usa Desmos.
+          </div>
         );
       case 'THREE':
         return (
