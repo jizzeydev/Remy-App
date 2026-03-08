@@ -16,6 +16,7 @@ async def seed_database():
     
     await db.courses.delete_many({})
     await db.formulas.delete_many({})
+    await db.questions.delete_many({})
     
     courses = [
         {
@@ -191,7 +192,80 @@ async def seed_database():
     await db.formulas.insert_many(formulas)
     print(f"✅ Insertadas {len(formulas)} fórmulas")
     
+    # Sample questions for testing
+    questions = [
+        {
+            "id": "q-001",
+            "course_id": "course-001",
+            "topic": "Derivadas",
+            "subtopic": "Regla de la potencia",
+            "difficulty": "fácil",
+            "question_text": "¿Cuál es la derivada de x³?",
+            "options": ["A) 3x²", "B) x²", "C) 3x", "D) x³"],
+            "correct_answer": "A",
+            "explanation": "Aplicando la regla de la potencia: d/dx(x^n) = n·x^(n-1), entonces d/dx(x³) = 3·x²",
+            "latex_content": "\\frac{d}{dx}(x^3) = 3x^2",
+            "created_at": "2024-01-01T00:00:00"
+        },
+        {
+            "id": "q-002",
+            "course_id": "course-001",
+            "topic": "Derivadas",
+            "subtopic": "Regla de la potencia",
+            "difficulty": "medio",
+            "question_text": "Si f(x) = 5x⁴, ¿cuál es f'(x)?",
+            "options": ["A) 20x³", "B) 5x³", "C) 20x⁴", "D) 4x³"],
+            "correct_answer": "A",
+            "explanation": "Aplicamos la regla de la potencia y la constante multiplicativa: d/dx(5x⁴) = 5·4x³ = 20x³",
+            "latex_content": "f'(x) = 20x^3",
+            "created_at": "2024-01-01T00:00:00"
+        },
+        {
+            "id": "q-003",
+            "course_id": "course-002",
+            "topic": "Integrales",
+            "subtopic": "Integrales básicas",
+            "difficulty": "fácil",
+            "question_text": "¿Cuál es la integral de x²?",
+            "options": ["A) x³/3 + C", "B) 2x + C", "C) x³ + C", "D) 3x² + C"],
+            "correct_answer": "A",
+            "explanation": "Usando la regla de la potencia para integrales: ∫x^n dx = x^(n+1)/(n+1) + C, entonces ∫x² dx = x³/3 + C",
+            "latex_content": "\\int x^2 dx = \\frac{x^3}{3} + C",
+            "created_at": "2024-01-01T00:00:00"
+        },
+        {
+            "id": "q-004",
+            "course_id": "course-003",
+            "topic": "Vectores",
+            "subtopic": "Producto punto",
+            "difficulty": "medio",
+            "question_text": "Si a = (2, 3) y b = (4, 1), ¿cuál es a·b?",
+            "options": ["A) 11", "B) 8", "C) 7", "D) 12"],
+            "correct_answer": "A",
+            "explanation": "El producto punto se calcula como: a·b = (2)(4) + (3)(1) = 8 + 3 = 11",
+            "latex_content": "\\vec{a} \\cdot \\vec{b} = 2(4) + 3(1) = 11",
+            "created_at": "2024-01-01T00:00:00"
+        },
+        {
+            "id": "q-005",
+            "course_id": "course-004",
+            "topic": "Cinemática",
+            "subtopic": "Velocidad",
+            "difficulty": "fácil",
+            "question_text": "Un objeto recorre 100m en 5 segundos. ¿Cuál es su velocidad promedio?",
+            "options": ["A) 20 m/s", "B) 25 m/s", "C) 15 m/s", "D) 10 m/s"],
+            "correct_answer": "A",
+            "explanation": "La velocidad promedio se calcula como: v = Δx/Δt = 100m / 5s = 20 m/s",
+            "latex_content": "v = \\frac{\\Delta x}{\\Delta t} = \\frac{100}{5} = 20 \\text{ m/s}",
+            "created_at": "2024-01-01T00:00:00"
+        }
+    ]
+    
+    await db.questions.insert_many(questions)
+    print(f"✅ Insertadas {len(questions)} preguntas de ejemplo")
+    
     print("🎉 Base de datos poblada exitosamente!")
+    print("📝 Nota: Inicia sesión en /admin con username: admin, password: admin123")
 
 if __name__ == "__main__":
     asyncio.run(seed_database())
