@@ -341,8 +341,14 @@ Estoy listo para mejorar la lección "${lessonForm.title}".
         { headers: { Authorization: `Bearer ${token}` }, timeout: 120000 }
       );
       
+      // The API returns a path like /api/uploads/xxx.png
+      // We need to prepend the base URL for the markdown
       const imageUrl = response.data.image_url;
-      const imageMarkdown = `\n\n![${imagePrompt}](${imageUrl})\n\n`;
+      const fullUrl = imageUrl.startsWith('/api') 
+        ? `${process.env.REACT_APP_BACKEND_URL}${imageUrl}`
+        : imageUrl;
+      
+      const imageMarkdown = `\n\n![${imagePrompt}](${fullUrl})\n\n`;
       setLessonForm({ ...lessonForm, content: lessonForm.content + imageMarkdown });
       
       toast.success('¡Imagen generada e insertada!');
@@ -382,9 +388,14 @@ Estoy listo para mejorar la lección "${lessonForm.title}".
         }
       );
       
+      // The API returns a path like /api/uploads/xxx.png
       const imageUrl = response.data.image_url;
+      const fullUrl = imageUrl.startsWith('/api') 
+        ? `${process.env.REACT_APP_BACKEND_URL}${imageUrl}`
+        : imageUrl;
+      
       const imageName = file.name.replace(/\.[^/.]+$/, '');
-      const imageMarkdown = `\n\n![${imageName}](${imageUrl})\n\n`;
+      const imageMarkdown = `\n\n![${imageName}](${fullUrl})\n\n`;
       setLessonForm({ ...lessonForm, content: lessonForm.content + imageMarkdown });
       
       toast.success('¡Imagen subida e insertada!');

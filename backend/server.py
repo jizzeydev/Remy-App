@@ -240,6 +240,16 @@ def extract_text_from_pdf(pdf_file: bytes) -> str:
 async def root():
     return {"message": "Bienvenido a Remy - Tu plataforma de estudio inteligente"}
 
+# Serve uploaded images
+from fastapi.responses import FileResponse
+
+@api_router.get("/uploads/{filename}")
+async def get_uploaded_image(filename: str):
+    file_path = UPLOADS_DIR / filename
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Imagen no encontrada")
+    return FileResponse(file_path)
+
 @api_router.get("/courses", response_model=List[Course])
 async def get_courses():
     courses = await db.courses.find({}, {"_id": 0}).to_list(100)
@@ -924,8 +934,16 @@ Requirements: Clear labels if needed, high contrast, easy to understand, no text
         )
         
         if images and len(images) > 0:
-            image_base64 = base64.b64encode(images[0]).decode('utf-8')
-            image_url = f"data:image/png;base64,{image_base64}"
+            # Save image to file with unique name
+            image_id = str(uuid.uuid4())
+            image_filename = f"{image_id}.png"
+            image_path = UPLOADS_DIR / image_filename
+            
+            async with aiofiles.open(image_path, 'wb') as f:
+                await f.write(images[0])
+            
+            # Return URL path
+            image_url = f"/api/uploads/{image_filename}"
             return {"image_url": image_url}
         else:
             raise HTTPException(status_code=500, detail="No se pudo generar la imagen")
@@ -943,14 +961,19 @@ async def upload_image(
         if not file.content_type.startswith('image/'):
             raise HTTPException(status_code=400, detail="Solo se permiten archivos de imagen")
         
-        # Read and convert to base64
+        # Generate unique filename
+        ext = file.filename.split('.')[-1] if '.' in file.filename else 'png'
+        image_id = str(uuid.uuid4())
+        image_filename = f"{image_id}.{ext}"
+        image_path = UPLOADS_DIR / image_filename
+        
+        # Save file
         image_data = await file.read()
-        image_base64 = base64.b64encode(image_data).decode('utf-8')
+        async with aiofiles.open(image_path, 'wb') as f:
+            await f.write(image_data)
         
-        # Determine mime type
-        mime_type = file.content_type or 'image/png'
-        image_url = f"data:{mime_type};base64,{image_base64}"
-        
+        # Return URL path
+        image_url = f"/api/uploads/{image_filename}"
         return {"image_url": image_url}
     except Exception as e:
         logging.error(f"Error uploading image: {str(e)}")
