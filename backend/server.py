@@ -53,8 +53,27 @@ class Course(BaseModel):
     modules_count: int
     instructor: str
     rating: float = 4.8
-    thumbnail_url: Optional[str] = None
+    cover_image_url: Optional[str] = None
     summary: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class Chapter(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    course_id: str
+    title: str
+    description: str
+    order: int
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class Lesson(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    chapter_id: str
+    title: str
+    content: str
+    order: int
+    duration_minutes: int = 30
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class Material(BaseModel):
@@ -143,6 +162,11 @@ class GenerateQuestionsRequest(BaseModel):
     course_id: str
     topic: str
     num_questions: int = 10
+
+class GenerateLessonContentRequest(BaseModel):
+    pdf_content: str
+    lesson_title: str
+    chapter_title: str
 
 class FormulaSearchRequest(BaseModel):
     query: str
@@ -557,6 +581,161 @@ Formato JSON requerido:
     except Exception as e:
         logging.error(f"Error generating questions: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+# Chapters endpoints
+@admin_router.get("/courses/{course_id}/chapters")
+async def get_course_chapters(course_id: str, _: str = Depends(verify_admin_token)):
+    chapters = await db.chapters.find({"course_id": course_id}, {"_id": 0}).sort("order", 1).to_list(100)
+    for chapter in chapters:
+        if isinstance(chapter.get('created_at'), str):
+            chapter['created_at'] = datetime.fromisoformat(chapter['created_at'])
+    return chapters
+
+@admin_router.post("/chapters", response_model=Chapter)
+async def create_chapter(chapter: Chapter, _: str = Depends(verify_admin_token)):
+    doc = chapter.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.chapters.insert_one(doc)
+    return chapter
+
+@admin_router.put("/chapters/{chapter_id}", response_model=Chapter)
+async def update_chapter(chapter_id: str, chapter: Chapter, _: str = Depends(verify_admin_token)):
+    doc = chapter.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    result = await db.chapters.update_one({"id": chapter_id}, {"$set": doc})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Capítulo no encontrado")
+    return chapter
+
+@admin_router.delete("/chapters/{chapter_id}")
+async def delete_chapter(chapter_id: str, _: str = Depends(verify_admin_token)):
+    await db.lessons.delete_many({"chapter_id": chapter_id})
+    result = await db.chapters.delete_one({"id": chapter_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Capítulo no encontrado")
+    return {"message": "Capítulo y sus lecciones eliminadas exitosamente"}
+
+# Lessons endpoints
+@admin_router.get("/chapters/{chapter_id}/lessons")
+async def get_chapter_lessons(chapter_id: str, _: str = Depends(verify_admin_token)):
+    lessons = await db.lessons.find({"chapter_id": chapter_id}, {"_id": 0}).sort("order", 1).to_list(100)
+    for lesson in lessons:
+        if isinstance(lesson.get('created_at'), str):
+            lesson['created_at'] = datetime.fromisoformat(lesson['created_at'])
+    return lessons
+
+@admin_router.post("/lessons", response_model=Lesson)
+async def create_lesson(lesson: Lesson, _: str = Depends(verify_admin_token)):
+    doc = lesson.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    await db.lessons.insert_one(doc)
+    return lesson
+
+@admin_router.put("/lessons/{lesson_id}", response_model=Lesson)
+async def update_lesson(lesson_id: str, lesson: Lesson, _: str = Depends(verify_admin_token)):
+    doc = lesson.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    result = await db.lessons.update_one({"id": lesson_id}, {"$set": doc})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Lección no encontrada")
+    return lesson
+
+@admin_router.delete("/lessons/{lesson_id}")
+async def delete_lesson(lesson_id: str, _: str = Depends(verify_admin_token)):
+    result = await db.lessons.delete_one({"id": lesson_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Lección no encontrada")
+    return {"message": "Lección eliminada exitosamente"}
+
+@admin_router.post("/generate-lesson-content")
+async def generate_lesson_content(request: GenerateLessonContentRequest, _: str = Depends(verify_admin_token)):
+    try:
+        system_message = f"""Eres un experto en educación creando contenido interactivo para lecciones.
+
+Crea contenido educativo para la lección "{request.lesson_title}" del capítulo "{request.chapter_title}".
+
+El contenido debe:
+- Ser claro y didáctico
+- Incluir explicaciones paso a paso
+- Usar LaTeX para fórmulas matemáticas (formato: $$formula$$)
+- Incluir ejemplos prácticos
+- Si es relevante, sugerir gráficos con Desmos (formato: [DESMOS:equation])
+- Estar estructurado en secciones
+
+Formato Markdown con LaTeX:
+# Título de la lección
+
+## Introducción
+Texto introductorio...
+
+## Conceptos Clave
+- Concepto 1
+- Concepto 2
+
+## Fórmulas Importantes
+$$formula en LaTeX$$
+
+## Ejemplos
+Ejemplo 1: ...
+
+## Gráficos Interactivos
+[DESMOS:y=x^2]
+
+## Práctica
+Ejercicios sugeridos...
+        """
+        
+        chat = get_gemini_chat(system_message)
+        user_message = UserMessage(
+            text=f"Genera contenido educativo basado en este material:\n\n{request.pdf_content[:15000]}"
+        )
+        response = await chat.send_message(user_message)
+        
+        return {"content": response}
+    except Exception as e:
+        logging.error(f"Error generating lesson content: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@admin_router.post("/upload-course-image")
+async def upload_course_image(
+    file: UploadFile = File(...),
+    _: str = Depends(verify_admin_token)
+):
+    if not file.content_type.startswith('image/'):
+        raise HTTPException(status_code=400, detail="Solo se permiten archivos de imagen")
+    
+    image_data = await file.read()
+    import base64
+    image_base64 = base64.b64encode(image_data).decode('utf-8')
+    image_url = f"data:{file.content_type};base64,{image_base64}"
+    
+    return {"image_url": image_url}
+
+# Public endpoints for students to view course content
+@api_router.get("/courses/{course_id}/chapters")
+async def get_public_course_chapters(course_id: str):
+    chapters = await db.chapters.find({"course_id": course_id}, {"_id": 0}).sort("order", 1).to_list(100)
+    for chapter in chapters:
+        if isinstance(chapter.get('created_at'), str):
+            chapter['created_at'] = datetime.fromisoformat(chapter['created_at'])
+    return chapters
+
+@api_router.get("/chapters/{chapter_id}/lessons")
+async def get_public_chapter_lessons(chapter_id: str):
+    lessons = await db.lessons.find({"chapter_id": chapter_id}, {"_id": 0}).sort("order", 1).to_list(100)
+    for lesson in lessons:
+        if isinstance(lesson.get('created_at'), str):
+            lesson['created_at'] = datetime.fromisoformat(lesson['created_at'])
+    return lessons
+
+@api_router.get("/lessons/{lesson_id}")
+async def get_lesson(lesson_id: str):
+    lesson = await db.lessons.find_one({"id": lesson_id}, {"_id": 0})
+    if not lesson:
+        raise HTTPException(status_code=404, detail="Lección no encontrada")
+    if isinstance(lesson.get('created_at'), str):
+        lesson['created_at'] = datetime.fromisoformat(lesson['created_at'])
+    return lesson
 
 app.include_router(api_router)
 app.include_router(admin_router)

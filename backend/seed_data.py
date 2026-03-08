@@ -17,6 +17,8 @@ async def seed_database():
     await db.courses.delete_many({})
     await db.formulas.delete_many({})
     await db.questions.delete_many({})
+    await db.chapters.delete_many({})
+    await db.lessons.delete_many({})
     
     courses = [
         {
@@ -28,7 +30,8 @@ async def seed_database():
             "modules_count": 50,
             "instructor": "Jesus Bravo",
             "rating": 4.8,
-            "thumbnail_url": None,
+            "cover_image_url": None,
+            "summary": "Introducción completa al cálculo diferencial e integral con enfoque en límites, derivadas y sus aplicaciones prácticas.",
             "created_at": "2024-01-01T00:00:00"
         },
         {
