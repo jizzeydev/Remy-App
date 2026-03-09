@@ -43,6 +43,8 @@ const CourseContentEditor = () => {
   const [generatingImage, setGeneratingImage] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const fileInputRef = useRef(null);
+  const contentTextareaRef = useRef(null);
+  const [cursorPosition, setCursorPosition] = useState(null);
 
   const [chapterForm, setChapterForm] = useState({
     title: '',
@@ -274,6 +276,27 @@ const CourseContentEditor = () => {
   }, []);
 
   // Image functions
+  
+  // Helper to insert text at cursor position
+  const insertAtCursor = (textToInsert) => {
+    const content = lessonForm.content;
+    if (cursorPosition !== null) {
+      const before = content.substring(0, cursorPosition);
+      const after = content.substring(cursorPosition);
+      return before + textToInsert + after;
+    }
+    // Fallback: append at end
+    return content + textToInsert;
+  };
+
+  // Open image dialog and save cursor position
+  const openImageDialog = () => {
+    if (contentTextareaRef.current) {
+      setCursorPosition(contentTextareaRef.current.selectionStart);
+    }
+    setImageDialogOpen(true);
+  };
+
   const handleGenerateImage = async () => {
     if (!imagePrompt.trim()) {
       toast.error('Escribe una descripción para la imagen');
@@ -297,11 +320,13 @@ const CourseContentEditor = () => {
         : imageUrl;
       
       const imageMarkdown = `\n\n![${imagePrompt}](${fullUrl})\n\n`;
-      setLessonForm({ ...lessonForm, content: lessonForm.content + imageMarkdown });
+      const newContent = insertAtCursor(imageMarkdown);
+      setLessonForm({ ...lessonForm, content: newContent });
       
       toast.success('¡Imagen generada e insertada!');
       setImageDialogOpen(false);
       setImagePrompt('');
+      setCursorPosition(null);
     } catch (error) {
       console.error('Error generating image:', error);
       toast.error('Error al generar imagen. Intenta con otra descripción.');
@@ -344,10 +369,12 @@ const CourseContentEditor = () => {
       
       const imageName = file.name.replace(/\.[^/.]+$/, '');
       const imageMarkdown = `\n\n![${imageName}](${fullUrl})\n\n`;
-      setLessonForm({ ...lessonForm, content: lessonForm.content + imageMarkdown });
+      const newContent = insertAtCursor(imageMarkdown);
+      setLessonForm({ ...lessonForm, content: newContent });
       
       toast.success('¡Imagen subida e insertada!');
       setImageDialogOpen(false);
+      setCursorPosition(null);
     } catch (error) {
       console.error('Error uploading image:', error);
       toast.error('Error al subir imagen');
@@ -699,7 +726,7 @@ const CourseContentEditor = () => {
                       type="button" 
                       size="sm" 
                       variant="outline"
-                      onClick={() => setImageDialogOpen(true)}
+                      onClick={openImageDialog}
                       className="gap-1"
                     >
                       <Image size={14} />
@@ -724,6 +751,7 @@ const CourseContentEditor = () => {
                   </div>
                 </div>
                 <Textarea
+                  ref={contentTextareaRef}
                   value={lessonForm.content}
                   onChange={(e) => setLessonForm({ ...lessonForm, content: e.target.value })}
                   placeholder="# Título\n\n## Sección\n\nTexto con fórmulas $$x^2$$\n\n[DESMOS:y=x^2]"

@@ -44,6 +44,9 @@ const AdminQuestions = () => {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [imageTarget, setImageTarget] = useState('question'); // 'question', 'option', 'explanation'
   const fileInputRef = useRef(null);
+  const questionTextareaRef = useRef(null);
+  const explanationTextareaRef = useRef(null);
+  const [cursorPosition, setCursorPosition] = useState(null);
 
   // Chat with Remy state
   const [chatOpen, setChatOpen] = useState(false);
@@ -427,20 +430,36 @@ const AdminQuestions = () => {
   };
 
   const insertImageIntoField = (imageMarkdown) => {
+    const insertAtPosition = (text, position, insertion) => {
+      if (position !== null && position !== undefined) {
+        const before = text.substring(0, position);
+        const after = text.substring(position);
+        return before + '\n\n' + insertion + '\n\n' + after;
+      }
+      return text + '\n\n' + insertion;
+    };
+
     if (imageTarget === 'question') {
       setFormData(prev => ({
         ...prev,
-        question_text: prev.question_text + '\n\n' + imageMarkdown
+        question_text: insertAtPosition(prev.question_text, cursorPosition, imageMarkdown)
       }));
     } else if (imageTarget === 'explanation') {
       setFormData(prev => ({
         ...prev,
-        explanation: prev.explanation + '\n\n' + imageMarkdown
+        explanation: insertAtPosition(prev.explanation, cursorPosition, imageMarkdown)
       }));
     }
+    setCursorPosition(null);
   };
 
   const openImageDialog = (target) => {
+    // Save cursor position before opening dialog
+    if (target === 'question' && questionTextareaRef.current) {
+      setCursorPosition(questionTextareaRef.current.selectionStart);
+    } else if (target === 'explanation' && explanationTextareaRef.current) {
+      setCursorPosition(explanationTextareaRef.current.selectionStart);
+    }
     setImageTarget(target);
     setImageDialogOpen(true);
   };
@@ -779,6 +798,7 @@ const AdminQuestions = () => {
                         </div>
                       </div>
                       <Textarea
+                        ref={questionTextareaRef}
                         value={formData.question_text}
                         onChange={(e) => setFormData({ ...formData, question_text: e.target.value })}
                         placeholder="Usa $formula$ para LaTeX inline, $$formula$$ para bloque"
@@ -834,6 +854,7 @@ const AdminQuestions = () => {
                         </Button>
                       </div>
                       <Textarea
+                        ref={explanationTextareaRef}
                         value={formData.explanation}
                         onChange={(e) => setFormData({ ...formData, explanation: e.target.value })}
                         placeholder="Explica paso a paso la solución usando $formulas$ de LaTeX"
