@@ -114,11 +114,19 @@ class QuizAttempt(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     user_id: str
     course_id: str
-    topic: str
+    course_title: Optional[str] = None
+    topic: str  # Legacy field, will use chapter_ids now
     subtopic: Optional[str] = None
+    chapter_ids: List[str] = []  # Chapters selected for this quiz
+    lesson_ids: List[str] = []   # Specific lessons selected
+    difficulty: str = "medio"
+    time_limit_minutes: Optional[int] = None  # Time limit in minutes
     questions: List[Dict[str, Any]]
-    answers: Dict[int, str]
+    answers: Dict[int, str] = {}
     score: Optional[float] = None
+    grade: Optional[float] = None  # Chilean grade 1-7
+    completed: bool = False
+    time_spent_seconds: Optional[int] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class Progress(BaseModel):
@@ -153,14 +161,36 @@ class Token(BaseModel):
 class QuizStartRequest(BaseModel):
     user_id: str
     course_id: str
-    topic: str
-    subtopic: Optional[str] = None
-    difficulty: Optional[str] = None
+    chapter_ids: List[str] = []  # Chapters to include
+    lesson_ids: List[str] = []   # Specific lessons to include (optional)
+    difficulty: str = "medio"    # fácil, medio, difícil
     num_questions: int = 10
+    time_limit_minutes: Optional[int] = None  # Optional time limit
+    topic: Optional[str] = None  # Legacy field for backward compatibility
 
 class QuizSubmitRequest(BaseModel):
     quiz_id: str
-    answers: Dict[int, str]
+    answers: Dict[str, str]  # Changed to str keys for JSON compatibility
+    time_spent_seconds: Optional[int] = None
+
+def calculate_chilean_grade(percentage: float) -> float:
+    """
+    Calculate Chilean grade (1-7) with 60% requirement for grade 4.
+    Scale: 1 (0%) to 4 (60%) to 7 (100%)
+    """
+    if percentage < 0:
+        percentage = 0
+    if percentage > 100:
+        percentage = 100
+    
+    if percentage < 60:
+        # Linear scale from 1 (0%) to 4 (60%)
+        grade = 1 + (percentage / 60) * 3
+    else:
+        # Linear scale from 4 (60%) to 7 (100%)
+        grade = 4 + ((percentage - 60) / 40) * 3
+    
+    return round(grade, 1)
 
 class GenerateSummaryRequest(BaseModel):
     pdf_content: str
@@ -367,44 +397,87 @@ async def search_formulas(request: FormulaSearchRequest):
 
 @api_router.post("/quiz/start")
 async def start_quiz(request: QuizStartRequest):
-    query = {"course_id": request.course_id, "topic": request.topic}
-    if request.subtopic:
-        query["subtopic"] = request.subtopic
-    if request.difficulty:
+    import random
+    
+    # Build query based on chapter_ids and lesson_ids
+    query = {"course_id": request.course_id}
+    
+    # If specific chapters or lessons are provided, use them
+    if request.chapter_ids or request.lesson_ids:
+        or_conditions = []
+        if request.chapter_ids:
+            or_conditions.append({"chapter_id": {"$in": request.chapter_ids}})
+        if request.lesson_ids:
+            or_conditions.append({"lesson_id": {"$in": request.lesson_ids}})
+        if or_conditions:
+            query["$or"] = or_conditions
+    
+    # Filter by difficulty if not "todos"
+    if request.difficulty and request.difficulty != "todos":
         query["difficulty"] = request.difficulty
     
     all_questions = await db.questions.find(query, {"_id": 0}).to_list(1000)
     
-    if len(all_questions) < request.num_questions:
+    # If using legacy topic field
+    if not all_questions and request.topic:
+        legacy_query = {"course_id": request.course_id, "topic": request.topic}
+        if request.difficulty and request.difficulty != "todos":
+            legacy_query["difficulty"] = request.difficulty
+        all_questions = await db.questions.find(legacy_query, {"_id": 0}).to_list(1000)
+    
+    if len(all_questions) == 0:
         raise HTTPException(
             status_code=400, 
-            detail=f"Solo hay {len(all_questions)} preguntas disponibles para este tema"
+            detail="No hay preguntas disponibles para los filtros seleccionados"
         )
     
-    import random
-    selected_questions = random.sample(all_questions, request.num_questions)
+    # Limit to available questions if fewer than requested
+    num_to_select = min(request.num_questions, len(all_questions))
+    selected_questions = random.sample(all_questions, num_to_select)
+    
+    # Get course title for display
+    course = await db.courses.find_one({"id": request.course_id}, {"_id": 0})
+    course_title = course.get("title", "") if course else ""
+    
+    # Build topic string from chapters for display
+    topic = request.topic or "Simulacro personalizado"
+    if request.chapter_ids:
+        chapters = await db.chapters.find(
+            {"id": {"$in": request.chapter_ids}}, 
+            {"_id": 0, "title": 1}
+        ).to_list(10)
+        if chapters:
+            topic = ", ".join([c.get("title", "") for c in chapters])
     
     quiz_attempt = QuizAttempt(
         user_id=request.user_id,
         course_id=request.course_id,
-        topic=request.topic,
-        subtopic=request.subtopic,
+        course_title=course_title,
+        topic=topic,
+        chapter_ids=request.chapter_ids,
+        lesson_ids=request.lesson_ids,
+        difficulty=request.difficulty,
+        time_limit_minutes=request.time_limit_minutes,
         questions=selected_questions,
-        answers={}
+        answers={},
+        completed=False
     )
     
     doc = quiz_attempt.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
     await db.quiz_attempts.insert_one(doc)
     
-    questions_without_answers = [
-        {k: v for k, v in q.items() if k != 'correct_answer' and k != 'explanation'}
+    # Return questions without answers for the quiz
+    questions_for_quiz = [
+        {k: v for k, v in q.items() if k not in ['correct_answer', 'explanation']}
         for q in selected_questions
     ]
     
     return {
         "quiz_id": quiz_attempt.id,
-        "questions": questions_without_answers
+        "questions": questions_for_quiz,
+        "time_limit_minutes": request.time_limit_minutes,
+        "total_questions": len(selected_questions)
     }
 
 @api_router.post("/quiz/submit")
@@ -418,26 +491,40 @@ async def submit_quiz(request: QuizSubmitRequest):
     
     for idx, question in enumerate(quiz['questions']):
         user_answer = request.answers.get(str(idx))
-        is_correct = user_answer == question['correct_answer']
+        correct_answer = question.get('correct_answer', '')
+        is_correct = user_answer == correct_answer
         if is_correct:
             correct_count += 1
         
         results.append({
             "question_index": idx,
-            "question_text": question['question_text'],
+            "question_text": question.get('question_text', ''),
             "user_answer": user_answer,
-            "correct_answer": question['correct_answer'],
+            "correct_answer": correct_answer,
             "is_correct": is_correct,
-            "explanation": question['explanation']
+            "explanation": question.get('explanation', '')
         })
     
-    score = (correct_count / len(quiz['questions'])) * 100
+    total_questions = len(quiz['questions'])
+    score = (correct_count / total_questions) * 100 if total_questions > 0 else 0
+    grade = calculate_chilean_grade(score)
+    
+    # Update quiz with results
+    update_data = {
+        "answers": request.answers, 
+        "score": score,
+        "grade": grade,
+        "completed": True
+    }
+    if request.time_spent_seconds:
+        update_data["time_spent_seconds"] = request.time_spent_seconds
     
     await db.quiz_attempts.update_one(
         {"id": request.quiz_id},
-        {"$set": {"answers": request.answers, "score": score}}
+        {"$set": update_data}
     )
     
+    # Update user progress
     progress = await db.progress.find_one(
         {"user_id": quiz['user_id'], "course_id": quiz['course_id']},
         {"_id": 0}
@@ -458,8 +545,9 @@ async def submit_quiz(request: QuizSubmitRequest):
     
     return {
         "score": score,
+        "grade": grade,
         "correct_count": correct_count,
-        "total_questions": len(quiz['questions']),
+        "total_questions": total_questions,
         "results": results
     }
 
@@ -532,6 +620,22 @@ async def get_quiz_history(user_id: str, limit: int = 20):
             quiz['created_at'] = datetime.fromisoformat(quiz['created_at'])
     
     return quizzes
+
+@api_router.delete("/quiz/{quiz_id}")
+async def delete_quiz(quiz_id: str, user_id: str):
+    """Delete a quiz attempt"""
+    result = await db.quiz_attempts.delete_one({"id": quiz_id, "user_id": user_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Simulacro no encontrado")
+    return {"success": True, "message": "Simulacro eliminado"}
+
+@api_router.get("/quiz/{quiz_id}")
+async def get_quiz(quiz_id: str):
+    """Get a specific quiz by ID"""
+    quiz = await db.quiz_attempts.find_one({"id": quiz_id}, {"_id": 0})
+    if not quiz:
+        raise HTTPException(status_code=404, detail="Simulacro no encontrado")
+    return quiz
 
 # Admin endpoints
 @admin_router.post("/login", response_model=Token)
