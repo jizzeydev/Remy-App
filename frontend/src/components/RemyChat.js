@@ -205,15 +205,15 @@ ${ctx.courseTitle ? `📚 Curso: ${ctx.courseTitle}` : ''}
 
   return (
     <div 
-      className="absolute inset-0 bg-white border rounded-lg shadow-2xl z-[60] flex flex-col" 
+      className="flex flex-col h-full bg-white border-l border-slate-200" 
       data-testid="remy-chat"
       onClick={(e) => e.stopPropagation()}
     >
       {/* Header */}
-      <div className="p-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-t-lg flex items-center justify-between">
-        <span className="font-medium flex items-center gap-2">
+      <div className="p-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white flex items-center justify-between flex-shrink-0">
+        <span className="font-medium flex items-center gap-2 text-sm">
           <Sparkles size={16} />
-          Chat con Remy - {context.type === 'question' ? 'Editar Pregunta' : 'Editar Lección'}
+          {context.type === 'question' ? 'Editar Pregunta' : 'Chat con Remy'}
         </span>
         <button 
           onClick={onClose} 
@@ -225,7 +225,7 @@ ${ctx.courseTitle ? `📚 Curso: ${ctx.courseTitle}` : ''}
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-3 bg-slate-50 min-h-[200px] max-h-[280px]">
+      <div className="flex-1 overflow-y-auto p-3 space-y-3 bg-slate-50">
         {messages.map((msg, i) => (
           <ChatMessage key={i} message={msg} />
         ))}
@@ -234,7 +234,7 @@ ${ctx.courseTitle ? `📚 Curso: ${ctx.courseTitle}` : ''}
       </div>
 
       {/* Input */}
-      <div className="p-3 border-t bg-white rounded-b-lg">
+      <div className="p-3 border-t bg-white flex-shrink-0">
         <div className="flex gap-2">
           <Textarea
             ref={inputRef}
@@ -242,11 +242,11 @@ ${ctx.courseTitle ? `📚 Curso: ${ctx.courseTitle}` : ''}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             placeholder={context.type === 'question' 
-              ? "Ej: Mejora los distractores, son muy obvios..." 
-              : "Ej: Agrega un ejemplo de derivada de x³..."
+              ? "Ej: Mejora los distractores..." 
+              : "Ej: Agrega un ejemplo..."
             }
             disabled={isLoading}
-            className="text-sm min-h-[40px] max-h-[100px] resize-none"
+            className="text-sm min-h-[40px] max-h-[80px] resize-none"
             rows={1}
             data-testid="chat-input"
           />
@@ -263,8 +263,8 @@ ${ctx.courseTitle ? `📚 Curso: ${ctx.courseTitle}` : ''}
         </div>
         <p className="text-xs text-slate-400 mt-2">
           {context.type === 'question' 
-            ? 'Tip: "Reformula el enunciado" o "Cambia los números del problema"'
-            : 'Tip: Sé específico. "Agrega un Desmos que muestre cómo cambia la pendiente"'
+            ? 'Tip: "Reformula el enunciado"'
+            : 'Tip: "Agrega un Desmos interactivo"'
           }
         </p>
       </div>

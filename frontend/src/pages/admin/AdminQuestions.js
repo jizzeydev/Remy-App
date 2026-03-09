@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,8 +9,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, Sparkles, FileText, Filter, Image, Upload, Wand2, Eye, EyeOff } from 'lucide-react';
+import { Plus, Edit, Trash2, Sparkles, FileText, Filter, Image, Upload, Wand2, Eye, EyeOff, MessageSquare } from 'lucide-react';
 import { QuestionContent, QuestionOption, ExplanationBlock } from '@/components/course/QuestionRenderer';
+import RemyChat from '@/components/RemyChat';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -43,6 +44,9 @@ const AdminQuestions = () => {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [imageTarget, setImageTarget] = useState('question'); // 'question', 'option', 'explanation'
   const fileInputRef = useRef(null);
+
+  // Chat with Remy state
+  const [chatOpen, setChatOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     course_id: '',
@@ -140,6 +144,38 @@ const AdminQuestions = () => {
     }
   };
 
+  // Callback for RemyChat to update question content
+  const handleQuestionContentUpdate = useCallback((newContent) => {
+    // The AI returns the complete question data as JSON
+    try {
+      const updatedData = JSON.parse(newContent);
+      setFormData(prev => ({
+        ...prev,
+        question_text: updatedData.question_text || prev.question_text,
+        options: updatedData.options || prev.options,
+        explanation: updatedData.explanation || prev.explanation,
+        correct_answer: updatedData.correct_answer || prev.correct_answer
+      }));
+    } catch {
+      // If not JSON, it might be just the explanation or question text
+      // Try to detect which field was updated based on content
+      if (newContent.includes('A)') && newContent.includes('B)')) {
+        // Looks like it's a full question, try to parse manually
+        toast.info('Contenido actualizado - revisa los cambios');
+      }
+    }
+  }, []);
+
+  // Get combined content for the chat context
+  const getQuestionContentForChat = useCallback(() => {
+    return JSON.stringify({
+      question_text: formData.question_text,
+      options: formData.options,
+      correct_answer: formData.correct_answer,
+      explanation: formData.explanation
+    }, null, 2);
+  }, [formData.question_text, formData.options, formData.correct_answer, formData.explanation]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -232,6 +268,7 @@ const AdminQuestions = () => {
     });
     setChapters([]);
     setLessons([]);
+    setChatOpen(false);
   };
 
   const handlePdfUpload = async () => {
@@ -605,7 +642,7 @@ const AdminQuestions = () => {
                 Nueva Pregunta
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className={`max-h-[90vh] overflow-y-auto ${chatOpen ? 'max-w-7xl' : 'max-w-5xl'}`}>
               <DialogHeader>
                 <DialogTitle>{editingQuestion ? 'Editar Pregunta' : 'Nueva Pregunta'}</DialogTitle>
               </DialogHeader>
@@ -711,17 +748,35 @@ const AdminQuestions = () => {
                   </div>
                 </div>
 
-                {/* Question Editor - Two columns */}
-                <div className="grid grid-cols-2 gap-4">
+                {/* Question Editor - Dynamic columns */}
+                <div className={`grid gap-4 ${chatOpen ? 'grid-cols-3' : 'grid-cols-2'}`}>
                   {/* Left: Editor */}
                   <div className="space-y-4">
                     <div>
                       <div className="flex items-center justify-between mb-1">
                         <Label>Enunciado de la pregunta (Markdown + LaTeX)</Label>
-                        <Button type="button" variant="ghost" size="sm" onClick={() => openImageDialog('question')}>
-                          <Image size={14} className="mr-1" />
-                          Insertar imagen
-                        </Button>
+                        <div className="flex gap-1">
+                          <Button type="button" variant="ghost" size="sm" onClick={() => openImageDialog('question')}>
+                            <Image size={14} className="mr-1" />
+                            Imagen
+                          </Button>
+                          {formData.question_text && (
+                            <Button 
+                              type="button" 
+                              size="sm" 
+                              variant={chatOpen ? "default" : "outline"}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setChatOpen(!chatOpen);
+                              }}
+                              className="gap-1"
+                              data-testid="toggle-remy-chat-questions"
+                            >
+                              <MessageSquare size={14} />
+                              {chatOpen ? 'Cerrar' : 'Remy'}
+                            </Button>
+                          )}
+                        </div>
                       </div>
                       <Textarea
                         value={formData.question_text}
@@ -775,7 +830,7 @@ const AdminQuestions = () => {
                         <Label>Explicación / Solución</Label>
                         <Button type="button" variant="ghost" size="sm" onClick={() => openImageDialog('explanation')}>
                           <Image size={14} className="mr-1" />
-                          Insertar imagen
+                          Imagen
                         </Button>
                       </div>
                       <Textarea
@@ -800,7 +855,7 @@ const AdminQuestions = () => {
                     </div>
                   </div>
 
-                  {/* Right: Preview */}
+                  {/* Middle: Preview */}
                   <div className="border rounded-lg p-4 bg-white overflow-y-auto max-h-[500px]">
                     <h3 className="text-sm font-medium text-slate-500 mb-3">Vista Previa</h3>
                     <div className="space-y-4">
@@ -835,6 +890,29 @@ const AdminQuestions = () => {
                       )}
                     </div>
                   </div>
+
+                  {/* Right: Chat with Remy - Only visible when chat is open */}
+                  {chatOpen && (
+                    <div className="h-[500px]">
+                      <RemyChat
+                        isOpen={chatOpen}
+                        onClose={() => setChatOpen(false)}
+                        currentContent={getQuestionContentForChat()}
+                        onContentUpdate={handleQuestionContentUpdate}
+                        context={{
+                          type: 'question',
+                          topic: formData.topic,
+                          courseTitle: courses.find(c => c.id === formData.course_id)?.title || '',
+                          questionData: {
+                            question_text: formData.question_text,
+                            options: formData.options,
+                            correct_answer: formData.correct_answer,
+                            explanation: formData.explanation
+                          }
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <Button type="submit" className="w-full" disabled={loading}>

@@ -543,7 +543,7 @@ const CourseContentEditor = () => {
 
       {/* Lesson Dialog */}
       <Dialog open={lessonDialogOpen} onOpenChange={setLessonDialogOpen}>
-        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className={`max-h-[90vh] overflow-y-auto ${chatOpen ? 'max-w-7xl' : 'max-w-5xl'}`}>
           <DialogHeader>
             <DialogTitle>
               {editingLesson ? 'Editar Lección' : 'Nueva Lección'} - {selectedChapter?.title}
@@ -688,8 +688,10 @@ const CourseContentEditor = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="relative">
+            {/* Editor Layout - 2 cols normally, 3 cols when chat is open */}
+            <div className={`grid gap-4 ${chatOpen ? 'grid-cols-3' : 'grid-cols-2'}`}>
+              {/* Markdown Editor Column */}
+              <div>
                 <div className="flex items-center justify-between mb-2">
                   <Label>Contenido (Markdown + LaTeX)</Label>
                   <div className="flex gap-2">
@@ -701,7 +703,7 @@ const CourseContentEditor = () => {
                       className="gap-1"
                     >
                       <Image size={14} />
-                      Insertar Imagen
+                      Imagen
                     </Button>
                     {lessonForm.content && (
                       <Button 
@@ -713,9 +715,10 @@ const CourseContentEditor = () => {
                           setChatOpen(!chatOpen);
                         }}
                         className="gap-1"
+                        data-testid="toggle-remy-chat"
                       >
                         <MessageSquare size={14} />
-                        {chatOpen ? 'Cerrar Chat' : 'Editar con IA'}
+                        {chatOpen ? 'Cerrar' : 'Remy'}
                       </Button>
                     )}
                   </div>
@@ -730,27 +733,31 @@ const CourseContentEditor = () => {
                 />
               </div>
               
-              {/* Vista Previa - con chat flotante */}
-              <div className="relative">
-                <Label>Vista Previa</Label>
+              {/* Preview Column */}
+              <div>
+                <Label className="mb-2 block">Vista Previa</Label>
                 <div className="border rounded-lg p-4 h-[500px] overflow-y-auto bg-white">
                   <MarkdownRenderer content={lessonForm.content} />
                 </div>
-                
-                {/* AI Chat Panel - Optimized Component - positioned over preview */}
-                <RemyChat
-                  isOpen={chatOpen}
-                  onClose={() => setChatOpen(false)}
-                  currentContent={lessonForm.content}
-                  onContentUpdate={handleContentUpdate}
-                  context={{
-                    type: 'lesson',
-                    title: lessonForm.title,
-                    chapterTitle: chapters.find(ch => ch.id === selectedChapter)?.title || '',
-                    courseTitle: course?.title || ''
-                  }}
-                />
               </div>
+
+              {/* AI Chat Column - Only visible when chat is open */}
+              {chatOpen && (
+                <div className="h-[530px]">
+                  <RemyChat
+                    isOpen={chatOpen}
+                    onClose={() => setChatOpen(false)}
+                    currentContent={lessonForm.content}
+                    onContentUpdate={handleContentUpdate}
+                    context={{
+                      type: 'lesson',
+                      title: lessonForm.title,
+                      chapterTitle: selectedChapter?.title || '',
+                      courseTitle: course?.title || ''
+                    }}
+                  />
+                </div>
+              )}
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
