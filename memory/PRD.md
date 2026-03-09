@@ -99,14 +99,26 @@ App educativa para "Se Remonta" con las siguientes características:
   - Integrado en editor de preguntas: ✅
   - Performance optimizado con componente aislado (RemyChat.js): ✅
   - Contexto de lección/pregunta en el chat: ✅
+- Sistema de Progreso de Estudiantes: ✅ IMPLEMENTADO
+  - Biblioteca simplificada (sin tabs): ✅
+  - Botón "Siguiente Lección" al final de cada lección: ✅
+  - Marcado de lecciones completadas: ✅
+  - Barra de progreso en curso y biblioteca: ✅
+- Inserción de imágenes en posición del cursor: ✅ IMPLEMENTADO
+- Sistema de Preguntas Reorganizado: ✅ IMPLEMENTADO
+  - Vista por cursos primero: ✅
+  - Preguntas organizadas por capítulo: ✅
+  - Estadísticas por dificultad: ✅
+  - Generación desde prompt: ✅
+  - Generación desde PDF: ✅
+  - Respuestas correctas que varían (A,B,C,D): ✅
 
 ## Next Steps (Backlog P1)
-- [ ] Add more questions to question bank for better quiz variety
-- [ ] Implement real user authentication for students
-- [ ] Connect progress tracking to actual student activity
-- [ ] Refactor server.py into multiple routers (>1200 líneas actualmente)
+- [ ] Migrar preguntas existentes para asignarles chapter_id
+- [ ] Implementar autenticación real para estudiantes
+- [ ] Refactorizar server.py (+1400 líneas) en routers separados
 
 ## Future Tasks (P2)
+- [ ] Exportar contenido a PDF
 - [ ] Multi-language support
-- [ ] Exportar preguntas/lecciones a PDF
-- [ ] Notificaciones para estudiantes
+- [ ] Sistema de notificaciones
