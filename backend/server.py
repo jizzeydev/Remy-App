@@ -637,6 +637,45 @@ async def get_quiz(quiz_id: str):
         raise HTTPException(status_code=404, detail="Simulacro no encontrado")
     return quiz
 
+# Migration endpoint to assign chapter_id to existing questions
+@api_router.post("/migrate/questions-chapter-id")
+async def migrate_questions_chapter_id():
+    """Migrate existing questions to assign chapter_id based on topic field"""
+    # Get all courses and their chapters
+    courses = await db.courses.find({}, {"_id": 0}).to_list(100)
+    
+    migrated_count = 0
+    for course in courses:
+        chapters = await db.chapters.find({"course_id": course["id"]}, {"_id": 0}).to_list(100)
+        
+        # Create mapping of topic name to chapter_id
+        for chapter in chapters:
+            chapter_title = chapter.get("title", "")
+            
+            # Update questions where topic matches chapter title and chapter_id is null
+            result = await db.questions.update_many(
+                {
+                    "course_id": course["id"],
+                    "topic": chapter_title,
+                    "$or": [{"chapter_id": None}, {"chapter_id": {"$exists": False}}]
+                },
+                {"$set": {"chapter_id": chapter["id"]}}
+            )
+            migrated_count += result.modified_count
+            
+            # Also try with lowercase match
+            result2 = await db.questions.update_many(
+                {
+                    "course_id": course["id"],
+                    "topic": {"$regex": f"^{chapter_title}$", "$options": "i"},
+                    "$or": [{"chapter_id": None}, {"chapter_id": {"$exists": False}}]
+                },
+                {"$set": {"chapter_id": chapter["id"]}}
+            )
+            migrated_count += result2.modified_count
+    
+    return {"success": True, "migrated_questions": migrated_count}
+
 # Admin endpoints
 @admin_router.post("/login", response_model=Token)
 async def admin_login(request: LoginRequest):

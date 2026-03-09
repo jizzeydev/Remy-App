@@ -78,7 +78,14 @@ App educativa para "Se Remonta" con las siguientes características:
 
 ## Testing Status (March 9, 2026)
 - Feature Fórmulas eliminada: ✅
-- Simulacros funcionales: ✅ (con KaTeX renderizado)
+- Simulacros funcionales: ✅ REDISEÑADO COMPLETAMENTE
+  - Crear simulacro seleccionando curso → capítulos → lecciones: ✅
+  - Número de preguntas 5-15: ✅
+  - Dificultad (fácil/medio/difícil/todas): ✅
+  - Tiempo límite con countdown: ✅
+  - Nota chilena (1-7, 60%=4): ✅
+  - Eliminar simulacros: ✅
+  - Mostrar nota solo en simulacros completados: ✅
 - Placeholder de imagen: ✅ verificado
 - Admin Dashboard actualizado: ✅
 - Error Select.Item en AdminQuestions: ✅ CORREGIDO
@@ -91,17 +98,17 @@ App educativa para "Se Remonta" con las siguientes características:
 - Gestión de cursos simplificada: ✅ IMPLEMENTADO
 - Editor de lecciones con doble modo de generación: ✅ IMPLEMENTADO
   - Desde Tema/Prompt: ✅ funcional
-  - Desde Documento PDF: ✅ MEJORADO - prompt especializado que extrae conceptos y los transforma
+  - Desde Documento PDF: ✅ MEJORADO
   - Vista previa del texto extraído del PDF: ✅ AÑADIDO
 - Chat con Remy (Edición Iterativa): ✅ CORREGIDO Y FUNCIONAL
   - Layout de 3 columnas: Editor | Vista Previa | Chat ✅
   - Integrado en editor de lecciones: ✅
   - Integrado en editor de preguntas: ✅
-  - Performance optimizado con componente aislado (RemyChat.js): ✅
+  - Performance optimizado: ✅
   - Contexto de lección/pregunta en el chat: ✅
 - Sistema de Progreso de Estudiantes: ✅ IMPLEMENTADO
   - Biblioteca simplificada (sin tabs): ✅
-  - Botón "Siguiente Lección" al final de cada lección: ✅
+  - Botón "Siguiente Lección": ✅
   - Marcado de lecciones completadas: ✅
   - Barra de progreso en curso y biblioteca: ✅
 - Inserción de imágenes en posición del cursor: ✅ IMPLEMENTADO
@@ -112,11 +119,13 @@ App educativa para "Se Remonta" con las siguientes características:
   - Generación desde prompt: ✅
   - Generación desde PDF: ✅
   - Respuestas correctas que varían (A,B,C,D): ✅
+- Logo de Remy: ✅ Integrado en sidebar y favicon
+- Migración de chapter_id en preguntas: ✅ Ejecutada
 
 ## Next Steps (Backlog P1)
-- [ ] Migrar preguntas existentes para asignarles chapter_id
 - [ ] Implementar autenticación real para estudiantes
-- [ ] Refactorizar server.py (+1400 líneas) en routers separados
+- [ ] Refactorizar server.py (+1500 líneas) en routers separados
+- [ ] Implementar página de Progreso del estudiante
 
 ## Future Tasks (P2)
 - [ ] Exportar contenido a PDF
