@@ -96,11 +96,11 @@ class Question(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     course_id: str
-    chapter_id: Optional[str] = None  # Optional chapter classification
+    chapter_id: Optional[str] = None  # Chapter classification (recommended)
     lesson_id: Optional[str] = None   # Optional lesson classification
-    topic: str
+    topic: Optional[str] = None  # Now optional, chapter_id is preferred
     subtopic: Optional[str] = None
-    difficulty: str
+    difficulty: str = "medio"
     question_text: str  # Supports Markdown + KaTeX
     options: List[str]  # Each option supports Markdown + KaTeX
     correct_answer: str  # A, B, C, or D - now randomized
