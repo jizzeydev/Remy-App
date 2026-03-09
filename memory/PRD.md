@@ -93,13 +93,20 @@ App educativa para "Se Remonta" con las siguientes características:
   - Desde Tema/Prompt: ✅ funcional
   - Desde Documento PDF: ✅ MEJORADO - prompt especializado que extrae conceptos y los transforma
   - Vista previa del texto extraído del PDF: ✅ AÑADIDO
+- Chat con Remy (Edición Iterativa): ✅ CORREGIDO Y FUNCIONAL
+  - Layout de 3 columnas: Editor | Vista Previa | Chat ✅
+  - Integrado en editor de lecciones: ✅
+  - Integrado en editor de preguntas: ✅
+  - Performance optimizado con componente aislado (RemyChat.js): ✅
+  - Contexto de lección/pregunta en el chat: ✅
 
 ## Next Steps (Backlog P1)
 - [ ] Add more questions to question bank for better quiz variety
 - [ ] Implement real user authentication for students
 - [ ] Connect progress tracking to actual student activity
-- [ ] Refactor server.py into multiple routers
+- [ ] Refactor server.py into multiple routers (>1200 líneas actualmente)
 
 ## Future Tasks (P2)
-- [ ] PDF content extraction
 - [ ] Multi-language support
+- [ ] Exportar preguntas/lecciones a PDF
+- [ ] Notificaciones para estudiantes
