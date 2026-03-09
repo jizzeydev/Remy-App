@@ -46,9 +46,16 @@ const Layout = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-cyan-50/30">
       <aside className="hidden lg:fixed lg:left-0 lg:top-0 lg:h-screen lg:w-64 lg:flex lg:flex-col lg:border-r lg:border-slate-100 lg:bg-white lg:p-6">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-primary" data-testid="app-logo">Remy</h1>
-          <p className="text-sm text-slate-500">Tu plataforma de estudio</p>
+        <div className="mb-8 flex items-center gap-3">
+          <img 
+            src="/remy-logo.png" 
+            alt="Remy" 
+            className="w-12 h-12 object-contain"
+          />
+          <div>
+            <h1 className="text-2xl font-bold text-primary" data-testid="app-logo">Remy</h1>
+            <p className="text-xs text-slate-500">Tu plataforma de estudio</p>
+          </div>
         </div>
         <nav className="flex-1">
           <NavContent />
@@ -56,9 +63,16 @@ const Layout = () => {
       </aside>
 
       <header className="lg:hidden sticky top-0 z-50 bg-white border-b border-slate-100 px-4 py-3 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-primary" data-testid="app-logo-mobile">Remy</h1>
-          <p className="text-xs text-slate-500">Tu plataforma de estudio</p>
+        <div className="flex items-center gap-2">
+          <img 
+            src="/remy-logo.png" 
+            alt="Remy" 
+            className="w-10 h-10 object-contain"
+          />
+          <div>
+            <h1 className="text-xl font-bold text-primary" data-testid="app-logo-mobile">Remy</h1>
+            <p className="text-xs text-slate-500">Tu plataforma de estudio</p>
+          </div>
         </div>
         <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
           <SheetTrigger asChild>

@@ -23,9 +23,16 @@ const AdminLayout = () => {
     <div className="min-h-screen bg-slate-50">
       {/* Sidebar */}
       <aside className="fixed left-0 top-0 h-screen w-64 bg-slate-900 text-white p-6">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold">Remy Admin</h1>
-          <p className="text-sm text-slate-400">Panel de administración</p>
+        <div className="mb-8 flex items-center gap-3">
+          <img 
+            src="/remy-logo.png" 
+            alt="Remy" 
+            className="w-12 h-12 object-contain"
+          />
+          <div>
+            <h1 className="text-xl font-bold">Remy Admin</h1>
+            <p className="text-xs text-slate-400">Panel de administración</p>
+          </div>
         </div>
         <nav className="flex-1 space-y-2">
           {navItems.map((item) => {
