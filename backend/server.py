@@ -167,10 +167,14 @@ class GenerateSummaryRequest(BaseModel):
     course_title: str
 
 class GenerateQuestionsRequest(BaseModel):
-    pdf_content: str
     course_id: str
-    topic: str
-    num_questions: int = 10
+    chapter_id: str
+    lesson_id: Optional[str] = None
+    difficulty: str = "medio"
+    num_questions: int = 5
+    generation_type: str = "prompt"  # "prompt" or "pdf"
+    topic: Optional[str] = None  # For prompt-based generation
+    pdf_content: Optional[str] = None  # For PDF-based generation
 
 class GenerateLessonContentRequest(BaseModel):
     pdf_content: Optional[str] = None
@@ -699,31 +703,31 @@ async def generate_questions(request: GenerateQuestionsRequest, _: str = Depends
     try:
         import random
         
+        # Get chapter and course info for context
+        chapter = await db.chapters.find_one({"id": request.chapter_id}, {"_id": 0})
+        course = await db.courses.find_one({"id": request.course_id}, {"_id": 0})
+        chapter_title = chapter.get("title", "") if chapter else ""
+        course_title = course.get("title", "") if course else ""
+        
         system_message = """Eres un experto en evaluación educativa de Se Remonta, especializado en crear preguntas de examen de opción múltiple para estudiantes universitarios de matemáticas y ciencias.
-
-TU TAREA PRINCIPAL:
-1. EXTRAE ejercicios del documento proporcionado y conviértelos en preguntas de opción múltiple
-2. CREA variantes de los ejercicios (cambiando números, funciones, o contexto)
-3. GENERA preguntas nuevas basadas en los conceptos del documento
 
 REGLAS ESTRICTAS PARA LAS FÓRMULAS:
 - USA LaTeX en línea con $...$ para fórmulas cortas: $f(x) = x^2$
-- USA LaTeX en bloque con $$...$$ para fórmulas largas o importantes
+- USA LaTeX en bloque con $$...$$ para fórmulas largas
 - NUNCA uses \\( \\) ni \\[ \\] - solo $ y $$
 - Para fracciones: $\\frac{a}{b}$
 - Para derivadas: $\\frac{d}{dx}$, $f'(x)$
-- Para raíces: $\\sqrt{x}$, $\\sqrt[n]{x}$
-- Para integrales: $\\int f(x)dx$, $\\int_a^b$
+- Para raíces: $\\sqrt{x}$
+- Para integrales: $\\int f(x)dx$
 
 IMPORTANTE - VARIACIÓN DE RESPUESTA CORRECTA:
-- La respuesta correcta DEBE variar entre A, B, C, D
+- La respuesta correcta DEBE variar entre A, B, C, D de forma ALEATORIA
 - NO todas las respuestas deben ser A
-- Distribuye las respuestas correctas de forma aleatoria
-- Ejemplo: si generas 5 preguntas, las respuestas podrían ser: B, D, A, C, A
+- Distribuye las respuestas correctas: algunas A, algunas B, algunas C, algunas D
+- Ejemplo para 5 preguntas: B, D, A, C, B
 
 FORMATO DE CADA OPCIÓN:
 - Formato: "A) contenido con $fórmulas$ si aplica"
-- Cada opción en su propia línea
 - Los distractores deben ser errores comunes que cometen los estudiantes
 
 FORMATO DE SALIDA - JSON ESTRICTO:
@@ -731,55 +735,74 @@ FORMATO DE SALIDA - JSON ESTRICTO:
 {
   "questions": [
     {
-      "question_text": "Enunciado claro. Usa $fórmulas$ para matemáticas.",
+      "question_text": "Enunciado claro con $fórmulas$ matemáticas.",
       "options": [
-        "A) $\\\\frac{d}{dx}[x^3] = 3x^2$",
-        "B) $\\\\frac{d}{dx}[x^3] = x^2$",
-        "C) $\\\\frac{d}{dx}[x^3] = 3x^3$",
-        "D) $\\\\frac{d}{dx}[x^3] = 2x^2$"
+        "A) Primera opción",
+        "B) Segunda opción", 
+        "C) Tercera opción",
+        "D) Cuarta opción"
       ],
-      "correct_answer": "A",
-      "explanation": "Explicación paso a paso usando $fórmulas$. La regla de la potencia establece que $\\\\frac{d}{dx}[x^n] = nx^{n-1}$, por lo tanto $\\\\frac{d}{dx}[x^3] = 3x^{3-1} = 3x^2$.",
-      "difficulty": "medio",
-      "image_placeholder": "Gráfica de f(x)=x³ mostrando la tangente en x=1 con pendiente 3"
+      "correct_answer": "B",
+      "explanation": "Explicación paso a paso de la solución."
     }
   ]
 }
 ```
 
-CAMPO image_placeholder:
-- Es OPCIONAL - solo inclúyelo si la pregunta realmente necesita un gráfico o diagrama
-- Describe exactamente qué debe mostrar la imagen para que pueda ser generada con IA
-- Ejemplos buenos: "Gráfica de la función f(x)=sin(x) con el área bajo la curva entre 0 y π sombreada"
-- NO lo incluyas para preguntas puramente algebraicas
-
 IMPORTANTE: Responde SOLO con el JSON, sin texto adicional."""
 
-        # Determine random distribution of correct answers
+        # Determine random distribution of correct answers for variety
         letters = ['A', 'B', 'C', 'D']
         answer_distribution = [random.choice(letters) for _ in range(request.num_questions)]
         
-        user_prompt = f"""Genera exactamente {request.num_questions} preguntas de opción múltiple sobre el tema "{request.topic}".
+        # Build user prompt based on generation type
+        if request.generation_type == "prompt":
+            # Generation from topic/prompt
+            user_prompt = f"""Genera exactamente {request.num_questions} preguntas de opción múltiple.
 
-DISTRIBUCIÓN SUGERIDA DE RESPUESTAS CORRECTAS (para variar):
+CONTEXTO:
+- Curso: {course_title}
+- Capítulo: {chapter_title}
+- Dificultad solicitada: {request.difficulty}
+
+TEMA/INSTRUCCIONES DEL USUARIO:
+{request.topic}
+
+DISTRIBUCIÓN DE RESPUESTAS CORRECTAS (SIGUE ESTO):
 {', '.join([f"Pregunta {i+1}: {l}" for i, l in enumerate(answer_distribution)])}
 
-Material de referencia del documento:
+INSTRUCCIONES:
+1. Crea preguntas relevantes al tema especificado
+2. Usa fórmulas con $ para inline y $$ para bloques  
+3. Cada pregunta debe tener 4 opciones (A, B, C, D)
+4. Los distractores deben ser errores comunes
+5. La explicación debe ser didáctica y paso a paso
+6. Dificultad: {request.difficulty}
+
+Responde SOLO con el JSON válido."""
+        else:
+            # Generation from PDF content
+            user_prompt = f"""Genera exactamente {request.num_questions} preguntas de opción múltiple basadas en el siguiente material.
+
+CONTEXTO:
+- Curso: {course_title}
+- Capítulo: {chapter_title}
+- Dificultad solicitada: {request.difficulty}
+
+DISTRIBUCIÓN DE RESPUESTAS CORRECTAS (SIGUE ESTO):
+{', '.join([f"Pregunta {i+1}: {l}" for i, l in enumerate(answer_distribution)])}
+
+MATERIAL DE REFERENCIA:
 ---
-{request.pdf_content[:15000]}
+{request.pdf_content[:15000] if request.pdf_content else ""}
 ---
 
-INSTRUCCIONES ESPECÍFICAS:
-1. EXTRAE al menos 50% de las preguntas directamente del documento (adaptándolas a formato de opción múltiple)
-2. CREA variantes cambiando valores numéricos o funciones similares
+INSTRUCCIONES:
+1. EXTRAE ejercicios del documento y conviértelos en preguntas
+2. CREA variantes cambiando números o funciones
 3. Las fórmulas DEBEN usar $ para inline y $$ para bloques
-4. Cada pregunta debe tener 4 opciones (A, B, C, D) con distractores plausibles
+4. Cada pregunta debe tener 4 opciones con distractores plausibles
 5. La explicación debe mostrar el proceso paso a paso
-
-Distribución de dificultad:
-- 30% fácil (conceptos básicos, cálculos directos)
-- 50% medio (aplicación de reglas, varios pasos)
-- 20% difícil (combinación de conceptos, análisis)
 
 Responde SOLO con el JSON válido."""
         
@@ -789,7 +812,6 @@ Responde SOLO con el JSON válido."""
         
         # Clean and parse JSON response
         try:
-            # Remove markdown code blocks if present
             clean_response = response.strip()
             if clean_response.startswith("```json"):
                 clean_response = clean_response[7:]
@@ -802,10 +824,12 @@ Responde SOLO con el JSON válido."""
             questions_data = json.loads(clean_response)
             questions = questions_data.get("questions", [])
             
-            # Ensure correct_answer values are valid
+            # Validate and enhance questions
             for q in questions:
                 if q.get('correct_answer') not in ['A', 'B', 'C', 'D']:
-                    q['correct_answer'] = 'A'
+                    q['correct_answer'] = random.choice(letters)
+                if 'difficulty' not in q:
+                    q['difficulty'] = request.difficulty
                     
         except json.JSONDecodeError as je:
             logging.error(f"JSON parse error: {je}, response: {response[:500]}")
