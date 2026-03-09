@@ -745,6 +745,11 @@ Estoy listo para mejorar la lección "${lessonForm.title}".
                             {pdfText.substring(0, 500)}...
                           </p>
                         </div>
+                        {!lessonForm.title && (
+                          <p className="text-xs text-amber-600 flex items-center gap-1">
+                            ⚠️ Escribe un título arriba para habilitar "Generar desde PDF"
+                          </p>
+                        )}
                       </div>
                     )}
                   </div>

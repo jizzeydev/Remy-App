@@ -234,11 +234,73 @@ async def verify_admin_token(credentials: HTTPAuthorizationCredentials = Depends
         )
 
 def extract_text_from_pdf(pdf_file: bytes) -> str:
+    """Extract text from PDF with improved handling for Spanish accents and LaTeX-generated PDFs"""
     pdf_reader = PyPDF2.PdfReader(io.BytesIO(pdf_file))
     text = ""
     for page in pdf_reader.pages:
-        text += page.extract_text() + "\n"
-    return text
+        page_text = page.extract_text() or ""
+        text += page_text + "\n"
+    
+    import re
+    
+    # Fix common LaTeX accent encoding issues in Spanish PDFs
+    # LaTeX uses special notation for accents that can get mangled in PDF extraction
+    
+    # Order matters! Process more specific patterns first
+    latex_accent_fixes = [
+        # Common Spanish word patterns where accent appears between letters
+        # Pattern: consonant + ´ + space + vowel (the accent belongs to the vowel)
+        (r"([bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ])´\s*([aeiouAEIOU])", r"\1\2́"),
+        
+        # Pattern: vowel + ´ + space + vowel (accent belongs to second vowel)
+        (r"([aeiouAEIOU])´\s+([aeiouAEIOU])", r"\1\2́"),
+        
+        # Pattern: ´ + space + vowel (standard pattern)
+        (r"´\s*a", "á"), (r"´\s*e", "é"), (r"´\s*i", "í"), 
+        (r"´\s*o", "ó"), (r"´\s*u", "ú"),
+        (r"´\s*A", "Á"), (r"´\s*E", "É"), (r"´\s*I", "Í"), 
+        (r"´\s*O", "Ó"), (r"´\s*U", "Ú"),
+        
+        # Pattern: vowel + space + ´ (accent after space)
+        (r"a\s*´", "á"), (r"e\s*´", "é"), (r"i\s*´", "í"),
+        (r"o\s*´", "ó"), (r"u\s*´", "ú"),
+        (r"A\s*´", "Á"), (r"E\s*´", "É"), (r"I\s*´", "Í"),
+        (r"O\s*´", "Ó"), (r"U\s*´", "Ú"),
+        
+        # Ñ (tilde)
+        (r"[˜~]\s*n", "ñ"), (r"n\s*[˜~]", "ñ"),
+        (r"[˜~]\s*N", "Ñ"), (r"N\s*[˜~]", "Ñ"),
+        
+        # Dieresis (ü)
+        (r"¨\s*u", "ü"), (r"¨\s*U", "Ü"),
+        
+        # Dotless i with accent (common in LaTeX)
+        (r"´\s*ı", "í"), (r"ı\s*´", "í"),
+    ]
+    
+    for pattern, replacement in latex_accent_fixes:
+        text = re.sub(pattern, replacement, text)
+    
+    # Clean up any remaining combining accents
+    # Replace combining acute accent (́) with the proper accented character
+    combining_fixes = [
+        ("á́", "á"), ("é́", "é"), ("í́", "í"), ("ó́", "ó"), ("ú́", "ú"),
+        ("a\u0301", "á"), ("e\u0301", "é"), ("i\u0301", "í"), 
+        ("o\u0301", "ó"), ("u\u0301", "ú"),
+        ("A\u0301", "Á"), ("E\u0301", "É"), ("I\u0301", "Í"),
+        ("O\u0301", "Ó"), ("U\u0301", "Ú"),
+    ]
+    
+    for pattern, replacement in combining_fixes:
+        text = text.replace(pattern, replacement)
+    
+    # Fix hyphenated line breaks (word- \nrest -> wordrest)
+    text = re.sub(r'(\w)-\s*\n\s*(\w)', r'\1\2', text)
+    
+    # Fix multiple spaces
+    text = re.sub(r' {2,}', ' ', text)
+    
+    return text.strip()
 
 # Public endpoints
 @api_router.get("/")
