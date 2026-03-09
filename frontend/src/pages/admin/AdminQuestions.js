@@ -510,12 +510,12 @@ const AdminQuestions = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <Label>Curso</Label>
-              <Select value={filterCourse} onValueChange={setFilterCourse}>
+              <Select value={filterCourse || "all"} onValueChange={(v) => setFilterCourse(v === "all" ? "" : v)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Todos los cursos" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todos</SelectItem>
+                  <SelectItem value="all">Todos</SelectItem>
                   {courses.map((course) => (
                     <SelectItem key={course.id} value={course.id}>
                       {course.title}
