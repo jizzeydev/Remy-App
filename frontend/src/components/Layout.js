@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Home, ClipboardCheck, BookOpen, Calculator, TrendingUp, Menu } from 'lucide-react';
+import { Home, ClipboardCheck, BookOpen, TrendingUp, Menu } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -13,7 +13,6 @@ const Layout = () => {
     { icon: Home, label: 'Inicio', path: '/dashboard' },
     { icon: ClipboardCheck, label: 'Simulacros', path: '/simulacros' },
     { icon: BookOpen, label: 'Biblioteca', path: '/biblioteca' },
-    { icon: Calculator, label: 'Fórmulas', path: '/formulas' },
     { icon: TrendingUp, label: 'Progreso', path: '/progreso' },
   ];
 

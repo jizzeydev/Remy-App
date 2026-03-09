@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Calculator, ClipboardList, Users } from 'lucide-react';
+import { BookOpen, ClipboardList, Users, GraduationCap } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -9,7 +9,7 @@ const API = `${BACKEND_URL}/api`;
 const AdminDashboard = () => {
   const [stats, setStats] = useState({
     courses: 0,
-    formulas: 0,
+    lessons: 0,
     questions: 0,
     users: 0
   });
@@ -20,19 +20,30 @@ const AdminDashboard = () => {
 
   const fetchStats = async () => {
     try {
-      const [coursesRes, formulasRes] = await Promise.all([
-        axios.get(`${API}/courses`),
-        axios.post(`${API}/formulas/search`, { query: '', course_id: null })
-      ]);
+      const coursesRes = await axios.get(`${API}/courses`);
       
       const token = localStorage.getItem('admin_token');
       const questionsRes = await axios.get(`${BACKEND_URL}/api/admin/questions`, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      
+      // Count lessons by fetching chapters and their lessons
+      let totalLessons = 0;
+      for (const course of coursesRes.data) {
+        try {
+          const chaptersRes = await axios.get(`${API}/courses/${course.id}/chapters`);
+          for (const chapter of chaptersRes.data) {
+            const lessonsRes = await axios.get(`${API}/chapters/${chapter.id}/lessons`);
+            totalLessons += lessonsRes.data.length;
+          }
+        } catch (e) {
+          console.error('Error fetching lessons:', e);
+        }
+      }
 
       setStats({
         courses: coursesRes.data.length,
-        formulas: formulasRes.data.length,
+        lessons: totalLessons,
         questions: questionsRes.data.length,
         users: 0
       });
@@ -43,7 +54,7 @@ const AdminDashboard = () => {
 
   const statCards = [
     { icon: BookOpen, label: 'Cursos', value: stats.courses, color: 'bg-blue-500' },
-    { icon: Calculator, label: 'Fórmulas', value: stats.formulas, color: 'bg-emerald-500' },
+    { icon: GraduationCap, label: 'Lecciones', value: stats.lessons, color: 'bg-emerald-500' },
     { icon: ClipboardList, label: 'Preguntas', value: stats.questions, color: 'bg-purple-500' },
     { icon: Users, label: 'Usuarios', value: stats.users, color: 'bg-orange-500' },
   ];
@@ -85,20 +96,22 @@ const AdminDashboard = () => {
           <div>
             <h3 className="font-semibold mb-2">📚 Cursos</h3>
             <p className="text-sm text-slate-600">
-              Crea y administra cursos. Puedes subir PDFs teóricos y generar resúmenes automáticos con Gemini.
-            </p>
-          </div>
-          <div>
-            <h3 className="font-semibold mb-2">🔢 Fórmulas</h3>
-            <p className="text-sm text-slate-600">
-              Agrega fórmulas matemáticas con soporte LaTeX para que los estudiantes puedan buscarlas.
+              Crea y administra cursos con capítulos y lecciones. Usa la AI "Remy" (GPT-5.2) para generar 
+              contenido educativo de alta calidad con visualizaciones Desmos interactivas.
             </p>
           </div>
           <div>
             <h3 className="font-semibold mb-2">❓ Preguntas</h3>
             <p className="text-sm text-slate-600">
-              Crea bancos de preguntas manualmente o genera automáticamente desde PDFs de ejercicios usando Gemini.
-              Las preguntas se organizan por curso, tema, subtema y dificultad.
+              Crea bancos de preguntas manualmente o genera automáticamente usando AI.
+              Las preguntas se organizan por curso, tema, subtema y dificultad para los Simulacros.
+            </p>
+          </div>
+          <div>
+            <h3 className="font-semibold mb-2">🖼️ Imágenes</h3>
+            <p className="text-sm text-slate-600">
+              Puedes generar imágenes con AI (GPT Image 1) o subir tus propias imágenes desde el editor 
+              de lecciones para completar los placeholders de imagen.
             </p>
           </div>
         </CardContent>

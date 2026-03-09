@@ -320,9 +320,23 @@ const Simulacros = () => {
           {quizzes.map((quiz, index) => (
             <Card key={quiz.id} className="hover:shadow-lg transition-all" data-testid={`quiz-card-${index}`}>
               <CardHeader>
-                <CardTitle className="text-lg">{quiz.title}</CardTitle>
-                <CardDescription>
-                  {quiz.questions.length} preguntas
+                <CardTitle className="text-lg">{quiz.topic || quiz.title || 'Simulacro'}</CardTitle>
+                <CardDescription className="space-y-1">
+                  <span className="block">{quiz.questions?.length || 0} preguntas</span>
+                  {quiz.score !== null && quiz.score !== undefined && (
+                    <span className="block text-primary font-medium">
+                      Puntuación: {quiz.score}%
+                    </span>
+                  )}
+                  {quiz.created_at && (
+                    <span className="block text-xs">
+                      {new Date(quiz.created_at).toLocaleDateString('es-ES', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                      })}
+                    </span>
+                  )}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -331,7 +345,7 @@ const Simulacros = () => {
                   data-testid={`start-quiz-${index}`}
                   className="w-full rounded-full"
                 >
-                  Comenzar simulacro
+                  {quiz.score !== null && quiz.score !== undefined ? 'Reintentar' : 'Comenzar simulacro'}
                 </Button>
               </CardContent>
             </Card>

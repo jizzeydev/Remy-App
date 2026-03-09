@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { MessageSquare, ClipboardCheck, BookOpen, Calculator, TrendingUp, Sparkles } from 'lucide-react';
+import { MessageSquare, ClipboardCheck, BookOpen, TrendingUp, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -33,7 +33,6 @@ const Dashboard = () => {
 
   const quickActions = [
     { icon: ClipboardCheck, label: 'Crear Simulacro', path: '/simulacros', color: 'bg-blue-500', testId: 'quick-action-quiz' },
-    { icon: Calculator, label: 'Buscar Fórmula', path: '/formulas', color: 'bg-emerald-500', testId: 'quick-action-formula' },
     { icon: BookOpen, label: 'Mis Cursos', path: '/biblioteca', color: 'bg-purple-500', testId: 'quick-action-courses' },
     { icon: TrendingUp, label: 'Ver Progreso', path: '/progreso', color: 'bg-orange-500', testId: 'quick-action-progress' },
   ];
