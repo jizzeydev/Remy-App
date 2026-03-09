@@ -33,10 +33,10 @@ App educativa para "Se Remonta" con las siguientes características:
 - [x] Fórmulas - Eliminado (no aporta valor diferenciador)
 
 ### Database Collections
-- `courses`: {id, title, description, category, level, modules_count, instructor, rating, cover_image_url, summary}
+- `courses`: {id, title, description, category, level, instructor} (simplificado)
 - `chapters`: {id, course_id, title, description, order}
 - `lessons`: {id, chapter_id, title, content (Markdown), order, duration_minutes}
-- `questions`: {id, course_id, topic, subtopic, difficulty, question_text, options, correct_answer, explanation, latex_content}
+- `questions`: {id, course_id, chapter_id (opt), lesson_id (opt), topic, subtopic, difficulty, question_text, options, correct_answer, explanation, image_placeholder}
 - `quiz_attempts`: {id, user_id, course_id, topic, subtopic, questions, answers, score}
 - `progress`: {id, user_id, course_id, completed_modules, total_modules, quizzes_completed, average_score, last_activity}
 
@@ -88,6 +88,9 @@ App educativa para "Se Remonta" con las siguientes características:
 - Nueva clasificación Curso→Capítulo→Lección: ✅ IMPLEMENTADO
 - Editor de preguntas mejorado con imágenes: ✅ IMPLEMENTADO
 - Generación de preguntas con IA mejorada: ✅ IMPLEMENTADO
+- Gestión de cursos simplificada: ✅ IMPLEMENTADO
+  - Eliminado: módulos, resumen, portada
+  - Añadido: conteo dinámico de capítulos/lecciones
 
 ## Next Steps (Backlog P1)
 - [ ] Add more questions to question bank for better quiz variety

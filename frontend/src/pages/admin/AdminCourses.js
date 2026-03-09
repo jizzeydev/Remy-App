@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, FileText, Sparkles, BookOpen, Image as ImageIcon } from 'lucide-react';
+import { Plus, Edit, Trash2, BookOpen, GraduationCap, Layers } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -18,25 +18,17 @@ const ADMIN_API = `${BACKEND_URL}/api/admin`;
 const AdminCourses = () => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
+  const [coursesStats, setCoursesStats] = useState({}); // {courseId: {chapters, lessons}}
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [pdfDialogOpen, setPdfDialogOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
-  const [pdfFile, setPdfFile] = useState(null);
-  const [pdfText, setPdfText] = useState('');
-  const [generatingSummary, setGeneratingSummary] = useState(false);
-  const [selectedCourseForSummary, setSelectedCourseForSummary] = useState(null);
 
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     category: 'Matemáticas',
     level: 'Intermedio',
-    modules_count: 0,
-    instructor: 'Jesus Bravo',
-    rating: 4.8,
-    summary: '',
-    cover_image_url: ''
+    instructor: 'Jesus Bravo'
   });
 
   useEffect(() => {
@@ -47,6 +39,33 @@ const AdminCourses = () => {
     try {
       const response = await axios.get(`${API}/courses`);
       setCourses(response.data);
+      
+      // Fetch stats for each course
+      const stats = {};
+      for (const course of response.data) {
+        try {
+          const chaptersRes = await axios.get(`${API}/courses/${course.id}/chapters`);
+          const chapters = chaptersRes.data;
+          let totalLessons = 0;
+          
+          for (const chapter of chapters) {
+            try {
+              const lessonsRes = await axios.get(`${API}/chapters/${chapter.id}/lessons`);
+              totalLessons += lessonsRes.data.length;
+            } catch (e) {
+              console.error('Error fetching lessons:', e);
+            }
+          }
+          
+          stats[course.id] = {
+            chapters: chapters.length,
+            lessons: totalLessons
+          };
+        } catch (e) {
+          stats[course.id] = { chapters: 0, lessons: 0 };
+        }
+      }
+      setCoursesStats(stats);
     } catch (error) {
       console.error('Error fetching courses:', error);
       toast.error('Error al cargar cursos');
@@ -59,7 +78,13 @@ const AdminCourses = () => {
 
     try {
       const token = localStorage.getItem('admin_token');
-      const payload = { ...formData, id: editingCourse?.id || undefined };
+      const payload = { 
+        ...formData, 
+        id: editingCourse?.id || undefined,
+        // Keep these fields for backwards compatibility but with defaults
+        modules_count: 0,
+        rating: 4.8
+      };
 
       if (editingCourse) {
         await axios.put(`${ADMIN_API}/courses/${editingCourse.id}`, payload, {
@@ -85,7 +110,7 @@ const AdminCourses = () => {
   };
 
   const handleDelete = async (courseId) => {
-    if (!window.confirm('¿Estás seguro de eliminar este curso?')) return;
+    if (!window.confirm('¿Estás seguro de eliminar este curso? Se eliminarán todos sus capítulos y lecciones.')) return;
 
     try {
       const token = localStorage.getItem('admin_token');
@@ -105,39 +130,11 @@ const AdminCourses = () => {
     setFormData({
       title: course.title,
       description: course.description,
-      category: course.category,
-      level: course.level,
-      modules_count: course.modules_count,
-      instructor: course.instructor,
-      rating: course.rating,
-      summary: course.summary || '',
-      cover_image_url: course.cover_image_url || ''
+      category: course.category || 'Matemáticas',
+      level: course.level || 'Intermedio',
+      instructor: course.instructor || 'Jesus Bravo'
     });
     setDialogOpen(true);
-  };
-
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    try {
-      const token = localStorage.getItem('admin_token');
-      const formDataImg = new FormData();
-      formDataImg.append('file', file);
-
-      const response = await axios.post(`${ADMIN_API}/upload-course-image`, formDataImg, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-
-      setFormData({ ...formData, cover_image_url: response.data.image_url });
-      toast.success('Imagen cargada');
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      toast.error('Error al cargar imagen');
-    }
   };
 
   const resetForm = () => {
@@ -147,84 +144,8 @@ const AdminCourses = () => {
       description: '',
       category: 'Matemáticas',
       level: 'Intermedio',
-      modules_count: 0,
-      instructor: 'Jesus Bravo',
-      rating: 4.8,
-      summary: '',
-      cover_image_url: ''
+      instructor: 'Jesus Bravo'
     });
-  };
-
-  const handlePdfUpload = async () => {
-    if (!pdfFile) {
-      toast.error('Por favor selecciona un archivo PDF');
-      return;
-    }
-
-    try {
-      const token = localStorage.getItem('admin_token');
-      const formData = new FormData();
-      formData.append('file', pdfFile);
-
-      const response = await axios.post(`${ADMIN_API}/upload-pdf`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-
-      setPdfText(response.data.text_preview);
-      toast.success('PDF procesado exitosamente');
-    } catch (error) {
-      console.error('Error uploading PDF:', error);
-      toast.error('Error al procesar PDF');
-    }
-  };
-
-  const handleGenerateSummary = async () => {
-    if (!pdfText || !selectedCourseForSummary) {
-      toast.error('Debes subir un PDF y seleccionar un curso');
-      return;
-    }
-
-    setGeneratingSummary(true);
-    try {
-      const token = localStorage.getItem('admin_token');
-      const response = await axios.post(
-        `${ADMIN_API}/generate-summary`,
-        {
-          pdf_content: pdfText,
-          course_title: selectedCourseForSummary.title
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
-
-      // Actualizar el curso con el resumen generado
-      await axios.put(
-        `${ADMIN_API}/courses/${selectedCourseForSummary.id}`,
-        {
-          ...selectedCourseForSummary,
-          summary: response.data.summary
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
-
-      toast.success('Resumen generado y guardado exitosamente');
-      fetchCourses();
-      setPdfDialogOpen(false);
-      setPdfFile(null);
-      setPdfText('');
-      setSelectedCourseForSummary(null);
-    } catch (error) {
-      console.error('Error generating summary:', error);
-      toast.error('Error al generar resumen con Gemini');
-    } finally {
-      setGeneratingSummary(false);
-    }
   };
 
   return (
@@ -234,247 +155,170 @@ const AdminCourses = () => {
           <h1 className="text-3xl font-bold mb-2">Gestión de Cursos</h1>
           <p className="text-slate-600">Administra los cursos disponibles en la plataforma</p>
         </div>
-        <div className="flex gap-2">
-          <Dialog open={pdfDialogOpen} onOpenChange={setPdfDialogOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline">
-                <Sparkles className="mr-2" size={20} />
-                Generar Resumen con IA
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Generar Resumen con Gemini</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogTrigger asChild>
+            <Button onClick={resetForm} data-testid="new-course-btn">
+              <Plus className="mr-2" size={20} />
+              Nuevo Curso
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle>
+                {editingCourse ? 'Editar Curso' : 'Nuevo Curso'}
+              </DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <Label htmlFor="title">Título del Curso *</Label>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder="Ej: Cálculo Diferencial"
+                  required
+                  data-testid="course-title-input"
+                />
+              </div>
+              <div>
+                <Label htmlFor="description">Descripción *</Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Breve descripción del contenido del curso"
+                  rows={3}
+                  required
+                  data-testid="course-description-input"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label>Seleccionar Curso</Label>
+                  <Label htmlFor="category">Categoría</Label>
+                  <Input
+                    id="category"
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    placeholder="Ej: Matemáticas"
+                    data-testid="course-category-input"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="level">Nivel</Label>
                   <Select
-                    value={selectedCourseForSummary?.id}
-                    onValueChange={(value) => {
-                      const course = courses.find(c => c.id === value);
-                      setSelectedCourseForSummary(course);
-                    }}
+                    value={formData.level}
+                    onValueChange={(value) => setFormData({ ...formData, level: value })}
                   >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecciona un curso" />
+                    <SelectTrigger data-testid="course-level-select">
+                      <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {courses.map((course) => (
-                        <SelectItem key={course.id} value={course.id}>
-                          {course.title}
-                        </SelectItem>
-                      ))}
+                      <SelectItem value="Básico">Básico</SelectItem>
+                      <SelectItem value="Intermedio">Intermedio</SelectItem>
+                      <SelectItem value="Avanzado">Avanzado</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                <div>
-                  <Label htmlFor="pdf-upload">Subir PDF Teórico</Label>
-                  <Input
-                    id="pdf-upload"
-                    type="file"
-                    accept=".pdf"
-                    onChange={(e) => setPdfFile(e.target.files[0])}
-                  />
-                  <Button onClick={handlePdfUpload} className="mt-2" size="sm">
-                    <FileText className="mr-2" size={16} />
-                    Procesar PDF
-                  </Button>
-                </div>
-                {pdfText && (
-                  <div>
-                    <Label>Vista previa del texto extraído</Label>
-                    <Textarea
-                      value={pdfText}
-                      readOnly
-                      className="h-32 text-xs"
-                    />
-                  </div>
-                )}
-                <Button
-                  onClick={handleGenerateSummary}
-                  disabled={!pdfText || !selectedCourseForSummary || generatingSummary}
-                  className="w-full"
-                >
-                  {generatingSummary ? 'Generando con Gemini...' : 'Generar Resumen'}
-                </Button>
               </div>
-            </DialogContent>
-          </Dialog>
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={resetForm}>
-                <Plus className="mr-2" size={20} />
-                Nuevo Curso
+              <div>
+                <Label htmlFor="instructor">Instructor</Label>
+                <Input
+                  id="instructor"
+                  value={formData.instructor}
+                  onChange={(e) => setFormData({ ...formData, instructor: e.target.value })}
+                  placeholder="Nombre del instructor"
+                  data-testid="course-instructor-input"
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={loading} data-testid="save-course-btn">
+                {loading ? 'Guardando...' : editingCourse ? 'Actualizar Curso' : 'Crear Curso'}
               </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>
-                  {editingCourse ? 'Editar Curso' : 'Nuevo Curso'}
-                </DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <Label htmlFor="title">Título</Label>
-                  <Input
-                    id="title"
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="description">Descripción</Label>
-                  <Textarea
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="category">Categoría</Label>
-                    <Input
-                      id="category"
-                      value={formData.category}
-                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="level">Nivel</Label>
-                    <Select
-                      value={formData.level}
-                      onValueChange={(value) => setFormData({ ...formData, level: value })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Básico">Básico</SelectItem>
-                        <SelectItem value="Intermedio">Intermedio</SelectItem>
-                        <SelectItem value="Avanzado">Avanzado</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="modules_count">Número de Módulos</Label>
-                    <Input
-                      id="modules_count"
-                      type="number"
-                      value={formData.modules_count}
-                      onChange={(e) => setFormData({ ...formData, modules_count: parseInt(e.target.value) })}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="instructor">Instructor</Label>
-                    <Input
-                      id="instructor"
-                      value={formData.instructor}
-                      onChange={(e) => setFormData({ ...formData, instructor: e.target.value })}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="cover_image">Portada del Curso</Label>
-                  <Input
-                    id="cover_image"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="mb-2"
-                  />
-                  {formData.cover_image_url && (
-                    <img
-                      src={formData.cover_image_url}
-                      alt="Portada"
-                      className="w-full h-32 object-cover rounded-lg"
-                    />
-                  )}
-                </div>
-                <div>
-                  <Label htmlFor="summary">Resumen (opcional)</Label>
-                  <Textarea
-                    id="summary"
-                    value={formData.summary}
-                    onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
-                    placeholder="Puedes agregar un resumen manualmente o generarlo con IA"
-                    rows={4}
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? 'Guardando...' : editingCourse ? 'Actualizar' : 'Crear'}
-                </Button>
-              </form>
-            </DialogContent>
-          </Dialog>
-        </div>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {courses.map((course) => (
-          <Card key={course.id}>
-            {course.cover_image_url && (
-              <img
-                src={course.cover_image_url}
-                alt={course.title}
-                className="w-full h-48 object-cover rounded-t-lg"
-              />
-            )}
-            <CardHeader>
-              <CardTitle className="text-lg">{course.title}</CardTitle>
-              <div className="flex items-center gap-2 text-sm text-slate-600">
-                <span className="px-2 py-1 bg-primary/10 text-primary rounded">
-                  {course.level}
-                </span>
-                <span>{course.modules_count} módulos</span>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-slate-600 mb-4 line-clamp-2">
-                {course.description}
-              </p>
-              {course.summary && (
-                <p className="text-xs text-emerald-600 mb-4">
-                  ✓ Resumen generado con IA
-                </p>
-              )}
-              <div className="flex flex-col gap-2">
-                <Button
-                  size="sm"
-                  onClick={() => navigate(`/admin/courses/${course.id}/content`)}
-                  className="w-full"
-                >
-                  <BookOpen size={16} className="mr-2" />
-                  Editar Contenido
-                </Button>
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleEdit(course)}
-                    className="flex-1"
-                  >
-                    <Edit size={16} className="mr-1" />
-                    Editar
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    onClick={() => handleDelete(course.id)}
-                  >
-                    <Trash2 size={16} />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      {courses.length === 0 ? (
+        <Card className="p-12 text-center">
+          <GraduationCap className="mx-auto mb-4 text-slate-400" size={48} />
+          <h3 className="text-lg font-medium text-slate-700 mb-2">No hay cursos creados</h3>
+          <p className="text-slate-500 mb-4">Crea tu primer curso para comenzar a agregar contenido</p>
+          <Button onClick={() => setDialogOpen(true)}>
+            <Plus className="mr-2" size={16} />
+            Crear Curso
+          </Button>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {courses.map((course) => {
+            const stats = coursesStats[course.id] || { chapters: 0, lessons: 0 };
+            return (
+              <Card key={course.id} className="hover:shadow-lg transition-shadow" data-testid={`course-card-${course.id}`}>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg leading-tight">{course.title}</CardTitle>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="px-2 py-1 bg-primary/10 text-primary rounded text-xs font-medium">
+                      {course.level}
+                    </span>
+                    <span className="px-2 py-1 bg-slate-100 text-slate-600 rounded text-xs">
+                      {course.category}
+                    </span>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-slate-600 mb-4 line-clamp-2">
+                    {course.description}
+                  </p>
+                  
+                  {/* Stats */}
+                  <div className="flex items-center gap-4 mb-4 text-sm text-slate-500">
+                    <div className="flex items-center gap-1">
+                      <Layers size={14} />
+                      <span>{stats.chapters} capítulos</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <BookOpen size={14} />
+                      <span>{stats.lessons} lecciones</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col gap-2">
+                    <Button
+                      size="sm"
+                      onClick={() => navigate(`/admin/courses/${course.id}/content`)}
+                      className="w-full"
+                      data-testid={`edit-content-${course.id}`}
+                    >
+                      <BookOpen size={16} className="mr-2" />
+                      Editar Contenido
+                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleEdit(course)}
+                        className="flex-1"
+                        data-testid={`edit-course-${course.id}`}
+                      >
+                        <Edit size={14} className="mr-1" />
+                        Editar
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => handleDelete(course.id)}
+                        data-testid={`delete-course-${course.id}`}
+                      >
+                        <Trash2 size={14} />
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
