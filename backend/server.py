@@ -96,14 +96,17 @@ class Question(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     course_id: str
+    chapter_id: Optional[str] = None  # Optional chapter classification
+    lesson_id: Optional[str] = None   # Optional lesson classification
     topic: str
     subtopic: Optional[str] = None
     difficulty: str
-    question_text: str
-    options: List[str]
-    correct_answer: str
-    explanation: str
-    latex_content: Optional[str] = None
+    question_text: str  # Supports Markdown + KaTeX
+    options: List[str]  # Each option supports Markdown + KaTeX
+    correct_answer: str  # A, B, C, or D - now randomized
+    explanation: str     # Supports Markdown + KaTeX
+    latex_content: Optional[str] = None  # Legacy field for main formula
+    image_placeholder: Optional[str] = None  # Description for GPAI image generation
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class QuizAttempt(BaseModel):
@@ -496,12 +499,18 @@ async def create_question(question: Question, _: str = Depends(verify_admin_toke
 @admin_router.get("/questions")
 async def get_all_questions(
     course_id: Optional[str] = None,
+    chapter_id: Optional[str] = None,
+    lesson_id: Optional[str] = None,
     topic: Optional[str] = None,
     _: str = Depends(verify_admin_token)
 ):
     query = {}
     if course_id:
         query["course_id"] = course_id
+    if chapter_id:
+        query["chapter_id"] = chapter_id
+    if lesson_id:
+        query["lesson_id"] = lesson_id
     if topic:
         query["topic"] = topic
     
@@ -574,47 +583,89 @@ FORMATO:
 @admin_router.post("/generate-questions")
 async def generate_questions(request: GenerateQuestionsRequest, _: str = Depends(verify_admin_token)):
     try:
-        system_message = """Eres un experto en evaluación educativa de Se Remonta, especializado en crear preguntas de examen de opción múltiple para estudiantes universitarios.
+        import random
+        
+        system_message = """Eres un experto en evaluación educativa de Se Remonta, especializado en crear preguntas de examen de opción múltiple para estudiantes universitarios de matemáticas y ciencias.
 
-REGLAS ESTRICTAS:
+TU TAREA PRINCIPAL:
+1. EXTRAE ejercicios del documento proporcionado y conviértelos en preguntas de opción múltiple
+2. CREA variantes de los ejercicios (cambiando números, funciones, o contexto)
+3. GENERA preguntas nuevas basadas en los conceptos del documento
 
-1. Genera preguntas que evalúen COMPRENSIÓN, no solo memorización
-2. Cada pregunta debe tener exactamente 4 opciones (A, B, C, D)
-3. Los distractores (opciones incorrectas) deben ser plausibles
-4. La explicación debe ser educativa y detallada
+REGLAS ESTRICTAS PARA LAS FÓRMULAS:
+- USA LaTeX en línea con $...$ para fórmulas cortas: $f(x) = x^2$
+- USA LaTeX en bloque con $$...$$ para fórmulas largas o importantes
+- NUNCA uses \\( \\) ni \\[ \\] - solo $ y $$
+- Para fracciones: $\\frac{a}{b}$
+- Para derivadas: $\\frac{d}{dx}$, $f'(x)$
+- Para raíces: $\\sqrt{x}$, $\\sqrt[n]{x}$
+- Para integrales: $\\int f(x)dx$, $\\int_a^b$
+
+IMPORTANTE - VARIACIÓN DE RESPUESTA CORRECTA:
+- La respuesta correcta DEBE variar entre A, B, C, D
+- NO todas las respuestas deben ser A
+- Distribuye las respuestas correctas de forma aleatoria
+- Ejemplo: si generas 5 preguntas, las respuestas podrían ser: B, D, A, C, A
+
+FORMATO DE CADA OPCIÓN:
+- Formato: "A) contenido con $fórmulas$ si aplica"
+- Cada opción en su propia línea
+- Los distractores deben ser errores comunes que cometen los estudiantes
 
 FORMATO DE SALIDA - JSON ESTRICTO:
 ```json
 {
   "questions": [
     {
-      "question_text": "Enunciado claro de la pregunta. Si incluye fórmulas usar $formula$ o $$formula$$",
+      "question_text": "Enunciado claro. Usa $fórmulas$ para matemáticas.",
       "options": [
-        "A) Primera opción",
-        "B) Segunda opción", 
-        "C) Tercera opción",
-        "D) Cuarta opción"
+        "A) $\\\\frac{d}{dx}[x^3] = 3x^2$",
+        "B) $\\\\frac{d}{dx}[x^3] = x^2$",
+        "C) $\\\\frac{d}{dx}[x^3] = 3x^3$",
+        "D) $\\\\frac{d}{dx}[x^3] = 2x^2$"
       ],
       "correct_answer": "A",
-      "explanation": "Explicación detallada de por qué A es correcta y por qué las otras son incorrectas",
-      "difficulty": "fácil|medio|difícil",
-      "latex_content": "Fórmula principal si aplica, ej: \\\\frac{d}{dx}[x^n] = nx^{n-1}"
+      "explanation": "Explicación paso a paso usando $fórmulas$. La regla de la potencia establece que $\\\\frac{d}{dx}[x^n] = nx^{n-1}$, por lo tanto $\\\\frac{d}{dx}[x^3] = 3x^{3-1} = 3x^2$.",
+      "difficulty": "medio",
+      "image_placeholder": "Gráfica de f(x)=x³ mostrando la tangente en x=1 con pendiente 3"
     }
   ]
 }
 ```
 
-IMPORTANTE: Responde SOLO con el JSON, sin texto adicional antes o después."""
+CAMPO image_placeholder:
+- Es OPCIONAL - solo inclúyelo si la pregunta realmente necesita un gráfico o diagrama
+- Describe exactamente qué debe mostrar la imagen para que pueda ser generada con IA
+- Ejemplos buenos: "Gráfica de la función f(x)=sin(x) con el área bajo la curva entre 0 y π sombreada"
+- NO lo incluyas para preguntas puramente algebraicas
 
+IMPORTANTE: Responde SOLO con el JSON, sin texto adicional."""
+
+        # Determine random distribution of correct answers
+        letters = ['A', 'B', 'C', 'D']
+        answer_distribution = [random.choice(letters) for _ in range(request.num_questions)]
+        
         user_prompt = f"""Genera exactamente {request.num_questions} preguntas de opción múltiple sobre el tema "{request.topic}".
 
-Material de referencia:
-{request.pdf_content[:12000]}
+DISTRIBUCIÓN SUGERIDA DE RESPUESTAS CORRECTAS (para variar):
+{', '.join([f"Pregunta {i+1}: {l}" for i, l in enumerate(answer_distribution)])}
 
-Distribución de dificultad sugerida:
-- 30% fácil (conceptos básicos)
-- 50% medio (aplicación de conceptos)
-- 20% difícil (análisis y síntesis)
+Material de referencia del documento:
+---
+{request.pdf_content[:15000]}
+---
+
+INSTRUCCIONES ESPECÍFICAS:
+1. EXTRAE al menos 50% de las preguntas directamente del documento (adaptándolas a formato de opción múltiple)
+2. CREA variantes cambiando valores numéricos o funciones similares
+3. Las fórmulas DEBEN usar $ para inline y $$ para bloques
+4. Cada pregunta debe tener 4 opciones (A, B, C, D) con distractores plausibles
+5. La explicación debe mostrar el proceso paso a paso
+
+Distribución de dificultad:
+- 30% fácil (conceptos básicos, cálculos directos)
+- 50% medio (aplicación de reglas, varios pasos)
+- 20% difícil (combinación de conceptos, análisis)
 
 Responde SOLO con el JSON válido."""
         
@@ -636,6 +687,12 @@ Responde SOLO con el JSON válido."""
             
             questions_data = json.loads(clean_response)
             questions = questions_data.get("questions", [])
+            
+            # Ensure correct_answer values are valid
+            for q in questions:
+                if q.get('correct_answer') not in ['A', 'B', 'C', 'D']:
+                    q['correct_answer'] = 'A'
+                    
         except json.JSONDecodeError as je:
             logging.error(f"JSON parse error: {je}, response: {response[:500]}")
             questions = []

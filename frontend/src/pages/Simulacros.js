@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Plus, Loader2, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { Plus, Loader2, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { QuestionContent, QuestionOption, ExplanationBlock } from '@/components/course/QuestionRenderer';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -135,50 +136,48 @@ const Simulacros = () => {
               {activeQuiz.questions.length} preguntas
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
-            {activeQuiz.questions.map((question, index) => (
-              <div key={index} className="space-y-3" data-testid={`quiz-question-${index}`}>
-                <h3 className="font-semibold text-lg">
-                  {index + 1}. {question.question_text || question.question}
-                </h3>
-                <div className="space-y-2">
-                  {question.options.map((option, optIndex) => {
-                    const optionLetter = option.charAt(0);
-                    const isSelected = answers[index] === optionLetter;
-                    const isCorrect = optionLetter === (question.correct_answer || question.correct_option);
-                    const showCorrect = showResults && isCorrect;
-                    const showIncorrect = showResults && isSelected && !isCorrect;
-
-                    return (
-                      <button
-                        key={optIndex}
-                        onClick={() => !showResults && handleAnswerSelect(index, optionLetter)}
-                        disabled={showResults}
-                        data-testid={`quiz-option-${index}-${optIndex}`}
-                        className={`w-full p-4 text-left border-2 rounded-xl quiz-option ${
-                          isSelected ? 'selected' : ''
-                        } ${showCorrect ? 'correct' : ''} ${showIncorrect ? 'incorrect' : ''}`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span>{option}</span>
-                          {showCorrect && <CheckCircle2 className="text-green-600" size={20} />}
-                          {showIncorrect && <XCircle className="text-red-600" size={20} />}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-                {showResults && question.explanation && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-3">
-                    <p className="text-sm text-blue-900">
-                      <strong>Explicación:</strong> {question.explanation}
-                    </p>
+          <CardContent className="space-y-8">
+            {activeQuiz.questions.map((question, index) => {
+              const correctAnswer = question.correct_answer || question.correct_option;
+              
+              return (
+                <div key={index} className="space-y-4" data-testid={`quiz-question-${index}`}>
+                  {/* Question number and text with KaTeX support */}
+                  <div className="font-medium text-lg">
+                    <QuestionContent content={`**${index + 1}.** ${question.question_text || question.question}`} />
                   </div>
-                )}
-              </div>
-            ))}
+                  
+                  {/* Options with KaTeX support */}
+                  <div className="space-y-3">
+                    {question.options.map((option, optIndex) => {
+                      const optionLetter = option.charAt(0);
+                      const isSelected = answers[index] === optionLetter;
+                      const isCorrect = optionLetter === correctAnswer;
+                      
+                      return (
+                        <QuestionOption
+                          key={optIndex}
+                          option={option}
+                          isSelected={isSelected}
+                          isCorrect={isCorrect}
+                          showResult={showResults}
+                          onClick={() => !showResults && handleAnswerSelect(index, optionLetter)}
+                          disabled={showResults}
+                          testId={`quiz-option-${index}-${optIndex}`}
+                        />
+                      );
+                    })}
+                  </div>
+                  
+                  {/* Explanation with KaTeX support */}
+                  {showResults && question.explanation && (
+                    <ExplanationBlock explanation={question.explanation} />
+                  )}
+                </div>
+              );
+            })}
 
-            <div className="flex gap-3 pt-4">
+            <div className="flex gap-3 pt-4 border-t">
               {!showResults ? (
                 <>
                   <Button

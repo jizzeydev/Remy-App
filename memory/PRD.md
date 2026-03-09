@@ -78,11 +78,16 @@ App educativa para "Se Remonta" con las siguientes características:
 
 ## Testing Status (March 9, 2026)
 - Feature Fórmulas eliminada: ✅
-- Simulacros funcionales: ✅ (con 5 preguntas)
+- Simulacros funcionales: ✅ (con KaTeX renderizado)
 - Placeholder de imagen: ✅ verificado
 - Admin Dashboard actualizado: ✅
 - Error Select.Item en AdminQuestions: ✅ CORREGIDO
 - Editor de contenido de cursos: ✅ FUNCIONAL
+- KaTeX en preguntas/simulacros: ✅ IMPLEMENTADO
+- Respuestas correctas variadas (no siempre A): ✅ IMPLEMENTADO
+- Nueva clasificación Curso→Capítulo→Lección: ✅ IMPLEMENTADO
+- Editor de preguntas mejorado con imágenes: ✅ IMPLEMENTADO
+- Generación de preguntas con IA mejorada: ✅ IMPLEMENTADO
 
 ## Next Steps (Backlog P1)
 - [ ] Add more questions to question bank for better quiz variety
