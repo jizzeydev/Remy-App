@@ -173,9 +173,11 @@ class GenerateQuestionsRequest(BaseModel):
     num_questions: int = 10
 
 class GenerateLessonContentRequest(BaseModel):
-    pdf_content: str
+    pdf_content: Optional[str] = None
+    topic_prompt: Optional[str] = None  # New: generate from topic
     lesson_title: str
     chapter_title: str
+    course_title: str = ""
 
 class FormulaSearchRequest(BaseModel):
     query: str
@@ -821,14 +823,6 @@ EJEMPLOS de cómo insertar imágenes en el texto:
 
 Como vemos en la imagen, aunque f(1) no existe, la función se acerca a 2."
 
-Otro ejemplo:
-
-"La discontinuidad de salto se visualiza claramente:
-
-**[INSERTAR IMAGEN: Función a trozos g(x) con rama izquierda terminando en círculo abierto ○ en (1,2) y rama derecha iniciando con círculo cerrado ● en (1,3), mostrando el salto vertical]**
-
-El salto de 1 unidad entre y=2 e y=3 demuestra que el límite no existe."
-
 ⚠️ IMPORTANTE SOBRE VISUALIZACIONES:
 - Puedes combinar Desmos + imágenes en la misma lección
 - Usa Desmos para lo interactivo (explorar con sliders)
@@ -855,9 +849,9 @@ El salto de 1 unidad entre y=2 e y=3 demuestra que el límite no existe."
 (Con explicación de cada símbolo y cuándo usarlas)
 
 ## 👀 Visualízalo
-(Usa Desmos para exploración interactiva O [IMAGEN_GPAI:...] para ilustraciones estáticas detalladas)
+(Usa Desmos para exploración interactiva O **[INSERTAR IMAGEN:]** para ilustraciones estáticas detalladas)
 - Si el concepto requiere EXPLORAR con sliders → Desmos
-- Si el concepto requiere ver puntos específicos, discontinuidades, anotaciones → IMAGEN_GPAI
+- Si el concepto requiere ver puntos específicos, discontinuidades, anotaciones → INSERTAR IMAGEN
 
 ## ✍️ Ejemplos Resueltos
 (Mínimo 3 ejemplos, del más fácil al más difícil, paso a paso)
@@ -873,16 +867,21 @@ El salto de 1 unidad entre y=2 e y=3 demuestra que el límite no existe."
 
 IMPORTANTE: El estudiante debe sentir que PUEDE aprender esto. Sé motivador pero honesto."""
 
-        user_prompt = f"""Crea una lección COMPLETA, INTERACTIVA y MOTIVADORA para:
+        # Determine if generating from document or from topic prompt
+        if request.pdf_content and request.pdf_content.strip():
+            # Generate from PDF document
+            user_prompt = f"""Crea una lección COMPLETA, INTERACTIVA y MOTIVADORA para:
 
 📖 Título: "{request.lesson_title}"
 📂 Capítulo: "{request.chapter_title}"
+📚 Curso: "{request.course_title}"
 
-Material de referencia:
-{request.pdf_content[:10000]}
+Material de referencia del documento:
+{request.pdf_content[:12000]}
 
 REQUISITOS OBLIGATORIOS:
-✅ En la sección "Visualízalo": decide inteligentemente entre Desmos (interactivo) o IMAGEN_GPAI (descripción para generar imagen)
+✅ Extrae y adapta el contenido del documento de forma didáctica
+✅ En la sección "Visualízalo": decide inteligentemente entre Desmos (interactivo) o **[INSERTAR IMAGEN:]** (descripción para imagen estática)
 ✅ Mínimo 3 ejemplos resueltos paso a paso
 ✅ Ejemplos de la vida cotidiana
 ✅ Una tabla comparativa o de resumen
@@ -891,15 +890,48 @@ REQUISITOS OBLIGATORIOS:
 
 RECUERDA:
 - Desmos = cuando el estudiante debe MOVER/EXPLORAR algo
-- IMAGEN_GPAI = cuando necesitas mostrar algo estático con detalles precisos (discontinuidades, puntos específicos, anotaciones)
+- **[INSERTAR IMAGEN:]** = cuando necesitas mostrar algo estático con detalles precisos (discontinuidades, puntos específicos, anotaciones)
 
 ¡Haz que el estudiante disfrute aprendiendo!"""
+
+        elif request.topic_prompt and request.topic_prompt.strip():
+            # Generate from topic/prompt (NEW)
+            user_prompt = f"""Crea una lección COMPLETA, INTERACTIVA y MOTIVADORA desde cero para:
+
+📖 Título de la Lección: "{request.lesson_title}"
+📂 Capítulo: "{request.chapter_title}"
+📚 Curso: "{request.course_title}"
+
+🎯 TEMA/INSTRUCCIONES DEL USUARIO:
+{request.topic_prompt}
+
+REQUISITOS OBLIGATORIOS:
+✅ Genera contenido original y completo sobre el tema especificado
+✅ Adapta el nivel al curso ({request.course_title})
+✅ En la sección "Visualízalo": decide inteligentemente entre Desmos (interactivo) o **[INSERTAR IMAGEN:]** (descripción para imagen estática)
+✅ Mínimo 3 ejemplos resueltos paso a paso con diferentes niveles de dificultad
+✅ Ejemplos de la vida cotidiana que conecten con el estudiante
+✅ Una tabla comparativa o de resumen de los conceptos clave
+✅ Tips específicos para aprobar el examen
+✅ Tono amigable pero profesional
+
+RECUERDA:
+- Si el tema requiere gráficas que el estudiante pueda explorar → usa Desmos con sliders
+- Si el tema requiere diagramas estáticos con detalles precisos → usa **[INSERTAR IMAGEN: descripción]**
+- El contenido debe ser tan completo como si fuera de un documento de referencia
+
+¡Crea el mejor material didáctico posible para este tema!"""
+
+        else:
+            raise HTTPException(status_code=400, detail="Debes proporcionar un documento PDF o un tema para generar contenido")
         
         chat = get_gpt_chat(system_message)
         user_message = UserMessage(text=user_prompt)
         response = await chat.send_message(user_message)
         
         return {"content": response}
+    except HTTPException:
+        raise
     except Exception as e:
         logging.error(f"Error generating lesson content: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))

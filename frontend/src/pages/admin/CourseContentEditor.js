@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, ArrowLeft, GripVertical, BookOpen, FileText, Sparkles, Send, MessageSquare, X, Image, Upload, Wand2 } from 'lucide-react';
+import { Plus, Edit, Trash2, ArrowLeft, GripVertical, BookOpen, FileText, Sparkles, Send, MessageSquare, X, Image, Upload, Wand2, Check } from 'lucide-react';
 import MarkdownRenderer from '@/components/course/MarkdownRenderer';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -29,6 +29,8 @@ const CourseContentEditor = () => {
   const [pdfFile, setPdfFile] = useState(null);
   const [pdfText, setPdfText] = useState('');
   const [generatingContent, setGeneratingContent] = useState(false);
+  const [topicPrompt, setTopicPrompt] = useState(''); // NEW: topic prompt for generation
+  const [generationMode, setGenerationMode] = useState('prompt'); // 'prompt' or 'document'
   
   // AI Chat state
   const [chatOpen, setChatOpen] = useState(false);
@@ -226,8 +228,18 @@ const CourseContentEditor = () => {
   };
 
   const handleGenerateContent = async () => {
-    if (!pdfText || !lessonForm.title) {
-      toast.error('Debes subir un PDF y especificar título de lección');
+    if (!lessonForm.title) {
+      toast.error('Especifica el título de la lección');
+      return;
+    }
+
+    // Validate based on mode
+    if (generationMode === 'document' && !pdfText) {
+      toast.error('Procesa un PDF primero');
+      return;
+    }
+    if (generationMode === 'prompt' && !topicPrompt.trim()) {
+      toast.error('Escribe un tema o instrucciones para generar');
       return;
     }
 
@@ -237,9 +249,11 @@ const CourseContentEditor = () => {
       const response = await axios.post(
         `${ADMIN_API}/generate-lesson-content`,
         {
-          pdf_content: pdfText,
+          pdf_content: generationMode === 'document' ? pdfText : null,
+          topic_prompt: generationMode === 'prompt' ? topicPrompt : null,
           lesson_title: lessonForm.title,
-          chapter_title: selectedChapter.title
+          chapter_title: selectedChapter?.title || '',
+          course_title: course?.title || ''
         },
         {
           headers: { Authorization: `Bearer ${token}` }
@@ -247,7 +261,7 @@ const CourseContentEditor = () => {
       );
 
       setLessonForm({ ...lessonForm, content: response.data.content });
-      toast.success('Contenido generado con Gemini');
+      toast.success('¡Contenido generado con GPT-5.2!');
     } catch (error) {
       console.error('Error generating content:', error);
       toast.error('Error al generar contenido');
@@ -451,6 +465,8 @@ Estoy listo para mejorar la lección "${lessonForm.title}".
     setEditingLesson(null);
     setPdfFile(null);
     setPdfText('');
+    setTopicPrompt('');
+    setGenerationMode('prompt');
     setLessonForm({ title: '', content: '', order: 1, duration_minutes: 30 });
     setChatOpen(false);
     setChatHistory([]);
@@ -624,29 +640,107 @@ Estoy listo para mejorar la lección "${lessonForm.title}".
             </div>
 
             <div className="border-t pt-4">
-              <Label className="flex items-center gap-2 mb-2">
+              <Label className="flex items-center gap-2 mb-3">
                 <Sparkles size={16} className="text-primary" />
-                Generar contenido con IA (opcional)
+                Generar contenido con IA (GPT-5.2)
               </Label>
-              <div className="space-y-2">
-                <Input
-                  type="file"
-                  accept=".pdf"
-                  onChange={(e) => setPdfFile(e.target.files[0])}
-                />
-                <div className="flex gap-2">
-                  <Button type="button" onClick={handlePdfUpload} size="sm" variant="outline" disabled={!pdfFile}>
-                    Procesar PDF
+              
+              {/* Generation Mode Tabs */}
+              <div className="bg-slate-50 rounded-lg p-4">
+                <div className="flex gap-2 mb-4">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant={generationMode === 'prompt' ? 'default' : 'outline'}
+                    onClick={() => setGenerationMode('prompt')}
+                    className="flex-1"
+                  >
+                    <MessageSquare size={14} className="mr-1" />
+                    Desde Tema
                   </Button>
                   <Button
                     type="button"
-                    onClick={handleGenerateContent}
                     size="sm"
-                    disabled={!pdfText || generatingContent}
+                    variant={generationMode === 'document' ? 'default' : 'outline'}
+                    onClick={() => setGenerationMode('document')}
+                    className="flex-1"
                   >
-                    {generatingContent ? 'Generando...' : 'Generar con Gemini'}
+                    <FileText size={14} className="mr-1" />
+                    Desde Documento
                   </Button>
                 </div>
+
+                {generationMode === 'prompt' ? (
+                  <div className="space-y-3">
+                    <p className="text-xs text-slate-500">
+                      Describe el tema y qué quieres que contenga la lección. Remy generará contenido completo con ejemplos, gráficos y ejercicios.
+                    </p>
+                    <Textarea
+                      value={topicPrompt}
+                      onChange={(e) => setTopicPrompt(e.target.value)}
+                      placeholder="Ej: Explica la regla de la cadena para derivadas, incluye ejemplos con funciones trigonométricas compuestas y aplicaciones en física."
+                      className="h-24 text-sm"
+                    />
+                    <Button
+                      type="button"
+                      onClick={handleGenerateContent}
+                      disabled={!topicPrompt.trim() || !lessonForm.title || generatingContent}
+                      className="w-full"
+                    >
+                      {generatingContent ? (
+                        <>
+                          <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                          Generando con GPT-5.2...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles size={16} className="mr-2" />
+                          Generar Lección
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <p className="text-xs text-slate-500">
+                      Sube un PDF con el material de referencia. Remy extraerá y adaptará el contenido de forma didáctica.
+                    </p>
+                    <Input
+                      type="file"
+                      accept=".pdf"
+                      onChange={(e) => setPdfFile(e.target.files[0])}
+                      className="text-sm"
+                    />
+                    <div className="flex gap-2">
+                      <Button 
+                        type="button" 
+                        onClick={handlePdfUpload} 
+                        size="sm" 
+                        variant="outline" 
+                        disabled={!pdfFile}
+                        className="flex-1"
+                      >
+                        <FileText size={14} className="mr-1" />
+                        Procesar PDF
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={handleGenerateContent}
+                        size="sm"
+                        disabled={!pdfText || !lessonForm.title || generatingContent}
+                        className="flex-1"
+                      >
+                        {generatingContent ? 'Generando...' : 'Generar desde PDF'}
+                      </Button>
+                    </div>
+                    {pdfText && (
+                      <p className="text-xs text-green-600 flex items-center gap-1">
+                        <Check size={12} />
+                        PDF procesado correctamente
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
