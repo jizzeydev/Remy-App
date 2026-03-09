@@ -467,6 +467,55 @@ async def get_user_progress(user_id: str):
             progress['last_activity'] = datetime.fromisoformat(progress['last_activity'])
     return progress_list
 
+@api_router.get("/progress/{student_id}/{course_id}")
+async def get_course_progress(student_id: str, course_id: str):
+    """Get progress for a specific student and course"""
+    progress = await db.lesson_progress.find_one(
+        {"student_id": student_id, "course_id": course_id},
+        {"_id": 0}
+    )
+    if not progress:
+        return {"student_id": student_id, "course_id": course_id, "completed_lessons": []}
+    return progress
+
+class CompleteLessonRequest(BaseModel):
+    student_id: str
+    course_id: str
+    lesson_id: str
+
+@api_router.post("/progress/complete-lesson")
+async def complete_lesson(request: CompleteLessonRequest):
+    """Mark a lesson as completed for a student"""
+    # Find existing progress or create new
+    progress = await db.lesson_progress.find_one({
+        "student_id": request.student_id,
+        "course_id": request.course_id
+    })
+    
+    if progress:
+        # Add lesson to completed list if not already there
+        completed = progress.get("completed_lessons", [])
+        if request.lesson_id not in completed:
+            completed.append(request.lesson_id)
+            await db.lesson_progress.update_one(
+                {"student_id": request.student_id, "course_id": request.course_id},
+                {"$set": {
+                    "completed_lessons": completed,
+                    "last_activity": datetime.now(timezone.utc).isoformat()
+                }}
+            )
+    else:
+        # Create new progress record
+        await db.lesson_progress.insert_one({
+            "id": f"progress_{request.student_id}_{request.course_id}",
+            "student_id": request.student_id,
+            "course_id": request.course_id,
+            "completed_lessons": [request.lesson_id],
+            "last_activity": datetime.now(timezone.utc).isoformat()
+        })
+    
+    return {"success": True, "message": "Lección completada"}
+
 @api_router.get("/quiz/history/{user_id}")
 async def get_quiz_history(user_id: str, limit: int = 20):
     quizzes = await db.quiz_attempts.find(
