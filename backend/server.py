@@ -1062,6 +1062,7 @@ class EditLessonContentRequest(BaseModel):
     user_instruction: str
     lesson_title: str = ""
     chapter_title: str = ""
+    course_title: str = ""
 
 @admin_router.post("/edit-lesson-content")
 async def edit_lesson_content(request: EditLessonContentRequest, _: str = Depends(verify_admin_token)):
@@ -1095,15 +1096,23 @@ async def edit_lesson_content(request: EditLessonContentRequest, _: str = Depend
    [DESMOS:y=x^2]
    [DESMOS:a=1]  <- MAL: separados no funcionan juntos
 
-3. TABLAS MARKDOWN:
+3. **INSERTAR IMAGEN** - Para diagramas estáticos:
+   Usa cuando necesites mostrar algo que Desmos no puede hacer bien:
+   - Círculos abiertos/cerrados en discontinuidades
+   - Diagramas con anotaciones específicas
+   - Flechas o marcas especiales
+   
+   Formato: **[INSERTAR IMAGEN: descripción detallada para generar con IA]**
+
+4. TABLAS MARKDOWN:
    | Columna 1 | Columna 2 |
    |-----------|-----------|
    | dato      | dato      |
 
-4. ESTRUCTURA - Usa emojis para secciones:
+5. ESTRUCTURA - Usa emojis para secciones:
    ## 🎯 Objetivo
    ## 📚 Explicación  
-   ## 👀 Visualízalo (aquí va Desmos)
+   ## 👀 Visualízalo (aquí va Desmos o INSERTAR IMAGEN)
    ## ✍️ Ejemplo Resuelto
    ## 💡 Tip
 
@@ -1120,7 +1129,9 @@ async def edit_lesson_content(request: EditLessonContentRequest, _: str = Depend
 - Mantén TODO lo que no se pidió cambiar
 - El resultado debe ser contenido listo para mostrar al estudiante"""
 
-        user_prompt = f"""📄 LECCIÓN: "{request.lesson_title}" (Capítulo: {request.chapter_title})
+        user_prompt = f"""📚 CURSO: "{request.course_title}"
+📂 CAPÍTULO: "{request.chapter_title}"
+📄 LECCIÓN: "{request.lesson_title}"
 
 ═══════════════════════════════════════
 CONTENIDO ACTUAL:
@@ -1134,7 +1145,7 @@ CONTENIDO ACTUAL:
 ═══════════════════════════════════════
 
 Genera el contenido COMPLETO de la lección con la modificación solicitada.
-Recuerda: Si agregas un gráfico Desmos, incluye sliders para hacerlo interactivo y explica qué debe observar el estudiante."""
+Recuerda: Si agregas visualizaciones, usa Desmos para interactivo o **[INSERTAR IMAGEN:]** para estático."""
         
         chat = get_gpt_chat(system_message)
         user_message = UserMessage(text=user_prompt)
@@ -1143,6 +1154,125 @@ Recuerda: Si agregas un gráfico Desmos, incluye sliders para hacerlo interactiv
         return {"content": response}
     except Exception as e:
         logging.error(f"Error editing lesson content: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Edit question content with AI
+class EditQuestionContentRequest(BaseModel):
+    current_content: str  # JSON stringified question data or main content
+    user_instruction: str
+    question_data: Dict[str, Any] = {}  # Full question object for context
+    topic: str = ""
+    course_title: str = ""
+
+@admin_router.post("/edit-question-content")
+async def edit_question_content(request: EditQuestionContentRequest, _: str = Depends(verify_admin_token)):
+    try:
+        system_message = """Eres REMY, el asistente educativo de Se Remonta. Tu trabajo es MEJORAR preguntas de examen para que evalúen correctamente y ayuden a los estudiantes a aprender.
+
+🎯 TU MISIÓN AL EDITAR PREGUNTAS:
+- Mejorar la claridad del enunciado
+- Crear distractores (opciones incorrectas) que sean PLAUSIBLES pero claramente distinguibles
+- Hacer explicaciones paso a paso que enseñen
+- Mantener el nivel de dificultad apropiado
+
+📐 FORMATO DE RESPUESTA - JSON ESTRICTO:
+Responde SIEMPRE con un JSON válido con esta estructura exacta:
+
+```json
+{
+  "question_text": "Enunciado claro. Usa $fórmulas$ para matemáticas.",
+  "options": [
+    "A) Primera opción con $fórmula$ si aplica",
+    "B) Segunda opción",
+    "C) Tercera opción",
+    "D) Cuarta opción"
+  ],
+  "correct_answer": "A",
+  "explanation": "Explicación paso a paso...",
+  "difficulty": "fácil|medio|difícil"
+}
+```
+
+📝 REGLAS PARA FÓRMULAS:
+- En línea: $formula$ (ej: $f(x) = x^2$)
+- En bloque: $$formula$$ (para ecuaciones importantes)
+- Usa \\frac{a}{b} para fracciones
+- Usa \\sqrt{x} para raíces
+
+🎓 REGLAS PARA OPCIONES:
+- Cada opción debe empezar con letra y paréntesis: "A) ", "B) ", etc.
+- Los distractores deben ser errores COMUNES que estudiantes realmente cometen
+- Evita opciones obviamente incorrectas
+- La respuesta correcta puede ser A, B, C o D (varía)
+
+💡 REGLAS PARA EXPLICACIONES:
+- Muestra el proceso paso a paso
+- Explica POR QUÉ cada distractor es incorrecto
+- Usa fórmulas LaTeX donde corresponda
+- Sé didáctico pero conciso
+
+⚠️ IMPORTANTE:
+- Responde SOLO con el JSON
+- NO incluyas texto adicional antes o después
+- Si cambias la respuesta correcta, actualiza "correct_answer"
+- Mantén coherencia entre pregunta, opciones y explicación"""
+
+        # Build context from question data
+        q_data = request.question_data
+        current_question = f"""Tema: {request.topic}
+Curso: {request.course_title}
+
+Pregunta actual:
+- Enunciado: {q_data.get('question_text', request.current_content)}
+- Opciones: {json.dumps(q_data.get('options', []), ensure_ascii=False)}
+- Respuesta correcta: {q_data.get('correct_answer', 'A')}
+- Dificultad: {q_data.get('difficulty', 'medio')}
+- Explicación: {q_data.get('explanation', '')}"""
+
+        user_prompt = f"""📝 PREGUNTA A MODIFICAR:
+═══════════════════════════════════════
+{current_question}
+═══════════════════════════════════════
+
+✏️ INSTRUCCIÓN DEL ADMINISTRADOR:
+"{request.user_instruction}"
+
+═══════════════════════════════════════
+
+Genera la pregunta COMPLETA modificada en formato JSON.
+Recuerda: Los distractores deben ser errores plausibles, y la explicación debe enseñar."""
+        
+        chat = get_gpt_chat(system_message)
+        user_message = UserMessage(text=user_prompt)
+        response = await chat.send_message(user_message)
+        
+        # Parse JSON response
+        try:
+            clean_response = response.strip()
+            if clean_response.startswith("```json"):
+                clean_response = clean_response[7:]
+            if clean_response.startswith("```"):
+                clean_response = clean_response[3:]
+            if clean_response.endswith("```"):
+                clean_response = clean_response[:-3]
+            clean_response = clean_response.strip()
+            
+            question_data = json.loads(clean_response)
+            
+            return {
+                "content": json.dumps(question_data, ensure_ascii=False),
+                "question_data": question_data,
+                "message": "✅ ¡Pregunta actualizada! Revisa los cambios."
+            }
+        except json.JSONDecodeError as je:
+            logging.error(f"JSON parse error in edit question: {je}")
+            return {
+                "content": response,
+                "message": "⚠️ Respuesta generada pero puede necesitar ajustes manuales."
+            }
+            
+    except Exception as e:
+        logging.error(f"Error editing question content: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # Image generation with AI

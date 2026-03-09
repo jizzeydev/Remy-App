@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,8 +9,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, ArrowLeft, GripVertical, BookOpen, FileText, Sparkles, Send, MessageSquare, X, Image, Upload, Wand2, Check } from 'lucide-react';
+import { Plus, Edit, Trash2, ArrowLeft, GripVertical, BookOpen, FileText, Sparkles, MessageSquare, X, Image, Upload, Wand2, Check } from 'lucide-react';
 import MarkdownRenderer from '@/components/course/MarkdownRenderer';
+import RemyChat from '@/components/RemyChat';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const ADMIN_API = `${BACKEND_URL}/api/admin`;
@@ -32,12 +33,8 @@ const CourseContentEditor = () => {
   const [topicPrompt, setTopicPrompt] = useState(''); // NEW: topic prompt for generation
   const [generationMode, setGenerationMode] = useState('prompt'); // 'prompt' or 'document'
   
-  // AI Chat state
+  // AI Chat state - simplified, the RemyChat component manages its own state
   const [chatOpen, setChatOpen] = useState(false);
-  const [chatMessage, setChatMessage] = useState('');
-  const [chatLoading, setChatLoading] = useState(false);
-  const [chatHistory, setChatHistory] = useState([]);
-  const chatEndRef = useRef(null);
   
   // Image insertion state
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
@@ -271,74 +268,10 @@ const CourseContentEditor = () => {
     }
   };
 
-  // AI Chat functions
-  const handleSendChatMessage = async () => {
-    if (!chatMessage.trim() || !lessonForm.content) return;
-    
-    const userMsg = chatMessage.trim();
-    setChatMessage('');
-    setChatHistory(prev => [...prev, { role: 'user', content: userMsg }]);
-    setChatLoading(true);
-    
-    try {
-      const token = localStorage.getItem('admin_token');
-      
-      // Get chapter title for context
-      const currentChapter = chapters.find(ch => ch.id === selectedChapter);
-      const chapterTitle = currentChapter?.title || '';
-      
-      const response = await axios.post(
-        `${ADMIN_API}/edit-lesson-content`,
-        {
-          current_content: lessonForm.content,
-          user_instruction: userMsg,
-          lesson_title: lessonForm.title,
-          chapter_title: chapterTitle
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      
-      setLessonForm({ ...lessonForm, content: response.data.content });
-      setChatHistory(prev => [...prev, { 
-        role: 'assistant', 
-        content: '✅ ¡Listo! He actualizado el contenido. Revisa la vista previa para ver los cambios.' 
-      }]);
-      toast.success('Contenido actualizado');
-    } catch (error) {
-      console.error('Error editing content:', error);
-      setChatHistory(prev => [...prev, { 
-        role: 'assistant', 
-        content: '❌ Hubo un error. Intenta ser más específico en tu instrucción.' 
-      }]);
-      toast.error('Error al editar contenido');
-    } finally {
-      setChatLoading(false);
-      setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
-    }
-  };
-
-  const openChatEditor = () => {
-    setChatOpen(true);
-    setChatHistory([{
-      role: 'assistant',
-      content: `¡Hola! Soy Remy 🎓
-
-Estoy listo para mejorar la lección "${lessonForm.title}".
-
-**Puedo ayudarte a:**
-• Agregar ejemplos más claros
-• Mejorar explicaciones confusas
-• Añadir gráficos Desmos interactivos
-• Quitar contenido innecesario
-• Agregar tips para el examen
-
-**Ejemplos de instrucciones:**
-"Agrega un ejemplo paso a paso de cómo derivar x³"
-"Mejora la explicación del límite, está confusa"
-"Pon un Desmos donde se vea la tangente moviéndose"
-"Quita el segundo ejemplo y pon uno más fácil"`
-    }]);
-  };
+  // Callback for RemyChat to update content
+  const handleContentUpdate = useCallback((newContent) => {
+    setLessonForm(prev => ({ ...prev, content: newContent }));
+  }, []);
 
   // Image functions
   const handleGenerateImage = async () => {
@@ -470,8 +403,6 @@ Estoy listo para mejorar la lección "${lessonForm.title}".
     setGenerationMode('prompt');
     setLessonForm({ title: '', content: '', order: 1, duration_minutes: 30 });
     setChatOpen(false);
-    setChatHistory([]);
-    setChatMessage('');
   };
 
   if (!course) return <div>Cargando...</div>;
@@ -777,7 +708,10 @@ Estoy listo para mejorar la lección "${lessonForm.title}".
                         type="button" 
                         size="sm" 
                         variant={chatOpen ? "default" : "outline"}
-                        onClick={() => chatOpen ? setChatOpen(false) : openChatEditor()}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setChatOpen(!chatOpen);
+                        }}
                         className="gap-1"
                       >
                         <MessageSquare size={14} />
@@ -794,72 +728,28 @@ Estoy listo para mejorar la lección "${lessonForm.title}".
                   rows={20}
                   required
                 />
-                
-                {/* AI Chat Panel */}
-                {chatOpen && (
-                  <div className="absolute top-10 right-0 w-96 bg-white border rounded-lg shadow-2xl z-10">
-                    <div className="p-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-t-lg flex items-center justify-between">
-                      <span className="font-medium flex items-center gap-2">
-                        <Sparkles size={16} />
-                        Chat con Remy - Editar Lección
-                      </span>
-                      <button onClick={() => setChatOpen(false)} className="hover:bg-white/20 rounded p-1">
-                        <X size={16} />
-                      </button>
-                    </div>
-                    <div className="h-80 overflow-y-auto p-3 space-y-3 bg-slate-50">
-                      {chatHistory.map((msg, i) => (
-                        <div 
-                          key={i} 
-                          className={`p-3 rounded-lg text-sm ${
-                            msg.role === 'user' 
-                              ? 'bg-cyan-500 text-white ml-8' 
-                              : 'bg-white border shadow-sm mr-4 text-slate-700'
-                          }`}
-                        >
-                          <div className="whitespace-pre-wrap leading-relaxed">{msg.content}</div>
-                        </div>
-                      ))}
-                      {chatLoading && (
-                        <div className="bg-white border shadow-sm mr-4 p-3 rounded-lg text-sm flex items-center gap-2">
-                          <div className="animate-spin w-4 h-4 border-2 border-cyan-500 border-t-transparent rounded-full"></div>
-                          <span className="text-slate-500">Remy está trabajando...</span>
-                        </div>
-                      )}
-                      <div ref={chatEndRef} />
-                    </div>
-                    <div className="p-3 border-t bg-white rounded-b-lg">
-                      <div className="flex gap-2">
-                        <Input
-                          value={chatMessage}
-                          onChange={(e) => setChatMessage(e.target.value)}
-                          placeholder="Ej: Agrega un ejemplo de derivada de x³..."
-                          onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSendChatMessage()}
-                          disabled={chatLoading}
-                          className="text-sm"
-                        />
-                        <Button 
-                          type="button" 
-                          size="sm" 
-                          onClick={handleSendChatMessage}
-                          disabled={chatLoading || !chatMessage.trim()}
-                          className="bg-cyan-500 hover:bg-cyan-600"
-                        >
-                          <Send size={14} />
-                        </Button>
-                      </div>
-                      <p className="text-xs text-slate-400 mt-2">
-                        Tip: Sé específico. "Agrega un Desmos interactivo que muestre cómo la pendiente cambia"
-                      </p>
-                    </div>
-                  </div>
-                )}
               </div>
-              <div>
+              
+              {/* Vista Previa - con chat flotante */}
+              <div className="relative">
                 <Label>Vista Previa</Label>
                 <div className="border rounded-lg p-4 h-[500px] overflow-y-auto bg-white">
                   <MarkdownRenderer content={lessonForm.content} />
                 </div>
+                
+                {/* AI Chat Panel - Optimized Component - positioned over preview */}
+                <RemyChat
+                  isOpen={chatOpen}
+                  onClose={() => setChatOpen(false)}
+                  currentContent={lessonForm.content}
+                  onContentUpdate={handleContentUpdate}
+                  context={{
+                    type: 'lesson',
+                    title: lessonForm.title,
+                    chapterTitle: chapters.find(ch => ch.id === selectedChapter)?.title || '',
+                    courseTitle: course?.title || ''
+                  }}
+                />
               </div>
             </div>
 
