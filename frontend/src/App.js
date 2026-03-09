@@ -3,6 +3,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { useState, useEffect } from 'react';
 import Layout from './components/Layout';
 import AdminLayout from './components/AdminLayout';
+import Landing from './pages/Landing';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import Simulacros from './pages/Simulacros';
@@ -37,8 +38,12 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
+          {/* Landing Page */}
+          <Route path="/" element={<Landing />} />
+          
+          {/* Student App */}
           <Route element={<Layout />}>
+            <Route path="/inicio" element={<Home />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/simulacros" element={<Simulacros />} />
             <Route path="/biblioteca" element={<Biblioteca />} />

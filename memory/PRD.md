@@ -97,37 +97,42 @@ App educativa para "Se Remonta" con las siguientes características:
 - Generación de preguntas con IA mejorada: ✅ IMPLEMENTADO
 - Gestión de cursos simplificada: ✅ IMPLEMENTADO
 - Editor de lecciones con doble modo de generación: ✅ IMPLEMENTADO
-  - Desde Tema/Prompt: ✅ funcional
-  - Desde Documento PDF: ✅ MEJORADO
-  - Vista previa del texto extraído del PDF: ✅ AÑADIDO
 - Chat con Remy (Edición Iterativa): ✅ CORREGIDO Y FUNCIONAL
-  - Layout de 3 columnas: Editor | Vista Previa | Chat ✅
-  - Integrado en editor de lecciones: ✅
-  - Integrado en editor de preguntas: ✅
-  - Performance optimizado: ✅
-  - Contexto de lección/pregunta en el chat: ✅
 - Sistema de Progreso de Estudiantes: ✅ IMPLEMENTADO
-  - Biblioteca simplificada (sin tabs): ✅
-  - Botón "Siguiente Lección": ✅
-  - Marcado de lecciones completadas: ✅
-  - Barra de progreso en curso y biblioteca: ✅
 - Inserción de imágenes en posición del cursor: ✅ IMPLEMENTADO
 - Sistema de Preguntas Reorganizado: ✅ IMPLEMENTADO
-  - Vista por cursos primero: ✅
-  - Preguntas organizadas por capítulo: ✅
-  - Estadísticas por dificultad: ✅
-  - Generación desde prompt: ✅
-  - Generación desde PDF: ✅
-  - Respuestas correctas que varían (A,B,C,D): ✅
 - Logo de Remy: ✅ Integrado en sidebar y favicon
 - Migración de chapter_id en preguntas: ✅ Ejecutada
+- **Landing Page de Ventas: ✅ IMPLEMENTADA**
+  - Hero section con CTA: ✅
+  - Sección de funcionalidades: ✅
+  - Preview de cursos (con candado): ✅
+  - Pricing ($9.990 mensual / $29.990 semestral): ✅
+  - Footer con navegación: ✅
+
+## Rutas de la Aplicación
+- `/` - Landing page de ventas
+- `/biblioteca` - Dashboard estudiante
+- `/simulacros` - Simulacros de prueba
+- `/course/:id` - Visor de curso
+- `/lesson/:id` - Visor de lección
+- `/admin/login` - Login administrador
+- `/admin/dashboard` - Dashboard admin
+- `/admin/courses` - Gestión de cursos
+- `/admin/questions` - Banco de preguntas
+
+## Pricing Oficial
+- Plan Mensual: $9.990 CLP/mes
+- Plan Semestral: $29.990 CLP/6 meses (50% descuento)
 
 ## Next Steps (Backlog P1)
-- [ ] Implementar autenticación real para estudiantes
+- [ ] Integrar pasarela de pago (Flow, Mercado Pago, etc.)
+- [ ] Sistema de autenticación de estudiantes
+- [ ] Admin: Gestión de usuarios/suscripciones
 - [ ] Refactorizar server.py (+1500 líneas) en routers separados
-- [ ] Implementar página de Progreso del estudiante
 
 ## Future Tasks (P2)
+- [ ] Implementar página de Progreso del estudiante
+- [ ] Implementar Tutor IA Remy 24/7
 - [ ] Exportar contenido a PDF
-- [ ] Multi-language support
 - [ ] Sistema de notificaciones
