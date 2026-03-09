@@ -90,9 +90,9 @@ App educativa para "Se Remonta" con las siguientes características:
 - Generación de preguntas con IA mejorada: ✅ IMPLEMENTADO
 - Gestión de cursos simplificada: ✅ IMPLEMENTADO
 - Editor de lecciones con doble modo de generación: ✅ IMPLEMENTADO
-  - Desde Tema/Prompt (nuevo)
-  - Desde Documento PDF (existente)
-  - GPT-5.2 con prompting optimizado
+  - Desde Tema/Prompt: ✅ funcional
+  - Desde Documento PDF: ✅ MEJORADO - prompt especializado que extrae conceptos y los transforma
+  - Vista previa del texto extraído del PDF: ✅ AÑADIDO
 
 ## Next Steps (Backlog P1)
 - [ ] Add more questions to question bank for better quiz variety

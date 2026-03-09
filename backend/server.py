@@ -549,7 +549,8 @@ async def upload_pdf(
     return {
         "filename": file.filename,
         "text_length": len(text),
-        "text_preview": text[:500] + "..."
+        "text": text,  # Full text for generation
+        "text_preview": text[:500] + "..." if len(text) > 500 else text
     }
 
 @admin_router.post("/generate-summary")
@@ -869,30 +870,87 @@ IMPORTANTE: El estudiante debe sentir que PUEDE aprender esto. Sé motivador per
 
         # Determine if generating from document or from topic prompt
         if request.pdf_content and request.pdf_content.strip():
-            # Generate from PDF document
-            user_prompt = f"""Crea una lección COMPLETA, INTERACTIVA y MOTIVADORA para:
+            # Generate from PDF document - SPECIALIZED PROMPT
+            user_prompt = f"""## TU MISIÓN: Transformar Material Académico en Aprendizaje Efectivo
 
-📖 Título: "{request.lesson_title}"
-📂 Capítulo: "{request.chapter_title}"
-📚 Curso: "{request.course_title}"
+Tienes un documento de referencia de una universidad/instituto. Tu trabajo es:
+1. **EXTRAER** todos los conceptos clave, definiciones, teoremas y fórmulas
+2. **TRANSFORMAR** ese contenido en una lección que un estudiante novato pueda entender
+3. **MEJORAR** la presentación: más ejemplos, más visual, más conectado con la vida real
 
-Material de referencia del documento:
-{request.pdf_content[:12000]}
+📖 **Título de la Lección:** "{request.lesson_title}"
+📂 **Capítulo:** "{request.chapter_title}"
+📚 **Curso:** "{request.course_title}"
 
-REQUISITOS OBLIGATORIOS:
-✅ Extrae y adapta el contenido del documento de forma didáctica
-✅ En la sección "Visualízalo": decide inteligentemente entre Desmos (interactivo) o **[INSERTAR IMAGEN:]** (descripción para imagen estática)
-✅ Mínimo 3 ejemplos resueltos paso a paso
-✅ Ejemplos de la vida cotidiana
-✅ Una tabla comparativa o de resumen
-✅ Tips específicos para aprobar el examen
-✅ Tono amigable pero profesional
+---
+### DOCUMENTO DE REFERENCIA (extraer conceptos de aquí):
+---
+{request.pdf_content[:15000]}
+---
 
-RECUERDA:
-- Desmos = cuando el estudiante debe MOVER/EXPLORAR algo
-- **[INSERTAR IMAGEN:]** = cuando necesitas mostrar algo estático con detalles precisos (discontinuidades, puntos específicos, anotaciones)
+## INSTRUCCIONES ESPECÍFICAS:
 
-¡Haz que el estudiante disfrute aprendiendo!"""
+### 1️⃣ ANÁLISIS DEL DOCUMENTO:
+- Identifica TODOS los conceptos, definiciones y teoremas mencionados
+- Lista las fórmulas matemáticas clave
+- Detecta la secuencia lógica del contenido
+
+### 2️⃣ TRANSFORMACIÓN DIDÁCTICA:
+- **NO copies el texto tal cual** - reformula todo para que sea más claro
+- **SÍ mantén** todos los conceptos, teoremas y fórmulas importantes
+- Explica cada concepto como si el estudiante lo viera por primera vez
+- Usa analogías de la vida real (streaming, redes sociales, videojuegos, deportes)
+
+### 3️⃣ ENRIQUECIMIENTO:
+- Añade ejemplos que NO estén en el documento (mínimo 3, de fácil a difícil)
+- Incluye "errores típicos" que los estudiantes cometen
+- Agrega conexiones con otros temas del curso
+- Crea ejercicios de práctica con pistas
+
+### 4️⃣ VISUALIZACIÓN INTELIGENTE:
+Para cada concepto visual del documento, decide:
+- **DESMOS** → Si el estudiante debe explorar/mover algo (gráficas de funciones, parámetros)
+  Formato: [DESMOS:ecuacion1; ecuacion2; parametro=valor]
+- **INSERTAR IMAGEN** → Si necesitas mostrar algo estático específico (discontinuidades con círculos abiertos/cerrados, diagramas anotados)
+  Formato: **[INSERTAR IMAGEN: descripción detallada para generar con IA]**
+
+### 5️⃣ ESTRUCTURA DE SALIDA:
+Sigue EXACTAMENTE esta estructura con los emojis indicados:
+
+## 🎯 ¿Qué vas a aprender?
+(Lista los objetivos basados en el contenido del documento)
+
+## 🤔 ¿Por qué es importante?
+(Conexión con aplicaciones reales - NO copiar del documento, crear nuevas)
+
+## 📚 Desarrollo del Tema
+(Todos los conceptos del documento, pero explicados de forma más clara y accesible)
+
+## 🔢 Fórmulas Clave
+(TODAS las fórmulas del documento en LaTeX, con explicación de cada símbolo)
+
+## 👀 Visualízalo
+(Desmos para explorar o **[INSERTAR IMAGEN:]** para diagramas estáticos)
+
+## ✍️ Ejemplos Resueltos
+(Mínimo 3 ejemplos paso a paso - pueden incluir los del documento MÁS nuevos)
+
+## 🎮 Ahora Practícalo Tú
+(Ejercicios con pistas, incluyendo algunos basados en el documento)
+
+## 📌 Resumen Express
+(Los puntos clave del documento en bullets concisos)
+
+## 💡 Tips para el Examen
+(Qué suele preguntarse sobre estos temas + errores comunes)
+
+---
+⚠️ RECORDATORIO FINAL:
+- El documento es tu FUENTE de conceptos, no tu plantilla de texto
+- Un estudiante novato debe poder entender TODO sin haber visto el documento original
+- Sé más completo y didáctico que el material original
+
+¡Transforma este material en la mejor lección posible!"""
 
         elif request.topic_prompt and request.topic_prompt.strip():
             # Generate from topic/prompt (NEW)

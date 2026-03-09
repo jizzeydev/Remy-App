@@ -219,8 +219,9 @@ const CourseContentEditor = () => {
         }
       });
 
-      setPdfText(response.data.text_preview);
-      toast.success('PDF procesado');
+      // Use full text for generation, not just preview
+      setPdfText(response.data.text || response.data.text_preview);
+      toast.success(`PDF procesado: ${response.data.text_length} caracteres extraídos`);
     } catch (error) {
       console.error('Error uploading PDF:', error);
       toast.error('Error al procesar PDF');
@@ -734,10 +735,17 @@ Estoy listo para mejorar la lección "${lessonForm.title}".
                       </Button>
                     </div>
                     {pdfText && (
-                      <p className="text-xs text-green-600 flex items-center gap-1">
-                        <Check size={12} />
-                        PDF procesado correctamente
-                      </p>
+                      <div className="space-y-2">
+                        <p className="text-xs text-green-600 flex items-center gap-1">
+                          <Check size={12} />
+                          PDF procesado: {pdfText.length.toLocaleString()} caracteres extraídos
+                        </p>
+                        <div className="bg-slate-100 rounded p-2 max-h-24 overflow-y-auto">
+                          <p className="text-xs text-slate-600 font-mono whitespace-pre-wrap">
+                            {pdfText.substring(0, 500)}...
+                          </p>
+                        </div>
+                      </div>
                     )}
                   </div>
                 )}
