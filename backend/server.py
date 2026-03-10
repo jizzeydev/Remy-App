@@ -1715,18 +1715,11 @@ app.include_router(auth_routes.router)
 app.include_router(payments_routes.router)
 app.include_router(admin_users_routes.router)
 
-# Allowed CORS origins - specific domains for production
-ALLOWED_ORIGINS = [
-    "https://remy.seremonta.store",
-    "https://remy-exam-prep.preview.emergentagent.com",
-    "https://remy-exam-prep.emergent.host",
-    "http://localhost:3000"
-]
-
+# CORS configuration - allow all origins since we use Bearer tokens (not cookies)
 app.add_middleware(
     CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=False,
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
