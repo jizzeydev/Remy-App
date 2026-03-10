@@ -224,18 +224,51 @@ async def create_subscription(
 async def get_subscription_status(
     current_user: dict = Depends(get_current_user_dependency)
 ):
-    """Get current user's subscription status"""
+    """Get current user's subscription status with detailed info"""
     subscription = await db.subscriptions.find_one(
-        {"user_id": current_user["user_id"], "status": {"$in": ["active", "pending"]}},
-        {"_id": 0}
+        {"user_id": current_user["user_id"], "status": {"$in": ["active", "pending", "cancelled"]}},
+        {"_id": 0},
+        sort=[("created_at", -1)]  # Get most recent
     )
+    
+    # Calculate days remaining
+    days_remaining = 0
+    subscription_end = current_user.get("subscription_end")
+    if subscription_end:
+        try:
+            if isinstance(subscription_end, str):
+                end_date = datetime.fromisoformat(subscription_end.replace('Z', '+00:00'))
+            else:
+                end_date = subscription_end
+            
+            if end_date.tzinfo is None:
+                end_date = end_date.replace(tzinfo=timezone.utc)
+            
+            diff = end_date - datetime.now(timezone.utc)
+            days_remaining = max(0, diff.days)
+        except Exception as e:
+            logger.warning(f"Error calculating days remaining: {e}")
+    
+    # Get plan details
+    plan_id = current_user.get("subscription_plan")
+    plan_info = PLANS.get(plan_id, {}) if plan_id else {}
     
     return {
         "has_subscription": current_user.get("subscription_status") == "active",
         "subscription_status": current_user.get("subscription_status", "inactive"),
         "subscription_type": current_user.get("subscription_type"),
         "subscription_plan": current_user.get("subscription_plan"),
+        "subscription_start": current_user.get("subscription_start"),
         "subscription_end": current_user.get("subscription_end"),
+        "days_remaining": days_remaining,
+        "auto_renewal": current_user.get("subscription_type") == "mercadopago",
+        "plan_details": {
+            "name": plan_info.get("name", ""),
+            "amount": plan_info.get("amount", 0),
+            "currency": plan_info.get("currency", "CLP"),
+            "frequency": plan_info.get("frequency", 1),
+            "frequency_type": plan_info.get("frequency_type", "months")
+        } if plan_info else None,
         "subscription_details": subscription
     }
 

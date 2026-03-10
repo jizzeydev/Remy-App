@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Home, ClipboardCheck, BookOpen, TrendingUp, Menu, LogOut, User, Crown } from 'lucide-react';
+import { Home, ClipboardCheck, BookOpen, TrendingUp, Menu, LogOut, User, Crown, CreditCard } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -93,12 +93,17 @@ const Layout = () => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => navigate('/mi-suscripcion')}>
+          <CreditCard size={16} className="mr-2" />
+          Mi Suscripción
+        </DropdownMenuItem>
         {!hasActiveSubscription() && (
-          <DropdownMenuItem onClick={() => navigate('/biblioteca')} className="text-cyan-600">
+          <DropdownMenuItem onClick={() => navigate('/subscribe')} className="text-cyan-600">
             <Crown size={16} className="mr-2" />
             Suscribirse
           </DropdownMenuItem>
         )}
+        <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout} className="text-red-600">
           <LogOut size={16} className="mr-2" />
           Cerrar sesión

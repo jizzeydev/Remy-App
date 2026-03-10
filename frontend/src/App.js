@@ -8,6 +8,7 @@ import Landing from './pages/Landing';
 import AuthPage from './pages/AuthPage';
 import AuthCallback from './pages/AuthCallback';
 import SubscribePage from './pages/SubscribePage';
+import MiSuscripcion from './pages/MiSuscripcion';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import Simulacros from './pages/Simulacros';
@@ -84,6 +85,7 @@ function AppRouter() {
       <Route path="/auth" element={<AuthPage />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
       <Route path="/subscribe" element={<StudentProtectedRoute><SubscribePage /></StudentProtectedRoute>} />
+      <Route path="/mi-suscripcion" element={<StudentProtectedRoute><MiSuscripcion /></StudentProtectedRoute>} />
       
       {/* Student App - Protected */}
       <Route element={<StudentProtectedRoute><Layout /></StudentProtectedRoute>}>
