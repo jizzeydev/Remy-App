@@ -191,7 +191,6 @@ const SubscribePage = () => {
           card_token: cardToken
         },
         { 
-          withCredentials: true,
           headers: sessionToken ? { Authorization: `Bearer ${sessionToken}` } : {}
         }
       );

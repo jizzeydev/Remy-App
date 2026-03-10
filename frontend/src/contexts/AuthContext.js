@@ -46,7 +46,6 @@ export const AuthProvider = ({ children }) => {
       const headers = storedToken ? { Authorization: `Bearer ${storedToken}` } : {};
       
       const response = await axios.get(`${API}/auth/me`, {
-        withCredentials: true,
         headers
       });
       setUser(response.data);
@@ -62,57 +61,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
-
-  // Email/Password Registration
-  const register = async (email, password, name) => {
-    try {
-      setError(null);
-      const response = await axios.post(`${API}/auth/register`, {
-        email,
-        password,
-        name
-      }, {
-        withCredentials: true
-      });
-      
-      // Store session token for persistence
-      if (response.data.session_token) {
-        storeToken(response.data.session_token);
-      }
-      
-      setUser(response.data.user);
-      return { success: true, user: response.data.user };
-    } catch (err) {
-      const message = err.response?.data?.detail || 'Error al registrarse';
-      setError(message);
-      return { success: false, error: message };
-    }
-  };
-
-  // Email/Password Login
-  const login = async (email, password) => {
-    try {
-      setError(null);
-      const response = await axios.post(`${API}/auth/login`, {
-        email,
-        password
-      }, {
-        withCredentials: true
-      });
-      
-      // Store session token for persistence
-      if (response.data.session_token) {
-        storeToken(response.data.session_token);
-      }
-      
-      setUser(response.data.user);
-      return { success: true, user: response.data.user };
-    } catch (err) {
-      const message = err.response?.data?.detail || 'Credenciales incorrectas';
-      setError(message);
-      return { success: false, error: message };
-    }
-  };
 
   // Google OAuth - Redirect to Emergent Auth
   const loginWithGoogle = () => {
@@ -130,7 +78,6 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.post(`${API}/auth/google/session`, {
         session_id: sessionId
       }, {
-        withCredentials: true,
         timeout: 15000 // 15 second timeout for slow mobile connections
       });
       
@@ -174,7 +121,6 @@ export const AuthProvider = ({ children }) => {
       const headers = storedToken ? { Authorization: `Bearer ${storedToken}` } : {};
       
       await axios.post(`${API}/auth/logout`, {}, {
-        withCredentials: true,
         headers
       });
     } catch (err) {
@@ -196,8 +142,6 @@ export const AuthProvider = ({ children }) => {
     error,
     isAuthenticated: !!user,
     hasActiveSubscription,
-    register,
-    login,
     loginWithGoogle,
     processGoogleCallback,
     logout,
