@@ -3,7 +3,7 @@
  * Handles both Login and Registration with Google OAuth + Email/Password
  */
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,10 +15,14 @@ import { toast } from 'sonner';
 
 const AuthPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { login, register, loginWithGoogle, error } = useAuth();
   
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  
+  // Get redirect URL from query params
+  const redirectUrl = searchParams.get('redirect') || '/biblioteca';
   
   // Login form state
   const [loginEmail, setLoginEmail] = useState('');
@@ -38,7 +42,7 @@ const AuthPage = () => {
     
     if (result.success) {
       toast.success('¡Bienvenido de vuelta!');
-      navigate('/biblioteca');
+      navigate(redirectUrl);
     } else {
       toast.error(result.error);
     }
@@ -65,7 +69,7 @@ const AuthPage = () => {
     
     if (result.success) {
       toast.success('¡Cuenta creada exitosamente!');
-      navigate('/biblioteca');
+      navigate(redirectUrl);
     } else {
       toast.error(result.error);
     }

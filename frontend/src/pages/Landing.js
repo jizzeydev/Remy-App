@@ -374,6 +374,7 @@ const PricingSection = () => {
 
   const plans = [
     {
+      id: "monthly",
       name: "Mensual",
       price: "9.990",
       period: "/mes",
@@ -389,6 +390,7 @@ const PricingSection = () => {
       popular: false
     },
     {
+      id: "semestral",
       name: "Semestral",
       price: "29.990",
       originalPrice: "59.940",
@@ -475,7 +477,7 @@ const PricingSection = () => {
                       ? 'bg-cyan-500 hover:bg-cyan-400 text-white shadow-lg shadow-cyan-500/30' 
                       : 'bg-slate-900 hover:bg-slate-800 text-white'
                   }`}
-                  onClick={() => navigate('/auth')}
+                  onClick={() => navigate(`/auth?redirect=/subscribe?plan=${plan.id}`)}
                   data-testid={`subscribe-btn-${plan.name.toLowerCase()}`}
                 >
                   {plan.cta}

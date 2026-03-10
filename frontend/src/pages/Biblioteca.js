@@ -1,23 +1,37 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import { BookOpen, Loader2, Layers, GraduationCap } from 'lucide-react';
+import { BookOpen, Loader2, Layers, GraduationCap, Crown, Lock, CheckCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { useAuth } from '../contexts/AuthContext';
+import { toast } from 'sonner';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const Biblioteca = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { user, hasActiveSubscription } = useAuth();
   const [courses, setCourses] = useState([]);
   const [coursesStats, setCoursesStats] = useState({});
   const [loading, setLoading] = useState(true);
 
-  // Get student ID from localStorage or generate one
+  // Check for subscription success message
+  useEffect(() => {
+    if (searchParams.get('subscription') === 'success') {
+      toast.success('¡Bienvenido! Tu suscripción está activa.');
+      // Clean URL
+      window.history.replaceState({}, '', '/biblioteca');
+    }
+  }, [searchParams]);
+
+  // Get student ID from user context or localStorage
   const getStudentId = () => {
+    if (user?.user_id) return user.user_id;
     let studentId = localStorage.getItem('student_id');
     if (!studentId) {
       studentId = 'student_' + Date.now();
@@ -96,6 +110,8 @@ const Biblioteca = () => {
     return colors[level] || 'bg-gray-100 text-gray-800';
   };
 
+  const isSubscribed = hasActiveSubscription();
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -106,9 +122,47 @@ const Biblioteca = () => {
 
   return (
     <div className="space-y-6 pb-24 lg:pb-8" data-testid="biblioteca-page">
+      {/* Subscription Banner */}
+      {!isSubscribed && (
+        <Card className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white border-0 shadow-lg">
+          <CardContent className="flex flex-col sm:flex-row items-center justify-between py-6 gap-4">
+            <div className="flex items-center gap-4">
+              <div className="bg-white/20 rounded-full p-3">
+                <Crown size={24} />
+              </div>
+              <div>
+                <h3 className="font-bold text-lg">Desbloquea todo el contenido</h3>
+                <p className="text-cyan-100 text-sm">
+                  Accede a todos los cursos, simulacros ilimitados y más desde $9.990/mes
+                </p>
+              </div>
+            </div>
+            <Button 
+              className="bg-white text-cyan-600 hover:bg-cyan-50 font-semibold px-6"
+              onClick={() => navigate('/subscribe')}
+              data-testid="subscribe-banner-btn"
+            >
+              Suscribirme ahora
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Active Subscription Badge */}
+      {isSubscribed && (
+        <div className="flex items-center gap-2 text-green-600 bg-green-50 px-4 py-2 rounded-lg w-fit">
+          <CheckCircle size={18} />
+          <span className="text-sm font-medium">Suscripción activa - Acceso completo</span>
+        </div>
+      )}
+
       <div>
         <h1 className="text-3xl font-bold">Biblioteca de Cursos</h1>
-        <p className="text-slate-600 mt-1">Explora todos los cursos disponibles</p>
+        <p className="text-slate-600 mt-1">
+          {isSubscribed 
+            ? 'Explora todos los cursos disponibles' 
+            : 'Suscríbete para acceder a todo el contenido'}
+        </p>
       </div>
 
       {courses.length === 0 ? (
@@ -126,11 +180,20 @@ const Biblioteca = () => {
             return (
               <Card
                 key={course.id}
-                className="cursor-pointer hover:shadow-lg transition-all course-card"
+                className={`cursor-pointer hover:shadow-lg transition-all course-card ${
+                  !isSubscribed ? 'opacity-90' : ''
+                }`}
                 onClick={() => handleCourseClick(course)}
                 data-testid={`course-card-${index}`}
               >
-                <CardHeader>
+                <CardHeader className="relative">
+                  {!isSubscribed && (
+                    <div className="absolute top-4 right-4 z-10">
+                      <div className="bg-slate-900/80 text-white rounded-full p-2">
+                        <Lock size={16} />
+                      </div>
+                    </div>
+                  )}
                   <div className="aspect-video bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-lg mb-4 flex items-center justify-center text-white text-3xl font-bold">
                     {course.title.charAt(0)}
                   </div>
@@ -171,12 +234,20 @@ const Biblioteca = () => {
                   
                   <Button
                     className="w-full"
+                    variant={isSubscribed ? "default" : "secondary"}
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/course/${course.id}`);
+                      if (isSubscribed) {
+                        navigate(`/course/${course.id}`);
+                      } else {
+                        navigate('/subscribe');
+                      }
                     }}
                   >
-                    {stats.progress === 0 ? 'Comenzar' : stats.progress === 100 ? 'Repasar' : 'Continuar'}
+                    {isSubscribed 
+                      ? (stats.progress === 0 ? 'Comenzar' : stats.progress === 100 ? 'Repasar' : 'Continuar')
+                      : 'Suscribirse para acceder'
+                    }
                   </Button>
                 </CardContent>
               </Card>
