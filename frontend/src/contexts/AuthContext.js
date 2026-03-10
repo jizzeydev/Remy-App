@@ -131,9 +131,27 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Check if user has active subscription
+  // Check if user has active subscription (including cancelled but still in paid period)
   const hasActiveSubscription = () => {
-    return user?.subscription_status === 'active';
+    if (!user) return false;
+    
+    // Active subscription
+    if (user.subscription_status === 'active') return true;
+    
+    // Cancelled but still has access until end date
+    if (user.subscription_status === 'cancelled' && user.subscription_end) {
+      try {
+        const endDate = new Date(user.subscription_end);
+        const now = new Date();
+        if (endDate > now) {
+          return true; // Still within paid period
+        }
+      } catch (e) {
+        console.error('Error parsing subscription_end:', e);
+      }
+    }
+    
+    return false;
   };
 
   const value = {

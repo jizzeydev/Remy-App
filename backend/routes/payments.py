@@ -260,7 +260,10 @@ async def get_subscription_status(
     
     # Calculate days remaining
     days_remaining = 0
+    has_access = False
     subscription_end = current_user.get("subscription_end")
+    subscription_status = current_user.get("subscription_status")
+    
     if subscription_end:
         try:
             if isinstance(subscription_end, str):
@@ -273,22 +276,34 @@ async def get_subscription_status(
             
             diff = end_date - datetime.now(timezone.utc)
             days_remaining = max(0, diff.days)
+            
+            # User has access if subscription is active OR cancelled but still within paid period
+            if subscription_status == "active":
+                has_access = True
+            elif subscription_status == "cancelled" and days_remaining > 0:
+                has_access = True  # Cancelled but paid period not over
+                
         except Exception as e:
             logger.warning(f"Error calculating days remaining: {e}")
+    
+    # Also check for active status without end date (manual subscriptions)
+    if subscription_status == "active" and not has_access:
+        has_access = True
     
     # Get plan details
     plan_id = current_user.get("subscription_plan")
     plan_info = PLANS.get(plan_id, {}) if plan_id else {}
     
     return {
-        "has_subscription": current_user.get("subscription_status") == "active",
+        "has_subscription": has_access,
         "subscription_status": current_user.get("subscription_status", "inactive"),
         "subscription_type": current_user.get("subscription_type"),
         "subscription_plan": current_user.get("subscription_plan"),
         "subscription_start": current_user.get("subscription_start"),
         "subscription_end": current_user.get("subscription_end"),
         "days_remaining": days_remaining,
-        "auto_renewal": current_user.get("subscription_type") == "mercadopago",
+        "auto_renewal": current_user.get("subscription_type") == "mercadopago" and current_user.get("subscription_status") == "active",
+        "is_cancelled": current_user.get("subscription_status") == "cancelled",
         "plan_details": {
             "name": plan_info.get("name", ""),
             "amount": plan_info.get("amount", 0),
@@ -304,30 +319,43 @@ async def get_subscription_status(
 async def cancel_subscription(
     current_user: dict = Depends(get_current_user_dependency)
 ):
-    """Cancel current subscription"""
-    if current_user.get("subscription_status") != "active":
+    """
+    Cancel current subscription - user keeps access until end of paid period
+    """
+    if current_user.get("subscription_status") not in ["active", "cancelled"]:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="No tienes una suscripción activa"
         )
     
+    # Already cancelled
+    if current_user.get("subscription_status") == "cancelled":
+        return {
+            "success": True,
+            "message": "Tu suscripción ya está cancelada. Mantendrás acceso hasta el final del período pagado."
+        }
+    
     subscription_id = current_user.get("subscription_id")
     subscription_type = current_user.get("subscription_type")
+    subscription_end = current_user.get("subscription_end")
     
     try:
-        # If Mercado Pago subscription, cancel it there too
+        # If Mercado Pago subscription, cancel auto-renewal (but keep access)
         if subscription_type == "mercadopago" and subscription_id:
             try:
                 mp_service.cancel_preapproval(subscription_id)
+                logger.info(f"MP preapproval cancelled: {subscription_id}")
             except Exception as e:
                 logger.warning(f"Could not cancel MP subscription: {e}")
         
-        # Update user status
+        # Update user status to 'cancelled' but KEEP subscription_end date
+        # This allows continued access until the paid period ends
         await db.users.update_one(
             {"user_id": current_user["user_id"]},
             {"$set": {
                 "subscription_status": "cancelled",
-                "subscription_id": None
+                "auto_renewal": False
+                # Note: subscription_end is NOT modified - user keeps access until then
             }}
         )
         
@@ -336,15 +364,29 @@ async def cancel_subscription(
             {"user_id": current_user["user_id"], "status": "active"},
             {"$set": {
                 "status": "cancelled",
+                "auto_renewal": False,
                 "cancelled_at": datetime.now(timezone.utc).isoformat()
             }}
         )
         
-        logger.info(f"Subscription cancelled for {current_user['email']}")
+        logger.info(f"Subscription cancelled for {current_user['email']}, access until {subscription_end}")
+        
+        # Send cancellation notification
+        if notify_subscription_cancelled:
+            try:
+                import asyncio
+                asyncio.create_task(notify_subscription_cancelled(
+                    current_user.get("email"),
+                    current_user.get("name", "Usuario"),
+                    "Cancelación por usuario"
+                ))
+            except Exception as e:
+                logger.error(f"Failed to send cancellation email: {e}")
         
         return {
             "success": True,
-            "message": "Suscripción cancelada. Tu acceso continuará hasta el final del período pagado."
+            "message": "Suscripción cancelada. Tu acceso continuará hasta el final del período pagado.",
+            "access_until": subscription_end
         }
         
     except Exception as e:
