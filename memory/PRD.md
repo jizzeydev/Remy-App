@@ -100,6 +100,7 @@ Usuario con Suscripción Activa:
 ### Admin
 - **Username:** admin
 - **Password:** #Alex060625
+- **Google Login:** seremonta.cl@gmail.com (authorized)
 
 ### Test User
 - **Email:** test@example.com
@@ -116,11 +117,32 @@ Usuario con Suscripción Activa:
 - **Plan Semestral:** $29.990 CLP/6 meses (50% descuento)
 
 ## Testing Status (March 10, 2026)
-- Backend API Tests: ✅ 100% (17/17)
+- Backend API Tests: ✅ 100% (11/11 new, 17/17 previous)
 - Frontend UI Tests: ✅ 100%
-- Auth Flow: ✅ Completo
-- Payment Flow: ✅ Completo (TEST mode)
+- Auth Flow: ✅ Completo (Email + Google para estudiantes Y admin)
+- Payment Flow: ✅ Completo (Production mode)
 - Admin Management: ✅ Completo
+- Admin Google Login: ✅ Implementado
+
+## Production Deployment
+
+### ✅ Admin Google Login - IMPLEMENTADO (March 10, 2026)
+- [x] Endpoint `/api/admin/google-login` creado
+- [x] Verifica que email sea `seremonta.cl@gmail.com`
+- [x] Genera JWT token para sesión de admin
+- [x] `verify_admin_token` actualizado para aceptar tokens Google
+- [x] Botón "Continuar con Google" en UI de admin login
+
+### ✅ Script de Migración - CREADO (March 10, 2026)
+- [x] `/app/backend/migration.py` para exportar/importar datos
+- [x] Exporta: courses, chapters, lessons, questions, formulas
+- [x] Datos exportados a `/app/backend/migration_data/`
+- [x] Instrucciones claras para importar en producción
+
+### Credenciales de Producción (CONFIGURADAS)
+- **Mercado Pago:** Credenciales de producción en backend/.env
+- **Webhook URL:** `https://remy.seremonta.store/api/payments/webhook/mercadopago`
+- **Admin Google Email:** seremonta.cl@gmail.com
 
 ## Backlog (Post-MVP)
 
@@ -138,8 +160,10 @@ Usuario con Suscripción Activa:
 
 ## Notas para Producción
 
-1. **Mercado Pago:** Cambiar de TEST a PRODUCTION credentials
-2. **Webhooks:** Configurar URL de webhook en dashboard de MP
-3. **Dominio:** Actualizar `FRONTEND_URL` en backend/.env
-4. **SSL:** Asegurar HTTPS para pagos seguros
+1. **Admin Login:** Usar Google con email seremonta.cl@gmail.com
+2. **Migración de Datos:**
+   - Los datos están exportados en `/app/backend/migration_data/`
+   - Para importar en producción: `python migration.py import`
+3. **Webhooks:** Configurar URL `https://remy.seremonta.store/api/payments/webhook/mercadopago` en dashboard de Mercado Pago
+4. **SSL:** HTTPS ya configurado en producción
 5. **Monitoreo:** Implementar logging de errores de pago

@@ -1,5 +1,31 @@
 # Changelog - Remy Platform
 
+## [March 10, 2026] - Admin Google Login & Data Migration
+
+### Added
+- **Admin Google Authentication**
+  - New endpoint `POST /api/admin/google-login` for admin Google OAuth
+  - Validates email against whitelist (`seremonta.cl@gmail.com`, `admin@seremonta.cl`)
+  - Generates JWT token with `type: admin_google` claim
+  - Updated `verify_admin_token()` to accept both traditional and Google tokens
+  - Google login button added to Admin Login UI
+
+- **Data Migration Script** (`/app/backend/migration.py`)
+  - `export` command: Exports courses, chapters, lessons, questions, formulas to JSON
+  - `import` command: Upserts data with duplicate handling
+  - `stats` command: Shows current database statistics
+  - Exported data stored in `/app/backend/migration_data/`
+
+### Production Readiness
+- All Mercado Pago credentials configured for PRODUCTION
+- Webhook URL: `https://remy.seremonta.store/api/payments/webhook/mercadopago`
+- Admin can now login via Google with authorized email
+
+### Data Exported (Preview Environment)
+- 2 courses, 2 chapters, 5 lessons, 9 questions, 10 formulas
+
+---
+
 ## [March 10, 2026] - Authentication & User Management Release
 
 ### Added
