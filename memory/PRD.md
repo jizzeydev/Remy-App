@@ -117,16 +117,27 @@ Usuario con Suscripción Activa:
 - **Plan Semestral:** $29.990 CLP/6 meses (50% descuento)
 
 ## Testing Status (March 10, 2026)
-- Backend API Tests: ✅ 100% (19/19 admin, 7/7 session, 17/17 previous)
+- Backend API Tests: ✅ 100%
 - Frontend UI Tests: ✅ 100%
-- Auth Flow: ✅ Completo (Email + Google para estudiantes Y admin)
+- Auth Flow: ✅ Google Only (email/password eliminado)
 - Payment Flow: ✅ Completo (Production mode)
 - Admin Management: ✅ Completo
-- Admin Google Login: ✅ Implementado
-- Session Persistence: ✅ Implementado (localStorage + cookies)
-- Admin Dashboard Metrics: ✅ Implementado (ingresos, suscripciones, gráficos)
+- Email Notifications: ✅ Implementado (Resend)
 
 ## Production Deployment
+
+### ✅ Email Notifications - IMPLEMENTADO (March 10, 2026)
+- [x] Integración con Resend API
+- [x] Notificación admin: nuevo usuario registrado
+- [x] Notificación admin: suscripción iniciada (Mercado Pago)
+- [x] Notificación admin: suscripción cancelada
+- [x] Email bienvenida al usuario nuevo
+- [x] Templates HTML profesionales
+
+### ✅ Solo Google Auth - IMPLEMENTADO (March 10, 2026)
+- [x] Eliminado registro email/password (roto)
+- [x] Simplificada página /auth solo con Google
+- [x] Sesiones extendidas a 30 días
 
 ### ✅ Admin Dashboard Metrics - IMPLEMENTADO (March 10, 2026)
 - [x] Métricas de ingresos del período seleccionado
