@@ -117,14 +117,21 @@ Usuario con Suscripción Activa:
 - **Plan Semestral:** $29.990 CLP/6 meses (50% descuento)
 
 ## Testing Status (March 10, 2026)
-- Backend API Tests: ✅ 100% (11/11 new, 17/17 previous)
+- Backend API Tests: ✅ 100% (7/7 session, 11/11 admin auth, 17/17 previous)
 - Frontend UI Tests: ✅ 100%
 - Auth Flow: ✅ Completo (Email + Google para estudiantes Y admin)
 - Payment Flow: ✅ Completo (Production mode)
 - Admin Management: ✅ Completo
 - Admin Google Login: ✅ Implementado
+- Session Persistence: ✅ Implementado (localStorage + cookies)
 
 ## Production Deployment
+
+### ✅ Session Persistence - IMPLEMENTADO (March 10, 2026)
+- [x] Token almacenado en localStorage (`remy_session_token`)
+- [x] Backend acepta Bearer token en header Authorization
+- [x] Sesión persiste al recargar página
+- [x] Landing y Auth redirigen usuarios autenticados a /dashboard
 
 ### ✅ Admin Google Login - IMPLEMENTADO (March 10, 2026)
 - [x] Endpoint `/api/admin/google-login` creado
