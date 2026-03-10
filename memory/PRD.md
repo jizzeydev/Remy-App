@@ -117,15 +117,24 @@ Usuario con Suscripción Activa:
 - **Plan Semestral:** $29.990 CLP/6 meses (50% descuento)
 
 ## Testing Status (March 10, 2026)
-- Backend API Tests: ✅ 100% (7/7 session, 11/11 admin auth, 17/17 previous)
+- Backend API Tests: ✅ 100% (19/19 admin, 7/7 session, 17/17 previous)
 - Frontend UI Tests: ✅ 100%
 - Auth Flow: ✅ Completo (Email + Google para estudiantes Y admin)
 - Payment Flow: ✅ Completo (Production mode)
 - Admin Management: ✅ Completo
 - Admin Google Login: ✅ Implementado
 - Session Persistence: ✅ Implementado (localStorage + cookies)
+- Admin Dashboard Metrics: ✅ Implementado (ingresos, suscripciones, gráficos)
 
 ## Production Deployment
+
+### ✅ Admin Dashboard Metrics - IMPLEMENTADO (March 10, 2026)
+- [x] Métricas de ingresos del período seleccionado
+- [x] Contador de suscripciones activas
+- [x] Selector de rango de fechas (hoy, semana, mes, mes anterior, 3/6 meses, año)
+- [x] Gráfico de ingresos mensuales (últimos 6 meses)
+- [x] Desglose por estado de suscripción y tipo (Mercado Pago vs Manual)
+- [x] Fix: verify_admin_token acepta tokens de Google admin
 
 ### ✅ Session Persistence - IMPLEMENTADO (March 10, 2026)
 - [x] Token almacenado en localStorage (`remy_session_token`)
