@@ -164,6 +164,9 @@ class LoginRequest(BaseModel):
     username: str
     password: str
 
+class GoogleLoginRequest(BaseModel):
+    session_id: str
+
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -264,13 +267,31 @@ async def verify_admin_token(credentials: HTTPAuthorizationCredentials = Depends
     try:
         token = credentials.credentials
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None or username != os.environ.get('ADMIN_USERNAME'):
+        subject: str = payload.get("sub")
+        token_type: str = payload.get("type", "")
+        
+        if subject is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid authentication credentials"
             )
-        return username
+        
+        # Check if it's a Google admin token
+        if token_type == "admin_google":
+            if subject.lower() not in [e.lower() for e in ALLOWED_ADMIN_EMAILS]:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Invalid authentication credentials"
+                )
+            return subject
+        
+        # Traditional username/password admin
+        if subject != os.environ.get('ADMIN_USERNAME'):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication credentials"
+            )
+        return subject
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -687,6 +708,12 @@ async def migrate_questions_chapter_id():
     return {"success": True, "migrated_questions": migrated_count}
 
 # Admin endpoints
+# Allowed admin emails for Google login
+ALLOWED_ADMIN_EMAILS = [
+    'seremonta.cl@gmail.com',
+    'admin@seremonta.cl'
+]
+
 @admin_router.post("/login", response_model=Token)
 async def admin_login(request: LoginRequest):
     admin_username = os.environ.get('ADMIN_USERNAME')
@@ -707,6 +734,73 @@ async def admin_login(request: LoginRequest):
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": request.username},
+        expires_delta=access_token_expires
+    )
+    
+    return {"access_token": access_token, "token_type": "bearer"}
+
+@admin_router.post("/google-login", response_model=Token)
+async def admin_google_login(request: GoogleLoginRequest):
+    """
+    Authenticate admin via Google OAuth (Emergent Auth)
+    Only allows specific admin emails
+    """
+    import httpx
+    
+    if not request.session_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="session_id requerido"
+        )
+    
+    # Exchange session_id for user data from Emergent Auth
+    try:
+        async with httpx.AsyncClient() as client:
+            auth_response = await client.get(
+                "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+                headers={"X-Session-ID": request.session_id},
+                timeout=10.0
+            )
+            
+            if auth_response.status_code != 200:
+                logger.error(f"Emergent Auth error: {auth_response.text}")
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Error de autenticación con Google"
+                )
+            
+            auth_data = auth_response.json()
+    
+    except httpx.RequestError as e:
+        logger.error(f"Error connecting to Emergent Auth: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Servicio de autenticación no disponible"
+        )
+    
+    email = auth_data.get("email", "").lower()
+    name = auth_data.get("name", "Admin")
+    
+    if not email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No se pudo obtener el email de Google"
+        )
+    
+    # Check if email is in allowed admin list
+    if email not in [e.lower() for e in ALLOWED_ADMIN_EMAILS]:
+        logger.warning(f"Unauthorized admin login attempt: {email}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"El email {email} no está autorizado como administrador"
+        )
+    
+    logger.info(f"Admin Google login successful: {email}")
+    
+    # Create JWT token for admin
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": email, "type": "admin_google"},
         expires_delta=access_token_expires
     )
     

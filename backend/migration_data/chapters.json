@@ -1,0 +1,18 @@
+[
+  {
+    "id": "chapter-001",
+    "course_id": "course-001",
+    "title": "Límites",
+    "description": "Introducción a límites y continuidad",
+    "order": 1,
+    "created_at": "2024-01-01T00:00:00"
+  },
+  {
+    "id": "chapter-002",
+    "course_id": "course-001",
+    "title": "Derivadas",
+    "description": "Concepto y reglas de derivación",
+    "order": 2,
+    "created_at": "2024-01-01T00:00:00"
+  }
+]
