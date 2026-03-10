@@ -1,44 +1,45 @@
-"""Authentication routes for Remy platform - Google OAuth + Email/Password"""
+"""Authentication routes for Remy platform - Google OAuth Only"""
 from fastapi import APIRouter, HTTPException, status, Response, Request, Cookie
 from pydantic import BaseModel, EmailStr
 from motor.motor_asyncio import AsyncIOMotorClient
-from passlib.context import CryptContext
 from datetime import datetime, timezone, timedelta
 from typing import Optional
 import httpx
 import uuid
 import os
 import logging
+import asyncio
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
-# Password hashing
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 # Session configuration
-SESSION_EXPIRE_DAYS = 7
+SESSION_EXPIRE_DAYS = 30  # Extended to 30 days for better UX
 
 # MongoDB connection (will be set from main app)
 db = None
 
+# Email service (will be imported after db is set)
+email_service = None
+
 def set_db(database):
     """Set database instance from main app"""
-    global db
+    global db, email_service
     db = database
+    # Import email service here to avoid circular imports
+    from services.email_service import (
+        notify_new_user_registration, 
+        send_welcome_email
+    )
+    global notify_new_user, send_welcome
+    notify_new_user = notify_new_user_registration
+    send_welcome = send_welcome_email
 
 
 # Request/Response models
-class RegisterRequest(BaseModel):
-    email: EmailStr
-    password: str
-    name: str
-
-
-class LoginRequest(BaseModel):
-    email: EmailStr
-    password: str
+class GoogleSessionRequest(BaseModel):
+    session_id: str
 
 
 class UserResponse(BaseModel):
@@ -143,95 +144,6 @@ def user_to_response(user: dict) -> dict:
     }
 
 
-# ==================== EMAIL AUTHENTICATION ====================
-
-@router.post("/register")
-async def register(request: RegisterRequest, response: Response):
-    """Register a new user with email/password"""
-    email = request.email.lower()
-    
-    # Check if user exists
-    existing_user = await get_user_by_email(email)
-    if existing_user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="El email ya está registrado"
-        )
-    
-    # Create user
-    user_id = generate_user_id()
-    password_hash = pwd_context.hash(request.password)
-    
-    user_doc = {
-        "user_id": user_id,
-        "email": email,
-        "name": request.name,
-        "picture": None,
-        "auth_provider": "email",
-        "password_hash": password_hash,
-        "subscription_status": "inactive",
-        "subscription_type": None,
-        "subscription_plan": None,
-        "subscription_id": None,
-        "subscription_start": None,
-        "subscription_end": None,
-        "created_at": datetime.now(timezone.utc).isoformat()
-    }
-    
-    await db.users.insert_one(user_doc)
-    logger.info(f"New user registered: {email}")
-    
-    # Create session
-    session_token, expires_at = await create_session(user_id)
-    set_session_cookie(response, session_token, expires_at)
-    
-    # Remove sensitive data
-    del user_doc["password_hash"]
-    
-    return {
-        "session_token": session_token,
-        "user": user_to_response(user_doc)
-    }
-
-
-@router.post("/login")
-async def login(request: LoginRequest, response: Response):
-    """Login with email/password"""
-    email = request.email.lower()
-    
-    user = await get_user_by_email(email)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Credenciales incorrectas"
-        )
-    
-    # Check if user has password (email auth)
-    if not user.get("password_hash"):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Esta cuenta usa inicio de sesión con Google"
-        )
-    
-    # Verify password
-    if not pwd_context.verify(request.password, user["password_hash"]):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Credenciales incorrectas"
-        )
-    
-    # Create session
-    session_token, expires_at = await create_session(user["user_id"])
-    set_session_cookie(response, session_token, expires_at)
-    
-    logger.info(f"User logged in: {email}")
-    
-    return {
-        "session_token": session_token,
-        "user": user_to_response(user)
-    }
-
-
 # ==================== GOOGLE OAUTH (Emergent Auth) ====================
 
 @router.post("/google/session")
@@ -277,7 +189,6 @@ async def process_google_session(request: Request, response: Response):
     email = auth_data.get("email", "").lower()
     name = auth_data.get("name", "Usuario")
     picture = auth_data.get("picture")
-    emergent_session_token = auth_data.get("session_token")
     
     if not email:
         raise HTTPException(
@@ -327,6 +238,13 @@ async def process_google_session(request: Request, response: Response):
         }
         await db.users.insert_one(user)
         logger.info(f"New Google user registered: {email}")
+        
+        # Send email notifications (non-blocking)
+        try:
+            asyncio.create_task(notify_new_user(email, name))
+            asyncio.create_task(send_welcome(email, name))
+        except Exception as e:
+            logger.error(f"Failed to send registration emails: {e}")
     
     # Create our own session
     session_token, expires_at = await create_session(user_id)

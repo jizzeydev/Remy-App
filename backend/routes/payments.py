@@ -5,6 +5,7 @@ from datetime import datetime, timezone, timedelta
 from typing import Optional
 import logging
 import os
+import asyncio
 
 from services.mercadopago_service import MercadoPagoService, PLANS
 from routes.auth import get_current_user_dependency
@@ -16,10 +17,21 @@ router = APIRouter(prefix="/api/payments", tags=["payments"])
 # MongoDB connection (will be set from main app)
 db = None
 
+# Email notification functions
+notify_subscription_started = None
+notify_subscription_cancelled = None
+
 def set_db(database):
     """Set database instance from main app"""
-    global db
+    global db, notify_subscription_started, notify_subscription_cancelled
     db = database
+    # Import email service
+    from services.email_service import (
+        notify_subscription_started as notify_start,
+        notify_subscription_cancelled as notify_cancel
+    )
+    notify_subscription_started = notify_start
+    notify_subscription_cancelled = notify_cancel
 
 
 # Initialize Mercado Pago service
@@ -401,6 +413,22 @@ async def mercadopago_webhook(request: Request):
                     )
                     
                     logger.info(f"Subscription activated via webhook: {subscription['user_email']}")
+                    
+                    # Send email notification
+                    try:
+                        user = await db.users.find_one(
+                            {"user_id": subscription["user_id"]},
+                            {"_id": 0, "email": 1, "name": 1}
+                        )
+                        if user and notify_subscription_started:
+                            asyncio.create_task(notify_subscription_started(
+                                user.get("email", subscription["user_email"]),
+                                user.get("name", "Usuario"),
+                                subscription.get("plan", "monthly"),
+                                subscription.get("amount", 0)
+                            ))
+                    except Exception as e:
+                        logger.error(f"Failed to send subscription email: {e}")
         
         # Handle subscription notifications
         elif "subscription" in action or "preapproval" in action:
@@ -433,6 +461,22 @@ async def mercadopago_webhook(request: Request):
                     )
                     
                     logger.info(f"Subscription updated via webhook: {preapproval_id} -> {our_status}")
+                    
+                    # Send cancellation notification
+                    if our_status == "cancelled" and notify_subscription_cancelled:
+                        try:
+                            user = await db.users.find_one(
+                                {"user_id": subscription["user_id"]},
+                                {"_id": 0, "email": 1, "name": 1}
+                            )
+                            if user:
+                                asyncio.create_task(notify_subscription_cancelled(
+                                    user.get("email", subscription["user_email"]),
+                                    user.get("name", "Usuario"),
+                                    "Cancelación desde Mercado Pago"
+                                ))
+                        except Exception as e:
+                            logger.error(f"Failed to send cancellation email: {e}")
         
         return {"status": "received"}
         
