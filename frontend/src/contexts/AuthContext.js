@@ -125,21 +125,43 @@ export const AuthProvider = ({ children }) => {
   const processGoogleCallback = async (sessionId) => {
     try {
       setError(null);
+      console.log('Sending session_id to backend...');
+      
       const response = await axios.post(`${API}/auth/google/session`, {
         session_id: sessionId
       }, {
-        withCredentials: true
+        withCredentials: true,
+        timeout: 15000 // 15 second timeout for slow mobile connections
       });
+      
+      console.log('Backend response received');
       
       // Store session token for persistence
       if (response.data.session_token) {
         storeToken(response.data.session_token);
+        console.log('Session token stored');
       }
       
       setUser(response.data.user);
       return { success: true, user: response.data.user };
     } catch (err) {
-      const message = err.response?.data?.detail || 'Error de autenticación con Google';
+      console.error('Google callback error:', err);
+      
+      let message = 'Error de autenticación con Google';
+      
+      if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+        message = 'Conexión lenta. Intenta de nuevo.';
+      } else if (err.response?.data?.detail) {
+        const detail = err.response.data.detail;
+        if (detail.includes('expired') || detail.includes('not found')) {
+          message = 'La sesión expiró. Intenta de nuevo.';
+        } else {
+          message = detail;
+        }
+      } else if (!navigator.onLine) {
+        message = 'Sin conexión a internet';
+      }
+      
       setError(message);
       return { success: false, error: message };
     }
