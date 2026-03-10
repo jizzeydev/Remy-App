@@ -100,12 +100,20 @@ class MercadoPagoService:
                 self._get_idempotency_headers()
             )
             
+            logger.info(f"MP API Response: status={result['status']}, response={result.get('response', {})}")
+            
             if result["status"] in [200, 201]:
                 logger.info(f"PreApproval created for {payer_email}: {result['response'].get('id')}")
                 return result["response"]
             else:
-                logger.error(f"Failed to create preapproval: {result}")
-                raise Exception(f"Mercado Pago error: {result.get('response', {}).get('message', 'Unknown error')}")
+                error_detail = result.get('response', {})
+                logger.error(f"Failed to create preapproval: status={result['status']}, response={error_detail}")
+                error_message = error_detail.get('message', 'Error desconocido de Mercado Pago')
+                if 'cause' in error_detail:
+                    causes = error_detail.get('cause', [])
+                    if causes:
+                        error_message = causes[0].get('description', error_message)
+                raise Exception(f"Mercado Pago: {error_message}")
                 
         except Exception as e:
             logger.error(f"Error creating preapproval: {str(e)}")

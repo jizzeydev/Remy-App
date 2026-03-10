@@ -231,9 +231,16 @@ async def create_subscription(
         
     except Exception as e:
         logger.error(f"Error creating subscription: {e}")
+        logger.error(f"Full error details: {repr(e)}")
+        # Return more detailed error message
+        error_msg = str(e)
+        if "card_token" in error_msg.lower():
+            error_msg = "Token de tarjeta inválido o expirado. Por favor intenta de nuevo."
+        elif "payer_email" in error_msg.lower():
+            error_msg = "Error con el email del pagador"
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error al procesar el pago: {str(e)}"
+            detail=f"Error al procesar el pago: {error_msg}"
         )
 
 
