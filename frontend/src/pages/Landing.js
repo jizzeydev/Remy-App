@@ -52,12 +52,12 @@ const HeroSection = () => {
       </nav>
       
       <div className="relative z-10 max-w-6xl mx-auto px-6 py-20 text-center">
-        {/* Logo */}
+        {/* Remy Mascot Image */}
         <div className="flex justify-center mb-8">
           <img 
-            src="/remy-logo.png" 
-            alt="Remy" 
-            className="w-32 h-32 object-contain drop-shadow-2xl"
+            src="/remy-mascot.png" 
+            alt="Remy - Tu tutor IA" 
+            className="w-48 h-48 md:w-64 md:h-64 object-contain drop-shadow-2xl"
           />
         </div>
         
@@ -95,22 +95,6 @@ const HeroSection = () => {
           >
             Ver cursos disponibles
           </Button>
-        </div>
-        
-        {/* Social proof */}
-        <div className="flex flex-wrap justify-center gap-8 text-slate-400">
-          <div className="flex items-center gap-2">
-            <Users size={20} className="text-cyan-400" />
-            <span>+500 estudiantes</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Star size={20} className="text-yellow-400" />
-            <span>4.9/5 valoración</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <TrendingUp size={20} className="text-green-400" />
-            <span>85% aprobación</span>
-          </div>
         </div>
         
         {/* Scroll indicator */}

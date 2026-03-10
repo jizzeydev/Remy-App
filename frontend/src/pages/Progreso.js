@@ -1,226 +1,319 @@
+/**
+ * Progreso Page - Real data from backend
+ * Shows: lessons completed, quizzes taken, average grade
+ */
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { TrendingUp, Award, Target, Calendar, Loader2 } from 'lucide-react';
+import { BookOpen, ClipboardCheck, TrendingUp, Award, Loader2, ChevronRight } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '../contexts/AuthContext';
+import SubscriptionRequired from '../components/SubscriptionRequired';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const Progreso = () => {
-  const [progressData, setProgressData] = useState([]);
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
-  const userId = 'demo-user-001';
+  const [courses, setCourses] = useState([]);
+  const [courseProgress, setCourseProgress] = useState({});
+  const [quizStats, setQuizStats] = useState({ total: 0, average: 0, grades: [] });
+
+  const getStudentId = () => {
+    if (user?.user_id) return user.user_id;
+    return localStorage.getItem('student_id') || 'anonymous';
+  };
 
   useEffect(() => {
-    fetchProgress();
+    fetchAllData();
   }, []);
 
-  const fetchProgress = async () => {
+  const fetchAllData = async () => {
     setLoading(true);
+    const studentId = getStudentId();
+    
     try {
-      const response = await axios.get(`${API}/progress/${userId}`);
-      setProgressData(response.data);
+      // Fetch courses
+      const coursesRes = await axios.get(`${API}/courses`);
+      const coursesData = coursesRes.data;
+      setCourses(coursesData);
+
+      // Fetch progress for each course
+      const progressMap = {};
+      let totalLessons = 0;
+      let completedLessons = 0;
+
+      for (const course of coursesData) {
+        try {
+          // Get chapters and lessons count
+          const chaptersRes = await axios.get(`${API}/courses/${course.id}/chapters`);
+          const chapters = chaptersRes.data;
+          
+          let courseLessons = 0;
+          for (const chapter of chapters) {
+            const lessonsRes = await axios.get(`${API}/chapters/${chapter.id}/lessons`);
+            courseLessons += lessonsRes.data.length;
+          }
+          
+          // Get progress
+          let courseCompleted = 0;
+          try {
+            const progressRes = await axios.get(`${API}/progress/${studentId}/${course.id}`);
+            courseCompleted = progressRes.data.completed_lessons?.length || 0;
+          } catch (e) {
+            // No progress yet
+          }
+
+          progressMap[course.id] = {
+            total: courseLessons,
+            completed: courseCompleted,
+            percentage: courseLessons > 0 ? Math.round((courseCompleted / courseLessons) * 100) : 0
+          };
+
+          totalLessons += courseLessons;
+          completedLessons += courseCompleted;
+        } catch (e) {
+          progressMap[course.id] = { total: 0, completed: 0, percentage: 0 };
+        }
+      }
+
+      setCourseProgress(progressMap);
+
+      // Fetch quiz stats
+      try {
+        const quizzesRes = await axios.get(`${API}/quiz/history/${studentId}`);
+        const quizzes = quizzesRes.data || [];
+        
+        const grades = quizzes.map(q => q.grade || 0).filter(g => g > 0);
+        const average = grades.length > 0 
+          ? (grades.reduce((a, b) => a + b, 0) / grades.length).toFixed(1)
+          : 0;
+
+        setQuizStats({
+          total: quizzes.length,
+          average: parseFloat(average),
+          grades: grades.slice(0, 10) // Last 10 grades
+        });
+      } catch (e) {
+        console.error('Error fetching quizzes:', e);
+      }
+
     } catch (error) {
-      console.error('Error fetching progress:', error);
+      console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const stats = {
-    totalLessons: 45,
-    completedLessons: 28,
-    totalQuizzes: 12,
-    completedQuizzes: 8,
-    averageScore: 87,
-    studyStreak: 7
+  // Calculate totals
+  const totalLessons = Object.values(courseProgress).reduce((sum, p) => sum + p.total, 0);
+  const completedLessons = Object.values(courseProgress).reduce((sum, p) => sum + p.completed, 0);
+  const overallProgress = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+
+  // Get grade color
+  const getGradeColor = (grade) => {
+    if (grade >= 6) return 'text-green-600';
+    if (grade >= 5) return 'text-cyan-600';
+    if (grade >= 4) return 'text-yellow-600';
+    return 'text-red-600';
   };
 
-  const achievements = [
-    { icon: Award, title: 'Primera victoria', description: 'Completaste tu primer simulacro', earned: true },
-    { icon: Target, title: 'Experto en cálculo', description: 'Completa 10 lecciones de cálculo', earned: true },
-    { icon: TrendingUp, title: 'Racha de estudio', description: 'Estudia 7 días seguidos', earned: true },
-    { icon: Calendar, title: 'Mes completo', description: 'Estudia todos los días del mes', earned: false },
-  ];
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="animate-spin text-cyan-500" size={32} />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 pb-24 lg:pb-8" data-testid="progreso-page">
       <div>
-        <h1 className="text-3xl font-bold">Tu Progreso</h1>
-        <p className="text-slate-600 mt-1">Seguimiento detallado de tu aprendizaje</p>
+        <h1 className="text-3xl font-bold text-slate-900">Mi Progreso</h1>
+        <p className="text-slate-600 mt-1">Tu avance de aprendizaje en Remy</p>
       </div>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card data-testid="stat-lessons">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Lessons Completed */}
+        <Card className="border-0 shadow-md bg-gradient-to-br from-cyan-50 to-white">
           <CardContent className="pt-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-1">{stats.completedLessons}</div>
-              <div className="text-sm text-slate-600">Lecciones completadas</div>
-              <Progress value={(stats.completedLessons / stats.totalLessons) * 100} className="mt-3" />
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-sm text-slate-500 mb-1">Lecciones completadas</p>
+                <p className="text-4xl font-bold text-slate-900">{completedLessons}</p>
+                <p className="text-sm text-slate-500 mt-1">de {totalLessons} totales</p>
+              </div>
+              <div className="bg-cyan-100 p-3 rounded-xl">
+                <BookOpen className="text-cyan-600" size={24} />
+              </div>
             </div>
+            <Progress value={overallProgress} className="mt-4 h-2" />
+            <p className="text-xs text-slate-500 mt-2">{overallProgress}% completado</p>
           </CardContent>
         </Card>
 
-        <Card data-testid="stat-quizzes">
+        {/* Quizzes Taken */}
+        <Card className="border-0 shadow-md bg-gradient-to-br from-purple-50 to-white">
           <CardContent className="pt-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-1">{stats.completedQuizzes}</div>
-              <div className="text-sm text-slate-600">Simulacros realizados</div>
-              <Progress value={(stats.completedQuizzes / stats.totalQuizzes) * 100} className="mt-3" />
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-sm text-slate-500 mb-1">Simulacros realizados</p>
+                <p className="text-4xl font-bold text-slate-900">{quizStats.total}</p>
+                <p className="text-sm text-slate-500 mt-1">simulacros de práctica</p>
+              </div>
+              <div className="bg-purple-100 p-3 rounded-xl">
+                <ClipboardCheck className="text-purple-600" size={24} />
+              </div>
             </div>
+            {quizStats.total > 0 && (
+              <Button 
+                variant="link" 
+                className="p-0 h-auto mt-4 text-purple-600"
+                onClick={() => navigate('/simulacros')}
+              >
+                Ver historial <ChevronRight size={16} />
+              </Button>
+            )}
           </CardContent>
         </Card>
 
-        <Card data-testid="stat-average">
+        {/* Average Grade */}
+        <Card className="border-0 shadow-md bg-gradient-to-br from-green-50 to-white">
           <CardContent className="pt-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-1">{stats.averageScore}%</div>
-              <div className="text-sm text-slate-600">Promedio general</div>
-              <Progress value={stats.averageScore} className="mt-3" />
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-sm text-slate-500 mb-1">Nota promedio</p>
+                {quizStats.total > 0 ? (
+                  <>
+                    <p className={`text-4xl font-bold ${getGradeColor(quizStats.average)}`}>
+                      {quizStats.average}
+                    </p>
+                    <p className="text-sm text-slate-500 mt-1">escala 1.0 - 7.0</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-4xl font-bold text-slate-300">-</p>
+                    <p className="text-sm text-slate-400 mt-1">Sin simulacros aún</p>
+                  </>
+                )}
+              </div>
+              <div className="bg-green-100 p-3 rounded-xl">
+                <Award className="text-green-600" size={24} />
+              </div>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card data-testid="stat-streak">
-          <CardContent className="pt-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-1">{stats.studyStreak}</div>
-              <div className="text-sm text-slate-600">Días de racha</div>
-              <div className="mt-3 text-2xl">🔥</div>
-            </div>
+            {quizStats.average >= 4 && quizStats.total > 0 && (
+              <div className="mt-4 text-sm text-green-600 flex items-center gap-1">
+                <TrendingUp size={14} />
+                {quizStats.average >= 6 ? '¡Excelente trabajo!' : 
+                 quizStats.average >= 5 ? '¡Vas muy bien!' : 'Sigue practicando'}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
 
-      {/* Detailed Progress */}
-      <Tabs defaultValue="courses" className="w-full">
-        <TabsList data-testid="progress-tabs">
-          <TabsTrigger value="courses">Cursos</TabsTrigger>
-          <TabsTrigger value="achievements">Logros</TabsTrigger>
-          <TabsTrigger value="activity">Actividad</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="courses" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Progreso por curso</CardTitle>
-              <CardDescription>Tu avance en cada curso</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {loading ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="animate-spin text-primary" size={32} />
-                </div>
-              ) : progressData.length === 0 ? (
-                <div className="text-center py-8 text-slate-500">
-                  No hay datos de progreso aún
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  {progressData.map((progress, index) => (
-                    <div key={progress.id} data-testid={`progress-item-${index}`}>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-semibold">Curso {index + 1}</span>
-                        <span className="text-sm text-slate-600">
-                          {progress.completed_modules}/{progress.total_modules} módulos
-                        </span>
-                      </div>
-                      <Progress
-                        value={(progress.completed_modules / progress.total_modules) * 100}
-                        className="h-3"
-                      />
-                      <div className="mt-2 flex items-center justify-between text-sm text-slate-500">
-                        <span>Simulacros: {progress.quizzes_completed}</span>
-                        <span>
-                          Última actividad:{' '}
-                          {new Date(progress.last_activity).toLocaleDateString('es-ES')}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="achievements" className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {achievements.map((achievement, index) => {
-              const Icon = achievement.icon;
-              return (
-                <Card
-                  key={index}
-                  className={achievement.earned ? 'border-primary' : 'opacity-50'}
-                  data-testid={`achievement-${index}`}
-                >
-                  <CardContent className="pt-6">
-                    <div className="flex items-start gap-4">
-                      <div
-                        className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                          achievement.earned
-                            ? 'bg-gradient-to-br from-cyan-400 to-cyan-600 text-white'
-                            : 'bg-slate-100 text-slate-400'
-                        }`}
-                      >
-                        <Icon size={24} />
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-semibold mb-1">{achievement.title}</h4>
-                        <p className="text-sm text-slate-600">{achievement.description}</p>
-                        {achievement.earned && (
-                          <div className="mt-2">
-                            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                              ✔ Desbloqueado
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="activity" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Actividad reciente</CardTitle>
-              <CardDescription>Últimas 7 días</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {[
-                  { date: 'Hoy', activity: 'Completaste 3 lecciones de Cálculo II' },
-                  { date: 'Ayer', activity: 'Realizaste un simulacro de Derivadas' },
-                  { date: 'Hace 2 días', activity: 'Consultaste 5 fórmulas' },
-                  { date: 'Hace 3 días', activity: 'Chateaste con Remy sobre integrales' },
-                  { date: 'Hace 4 días', activity: 'Completaste un simulacro con 90%' },
-                ].map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-start gap-4 pb-4 border-b border-slate-100 last:border-0"
-                    data-testid={`activity-item-${index}`}
+      {/* Course Progress */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Progreso por curso</CardTitle>
+          <CardDescription>Tu avance en cada curso disponible</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {courses.length === 0 ? (
+            <div className="text-center py-8 text-slate-500">
+              No hay cursos disponibles aún
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {courses.map((course) => {
+                const progress = courseProgress[course.id] || { total: 0, completed: 0, percentage: 0 };
+                return (
+                  <div 
+                    key={course.id} 
+                    className="p-4 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer"
+                    onClick={() => navigate(`/course/${course.id}`)}
                   >
-                    <div className="w-2 h-2 mt-2 rounded-full bg-primary"></div>
-                    <div>
-                      <div className="text-sm font-medium">{item.date}</div>
-                      <div className="text-sm text-slate-600">{item.activity}</div>
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <h4 className="font-semibold text-slate-900">{course.title}</h4>
+                        <p className="text-sm text-slate-500">{course.category}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-lg font-bold text-cyan-600">{progress.percentage}%</p>
+                        <p className="text-xs text-slate-500">
+                          {progress.completed}/{progress.total} lecciones
+                        </p>
+                      </div>
                     </div>
+                    <Progress value={progress.percentage} className="h-2" />
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+                );
+              })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Recent Quizzes */}
+      {quizStats.grades.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Últimas notas en simulacros</CardTitle>
+            <CardDescription>Tus {quizStats.grades.length} simulacros más recientes</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-3 flex-wrap">
+              {quizStats.grades.map((grade, idx) => (
+                <div 
+                  key={idx}
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg ${
+                    grade >= 6 ? 'bg-green-100 text-green-700' :
+                    grade >= 5 ? 'bg-cyan-100 text-cyan-700' :
+                    grade >= 4 ? 'bg-yellow-100 text-yellow-700' :
+                    'bg-red-100 text-red-700'
+                  }`}
+                >
+                  {grade.toFixed(1)}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Empty state for new users */}
+      {completedLessons === 0 && quizStats.total === 0 && (
+        <Card className="border-dashed">
+          <CardContent className="py-12 text-center">
+            <div className="w-16 h-16 bg-cyan-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+              <TrendingUp className="text-cyan-600" size={32} />
+            </div>
+            <h3 className="text-xl font-semibold text-slate-900 mb-2">
+              ¡Comienza tu aventura de aprendizaje!
+            </h3>
+            <p className="text-slate-500 mb-6 max-w-md mx-auto">
+              Completa lecciones y realiza simulacros para ver tu progreso aquí.
+            </p>
+            <Button onClick={() => navigate('/biblioteca')} className="bg-cyan-500 hover:bg-cyan-600">
+              Explorar cursos
+            </Button>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
 
-export default Progreso;
+// Wrap with subscription guard
+export default function ProgresoPage() {
+  return (
+    <SubscriptionRequired feature="tu página de progreso">
+      <Progreso />
+    </SubscriptionRequired>
+  );
+}
