@@ -1621,9 +1621,6 @@ app.include_router(auth_routes.router)
 app.include_router(payments_routes.router)
 app.include_router(admin_users_routes.router)
 
-# Set admin verifier for user management routes
-admin_users_routes.set_admin_verifier(verify_admin_token)
-
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,

@@ -1,20 +1,23 @@
 """Admin user management routes for Remy platform"""
 from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, EmailStr
 from datetime import datetime, timezone, timedelta
 from typing import Optional, List
+from jose import JWTError, jwt
 import logging
 import uuid
+import os
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/admin/users", tags=["admin-users"])
 
+# Security
+security = HTTPBearer()
+
 # MongoDB connection (will be set from main app)
 db = None
-
-# Admin verification function (will be set from main app)
-verify_admin_token = None
 
 
 def set_db(database):
@@ -23,10 +26,28 @@ def set_db(database):
     db = database
 
 
-def set_admin_verifier(verifier):
-    """Set admin token verifier from main app"""
-    global verify_admin_token
-    verify_admin_token = verifier
+# Admin authentication - direct implementation
+async def verify_admin_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Verify admin JWT token"""
+    try:
+        token = credentials.credentials
+        secret_key = os.environ.get('ADMIN_SECRET_KEY')
+        admin_username = os.environ.get('ADMIN_USERNAME')
+        
+        payload = jwt.decode(token, secret_key, algorithms=["HS256"])
+        username: str = payload.get("sub")
+        
+        if username is None or username != admin_username:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Credenciales de administrador inválidas"
+            )
+        return username
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token de administrador inválido o expirado"
+        )
 
 
 # Request/Response models
@@ -59,7 +80,7 @@ async def list_users(
     limit: int = 50,
     status_filter: Optional[str] = None,
     search: Optional[str] = None,
-    _: str = Depends(lambda: verify_admin_token)
+    _: str = Depends(verify_admin_token)
 ):
     """
     List all registered users with their subscription status
@@ -111,7 +132,7 @@ async def list_users(
 
 
 @router.get("/stats")
-async def get_user_stats(_: str = Depends(lambda: verify_admin_token)):
+async def get_user_stats(_: str = Depends(verify_admin_token)):
     """Get user and subscription statistics"""
     
     # Total users
@@ -166,7 +187,7 @@ async def get_user_stats(_: str = Depends(lambda: verify_admin_token)):
 @router.get("/{user_id}")
 async def get_user_details(
     user_id: str,
-    _: str = Depends(lambda: verify_admin_token)
+    _: str = Depends(verify_admin_token)
 ):
     """Get detailed information about a specific user"""
     user = await db.users.find_one(
@@ -209,7 +230,7 @@ async def get_user_details(
 @router.post("/grant-access")
 async def grant_manual_access(
     request: GrantAccessRequest,
-    _: str = Depends(lambda: verify_admin_token)
+    _: str = Depends(verify_admin_token)
 ):
     """
     Grant manual access to a user
@@ -295,7 +316,7 @@ async def grant_manual_access(
 @router.post("/{user_id}/revoke-access")
 async def revoke_user_access(
     user_id: str,
-    _: str = Depends(lambda: verify_admin_token)
+    _: str = Depends(verify_admin_token)
 ):
     """Revoke a user's manual access"""
     user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
@@ -343,7 +364,7 @@ async def revoke_user_access(
 async def extend_user_access(
     user_id: str,
     months: int = 1,
-    _: str = Depends(lambda: verify_admin_token)
+    _: str = Depends(verify_admin_token)
 ):
     """Extend a user's subscription by X months"""
     user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
