@@ -209,6 +209,9 @@ const SubscribePage = () => {
       // Get session token from localStorage
       const sessionToken = localStorage.getItem('remy_session_token');
       
+      console.log('Submitting payment with plan:', selectedPlan);
+      console.log('Plan ID being sent:', selectedPlan.id);
+      
       // Send to backend
       const response = await axios.post(
         `${API}/payments/subscribe`,
@@ -220,6 +223,8 @@ const SubscribePage = () => {
           headers: sessionToken ? { Authorization: `Bearer ${sessionToken}` } : {}
         }
       );
+      
+      console.log('Backend response:', response.data);
       
       if (response.data.success) {
         toast.success('¡Suscripción activada exitosamente!');

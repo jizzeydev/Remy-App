@@ -44,8 +44,11 @@ const MiSuscripcion = () => {
   const fetchSubscription = async () => {
     setLoading(true);
     try {
+      const token = localStorage.getItem('remy_session_token');
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      
       const response = await axios.get(`${API}/payments/subscription`, {
-        withCredentials: true
+        headers
       });
       setSubscription(response.data);
     } catch (error) {
@@ -61,8 +64,11 @@ const MiSuscripcion = () => {
   const handleCancelSubscription = async () => {
     setCancelling(true);
     try {
+      const token = localStorage.getItem('remy_session_token');
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      
       const response = await axios.post(`${API}/payments/cancel`, {}, {
-        withCredentials: true
+        headers
       });
       
       toast.success(response.data.message || 'Suscripción cancelada');

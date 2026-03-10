@@ -148,6 +148,8 @@ async def create_subscription(
     - plan_id: "monthly" or "semestral"
     - card_token: Token from Mercado Pago JS SDK
     """
+    logger.info(f"Creating subscription for {current_user['email']}: plan_id={request.plan_id}")
+    
     if request.plan_id not in PLANS:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -162,6 +164,7 @@ async def create_subscription(
         )
     
     plan = PLANS[request.plan_id]
+    logger.info(f"Selected plan: {plan['name']} - ${plan['amount']} CLP")
     
     try:
         # Get base URL from environment variable
