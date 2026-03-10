@@ -17,6 +17,7 @@ import Progreso from './pages/Progreso';
 import CourseViewer from './pages/student/CourseViewer';
 import LessonViewer from './pages/student/LessonViewer';
 import AdminLogin from './pages/admin/AdminLogin';
+import AdminAuthCallback from './pages/admin/AdminAuthCallback';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminCourses from './pages/admin/AdminCourses';
 import AdminQuestions from './pages/admin/AdminQuestions';
@@ -100,6 +101,7 @@ function AppRouter() {
       
       {/* Admin Routes */}
       <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/admin/auth/callback" element={<AdminAuthCallback />} />
       <Route element={<AdminProtectedRoute><AdminLayout /></AdminProtectedRoute>}>
         <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />

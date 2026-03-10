@@ -1,75 +1,23 @@
-import { useState, useEffect, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { Lock, User, Loader2 } from 'lucide-react';
+import { Lock, User } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api/admin`;
 
-// Allowed admin emails for Google login
-const ALLOWED_ADMIN_EMAILS = [
-  'seremonta.cl@gmail.com',
-  'admin@seremonta.cl'
-];
-
 const AdminLogin = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
-  const hasProcessedCallback = useRef(false);
   const [formData, setFormData] = useState({
     username: '',
     password: ''
   });
-
-  // Handle Google OAuth callback
-  useEffect(() => {
-    const hash = window.location.hash;
-    if (hash && hash.includes('session_id=') && !hasProcessedCallback.current) {
-      hasProcessedCallback.current = true;
-      handleGoogleCallback(hash);
-    }
-  }, [location]);
-
-  const handleGoogleCallback = async (hash) => {
-    setGoogleLoading(true);
-    const params = new URLSearchParams(hash.replace('#', ''));
-    const sessionId = params.get('session_id');
-
-    if (!sessionId) {
-      toast.error('Error de autenticación');
-      setGoogleLoading(false);
-      return;
-    }
-
-    try {
-      // Get user data from Emergent Auth
-      const response = await axios.post(`${BACKEND_URL}/api/admin/google-login`, {
-        session_id: sessionId
-      });
-
-      if (response.data.access_token) {
-        localStorage.setItem('admin_token', response.data.access_token);
-        toast.success('¡Bienvenido, Admin!');
-        // Clear hash and navigate
-        window.history.replaceState({}, '', '/admin/login');
-        navigate('/admin/dashboard');
-      }
-    } catch (error) {
-      console.error('Google login error:', error);
-      const message = error.response?.data?.detail || 'Error de autenticación con Google';
-      toast.error(message);
-      window.history.replaceState({}, '', '/admin/login');
-    } finally {
-      setGoogleLoading(false);
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -89,21 +37,9 @@ const AdminLogin = () => {
   };
 
   const handleGoogleLogin = () => {
-    const redirectUrl = window.location.origin + '/admin/login';
+    const redirectUrl = window.location.origin + '/admin/auth/callback';
     window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
   };
-
-  // Show loading state if processing callback
-  if (googleLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="w-12 h-12 text-cyan-500 animate-spin mx-auto mb-4" />
-          <p className="text-white text-lg">Verificando acceso de administrador...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
@@ -122,7 +58,7 @@ const AdminLogin = () => {
             variant="outline"
             className="w-full h-12 text-base border-2 hover:bg-slate-50"
             onClick={handleGoogleLogin}
-            disabled={loading || googleLoading}
+            disabled={loading}
           >
             <svg className="mr-3 w-5 h-5" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -177,7 +113,7 @@ const AdminLogin = () => {
             <Button
               type="submit"
               className="w-full"
-              disabled={loading || googleLoading}
+              disabled={loading}
             >
               {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
             </Button>
