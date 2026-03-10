@@ -436,11 +436,12 @@ const SubscribePage = () => {
                       <Label htmlFor="docNumber">Número de documento</Label>
                       <Input
                         id="docNumber"
-                        placeholder="12.345.678-9"
+                        placeholder="123456789"
                         value={docNumber}
-                        onChange={(e) => setDocNumber(e.target.value)}
+                        onChange={(e) => setDocNumber(e.target.value.replace(/[.-]/g, ''))}
                         data-testid="doc-number-input"
                       />
+                      <p className="text-xs text-slate-500">Sin puntos ni guión (ej: 123456789)</p>
                     </div>
                   </div>
                   
