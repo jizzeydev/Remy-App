@@ -161,13 +161,27 @@ const SubscribePage = () => {
         identificationNumber: docNumber
       };
       
+      console.log('Creating card token with data:', { ...cardData, securityCode: '***' });
+      
       const tokenResponse = await mp.createCardToken(cardData);
       
+      console.log('Token response:', tokenResponse);
+      
       if (tokenResponse.error) {
-        throw new Error(tokenResponse.error);
+        console.error('Token error:', tokenResponse);
+        throw new Error(tokenResponse.error.message || tokenResponse.error);
+      }
+      
+      if (!tokenResponse.id) {
+        console.error('No token ID in response:', tokenResponse);
+        throw new Error('No se pudo generar el token de la tarjeta');
       }
       
       const cardToken = tokenResponse.id;
+      console.log('Card token created:', cardToken);
+      
+      // Get session token from localStorage
+      const sessionToken = localStorage.getItem('remy_session_token');
       
       // Send to backend
       const response = await axios.post(
@@ -176,7 +190,10 @@ const SubscribePage = () => {
           plan_id: selectedPlan.id,
           card_token: cardToken
         },
-        { withCredentials: true }
+        { 
+          withCredentials: true,
+          headers: sessionToken ? { Authorization: `Bearer ${sessionToken}` } : {}
+        }
       );
       
       if (response.data.success) {
@@ -190,7 +207,27 @@ const SubscribePage = () => {
       
     } catch (error) {
       console.error('Payment error:', error);
-      const message = error.response?.data?.detail || error.message || 'Error al procesar el pago';
+      console.error('Error response:', error.response?.data);
+      
+      let message = 'Error al procesar el pago';
+      
+      if (error.response?.data?.detail) {
+        message = error.response.data.detail;
+      } else if (error.message) {
+        // Handle Mercado Pago SDK errors
+        if (error.message.includes('cardNumber')) {
+          message = 'Número de tarjeta inválido';
+        } else if (error.message.includes('securityCode')) {
+          message = 'CVV inválido';
+        } else if (error.message.includes('cardExpiration')) {
+          message = 'Fecha de vencimiento inválida';
+        } else if (error.message.includes('identification')) {
+          message = 'Documento de identidad inválido';
+        } else {
+          message = error.message;
+        }
+      }
+      
       toast.error(message);
     } finally {
       setProcessing(false);
