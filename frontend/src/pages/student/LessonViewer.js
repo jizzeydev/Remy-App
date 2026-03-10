@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, Clock, BookOpen, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import MarkdownRenderer from '@/components/course/MarkdownRenderer';
+import SubscriptionRequired from '@/components/SubscriptionRequired';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -227,4 +228,10 @@ const LessonViewer = () => {
   );
 };
 
-export default LessonViewer;
+export default function LessonViewerPage() {
+  return (
+    <SubscriptionRequired feature="las lecciones del curso">
+      <LessonViewer />
+    </SubscriptionRequired>
+  );
+}

@@ -1,6 +1,6 @@
 /**
  * Mi Suscripción - User Subscription Management Page
- * Shows subscription status, days remaining, and allows cancellation
+ * Beautiful redesigned version with modern UI
  */
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -9,12 +9,11 @@ import axios from 'axios';
 import { 
   Crown, Calendar, CreditCard, Clock, AlertTriangle,
   CheckCircle, XCircle, Loader2, ArrowLeft, RefreshCw,
-  Shield, Zap
+  Shield, Zap, Sparkles, Star, Gift, ChevronRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -76,7 +75,6 @@ const MiSuscripcion = () => {
     }
   };
 
-  // Calculate days remaining
   const calculateDaysRemaining = () => {
     if (!subscription?.subscription_end) return 0;
     const endDate = new Date(subscription.subscription_end);
@@ -84,19 +82,6 @@ const MiSuscripcion = () => {
     const diffTime = endDate - now;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return Math.max(0, diffDays);
-  };
-
-  // Calculate progress percentage (days used / total days)
-  const calculateProgress = () => {
-    if (!subscription?.subscription_end || !user?.subscription_start) return 0;
-    const startDate = new Date(user.subscription_start);
-    const endDate = new Date(subscription.subscription_end);
-    const now = new Date();
-    
-    const totalDays = (endDate - startDate) / (1000 * 60 * 60 * 24);
-    const usedDays = (now - startDate) / (1000 * 60 * 60 * 24);
-    
-    return Math.min(100, Math.max(0, (usedDays / totalDays) * 100));
   };
 
   const formatDate = (dateStr) => {
@@ -108,38 +93,12 @@ const MiSuscripcion = () => {
     });
   };
 
-  const getPlanName = (plan) => {
+  const getPlanDetails = (plan) => {
     const plans = {
-      'monthly': 'Plan Mensual',
-      'semestral': 'Plan Semestral'
+      'monthly': { name: 'Plan Mensual', price: '$9.990', period: 'mes', color: 'from-cyan-500 to-blue-600' },
+      'semestral': { name: 'Plan Semestral', price: '$29.990', period: '6 meses', color: 'from-purple-500 to-pink-600' }
     };
-    return plans[plan] || plan;
-  };
-
-  const getPlanPrice = (plan) => {
-    const prices = {
-      'monthly': '$9.990 CLP/mes',
-      'semestral': '$29.990 CLP/6 meses'
-    };
-    return prices[plan] || '-';
-  };
-
-  const getStatusBadge = (status) => {
-    const badges = {
-      'active': { color: 'bg-green-100 text-green-700', icon: CheckCircle, text: 'Activa' },
-      'cancelled': { color: 'bg-red-100 text-red-700', icon: XCircle, text: 'Cancelada' },
-      'expired': { color: 'bg-orange-100 text-orange-700', icon: Clock, text: 'Expirada' },
-      'pending': { color: 'bg-yellow-100 text-yellow-700', icon: Clock, text: 'Pendiente' },
-      'inactive': { color: 'bg-slate-100 text-slate-700', icon: XCircle, text: 'Sin suscripción' }
-    };
-    const badge = badges[status] || badges['inactive'];
-    const Icon = badge.icon;
-    return (
-      <Badge className={`${badge.color} flex items-center gap-1`}>
-        <Icon size={14} />
-        {badge.text}
-      </Badge>
-    );
+    return plans[plan] || { name: 'Plan', price: '-', period: '', color: 'from-slate-500 to-slate-600' };
   };
 
   if (loading) {
@@ -152,254 +111,322 @@ const MiSuscripcion = () => {
 
   const isActive = subscription?.subscription_status === 'active';
   const daysRemaining = calculateDaysRemaining();
-  const progress = calculateProgress();
+  const planDetails = getPlanDetails(subscription?.subscription_plan);
 
+  // ==================== NO SUBSCRIPTION VIEW ====================
+  if (!isActive) {
+    return (
+      <div className="max-w-4xl mx-auto space-y-8 pb-24 lg:pb-8" data-testid="mi-suscripcion-page">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900">Mi Suscripción</h1>
+            <p className="text-slate-500 mt-1">Gestiona tu plan de Remy</p>
+          </div>
+          <Button variant="ghost" onClick={() => navigate('/biblioteca')}>
+            <ArrowLeft size={18} className="mr-2" />
+            Volver
+          </Button>
+        </div>
+
+        {/* No Subscription Card */}
+        <Card className="overflow-hidden border-0 shadow-xl">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-8 text-white text-center">
+            <div className="w-20 h-20 bg-white/10 rounded-full mx-auto mb-6 flex items-center justify-center">
+              <Crown size={40} className="text-cyan-400" />
+            </div>
+            <h2 className="text-2xl font-bold mb-2">Sin suscripción activa</h2>
+            <p className="text-slate-300 max-w-md mx-auto">
+              Desbloquea todo el potencial de Remy con una suscripción premium
+            </p>
+          </div>
+          
+          <CardContent className="p-8">
+            {/* Benefits Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              {[
+                { icon: Sparkles, label: 'Cursos ilimitados', color: 'text-cyan-500' },
+                { icon: ClipboardCheck, label: 'Simulacros', color: 'text-purple-500' },
+                { icon: TrendingUp, label: 'Progreso', color: 'text-green-500' },
+                { icon: Zap, label: 'Soporte 24/7', color: 'text-yellow-500' }
+              ].map((item, idx) => (
+                <div key={idx} className="text-center p-4 rounded-xl bg-slate-50">
+                  <item.icon className={`mx-auto mb-2 ${item.color}`} size={24} />
+                  <p className="text-sm font-medium text-slate-700">{item.label}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Plans */}
+            <div className="grid md:grid-cols-2 gap-4 mb-8">
+              {/* Monthly */}
+              <div 
+                className="relative p-6 rounded-2xl border-2 border-slate-200 hover:border-cyan-300 cursor-pointer transition-all hover:shadow-lg"
+                onClick={() => navigate('/subscribe?plan=monthly')}
+              >
+                <h3 className="font-bold text-lg mb-1">Plan Mensual</h3>
+                <p className="text-3xl font-bold text-slate-900 mb-2">
+                  $9.990 <span className="text-sm font-normal text-slate-500">CLP/mes</span>
+                </p>
+                <p className="text-sm text-slate-500">Flexibilidad total, cancela cuando quieras</p>
+                <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300" size={24} />
+              </div>
+
+              {/* Semestral */}
+              <div 
+                className="relative p-6 rounded-2xl border-2 border-cyan-500 bg-gradient-to-br from-cyan-50 to-blue-50 cursor-pointer transition-all hover:shadow-lg"
+                onClick={() => navigate('/subscribe?plan=semestral')}
+              >
+                <div className="absolute -top-3 right-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+                  AHORRA 50%
+                </div>
+                <h3 className="font-bold text-lg mb-1">Plan Semestral</h3>
+                <p className="text-3xl font-bold text-slate-900 mb-2">
+                  $29.990 <span className="text-sm font-normal text-slate-500">CLP/6 meses</span>
+                </p>
+                <p className="text-sm text-slate-500">El mejor valor para tu aprendizaje</p>
+                <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 text-cyan-500" size={24} />
+              </div>
+            </div>
+
+            <Button 
+              size="lg"
+              className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white py-6 text-lg rounded-xl shadow-lg"
+              onClick={() => navigate('/subscribe')}
+            >
+              <Crown className="mr-2" size={20} />
+              Comenzar mi suscripción
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // ==================== ACTIVE SUBSCRIPTION VIEW ====================
   return (
-    <div className="space-y-6 pb-24 lg:pb-8" data-testid="mi-suscripcion-page">
+    <div className="max-w-4xl mx-auto space-y-6 pb-24 lg:pb-8" data-testid="mi-suscripcion-page">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-slate-900">Mi Suscripción</h1>
-          <p className="text-slate-600 mt-1">Gestiona tu plan y método de pago</p>
+          <p className="text-slate-500 mt-1">Gestiona tu plan de Remy</p>
         </div>
-        <Button variant="outline" onClick={() => navigate('/biblioteca')}>
+        <Button variant="ghost" onClick={() => navigate('/biblioteca')}>
           <ArrowLeft size={18} className="mr-2" />
           Volver
         </Button>
       </div>
 
-      {/* Subscription Status Card */}
-      <Card className={`border-2 ${isActive ? 'border-green-200 bg-green-50/30' : 'border-slate-200'}`}>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className={`p-3 rounded-full ${isActive ? 'bg-green-100' : 'bg-slate-100'}`}>
-                <Crown size={24} className={isActive ? 'text-green-600' : 'text-slate-400'} />
+      {/* Main Subscription Card */}
+      <Card className="overflow-hidden border-0 shadow-xl">
+        <div className={`bg-gradient-to-r ${planDetails.color} p-8 text-white relative overflow-hidden`}>
+          {/* Background decoration */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
+          
+          <div className="relative z-10">
+            <div className="flex items-start justify-between mb-6">
+              <div>
+                <Badge className="bg-white/20 text-white mb-3 px-3 py-1">
+                  <Star size={12} className="mr-1" fill="currentColor" />
+                  PREMIUM ACTIVO
+                </Badge>
+                <h2 className="text-3xl font-bold mb-1">{planDetails.name}</h2>
+                <p className="text-white/80">{planDetails.price} CLP/{planDetails.period}</p>
+              </div>
+              <div className="text-right">
+                <div className="text-5xl font-bold">{daysRemaining}</div>
+                <div className="text-white/80 text-sm">días restantes</div>
+              </div>
+            </div>
+
+            {/* Progress bar */}
+            <div className="bg-white/20 rounded-full h-2 overflow-hidden">
+              <div 
+                className="bg-white h-full rounded-full transition-all duration-500"
+                style={{ width: `${Math.max(5, (daysRemaining / (subscription?.subscription_plan === 'monthly' ? 30 : 180)) * 100)}%` }}
+              />
+            </div>
+            <p className="text-white/70 text-sm mt-2">
+              Se renueva el {formatDate(subscription?.subscription_end)}
+            </p>
+          </div>
+        </div>
+
+        <CardContent className="p-6 space-y-6">
+          {/* Info Grid */}
+          <div className="grid grid-cols-3 gap-4">
+            <div className="text-center p-4 bg-slate-50 rounded-xl">
+              <Calendar className="mx-auto mb-2 text-slate-400" size={20} />
+              <p className="text-xs text-slate-500 mb-1">Inicio</p>
+              <p className="font-semibold text-sm text-slate-900">
+                {formatDate(user?.subscription_start || subscription?.subscription_details?.start_date)}
+              </p>
+            </div>
+            <div className="text-center p-4 bg-slate-50 rounded-xl">
+              <RefreshCw className="mx-auto mb-2 text-slate-400" size={20} />
+              <p className="text-xs text-slate-500 mb-1">Próximo cobro</p>
+              <p className="font-semibold text-sm text-slate-900">
+                {formatDate(subscription?.subscription_end)}
+              </p>
+            </div>
+            <div className="text-center p-4 bg-slate-50 rounded-xl">
+              <CreditCard className="mx-auto mb-2 text-slate-400" size={20} />
+              <p className="text-xs text-slate-500 mb-1">Tipo</p>
+              <p className="font-semibold text-sm text-slate-900 capitalize">
+                {subscription?.subscription_type === 'mercadopago' ? 'Mercado Pago' : 'Manual'}
+              </p>
+            </div>
+          </div>
+
+          {/* Auto renewal notice */}
+          {subscription?.subscription_type === 'mercadopago' && (
+            <div className="flex items-start gap-4 p-4 bg-blue-50 rounded-xl border border-blue-100">
+              <div className="bg-blue-100 rounded-full p-2">
+                <Shield className="text-blue-600" size={20} />
               </div>
               <div>
-                <CardTitle className="text-xl">
-                  {isActive ? getPlanName(subscription?.subscription_plan) : 'Sin Suscripción Activa'}
-                </CardTitle>
-                <CardDescription>
-                  {isActive ? getPlanPrice(subscription?.subscription_plan) : 'Suscríbete para acceder a todo el contenido'}
-                </CardDescription>
+                <h4 className="font-semibold text-blue-900 mb-1">Renovación automática activa</h4>
+                <p className="text-sm text-blue-700">
+                  Tu suscripción se renovará automáticamente el {formatDate(subscription?.subscription_end)}. 
+                  Se cargará {planDetails.price} CLP a tu tarjeta.
+                </p>
               </div>
             </div>
-            {getStatusBadge(subscription?.subscription_status)}
+          )}
+
+          {/* Manual access notice */}
+          {subscription?.subscription_type === 'manual' && (
+            <div className="flex items-start gap-4 p-4 bg-purple-50 rounded-xl border border-purple-100">
+              <div className="bg-purple-100 rounded-full p-2">
+                <Gift className="text-purple-600" size={20} />
+              </div>
+              <div>
+                <h4 className="font-semibold text-purple-900 mb-1">Acceso cortesía</h4>
+                <p className="text-sm text-purple-700">
+                  Tu acceso fue otorgado por el administrador y expira el {formatDate(subscription?.subscription_end)}. 
+                  No se realizarán cobros automáticos.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Benefits */}
+          <div>
+            <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+              <Zap className="text-cyan-500" size={18} />
+              Incluido en tu plan
+            </h3>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                'Acceso a todos los cursos',
+                'Simulacros ilimitados',
+                'Seguimiento de progreso',
+                'Soporte prioritario',
+                ...(subscription?.subscription_plan === 'semestral' ? [
+                  'Contenido exclusivo',
+                  'Acceso anticipado'
+                ] : [])
+              ].map((benefit, idx) => (
+                <div key={idx} className="flex items-center gap-2 text-sm text-slate-600">
+                  <CheckCircle size={16} className="text-green-500 flex-shrink-0" />
+                  {benefit}
+                </div>
+              ))}
+            </div>
           </div>
-        </CardHeader>
-        
-        {isActive && (
-          <CardContent className="space-y-6">
-            {/* Days Remaining */}
-            <div className="bg-white rounded-lg p-4 border">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-slate-600">Tiempo restante</span>
-                <span className="font-bold text-lg text-slate-900">{daysRemaining} días</span>
-              </div>
-              <Progress value={100 - progress} className="h-2" />
-              <p className="text-xs text-slate-500 mt-2">
-                Tu suscripción se renovará automáticamente el {formatDate(subscription?.subscription_end)}
-              </p>
-            </div>
-
-            {/* Subscription Details */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-white rounded-lg p-4 border">
-                <div className="flex items-center gap-2 text-slate-500 mb-1">
-                  <Calendar size={16} />
-                  <span className="text-sm">Fecha de inicio</span>
-                </div>
-                <p className="font-semibold">
-                  {formatDate(user?.subscription_start) || formatDate(subscription?.subscription_details?.start_date) || '-'}
-                </p>
-              </div>
-              
-              <div className="bg-white rounded-lg p-4 border">
-                <div className="flex items-center gap-2 text-slate-500 mb-1">
-                  <RefreshCw size={16} />
-                  <span className="text-sm">Próxima renovación</span>
-                </div>
-                <p className="font-semibold">{formatDate(subscription?.subscription_end)}</p>
-              </div>
-              
-              <div className="bg-white rounded-lg p-4 border">
-                <div className="flex items-center gap-2 text-slate-500 mb-1">
-                  <CreditCard size={16} />
-                  <span className="text-sm">Tipo de suscripción</span>
-                </div>
-                <p className="font-semibold capitalize">
-                  {subscription?.subscription_type === 'mercadopago' ? 'Mercado Pago' : 
-                   subscription?.subscription_type === 'manual' ? 'Acceso Manual' : '-'}
-                </p>
-              </div>
-            </div>
-
-            {/* Auto-renewal notice */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <Shield className="text-blue-600 flex-shrink-0 mt-0.5" size={20} />
-                <div>
-                  <h4 className="font-semibold text-blue-900">Renovación automática</h4>
-                  <p className="text-sm text-blue-700 mt-1">
-                    Tu suscripción se renueva automáticamente cada {subscription?.subscription_plan === 'monthly' ? 'mes' : '6 meses'}. 
-                    Se cargará {getPlanPrice(subscription?.subscription_plan)} a tu método de pago el {formatDate(subscription?.subscription_end)}.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Benefits */}
-            <div className="bg-white rounded-lg p-4 border">
-              <h4 className="font-semibold mb-3 flex items-center gap-2">
-                <Zap size={18} className="text-cyan-500" />
-                Beneficios de tu plan
-              </h4>
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                {[
-                  'Acceso a todos los cursos',
-                  'Simulacros ilimitados',
-                  'Seguimiento de progreso',
-                  'Soporte prioritario',
-                  ...(subscription?.subscription_plan === 'semestral' ? [
-                    'Contenido exclusivo',
-                    'Acceso anticipado a nuevos cursos'
-                  ] : [])
-                ].map((benefit, idx) => (
-                  <li key={idx} className="flex items-center gap-2 text-sm text-slate-600">
-                    <CheckCircle size={16} className="text-green-500 flex-shrink-0" />
-                    {benefit}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Cancel Subscription - Only for Mercado Pago subscriptions */}
-            {subscription?.subscription_type === 'mercadopago' && (
-              <div className="border-t pt-6">
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="outline" className="text-red-600 border-red-200 hover:bg-red-50">
-                      <XCircle size={18} className="mr-2" />
-                      Cancelar suscripción
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle className="flex items-center gap-2">
-                        <AlertTriangle className="text-yellow-500" size={24} />
-                        ¿Cancelar tu suscripción?
-                      </AlertDialogTitle>
-                      <AlertDialogDescription className="space-y-3">
-                        <p>
-                          Si cancelas tu suscripción:
-                        </p>
-                        <ul className="list-disc list-inside space-y-1 text-sm">
-                          <li>No se realizarán más cobros automáticos</li>
-                          <li>Mantendrás acceso hasta el {formatDate(subscription?.subscription_end)}</li>
-                          <li>Después de esa fecha, perderás acceso al contenido premium</li>
-                          <li>Puedes volver a suscribirte en cualquier momento</li>
-                        </ul>
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Mantener suscripción</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={handleCancelSubscription}
-                        disabled={cancelling}
-                        className="bg-red-600 hover:bg-red-700"
-                      >
-                        {cancelling ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Cancelando...
-                          </>
-                        ) : (
-                          'Sí, cancelar suscripción'
-                        )}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-                
-                <p className="text-xs text-slate-500 mt-2">
-                  Al cancelar, mantendrás acceso hasta el final de tu período pagado.
-                </p>
-              </div>
-            )}
-
-            {/* Manual subscription notice */}
-            {subscription?.subscription_type === 'manual' && (
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                  <Crown className="text-purple-600 flex-shrink-0 mt-0.5" size={20} />
-                  <div>
-                    <h4 className="font-semibold text-purple-900">Acceso otorgado por el administrador</h4>
-                    <p className="text-sm text-purple-700 mt-1">
-                      Tu acceso fue otorgado manualmente y expira el {formatDate(subscription?.subscription_end)}. 
-                      Contacta al administrador si necesitas extender tu acceso.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        )}
-
-        {/* No subscription - Show CTA */}
-        {!isActive && (
-          <CardContent>
-            <div className="text-center py-6">
-              <p className="text-slate-600 mb-6">
-                Obtén acceso ilimitado a todos los cursos, simulacros y más.
-              </p>
-              <Button 
-                size="lg"
-                className="bg-cyan-500 hover:bg-cyan-600"
-                onClick={() => navigate('/subscribe')}
-              >
-                <Crown className="mr-2" size={20} />
-                Suscribirme ahora
-              </Button>
-            </div>
-          </CardContent>
-        )}
+        </CardContent>
       </Card>
 
-      {/* FAQ Section */}
+      {/* Cancel Section - Only for Mercado Pago */}
+      {subscription?.subscription_type === 'mercadopago' && (
+        <Card className="border-slate-200">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-semibold text-slate-900">¿Necesitas cancelar?</h3>
+                <p className="text-sm text-slate-500">
+                  Mantendrás acceso hasta el {formatDate(subscription?.subscription_end)}
+                </p>
+              </div>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" className="text-red-600 border-red-200 hover:bg-red-50">
+                    Cancelar suscripción
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="flex items-center gap-2">
+                      <AlertTriangle className="text-yellow-500" size={24} />
+                      ¿Cancelar tu suscripción?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="space-y-3 text-left">
+                      <p>Si cancelas:</p>
+                      <ul className="list-disc list-inside space-y-1 text-sm">
+                        <li>No se realizarán más cobros</li>
+                        <li>Mantendrás acceso hasta el {formatDate(subscription?.subscription_end)}</li>
+                        <li>Después perderás acceso al contenido</li>
+                        <li>Puedes volver a suscribirte cuando quieras</li>
+                      </ul>
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Mantener suscripción</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleCancelSubscription}
+                      disabled={cancelling}
+                      className="bg-red-600 hover:bg-red-700"
+                    >
+                      {cancelling ? 'Cancelando...' : 'Sí, cancelar'}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* FAQ */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Preguntas frecuentes</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <h4 className="font-medium text-slate-900">¿Cómo funciona la renovación automática?</h4>
-            <p className="text-sm text-slate-600 mt-1">
-              Tu suscripción se renueva automáticamente al final de cada período. Se cargará el monto correspondiente a tu método de pago registrado.
-            </p>
-          </div>
-          <div>
-            <h4 className="font-medium text-slate-900">¿Puedo cancelar en cualquier momento?</h4>
-            <p className="text-sm text-slate-600 mt-1">
-              Sí, puedes cancelar tu suscripción cuando quieras. Mantendrás acceso hasta el final del período que ya pagaste.
-            </p>
-          </div>
-          <div>
-            <h4 className="font-medium text-slate-900">¿Qué pasa si cancelo mi suscripción?</h4>
-            <p className="text-sm text-slate-600 mt-1">
-              No se realizarán más cobros automáticos. Tu acceso continuará hasta la fecha de vencimiento del período actual. Después, puedes volver a suscribirte cuando lo desees.
-            </p>
-          </div>
-          <div>
-            <h4 className="font-medium text-slate-900">¿Cómo cambio mi método de pago?</h4>
-            <p className="text-sm text-slate-600 mt-1">
-              Para cambiar tu método de pago, cancela tu suscripción actual y vuelve a suscribirte con el nuevo método de pago.
-            </p>
+        <CardContent className="p-6">
+          <h3 className="font-semibold text-slate-900 mb-4">Preguntas frecuentes</h3>
+          <div className="space-y-4 text-sm">
+            <div>
+              <p className="font-medium text-slate-700">¿Cómo funciona la renovación?</p>
+              <p className="text-slate-500">Se cobra automáticamente al final de cada período.</p>
+            </div>
+            <div>
+              <p className="font-medium text-slate-700">¿Puedo cancelar?</p>
+              <p className="text-slate-500">Sí, mantendrás acceso hasta el final del período pagado.</p>
+            </div>
+            <div>
+              <p className="font-medium text-slate-700">¿Cómo cambio mi tarjeta?</p>
+              <p className="text-slate-500">Cancela y vuelve a suscribirte con la nueva tarjeta.</p>
+            </div>
           </div>
         </CardContent>
       </Card>
     </div>
   );
 };
+
+// Missing icons
+const ClipboardCheck = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+    <path d="m9 14 2 2 4-4"/>
+  </svg>
+);
+
+const TrendingUp = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
+    <polyline points="16 7 22 7 22 13"/>
+  </svg>
+);
 
 export default MiSuscripcion;

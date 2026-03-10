@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { ArrowLeft, BookOpen, Play, Clock, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import SubscriptionRequired from '@/components/SubscriptionRequired';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -225,4 +226,10 @@ const CourseViewer = () => {
   );
 };
 
-export default CourseViewer;
+export default function CourseViewerPage() {
+  return (
+    <SubscriptionRequired feature="el contenido de los cursos">
+      <CourseViewer />
+    </SubscriptionRequired>
+  );
+}

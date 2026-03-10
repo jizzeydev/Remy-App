@@ -13,6 +13,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { QuestionContent, QuestionOption, ExplanationBlock } from '@/components/course/QuestionRenderer';
+import SubscriptionRequired from '@/components/SubscriptionRequired';
+import { useAuth } from '../contexts/AuthContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -793,4 +795,10 @@ const Simulacros = () => {
   );
 };
 
-export default Simulacros;
+export default function SimulacrosPage() {
+  return (
+    <SubscriptionRequired feature="los simulacros de práctica">
+      <Simulacros />
+    </SubscriptionRequired>
+  );
+}
