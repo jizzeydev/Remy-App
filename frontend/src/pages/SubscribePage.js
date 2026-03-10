@@ -163,9 +163,35 @@ const SubscribePage = () => {
       
       console.log('Creating card token with data:', { ...cardData, securityCode: '***' });
       
-      const tokenResponse = await mp.createCardToken(cardData);
+      let tokenResponse;
+      try {
+        tokenResponse = await mp.createCardToken(cardData);
+        console.log('Token response:', tokenResponse);
+      } catch (sdkError) {
+        console.error('SDK createCardToken error:', sdkError);
+        // Handle array of errors from MP SDK
+        if (Array.isArray(sdkError)) {
+          const errorMessages = sdkError.map(e => {
+            if (e.message) return e.message;
+            if (e.cause) return e.cause;
+            return JSON.stringify(e);
+          });
+          throw new Error(errorMessages.join(', '));
+        }
+        throw new Error(sdkError.message || 'Error al procesar la tarjeta');
+      }
       
-      console.log('Token response:', tokenResponse);
+      // Check if response is an array (error case)
+      if (Array.isArray(tokenResponse)) {
+        console.error('Token response is array (error):', tokenResponse);
+        const errorMessages = tokenResponse.map(e => {
+          if (e.message) return e.message;
+          if (e.cause) return e.cause;
+          if (e.description) return e.description;
+          return JSON.stringify(e);
+        });
+        throw new Error(errorMessages.join(', ') || 'Error en los datos de la tarjeta');
+      }
       
       if (tokenResponse.error) {
         console.error('Token error:', tokenResponse);
@@ -213,15 +239,20 @@ const SubscribePage = () => {
       if (error.response?.data?.detail) {
         message = error.response.data.detail;
       } else if (error.message) {
+        const errMsg = error.message.toLowerCase();
         // Handle Mercado Pago SDK errors
-        if (error.message.includes('cardNumber')) {
-          message = 'Número de tarjeta inválido';
-        } else if (error.message.includes('securityCode')) {
-          message = 'CVV inválido';
-        } else if (error.message.includes('cardExpiration')) {
-          message = 'Fecha de vencimiento inválida';
-        } else if (error.message.includes('identification')) {
-          message = 'Documento de identidad inválido';
+        if (errMsg.includes('cardnumber') || errMsg.includes('card number') || errMsg.includes('invalid card')) {
+          message = 'Número de tarjeta inválido. Verifica los 16 dígitos.';
+        } else if (errMsg.includes('securitycode') || errMsg.includes('cvv') || errMsg.includes('security code')) {
+          message = 'CVV inválido. Son los 3 dígitos del reverso.';
+        } else if (errMsg.includes('expiration') || errMsg.includes('expire') || errMsg.includes('date')) {
+          message = 'Fecha de vencimiento inválida o tarjeta expirada.';
+        } else if (errMsg.includes('identification') || errMsg.includes('document')) {
+          message = 'RUT inválido. Ingresa sin puntos ni guión.';
+        } else if (errMsg.includes('cardholder') || errMsg.includes('name')) {
+          message = 'Nombre del titular inválido.';
+        } else if (errMsg.includes('parameter') || errMsg.includes('required')) {
+          message = 'Completa todos los campos correctamente.';
         } else {
           message = error.message;
         }
