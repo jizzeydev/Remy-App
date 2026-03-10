@@ -28,25 +28,26 @@ const HeroSection = () => {
       </div>
       
       {/* Top Navigation */}
-      <nav className="absolute top-0 left-0 right-0 z-20 p-6">
+      <nav className="absolute top-0 left-0 right-0 z-20 p-4 md:p-6">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src="/remy-logo.png" alt="Remy" className="w-10 h-10 object-contain" />
-            <span className="text-white font-bold text-xl">Remy</span>
+            <img src="/remy-logo.png" alt="Remy" className="w-8 h-8 md:w-10 md:h-10 object-contain" />
+            <span className="text-white font-bold text-lg md:text-xl">Remy</span>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
             <Button 
               variant="ghost" 
-              className="text-white hover:bg-white/10"
+              className="text-white hover:bg-white/10 text-sm md:text-base px-2 md:px-4"
               onClick={() => navigate('/auth')}
             >
-              Iniciar sesión
+              Ingresar
             </Button>
             <Button 
-              className="bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold"
+              className="bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold text-sm md:text-base px-3 md:px-4"
               onClick={() => navigate('/auth')}
             >
-              Comenzar gratis
+              <span className="hidden sm:inline">Comenzar gratis</span>
+              <span className="sm:hidden">Comenzar</span>
             </Button>
           </div>
         </div>
