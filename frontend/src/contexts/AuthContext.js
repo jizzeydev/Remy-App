@@ -1,12 +1,14 @@
 /**
  * Authentication Context for Remy Platform
  * Handles Google OAuth + Email/Password authentication
+ * Uses both cookies and localStorage for session persistence
  */
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
+const SESSION_TOKEN_KEY = 'remy_session_token';
 
 const AuthContext = createContext(null);
 
@@ -17,6 +19,11 @@ export const useAuth = () => {
   }
   return context;
 };
+
+// Helper to get session token from localStorage
+const getStoredToken = () => localStorage.getItem(SESSION_TOKEN_KEY);
+const storeToken = (token) => localStorage.setItem(SESSION_TOKEN_KEY, token);
+const removeToken = () => localStorage.removeItem(SESSION_TOKEN_KEY);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -34,12 +41,18 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
+      // Get stored token for Authorization header
+      const storedToken = getStoredToken();
+      const headers = storedToken ? { Authorization: `Bearer ${storedToken}` } : {};
+      
       const response = await axios.get(`${API}/auth/me`, {
-        withCredentials: true
+        withCredentials: true,
+        headers
       });
       setUser(response.data);
     } catch (err) {
-      // Not authenticated - that's ok
+      // Not authenticated - clear any stale token
+      removeToken();
       setUser(null);
     } finally {
       setLoading(false);
@@ -62,6 +75,11 @@ export const AuthProvider = ({ children }) => {
         withCredentials: true
       });
       
+      // Store session token for persistence
+      if (response.data.session_token) {
+        storeToken(response.data.session_token);
+      }
+      
       setUser(response.data.user);
       return { success: true, user: response.data.user };
     } catch (err) {
@@ -81,6 +99,11 @@ export const AuthProvider = ({ children }) => {
       }, {
         withCredentials: true
       });
+      
+      // Store session token for persistence
+      if (response.data.session_token) {
+        storeToken(response.data.session_token);
+      }
       
       setUser(response.data.user);
       return { success: true, user: response.data.user };
@@ -108,6 +131,11 @@ export const AuthProvider = ({ children }) => {
         withCredentials: true
       });
       
+      // Store session token for persistence
+      if (response.data.session_token) {
+        storeToken(response.data.session_token);
+      }
+      
       setUser(response.data.user);
       return { success: true, user: response.data.user };
     } catch (err) {
@@ -120,12 +148,17 @@ export const AuthProvider = ({ children }) => {
   // Logout
   const logout = async () => {
     try {
+      const storedToken = getStoredToken();
+      const headers = storedToken ? { Authorization: `Bearer ${storedToken}` } : {};
+      
       await axios.post(`${API}/auth/logout`, {}, {
-        withCredentials: true
+        withCredentials: true,
+        headers
       });
     } catch (err) {
       console.error('Logout error:', err);
     } finally {
+      removeToken();
       setUser(null);
     }
   };

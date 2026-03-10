@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
 import { 
   BookOpen, Brain, Target, Clock, CheckCircle, Star, 
   ChevronDown, ChevronRight, Sparkles, GraduationCap,
@@ -516,6 +517,28 @@ const Footer = () => {
 
 // ==================== MAIN LANDING PAGE ====================
 const Landing = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated, loading } = useAuth();
+
+  // Redirect authenticated users to dashboard
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, loading, navigate]);
+
+  // Show loading while checking auth
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900 flex items-center justify-center">
+        <div className="text-center">
+          <img src="/remy-logo.png" alt="Remy" className="w-16 h-16 mx-auto mb-4 animate-pulse" />
+          <div className="animate-spin w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full mx-auto" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen">
       <HeroSection />

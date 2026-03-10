@@ -34,8 +34,8 @@ const AuthCallback = () => {
         
         if (result.success) {
           toast.success('¡Bienvenido!');
-          // Navigate to biblioteca with user data
-          navigate('/biblioteca', { 
+          // Navigate to dashboard
+          navigate('/dashboard', { 
             state: { user: result.user },
             replace: true 
           });

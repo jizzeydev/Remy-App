@@ -2,7 +2,7 @@
  * Authentication Page for Remy Platform
  * Handles both Login and Registration with Google OAuth + Email/Password
  */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -16,13 +16,20 @@ import { toast } from 'sonner';
 const AuthPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { login, register, loginWithGoogle, error } = useAuth();
+  const { login, register, loginWithGoogle, error, isAuthenticated, loading } = useAuth();
   
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   
   // Get redirect URL from query params
-  const redirectUrl = searchParams.get('redirect') || '/biblioteca';
+  const redirectUrl = searchParams.get('redirect') || '/dashboard';
+  
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      navigate(redirectUrl, { replace: true });
+    }
+  }, [isAuthenticated, loading, navigate, redirectUrl]);
   
   // Login form state
   const [loginEmail, setLoginEmail] = useState('');
