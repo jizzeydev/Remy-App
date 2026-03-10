@@ -7,7 +7,7 @@ import axios from 'axios';
 import { 
   Users, Search, UserPlus, CheckCircle, XCircle, 
   Clock, CreditCard, Gift, ChevronLeft, ChevronRight,
-  TrendingUp, Mail, Calendar, MoreVertical
+  TrendingUp, Mail, Calendar, MoreVertical, Trash2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -182,6 +182,23 @@ const AdminUsers = () => {
       fetchUsers();
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Error al extender acceso');
+    }
+  };
+
+  const handleDeleteUser = async (userId, email) => {
+    if (!confirm(`¿Eliminar permanentemente a ${email}?\n\nEsta acción no se puede deshacer.`)) return;
+    
+    try {
+      await axios.delete(
+        `${API}/admin/users/${userId}`,
+        getAuthHeader()
+      );
+      
+      toast.success('Usuario eliminado');
+      fetchUsers();
+      fetchStats();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Error al eliminar usuario');
     }
   };
 
@@ -465,6 +482,15 @@ const AdminUsers = () => {
                             >
                               <XCircle size={16} className="mr-2" />
                               Revocar Acceso
+                            </DropdownMenuItem>
+                          )}
+                          {user.email !== 'seremonta.cl@gmail.com' && (
+                            <DropdownMenuItem 
+                              className="text-red-600"
+                              onClick={() => handleDeleteUser(user.user_id, user.email)}
+                            >
+                              <Trash2 size={16} className="mr-2" />
+                              Eliminar Usuario
                             </DropdownMenuItem>
                           )}
                         </DropdownMenuContent>

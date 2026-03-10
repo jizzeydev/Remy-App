@@ -588,3 +588,45 @@ async def extend_user_access(
         "new_end_date": new_end.isoformat(),
         "message": f"Acceso extendido hasta {new_end.strftime('%d/%m/%Y')}"
     }
+
+
+
+@router.delete("/{user_id}")
+async def delete_user(
+    user_id: str,
+    _: str = Depends(verify_admin_token)
+):
+    """Delete a user completely from the database"""
+    user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Usuario no encontrado"
+        )
+    
+    email = user.get('email')
+    
+    # Don't allow deleting admin emails
+    protected_emails = ['seremonta.cl@gmail.com']
+    if email.lower() in [e.lower() for e in protected_emails]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No se puede eliminar este usuario protegido"
+        )
+    
+    # Delete user
+    await db.users.delete_one({"user_id": user_id})
+    
+    # Delete related data
+    await db.user_sessions.delete_many({"user_id": user_id})
+    await db.subscriptions.delete_many({"user_id": user_id})
+    await db.progress.delete_many({"student_id": user_id})
+    await db.quiz_attempts.delete_many({"user_id": user_id})
+    
+    logger.info(f"User deleted: {email}")
+    
+    return {
+        "success": True,
+        "message": f"Usuario {email} eliminado correctamente"
+    }
