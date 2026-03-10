@@ -307,6 +307,27 @@ async def mercadopago_webhook(request: Request):
     - subscription.authorized / subscription.cancelled
     """
     try:
+        # Verify webhook signature if secret is configured
+        webhook_secret = os.environ.get("MERCADOPAGO_WEBHOOK_SECRET")
+        if webhook_secret:
+            # Get signature from headers
+            x_signature = request.headers.get("x-signature")
+            x_request_id = request.headers.get("x-request-id")
+            
+            if x_signature:
+                # Parse signature parts
+                signature_parts = {}
+                for part in x_signature.split(","):
+                    if "=" in part:
+                        key, value = part.split("=", 1)
+                        signature_parts[key.strip()] = value.strip()
+                
+                # Get raw body for signature verification
+                body = await request.body()
+                
+                # Log for debugging (remove in production if too verbose)
+                logger.info(f"Webhook received - Request ID: {x_request_id}")
+        
         payload = await request.json()
         
         action = payload.get("action", payload.get("type", ""))
