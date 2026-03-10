@@ -52,15 +52,6 @@ const HeroSection = () => {
       </nav>
       
       <div className="relative z-10 max-w-6xl mx-auto px-6 py-20 text-center">
-        {/* Remy Mascot Image */}
-        <div className="flex justify-center mb-8">
-          <img 
-            src="/remy-mascot.png" 
-            alt="Remy - Tu tutor IA" 
-            className="w-48 h-48 md:w-64 md:h-64 object-contain drop-shadow-2xl"
-          />
-        </div>
-        
         {/* Main heading */}
         <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
           <span className="text-cyan-400">Remonta</span> tus ramos
