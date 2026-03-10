@@ -20,6 +20,11 @@ import json
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
+# Import new routers
+from routes import auth as auth_routes
+from routes import payments as payments_routes
+from routes import admin_users as admin_users_routes
+
 ROOT_DIR = Path(__file__).parent
 UPLOADS_DIR = ROOT_DIR / 'uploads'
 UPLOADS_DIR.mkdir(exist_ok=True)
@@ -29,6 +34,11 @@ load_dotenv(ROOT_DIR / '.env')
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
+
+# Initialize new routers with database connection
+auth_routes.set_db(db)
+payments_routes.set_db(db)
+admin_users_routes.set_db(db)
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
@@ -1605,6 +1615,14 @@ async def get_lesson(lesson_id: str):
 
 app.include_router(api_router)
 app.include_router(admin_router)
+
+# Include new routers for auth, payments, and user management
+app.include_router(auth_routes.router)
+app.include_router(payments_routes.router)
+app.include_router(admin_users_routes.router)
+
+# Set admin verifier for user management routes
+admin_users_routes.set_admin_verifier(verify_admin_token)
 
 app.add_middleware(
     CORSMiddleware,

@@ -26,6 +26,31 @@ const HeroSection = () => {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-400/5 rounded-full blur-3xl" />
       </div>
       
+      {/* Top Navigation */}
+      <nav className="absolute top-0 left-0 right-0 z-20 p-6">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <img src="/remy-logo.png" alt="Remy" className="w-10 h-10 object-contain" />
+            <span className="text-white font-bold text-xl">Remy</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Button 
+              variant="ghost" 
+              className="text-white hover:bg-white/10"
+              onClick={() => navigate('/auth')}
+            >
+              Iniciar sesión
+            </Button>
+            <Button 
+              className="bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold"
+              onClick={() => navigate('/auth')}
+            >
+              Comenzar gratis
+            </Button>
+          </div>
+        </div>
+      </nav>
+      
       <div className="relative z-10 max-w-6xl mx-auto px-6 py-20 text-center">
         {/* Logo */}
         <div className="flex justify-center mb-8">
@@ -450,7 +475,8 @@ const PricingSection = () => {
                       ? 'bg-cyan-500 hover:bg-cyan-400 text-white shadow-lg shadow-cyan-500/30' 
                       : 'bg-slate-900 hover:bg-slate-800 text-white'
                   }`}
-                  onClick={() => navigate('/biblioteca')}
+                  onClick={() => navigate('/auth')}
+                  data-testid={`subscribe-btn-${plan.name.toLowerCase()}`}
                 >
                   {plan.cta}
                 </Button>

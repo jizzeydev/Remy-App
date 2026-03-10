@@ -1,12 +1,23 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Home, ClipboardCheck, BookOpen, TrendingUp, Menu } from 'lucide-react';
+import { Home, ClipboardCheck, BookOpen, TrendingUp, Menu, LogOut, User, Crown } from 'lucide-react';
 import { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Badge } from '@/components/ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const Layout = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, logout, hasActiveSubscription } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
@@ -15,6 +26,11 @@ const Layout = () => {
     { icon: BookOpen, label: 'Biblioteca', path: '/biblioteca' },
     { icon: TrendingUp, label: 'Progreso', path: '/progreso' },
   ];
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
 
   const NavContent = () => (
     <div className="flex flex-col gap-2">
@@ -43,6 +59,54 @@ const Layout = () => {
     </div>
   );
 
+  const UserMenu = ({ className = "" }) => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className={`flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors w-full ${className}`}>
+          {user?.picture ? (
+            <img src={user.picture} alt={user.name} className="w-10 h-10 rounded-full" />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-700 font-semibold">
+              {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+            </div>
+          )}
+          <div className="flex-1 text-left">
+            <p className="font-medium text-sm text-slate-900 truncate">{user?.name || 'Usuario'}</p>
+            <div className="flex items-center gap-1">
+              {hasActiveSubscription() ? (
+                <Badge className="bg-green-100 text-green-700 text-xs py-0">
+                  <Crown size={10} className="mr-1" />
+                  Premium
+                </Badge>
+              ) : (
+                <Badge variant="secondary" className="text-xs py-0">Free</Badge>
+              )}
+            </div>
+          </div>
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuLabel>
+          <div>
+            <p className="font-medium">{user?.name}</p>
+            <p className="text-xs text-slate-500 truncate">{user?.email}</p>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {!hasActiveSubscription() && (
+          <DropdownMenuItem onClick={() => navigate('/biblioteca')} className="text-cyan-600">
+            <Crown size={16} className="mr-2" />
+            Suscribirse
+          </DropdownMenuItem>
+        )}
+        <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+          <LogOut size={16} className="mr-2" />
+          Cerrar sesión
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-cyan-50/30">
       <aside className="hidden lg:fixed lg:left-0 lg:top-0 lg:h-screen lg:w-64 lg:flex lg:flex-col lg:border-r lg:border-slate-100 lg:bg-white lg:p-6">
@@ -60,6 +124,11 @@ const Layout = () => {
         <nav className="flex-1">
           <NavContent />
         </nav>
+        
+        {/* User info at bottom of sidebar */}
+        <div className="border-t border-slate-100 pt-4 mt-4">
+          <UserMenu />
+        </div>
       </aside>
 
       <header className="lg:hidden sticky top-0 z-50 bg-white border-b border-slate-100 px-4 py-3 flex items-center justify-between">
@@ -74,24 +143,27 @@ const Layout = () => {
             <p className="text-xs text-slate-500">Tu plataforma de estudio</p>
           </div>
         </div>
-        <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" data-testid="mobile-menu-button">
-              <Menu className="h-6 w-6" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-64">
-            <div className="mb-6">
-              <h2 className="text-xl font-bold text-primary">Menú</h2>
-            </div>
-            <nav>
-              <NavContent />
-            </nav>
-          </SheetContent>
-        </Sheet>
+        <div className="flex items-center gap-2">
+          <UserMenu className="p-2" />
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" data-testid="mobile-menu-button">
+                <Menu className="h-6 w-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-64">
+              <div className="mb-6">
+                <h2 className="text-xl font-bold text-primary">Menú</h2>
+              </div>
+              <nav>
+                <NavContent />
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </div>
       </header>
 
-      <main className="lg:ml-64 min-h-screen">
+      <main className="lg:ml-64 min-h-screen pb-20 lg:pb-0">
         <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
           <Outlet />
         </div>
