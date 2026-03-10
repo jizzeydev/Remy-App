@@ -27,7 +27,8 @@ export const AuthProvider = ({ children }) => {
   const checkAuth = useCallback(async () => {
     // CRITICAL: If returning from OAuth callback, skip the /me check.
     // AuthCallback will exchange the session_id and establish the session first.
-    if (window.location.hash?.includes('session_id=')) {
+    // Also skip for admin routes - they handle their own auth
+    if (window.location.hash?.includes('session_id=') || window.location.pathname.startsWith('/admin')) {
       setLoading(false);
       return;
     }

@@ -75,7 +75,8 @@ function AppRouter() {
   
   // Check URL fragment for session_id synchronously during render
   // This prevents race conditions by processing new session_id FIRST
-  if (location.hash?.includes('session_id=')) {
+  // BUT: Don't intercept admin routes - they have their own callback handler
+  if (location.hash?.includes('session_id=') && !location.pathname.startsWith('/admin')) {
     return <AuthCallback />;
   }
   
