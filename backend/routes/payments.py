@@ -152,11 +152,13 @@ async def create_subscription(
     plan = PLANS[request.plan_id]
     
     try:
-        # Get base URL dynamically - no hardcoded fallback
-        base_url = os.environ.get("FRONTEND_URL", "")
+        # Get base URL from environment variable
+        # In production, FRONTEND_URL should be set to https://remy.seremonta.store
+        # In preview, it should be the preview URL
+        base_url = os.environ.get("FRONTEND_URL")
         if not base_url:
-            # Fallback: construct from request if available
-            base_url = "https://remy.seremonta.store"  # Production domain
+            logger.warning("FRONTEND_URL not set, using fallback")
+            base_url = "https://remy.seremonta.store"
         back_url = f"{base_url}/biblioteca?subscription=success"
         
         # Create subscription in Mercado Pago
