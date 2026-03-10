@@ -26,23 +26,46 @@ def set_db(database):
     db = database
 
 
-# Admin authentication - direct implementation
+# Allowed admin emails for Google login
+ALLOWED_ADMIN_EMAILS = [
+    'seremonta.cl@gmail.com',
+    'admin@seremonta.cl'
+]
+
+# Admin authentication - supports both traditional and Google login
 async def verify_admin_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    """Verify admin JWT token"""
+    """Verify admin JWT token (traditional or Google)"""
     try:
         token = credentials.credentials
         secret_key = os.environ.get('ADMIN_SECRET_KEY')
         admin_username = os.environ.get('ADMIN_USERNAME')
         
         payload = jwt.decode(token, secret_key, algorithms=["HS256"])
-        username: str = payload.get("sub")
+        subject: str = payload.get("sub")
+        token_type: str = payload.get("type", "")
         
-        if username is None or username != admin_username:
+        if subject is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Credenciales de administrador inválidas"
             )
-        return username
+        
+        # Check if it's a Google admin token
+        if token_type == "admin_google":
+            if subject.lower() not in [e.lower() for e in ALLOWED_ADMIN_EMAILS]:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Email no autorizado como administrador"
+                )
+            return subject
+        
+        # Traditional username/password admin
+        if subject != admin_username:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Credenciales de administrador inválidas"
+            )
+        return subject
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -181,6 +204,164 @@ async def get_user_stats(_: str = Depends(verify_admin_token)):
             "email": email_users
         },
         "recent_registrations": recent_users
+    }
+
+
+@router.get("/revenue/summary")
+async def get_revenue_summary(
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    _: str = Depends(verify_admin_token)
+):
+    """
+    Get revenue summary for a date range
+    
+    Query params:
+    - start_date: ISO date string (default: first day of current month)
+    - end_date: ISO date string (default: today)
+    
+    Returns:
+    - Total revenue in the period
+    - Number of paid subscriptions
+    - Revenue breakdown by plan
+    - Daily revenue data for chart
+    """
+    now = datetime.now(timezone.utc)
+    
+    # Default to current month
+    if not start_date:
+        start_dt = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    else:
+        try:
+            start_dt = datetime.fromisoformat(start_date.replace('Z', '+00:00'))
+            if start_dt.tzinfo is None:
+                start_dt = start_dt.replace(tzinfo=timezone.utc)
+        except:
+            start_dt = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    
+    if not end_date:
+        end_dt = now
+    else:
+        try:
+            end_dt = datetime.fromisoformat(end_date.replace('Z', '+00:00'))
+            if end_dt.tzinfo is None:
+                end_dt = end_dt.replace(tzinfo=timezone.utc)
+        except:
+            end_dt = now
+    
+    # Query payments in date range
+    query = {
+        "status": {"$in": ["active", "authorized", "completed"]},
+        "created_at": {
+            "$gte": start_dt.isoformat(),
+            "$lte": end_dt.isoformat()
+        },
+        "subscription_type": {"$ne": "manual"}  # Exclude manual (free) subscriptions
+    }
+    
+    subscriptions = await db.subscriptions.find(query, {"_id": 0}).to_list(1000)
+    
+    # Calculate totals
+    total_revenue = sum(sub.get("amount", 0) for sub in subscriptions)
+    total_subscriptions = len(subscriptions)
+    
+    # Revenue by plan
+    revenue_by_plan = {}
+    for sub in subscriptions:
+        plan = sub.get("plan", "unknown")
+        revenue_by_plan[plan] = revenue_by_plan.get(plan, 0) + sub.get("amount", 0)
+    
+    # Daily breakdown for chart
+    daily_revenue = {}
+    for sub in subscriptions:
+        created_at = sub.get("created_at", "")
+        if created_at:
+            try:
+                day = created_at[:10]  # Extract YYYY-MM-DD
+                daily_revenue[day] = daily_revenue.get(day, 0) + sub.get("amount", 0)
+            except:
+                pass
+    
+    # Sort daily data
+    sorted_daily = sorted(daily_revenue.items())
+    
+    return {
+        "period": {
+            "start": start_dt.isoformat(),
+            "end": end_dt.isoformat()
+        },
+        "total_revenue": total_revenue,
+        "currency": "CLP",
+        "total_subscriptions": total_subscriptions,
+        "revenue_by_plan": revenue_by_plan,
+        "daily_revenue": [
+            {"date": day, "amount": amount} 
+            for day, amount in sorted_daily
+        ],
+        "average_per_subscription": total_revenue / total_subscriptions if total_subscriptions > 0 else 0
+    }
+
+
+@router.get("/revenue/monthly")
+async def get_monthly_revenue(
+    months: int = 6,
+    _: str = Depends(verify_admin_token)
+):
+    """
+    Get revenue data for the last N months
+    
+    Returns monthly totals for comparison
+    """
+    now = datetime.now(timezone.utc)
+    monthly_data = []
+    
+    for i in range(months):
+        # Calculate month boundaries
+        if i == 0:
+            month_end = now
+        else:
+            month_end = now.replace(day=1) - timedelta(days=1)
+            for _ in range(i - 1):
+                month_end = month_end.replace(day=1) - timedelta(days=1)
+        
+        month_start = month_end.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        
+        # Calculate the actual month we're querying
+        target_month = now.month - i
+        target_year = now.year
+        while target_month <= 0:
+            target_month += 12
+            target_year -= 1
+        
+        month_start = datetime(target_year, target_month, 1, tzinfo=timezone.utc)
+        if target_month == 12:
+            month_end = datetime(target_year + 1, 1, 1, tzinfo=timezone.utc) - timedelta(seconds=1)
+        else:
+            month_end = datetime(target_year, target_month + 1, 1, tzinfo=timezone.utc) - timedelta(seconds=1)
+        
+        # Query subscriptions for this month
+        query = {
+            "status": {"$in": ["active", "authorized", "completed"]},
+            "created_at": {
+                "$gte": month_start.isoformat(),
+                "$lte": month_end.isoformat()
+            },
+            "subscription_type": {"$ne": "manual"}
+        }
+        
+        subs = await db.subscriptions.find(query, {"_id": 0, "amount": 1}).to_list(1000)
+        revenue = sum(sub.get("amount", 0) for sub in subs)
+        
+        monthly_data.append({
+            "month": month_start.strftime("%Y-%m"),
+            "month_name": month_start.strftime("%B %Y"),
+            "revenue": revenue,
+            "subscriptions": len(subs)
+        })
+    
+    return {
+        "monthly_data": list(reversed(monthly_data)),  # Oldest to newest
+        "currency": "CLP"
     }
 
 
