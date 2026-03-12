@@ -256,7 +256,8 @@ const CourseContentEditor = () => {
           course_title: course?.title || ''
         },
         {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
+          timeout: 120000 // 2 minutes for AI generation
         }
       );
 
@@ -264,7 +265,13 @@ const CourseContentEditor = () => {
       toast.success('¡Contenido generado con GPT-5.2!');
     } catch (error) {
       console.error('Error generating content:', error);
-      toast.error('Error al generar contenido');
+      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+        toast.error('La generación está tomando demasiado tiempo. Intenta con un tema más específico.');
+      } else if (error.message?.includes('Network Error')) {
+        toast.error('Error de conexión. Verifica tu internet e intenta de nuevo.');
+      } else {
+        toast.error(error.response?.data?.detail || 'Error al generar contenido');
+      }
     } finally {
       setGeneratingContent(false);
     }
