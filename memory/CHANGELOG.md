@@ -1,5 +1,25 @@
 # Changelog - Remy Platform
 
+## [March 12, 2026] - AI Content Generation Fix (Background Tasks)
+
+### Fixed
+- **504 Gateway Timeout on AI Content Generation** 
+  - The `/api/admin/generate-lesson-content` endpoint was timing out in production due to LLM response time exceeding proxy timeout limits
+  - Implemented background task system with polling:
+    - New endpoint `POST /api/admin/generate-lesson-content/start` - Starts async task, returns `task_id` immediately
+    - New endpoint `GET /api/admin/generate-lesson-content/status/{task_id}` - Poll for completion status
+  - Frontend updated to use polling mechanism (2-second intervals, max 2 minutes)
+  - CORS errors eliminated since all requests now complete quickly
+  - In-memory task storage (production recommendation: use Redis with TTL)
+
+### Technical Details
+- `asyncio.create_task()` for non-blocking LLM calls
+- Task states: `pending` → `processing` → `completed|error`
+- Auto-cleanup of completed/failed tasks after status retrieval
+- Backward-compatible: legacy endpoint still exists
+
+---
+
 ## [March 10, 2026] - Admin Google Login & Data Migration
 
 ### Added

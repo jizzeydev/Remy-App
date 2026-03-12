@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, UploadFile, File, Depends, status
+from fastapi import FastAPI, APIRouter, HTTPException, UploadFile, File, Depends, status, BackgroundTasks
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -11,6 +11,7 @@ from typing import List, Optional, Dict, Any
 import uuid
 import base64
 import aiofiles
+import asyncio
 from datetime import datetime, timezone, timedelta
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 from emergentintegrations.llm.openai.image_generation import OpenAIImageGeneration
@@ -19,6 +20,9 @@ import io
 import json
 from jose import JWTError, jwt
 from passlib.context import CryptContext
+
+# In-memory storage for background tasks (for production, use Redis)
+generation_tasks: Dict[str, Dict[str, Any]] = {}
 
 # Import new routers
 from routes import auth as auth_routes
@@ -1152,6 +1156,181 @@ async def delete_lesson(lesson_id: str, _: str = Depends(verify_admin_token)):
         raise HTTPException(status_code=404, detail="Lección no encontrada")
     return {"message": "Lección eliminada exitosamente"}
 
+
+# ============ ASYNC CONTENT GENERATION (Background Tasks) ============
+# This solves the 504 Gateway Timeout issue by processing in the background
+
+async def _generate_lesson_content_task(task_id: str, request_data: dict):
+    """Background task to generate lesson content"""
+    try:
+        generation_tasks[task_id]["status"] = "processing"
+        generation_tasks[task_id]["progress"] = "Conectando con GPT-5.2..."
+        
+        system_message = """Eres REMY, el profesor virtual de Se Remonta. Tu misión es que cada estudiante ENTIENDA, APRENDA y APRUEBE.
+
+🎯 TU FILOSOFÍA DE ENSEÑANZA:
+- Explica como si fueras un amigo que domina el tema
+- Usa ejemplos de la VIDA COTIDIANA (Netflix, deportes, cocina, videojuegos, redes sociales)
+- Haz que los conceptos abstractos sean TANGIBLES y VISUALES
+- Si algo puede verse, MUÉSTRALO con un gráfico interactivo
+- Celebra los pequeños logros del estudiante
+- Anticipa las dudas comunes y respóndelas proactivamente
+
+📝 FORMATO MARKDOWN:
+- Títulos: # para H1, ## para H2, ### para H3
+- Listas: * o - para viñetas
+- Negrita: **concepto importante**
+- Cursiva: *énfasis suave*
+
+📐 FÓRMULAS LATEX (KaTeX):
+- En línea: $formula$ 
+- En bloque: $$formula$$
+- Ejemplos: $f(x) = x^2$, $$\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$$
+
+📊 VISUALIZACIONES:
+**DESMOS (Interactivo)** - Formato: [DESMOS:ecuaciones separadas por punto y coma]
+**INSERTAR IMAGEN** - Formato: **[INSERTAR IMAGEN: descripción breve]**
+
+🏗️ ESTRUCTURA OBLIGATORIA:
+## 🎯 ¿Qué vas a aprender?
+## 🤔 ¿Por qué es importante?
+## 📚 Desarrollo del Tema
+## 🔢 Fórmulas Clave
+## 👀 Visualízalo
+## ✍️ Ejemplos Resueltos
+## 🎮 Ahora Practícalo Tú
+## 📌 Resumen Express
+## 💡 Tips para el Examen
+
+IMPORTANTE: El estudiante debe sentir que PUEDE aprender esto. Sé motivador pero honesto."""
+
+        pdf_content = request_data.get("pdf_content")
+        topic_prompt = request_data.get("topic_prompt")
+        lesson_title = request_data.get("lesson_title", "")
+        chapter_title = request_data.get("chapter_title", "")
+        course_title = request_data.get("course_title", "")
+
+        if pdf_content and pdf_content.strip():
+            generation_tasks[task_id]["progress"] = "Analizando documento PDF..."
+            user_prompt = f"""## TU MISIÓN: Transformar Material Académico en Aprendizaje Efectivo
+
+📖 **Título de la Lección:** "{lesson_title}"
+📂 **Capítulo:** "{chapter_title}"
+📚 **Curso:** "{course_title}"
+
+---
+### DOCUMENTO DE REFERENCIA:
+---
+{pdf_content[:15000]}
+---
+
+Transforma este material en una lección completa y didáctica siguiendo la estructura obligatoria."""
+
+        elif topic_prompt and topic_prompt.strip():
+            generation_tasks[task_id]["progress"] = "Generando contenido desde tema..."
+            user_prompt = f"""Crea una lección COMPLETA para:
+
+📖 Título de la Lección: "{lesson_title}"
+📂 Capítulo: "{chapter_title}"
+📚 Curso: "{course_title}"
+
+🎯 TEMA/INSTRUCCIONES:
+{topic_prompt}
+
+Genera contenido completo siguiendo la estructura obligatoria con ejemplos, visualizaciones y ejercicios."""
+
+        else:
+            generation_tasks[task_id]["status"] = "error"
+            generation_tasks[task_id]["error"] = "No se proporcionó contenido para generar"
+            return
+
+        generation_tasks[task_id]["progress"] = "Generando lección con GPT-5.2... (esto puede tomar 30-60 segundos)"
+        
+        chat = get_gpt_chat(system_message)
+        user_message = UserMessage(text=user_prompt)
+        response = await chat.send_message(user_message)
+        
+        generation_tasks[task_id]["status"] = "completed"
+        generation_tasks[task_id]["content"] = response
+        generation_tasks[task_id]["progress"] = "¡Lección generada exitosamente!"
+        logging.info(f"Task {task_id} completed successfully")
+        
+    except Exception as e:
+        logging.error(f"Error in background task {task_id}: {str(e)}")
+        generation_tasks[task_id]["status"] = "error"
+        generation_tasks[task_id]["error"] = str(e)
+
+
+@admin_router.post("/generate-lesson-content/start")
+async def start_generate_lesson_content(request: GenerateLessonContentRequest, _: str = Depends(verify_admin_token)):
+    """
+    Start async content generation. Returns task_id immediately.
+    Client should poll /generate-lesson-content/status/{task_id}
+    """
+    # Validate input
+    if not request.pdf_content and not request.topic_prompt:
+        raise HTTPException(status_code=400, detail="Debes proporcionar un documento PDF o un tema para generar contenido")
+    
+    if not request.lesson_title:
+        raise HTTPException(status_code=400, detail="El título de la lección es requerido")
+    
+    # Create task
+    task_id = str(uuid.uuid4())
+    generation_tasks[task_id] = {
+        "status": "pending",
+        "progress": "Iniciando generación...",
+        "content": None,
+        "error": None,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    # Start background task
+    request_data = {
+        "pdf_content": request.pdf_content,
+        "topic_prompt": request.topic_prompt,
+        "lesson_title": request.lesson_title,
+        "chapter_title": request.chapter_title,
+        "course_title": request.course_title
+    }
+    
+    # Run as asyncio task (doesn't block the response)
+    asyncio.create_task(_generate_lesson_content_task(task_id, request_data))
+    
+    logging.info(f"Started content generation task: {task_id}")
+    return {"task_id": task_id, "status": "pending"}
+
+
+@admin_router.get("/generate-lesson-content/status/{task_id}")
+async def get_generation_status(task_id: str, _: str = Depends(verify_admin_token)):
+    """
+    Get the status of a content generation task.
+    Returns: status (pending|processing|completed|error), progress, content (if completed), error (if failed)
+    """
+    if task_id not in generation_tasks:
+        raise HTTPException(status_code=404, detail="Tarea no encontrada")
+    
+    task = generation_tasks[task_id]
+    
+    response = {
+        "task_id": task_id,
+        "status": task["status"],
+        "progress": task["progress"]
+    }
+    
+    if task["status"] == "completed":
+        response["content"] = task["content"]
+        # Clean up completed task after retrieval (keep memory clean)
+        # In production, you'd use Redis with TTL
+        del generation_tasks[task_id]
+    elif task["status"] == "error":
+        response["error"] = task["error"]
+        # Clean up failed task
+        del generation_tasks[task_id]
+    
+    return response
+
+
+# Legacy endpoint - now redirects to async version
 @admin_router.post("/generate-lesson-content")
 async def generate_lesson_content(request: GenerateLessonContentRequest, _: str = Depends(verify_admin_token)):
     try:

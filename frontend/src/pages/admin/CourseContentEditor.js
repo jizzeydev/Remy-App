@@ -246,8 +246,10 @@ const CourseContentEditor = () => {
     setGeneratingContent(true);
     try {
       const token = localStorage.getItem('admin_token');
-      const response = await axios.post(
-        `${ADMIN_API}/generate-lesson-content`,
+      
+      // Step 1: Start the async generation task
+      const startResponse = await axios.post(
+        `${ADMIN_API}/generate-lesson-content/start`,
         {
           pdf_content: generationMode === 'document' ? pdfText : null,
           topic_prompt: generationMode === 'prompt' ? topicPrompt : null,
@@ -257,22 +259,73 @@ const CourseContentEditor = () => {
         },
         {
           headers: { Authorization: `Bearer ${token}` },
-          timeout: 120000 // 2 minutes for AI generation
+          timeout: 15000 // 15 sec should be enough to just start the task
         }
       );
 
-      setLessonForm({ ...lessonForm, content: response.data.content });
-      toast.success('¡Contenido generado con GPT-5.2!');
+      const taskId = startResponse.data.task_id;
+      toast.info('Generando contenido con GPT-5.2... esto puede tomar hasta 60 segundos');
+
+      // Step 2: Poll for status until completion
+      let attempts = 0;
+      const maxAttempts = 60; // 60 attempts * 2 seconds = 2 minutes max
+      
+      const pollStatus = async () => {
+        try {
+          const statusResponse = await axios.get(
+            `${ADMIN_API}/generate-lesson-content/status/${taskId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+              timeout: 10000
+            }
+          );
+
+          const { status, progress, content, error } = statusResponse.data;
+          
+          if (status === 'completed' && content) {
+            setLessonForm({ ...lessonForm, content: content });
+            toast.success('¡Contenido generado con GPT-5.2!');
+            setGeneratingContent(false);
+            return;
+          } else if (status === 'error') {
+            toast.error(error || 'Error al generar contenido');
+            setGeneratingContent(false);
+            return;
+          } else if (status === 'pending' || status === 'processing') {
+            attempts++;
+            if (attempts < maxAttempts) {
+              // Continue polling
+              setTimeout(pollStatus, 2000); // Poll every 2 seconds
+            } else {
+              toast.error('La generación está tomando demasiado tiempo. Intenta de nuevo.');
+              setGeneratingContent(false);
+            }
+          }
+        } catch (pollError) {
+          console.error('Error polling status:', pollError);
+          attempts++;
+          if (attempts < maxAttempts) {
+            // Retry polling even on error
+            setTimeout(pollStatus, 3000);
+          } else {
+            toast.error('Error de conexión. Intenta de nuevo.');
+            setGeneratingContent(false);
+          }
+        }
+      };
+
+      // Start polling
+      setTimeout(pollStatus, 2000); // First poll after 2 seconds
+      
     } catch (error) {
-      console.error('Error generating content:', error);
+      console.error('Error starting content generation:', error);
       if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-        toast.error('La generación está tomando demasiado tiempo. Intenta con un tema más específico.');
+        toast.error('Error al iniciar la generación. Intenta de nuevo.');
       } else if (error.message?.includes('Network Error')) {
         toast.error('Error de conexión. Verifica tu internet e intenta de nuevo.');
       } else {
         toast.error(error.response?.data?.detail || 'Error al generar contenido');
       }
-    } finally {
       setGeneratingContent(false);
     }
   };

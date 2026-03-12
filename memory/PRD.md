@@ -95,6 +95,10 @@ Usuario con Suscripción Activa:
 - `POST /api/admin/users/{id}/revoke-access` - Revocar acceso
 - `POST /api/admin/users/{id}/extend-access` - Extender acceso
 
+### Admin AI Content Generation (Async)
+- `POST /api/admin/generate-lesson-content/start` - Inicia generación asíncrona (retorna task_id)
+- `GET /api/admin/generate-lesson-content/status/{task_id}` - Polling de estado (pending|processing|completed|error)
+
 ## Credenciales
 
 ### Admin
