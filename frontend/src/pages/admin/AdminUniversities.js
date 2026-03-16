@@ -39,9 +39,7 @@ const AdminUniversities = () => {
   // Form state
   const [formData, setFormData] = useState({
     name: '',
-    short_name: '',
-    city: '',
-    logo_url: ''
+    short_name: ''
   });
 
   useEffect(() => {
@@ -132,9 +130,7 @@ const AdminUniversities = () => {
   const openEditDialog = (university) => {
     setFormData({
       name: university.name,
-      short_name: university.short_name || '',
-      city: university.city || '',
-      logo_url: university.logo_url || ''
+      short_name: university.short_name || ''
     });
     setEditingUniversity(university);
   };
@@ -142,9 +138,7 @@ const AdminUniversities = () => {
   const resetForm = () => {
     setFormData({
       name: '',
-      short_name: '',
-      city: '',
-      logo_url: ''
+      short_name: ''
     });
   };
 
@@ -205,22 +199,6 @@ const AdminUniversities = () => {
                   onChange={(e) => setFormData({...formData, short_name: e.target.value})}
                 />
               </div>
-              <div>
-                <Label>Ciudad</Label>
-                <Input
-                  placeholder="Santiago"
-                  value={formData.city}
-                  onChange={(e) => setFormData({...formData, city: e.target.value})}
-                />
-              </div>
-              <div>
-                <Label>URL del Logo</Label>
-                <Input
-                  placeholder="https://..."
-                  value={formData.logo_url}
-                  onChange={(e) => setFormData({...formData, logo_url: e.target.value})}
-                />
-              </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
@@ -271,17 +249,9 @@ const AdminUniversities = () => {
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    {university.logo_url ? (
-                      <img 
-                        src={university.logo_url} 
-                        alt={university.name}
-                        className="w-12 h-12 object-contain rounded-lg bg-slate-100"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
-                        {university.name.charAt(0)}
-                      </div>
-                    )}
+                    <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
+                      {university.short_name ? university.short_name.substring(0,2) : university.name.charAt(0)}
+                    </div>
                     <div>
                       <CardTitle className="text-lg">{university.name}</CardTitle>
                       {university.short_name && (
@@ -293,9 +263,6 @@ const AdminUniversities = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                {university.city && (
-                  <p className="text-sm text-slate-500 mb-3">{university.city}</p>
-                )}
                 <div className="flex items-center gap-4 text-sm text-slate-600">
                   <div className="flex items-center gap-1">
                     <BookOpen size={14} className="text-cyan-500" />
@@ -353,20 +320,6 @@ const AdminUniversities = () => {
               <Input
                 value={formData.short_name}
                 onChange={(e) => setFormData({...formData, short_name: e.target.value})}
-              />
-            </div>
-            <div>
-              <Label>Ciudad</Label>
-              <Input
-                value={formData.city}
-                onChange={(e) => setFormData({...formData, city: e.target.value})}
-              />
-            </div>
-            <div>
-              <Label>URL del Logo</Label>
-              <Input
-                value={formData.logo_url}
-                onChange={(e) => setFormData({...formData, logo_url: e.target.value})}
               />
             </div>
           </div>

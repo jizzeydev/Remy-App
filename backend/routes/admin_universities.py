@@ -1,11 +1,10 @@
 """
 University Management Routes for Remy Platform
 Handles: Universities → Courses → Evaluations → Question Banks
-Supports: File uploads, AI generation from prompt/PDF, Markdown/LaTeX
+Supports: AI generation from prompt/PDF, Markdown/LaTeX
 """
-from fastapi import APIRouter, HTTPException, status, Depends, UploadFile, File, Form
+from fastapi import APIRouter, HTTPException, status, Depends, UploadFile, File
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from datetime import datetime, timezone
 from typing import Optional, List, Dict, Any
@@ -28,8 +27,8 @@ security = HTTPBearer()
 # MongoDB connection
 db = None
 
-# Upload directory for university logos
-UPLOADS_DIR = Path(__file__).parent.parent / 'uploads' / 'universities'
+# Upload directory for PDFs and question images
+UPLOADS_DIR = Path(__file__).parent.parent / 'uploads' / 'questions'
 UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -261,101 +260,25 @@ async def list_universities(_: str = Depends(verify_admin_token)):
 
 @router.post("")
 async def create_university(
-    name: str = Form(...),
-    short_name: str = Form(None),
-    city: str = Form(None),
-    logo: UploadFile = File(None),
+    data: UniversityCreate,
     _: str = Depends(verify_admin_token)
 ):
-    """Create a new university with optional logo upload"""
+    """Create a new university"""
     uni_id = str(uuid.uuid4())
-    logo_path = None
-    
-    # Handle logo upload
-    if logo and logo.filename:
-        # Validate file type
-        allowed_types = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
-        if logo.content_type not in allowed_types:
-            raise HTTPException(status_code=400, detail="Tipo de archivo no permitido. Use JPG, PNG, WebP o GIF.")
-        
-        # Save file
-        ext = logo.filename.split('.')[-1] if '.' in logo.filename else 'png'
-        filename = f"{uni_id}.{ext}"
-        file_path = UPLOADS_DIR / filename
-        
-        async with aiofiles.open(file_path, 'wb') as f:
-            content = await logo.read()
-            await f.write(content)
-        
-        logo_path = f"/api/admin/universities/logo/{filename}"
     
     university = {
         "id": uni_id,
-        "name": name,
-        "short_name": short_name or name[:10],
-        "logo_path": logo_path,
-        "city": city,
+        "name": data.name,
+        "short_name": data.short_name or data.name[:10],
+        "city": data.city,
         "active": True,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
     await db.universities.insert_one(university)
-    logger.info(f"Created university: {name}")
+    logger.info(f"Created university: {data.name}")
     
-    return {"id": uni_id, "message": "Universidad creada exitosamente", "logo_path": logo_path}
-
-
-@router.get("/logo/{filename}")
-async def get_university_logo(filename: str):
-    """Serve university logo file"""
-    file_path = UPLOADS_DIR / filename
-    if not file_path.exists():
-        raise HTTPException(status_code=404, detail="Logo no encontrado")
-    return FileResponse(file_path)
-
-
-@router.post("/{university_id}/upload-logo")
-async def upload_university_logo(
-    university_id: str,
-    logo: UploadFile = File(...),
-    _: str = Depends(verify_admin_token)
-):
-    """Upload or update university logo"""
-    # Verify university exists
-    university = await db.universities.find_one({"id": university_id})
-    if not university:
-        raise HTTPException(status_code=404, detail="Universidad no encontrada")
-    
-    # Validate file type
-    allowed_types = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
-    if logo.content_type not in allowed_types:
-        raise HTTPException(status_code=400, detail="Tipo de archivo no permitido. Use JPG, PNG, WebP o GIF.")
-    
-    # Delete old logo if exists
-    if university.get("logo_path"):
-        old_filename = university["logo_path"].split('/')[-1]
-        old_path = UPLOADS_DIR / old_filename
-        if old_path.exists():
-            old_path.unlink()
-    
-    # Save new file
-    ext = logo.filename.split('.')[-1] if '.' in logo.filename else 'png'
-    filename = f"{university_id}.{ext}"
-    file_path = UPLOADS_DIR / filename
-    
-    async with aiofiles.open(file_path, 'wb') as f:
-        content = await logo.read()
-        await f.write(content)
-    
-    logo_path = f"/api/admin/universities/logo/{filename}"
-    
-    # Update database
-    await db.universities.update_one(
-        {"id": university_id},
-        {"$set": {"logo_path": logo_path, "updated_at": datetime.now(timezone.utc).isoformat()}}
-    )
-    
-    return {"message": "Logo actualizado", "logo_path": logo_path}
+    return {"id": uni_id, "message": "Universidad creada exitosamente"}
 
 
 @router.get("/{university_id}")
@@ -421,14 +344,6 @@ async def delete_university(university_id: str, _: str = Depends(verify_admin_to
     
     # Delete courses
     await db.university_courses.delete_many({"university_id": university_id})
-    
-    # Delete university logo if exists
-    university = await db.universities.find_one({"id": university_id})
-    if university and university.get("logo_path"):
-        filename = university["logo_path"].split('/')[-1]
-        file_path = UPLOADS_DIR / filename
-        if file_path.exists():
-            file_path.unlink()
     
     # Delete university
     result = await db.universities.delete_one({"id": university_id})
