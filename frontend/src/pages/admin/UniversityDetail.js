@@ -64,6 +64,9 @@ const UniversityDetail = () => {
   const [aiPrompt, setAiPrompt] = useState('');
   const [aiNumQuestions, setAiNumQuestions] = useState(5);
   const [generating, setGenerating] = useState(false);
+  const [pdfFile, setPdfFile] = useState(null);
+  const [uploadingPdf, setUploadingPdf] = useState(false);
+  const [pdfText, setPdfText] = useState('');
   
   // Questions list
   const [questions, setQuestions] = useState([]);
@@ -258,10 +261,52 @@ const UniversityDetail = () => {
     }
   };
 
+  // Handle PDF upload
+  const handlePdfUpload = async (file) => {
+    if (!file) return;
+    
+    if (file.type !== 'application/pdf') {
+      toast.error('Solo se permiten archivos PDF');
+      return;
+    }
+    
+    setUploadingPdf(true);
+    setPdfFile(file);
+    
+    try {
+      const token = localStorage.getItem('admin_token');
+      const formData = new FormData();
+      formData.append('pdf_file', file);
+      
+      const response = await axios.post(
+        `${API}/${universityId}/courses/${selectedCourse.id}/evaluations/${selectedEvaluation.id}/upload-pdf`,
+        formData,
+        {
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+      
+      if (response.data.success) {
+        setPdfText(response.data.extracted_text);
+        toast.success(`PDF procesado: ${response.data.text_length} caracteres extraídos`);
+      }
+    } catch (error) {
+      console.error('Error uploading PDF:', error);
+      toast.error(error.response?.data?.detail || 'Error al procesar el PDF');
+      setPdfFile(null);
+    } finally {
+      setUploadingPdf(false);
+    }
+  };
+
   // AI Generation - Uses the university-specific endpoint
   const handleAIGenerate = async () => {
-    if (!aiPrompt.trim()) {
-      toast.error('Describe el tema o pega contenido de un PDF');
+    // Check if we have either a prompt or PDF content
+    if (!aiPrompt.trim() && !pdfText) {
+      toast.error('Describe el tema o sube un PDF de examen anterior');
       return;
     }
     
@@ -269,12 +314,17 @@ const UniversityDetail = () => {
     try {
       const token = localStorage.getItem('admin_token');
       
+      // Determine generation type based on available content
+      const generationType = pdfText ? 'pdf' : 'prompt';
+      const content = pdfText || aiPrompt;
+      
       // Use the university-specific generation endpoint
       const response = await axios.post(
         `${API}/${universityId}/courses/${selectedCourse.id}/evaluations/${selectedEvaluation.id}/generate`,
         {
-          generation_type: 'prompt',
-          prompt: aiPrompt,
+          generation_type: generationType,
+          prompt: generationType === 'prompt' ? content : null,
+          pdf_content: generationType === 'pdf' ? content : null,
           num_questions: aiNumQuestions,
           difficulty: 'medio'
         },
@@ -288,6 +338,8 @@ const UniversityDetail = () => {
         toast.success(`${response.data.created_count} preguntas generadas y guardadas`);
         setShowAIGenerateDialog(false);
         setAiPrompt('');
+        setPdfFile(null);
+        setPdfText('');
         fetchQuestions(selectedEvaluation.id);
       } else {
         toast.error('No se pudieron generar preguntas');
@@ -738,21 +790,87 @@ const UniversityDetail = () => {
                 onChange={(e) => setAiNumQuestions(parseInt(e.target.value) || 5)}
               />
             </div>
+            
+            {/* PDF Upload Section */}
+            <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 bg-slate-50">
+              <Label className="flex items-center gap-2 mb-2">
+                <Upload size={16} />
+                Subir PDF de examen anterior
+              </Label>
+              <input
+                type="file"
+                accept=".pdf"
+                onChange={(e) => handlePdfUpload(e.target.files[0])}
+                className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-cyan-50 file:text-cyan-700 hover:file:bg-cyan-100"
+                disabled={uploadingPdf}
+              />
+              {uploadingPdf && (
+                <div className="flex items-center gap-2 mt-2 text-sm text-slate-500">
+                  <Loader2 className="animate-spin" size={14} />
+                  Extrayendo texto del PDF...
+                </div>
+              )}
+              {pdfFile && pdfText && (
+                <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded text-sm">
+                  <p className="text-green-700 font-medium flex items-center gap-1">
+                    <FileText size={14} />
+                    {pdfFile.name}
+                  </p>
+                  <p className="text-green-600 text-xs mt-1">
+                    {pdfText.length} caracteres extraídos - Listo para generar preguntas
+                  </p>
+                </div>
+              )}
+            </div>
+            
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-white px-2 text-slate-500">O escribe manualmente</span>
+              </div>
+            </div>
+            
             <div>
               <Label>Tema o contenido del examen</Label>
               <Textarea
-                placeholder="Ej: Genera preguntas sobre derivadas e integrales, incluyendo aplicaciones a problemas de optimización.
-
-O pega aquí el contenido de un examen anterior para generar preguntas similares..."
+                placeholder="Ej: Genera preguntas sobre derivadas e integrales, incluyendo aplicaciones a problemas de optimización..."
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
-                rows={10}
+                rows={6}
+                disabled={!!pdfText}
               />
+              {pdfText && (
+                <p className="text-xs text-amber-600 mt-1">
+                  Campo deshabilitado porque ya subiste un PDF. Elimina el PDF para escribir manualmente.
+                </p>
+              )}
             </div>
+            
+            {pdfFile && (
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="text-red-600"
+                onClick={() => {
+                  setPdfFile(null);
+                  setPdfText('');
+                }}
+              >
+                <Trash2 size={14} className="mr-1" />
+                Eliminar PDF
+              </Button>
+            )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowAIGenerateDialog(false)}>Cancelar</Button>
-            <Button onClick={handleAIGenerate} disabled={generating}>
+            <Button variant="outline" onClick={() => {
+              setShowAIGenerateDialog(false);
+              setPdfFile(null);
+              setPdfText('');
+              setAiPrompt('');
+            }}>Cancelar</Button>
+            <Button onClick={handleAIGenerate} disabled={generating || uploadingPdf || (!aiPrompt.trim() && !pdfText)}>
               {generating ? (
                 <>
                   <Loader2 className="animate-spin mr-2" size={16} />
