@@ -22,6 +22,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminCourses from './pages/admin/AdminCourses';
 import AdminQuestions from './pages/admin/AdminQuestions';
 import AdminUsers from './pages/admin/AdminUsers';
+import AdminPricing from './pages/admin/AdminPricing';
 import CourseContentEditor from './pages/admin/CourseContentEditor';
 import '@/App.css';
 
@@ -110,6 +111,7 @@ function AppRouter() {
         <Route path="/admin/courses/:courseId/content" element={<CourseContentEditor />} />
         <Route path="/admin/questions" element={<AdminQuestions />} />
         <Route path="/admin/users" element={<AdminUsers />} />
+        <Route path="/admin/pricing" element={<AdminPricing />} />
       </Route>
     </Routes>
   );

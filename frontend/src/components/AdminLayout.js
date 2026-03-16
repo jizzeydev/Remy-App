@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, BookOpen, ClipboardList, Users, LogOut } from 'lucide-react';
+import { LayoutDashboard, BookOpen, ClipboardList, Users, LogOut, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -12,6 +12,7 @@ const AdminLayout = () => {
     { icon: BookOpen, label: 'Cursos', path: '/admin/courses' },
     { icon: ClipboardList, label: 'Preguntas', path: '/admin/questions' },
     { icon: Users, label: 'Usuarios', path: '/admin/users' },
+    { icon: DollarSign, label: 'Precios', path: '/admin/pricing' },
   ];
 
   const handleLogout = () => {

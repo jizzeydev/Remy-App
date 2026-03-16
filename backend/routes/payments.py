@@ -92,46 +92,157 @@ async def update_user_subscription(
     return update_data
 
 
+# ==================== DEFAULT PRICING CONFIG ====================
+DEFAULT_PRICING_CONFIG = {
+    "monthly": {
+        "id": "monthly",
+        "name": "Plan Mensual",
+        "description": "Acceso completo por 1 mes",
+        "base_price": 9990,
+        "currency": "CLP",
+        "frequency": "mensual",
+        "frequency_months": 1,
+        "features": [
+            "Acceso a todos los cursos",
+            "Simulacros ilimitados",
+            "Seguimiento de progreso",
+            "Correcciones detalladas"
+        ],
+        "discount_enabled": False,
+        "discount_percentage": 0,
+        "promotion_start": None,
+        "promotion_end": None
+    },
+    "semestral": {
+        "id": "semestral",
+        "name": "Plan Semestral",
+        "description": "El más popular - 6 meses de acceso",
+        "base_price": 59940,  # Original price (6 months)
+        "final_price": 29990,  # Discounted price
+        "currency": "CLP",
+        "frequency": "semestral",
+        "frequency_months": 6,
+        "features": [
+            "Acceso a todos los cursos",
+            "Simulacros ilimitados",
+            "Seguimiento de progreso",
+            "Correcciones detalladas",
+            "Acceso anticipado a nuevos cursos"
+        ],
+        "discount_enabled": True,
+        "discount_percentage": 50,
+        "promotion_start": None,
+        "promotion_end": None,
+        "is_popular": True
+    }
+}
+
+
+async def get_pricing_config():
+    """Get pricing config from database or return defaults"""
+    config = await db.pricing_config.find_one({"config_id": "main"}, {"_id": 0})
+    if config:
+        return config.get("plans", DEFAULT_PRICING_CONFIG)
+    return DEFAULT_PRICING_CONFIG
+
+
+def is_discount_active(plan_config: dict) -> bool:
+    """Check if discount is currently active based on dates"""
+    if not plan_config.get("discount_enabled"):
+        return False
+    
+    now = datetime.now(timezone.utc)
+    start = plan_config.get("promotion_start")
+    end = plan_config.get("promotion_end")
+    
+    # If no dates set, discount is always active when enabled
+    if not start and not end:
+        return True
+    
+    # Parse dates if they're strings
+    if start and isinstance(start, str):
+        start = datetime.fromisoformat(start.replace('Z', '+00:00'))
+    if end and isinstance(end, str):
+        end = datetime.fromisoformat(end.replace('Z', '+00:00'))
+    
+    # Check date range
+    if start and now < start:
+        return False
+    if end and now > end:
+        return False
+    
+    return True
+
+
+def calculate_final_price(plan_config: dict) -> dict:
+    """Calculate final price considering discounts"""
+    base_price = plan_config.get("base_price", 0)
+    
+    # Check if this plan has a fixed final_price (like semestral)
+    if "final_price" in plan_config and is_discount_active(plan_config):
+        return {
+            "amount": plan_config["final_price"],
+            "original_amount": base_price,
+            "discount_percentage": plan_config.get("discount_percentage", 0),
+            "discount_active": True
+        }
+    
+    # Calculate based on percentage discount
+    if is_discount_active(plan_config):
+        discount_pct = plan_config.get("discount_percentage", 0)
+        discounted_price = int(base_price * (100 - discount_pct) / 100)
+        return {
+            "amount": discounted_price,
+            "original_amount": base_price,
+            "discount_percentage": discount_pct,
+            "discount_active": True
+        }
+    
+    return {
+        "amount": base_price,
+        "original_amount": None,
+        "discount_percentage": 0,
+        "discount_active": False
+    }
+
+
 # ==================== SUBSCRIPTION ENDPOINTS ====================
 
 @router.get("/plans")
 async def get_available_plans():
-    """Get all available subscription plans"""
+    """Get all available subscription plans with current pricing"""
+    pricing_config = await get_pricing_config()
+    
+    plans = []
+    for plan_id, config in pricing_config.items():
+        price_info = calculate_final_price(config)
+        
+        plan_data = {
+            "id": config.get("id", plan_id),
+            "name": config.get("name"),
+            "description": config.get("description"),
+            "amount": price_info["amount"],
+            "currency": config.get("currency", "CLP"),
+            "frequency": config.get("frequency"),
+            "features": config.get("features", [])
+        }
+        
+        # Add discount info if active
+        if price_info["discount_active"]:
+            plan_data["original_amount"] = price_info["original_amount"]
+            plan_data["discount"] = f"{price_info['discount_percentage']}%"
+        
+        # Add popular flag
+        if config.get("is_popular"):
+            plan_data["is_popular"] = True
+        
+        plans.append(plan_data)
+    
+    # Sort: monthly first, then semestral
+    plans.sort(key=lambda x: 0 if x["id"] == "monthly" else 1)
+    
     return {
-        "plans": [
-            {
-                "id": "monthly",
-                "name": "Plan Mensual",
-                "description": "Acceso completo por 1 mes",
-                "amount": 9990,
-                "currency": "CLP",
-                "frequency": "mensual",
-                "features": [
-                    "Acceso a todos los cursos",
-                    "Simulacros ilimitados",
-                    "Seguimiento de progreso",
-                    "Soporte prioritario"
-                ]
-            },
-            {
-                "id": "semestral",
-                "name": "Plan Semestral",
-                "description": "Ahorra 50% - 6 meses de acceso",
-                "amount": 29990,
-                "original_amount": 59940,
-                "currency": "CLP",
-                "frequency": "semestral",
-                "discount": "50%",
-                "features": [
-                    "Acceso a todos los cursos",
-                    "Simulacros ilimitados",
-                    "Seguimiento de progreso",
-                    "Soporte prioritario",
-                    "Contenido exclusivo",
-                    "Acceso anticipado a nuevos cursos"
-                ]
-            }
-        ],
+        "plans": plans,
         "mercadopago_public_key": os.environ.get("MERCADOPAGO_PUBLIC_KEY", "")
     }
 
@@ -536,3 +647,162 @@ async def mercadopago_webhook(request: Request):
         logger.error(f"Webhook error: {e}")
         # Return 200 to prevent retries
         return {"status": "error", "detail": str(e)}
+
+
+# ==================== ADMIN PRICING ENDPOINTS ====================
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from jose import JWTError, jwt
+
+admin_security = HTTPBearer()
+
+# Allowed admin emails for Google login
+ALLOWED_ADMIN_EMAILS = [
+    'seremonta.cl@gmail.com',
+    'admin@seremonta.cl'
+]
+
+
+async def verify_admin_for_pricing(credentials: HTTPAuthorizationCredentials = Depends(admin_security)):
+    """Verify admin JWT token for pricing management"""
+    try:
+        token = credentials.credentials
+        secret_key = os.environ.get('ADMIN_SECRET_KEY')
+        admin_username = os.environ.get('ADMIN_USERNAME')
+        
+        payload = jwt.decode(token, secret_key, algorithms=["HS256"])
+        subject: str = payload.get("sub")
+        token_type: str = payload.get("type", "")
+        
+        if subject is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Credenciales de administrador inválidas"
+            )
+        
+        # Check if it's a Google admin token
+        if token_type == "admin_google":
+            if subject.lower() not in [e.lower() for e in ALLOWED_ADMIN_EMAILS]:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Credenciales de administrador inválidas"
+                )
+            return subject
+        
+        # Traditional username/password admin
+        if subject != admin_username:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Credenciales de administrador inválidas"
+            )
+        return subject
+        
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Credenciales de administrador inválidas"
+        )
+
+
+class PlanPricingUpdate(BaseModel):
+    name: str
+    description: str
+    base_price: int
+    final_price: Optional[int] = None  # For semestral with fixed discount
+    features: list[str]
+    discount_enabled: bool = False
+    discount_percentage: int = 0
+    promotion_start: Optional[str] = None
+    promotion_end: Optional[str] = None
+    is_popular: bool = False
+
+
+class PricingConfigUpdate(BaseModel):
+    monthly: PlanPricingUpdate
+    semestral: PlanPricingUpdate
+
+
+@router.get("/admin/pricing")
+async def get_admin_pricing(_: str = Depends(verify_admin_for_pricing)):
+    """Get current pricing configuration for admin"""
+    pricing_config = await get_pricing_config()
+    
+    # Get last updated timestamp
+    config_doc = await db.pricing_config.find_one({"config_id": "main"}, {"_id": 0, "updated_at": 1})
+    last_updated = config_doc.get("updated_at") if config_doc else None
+    
+    return {
+        "plans": pricing_config,
+        "last_updated": last_updated
+    }
+
+
+@router.put("/admin/pricing")
+async def update_pricing(config: PricingConfigUpdate, _: str = Depends(verify_admin_for_pricing)):
+    """Update pricing configuration"""
+    try:
+        # Build config object
+        pricing_data = {
+            "monthly": {
+                "id": "monthly",
+                "name": config.monthly.name,
+                "description": config.monthly.description,
+                "base_price": config.monthly.base_price,
+                "currency": "CLP",
+                "frequency": "mensual",
+                "frequency_months": 1,
+                "features": config.monthly.features,
+                "discount_enabled": config.monthly.discount_enabled,
+                "discount_percentage": config.monthly.discount_percentage,
+                "promotion_start": config.monthly.promotion_start,
+                "promotion_end": config.monthly.promotion_end,
+                "is_popular": config.monthly.is_popular
+            },
+            "semestral": {
+                "id": "semestral",
+                "name": config.semestral.name,
+                "description": config.semestral.description,
+                "base_price": config.semestral.base_price,
+                "final_price": config.semestral.final_price or int(config.semestral.base_price * (100 - config.semestral.discount_percentage) / 100),
+                "currency": "CLP",
+                "frequency": "semestral",
+                "frequency_months": 6,
+                "features": config.semestral.features,
+                "discount_enabled": config.semestral.discount_enabled,
+                "discount_percentage": config.semestral.discount_percentage,
+                "promotion_start": config.semestral.promotion_start,
+                "promotion_end": config.semestral.promotion_end,
+                "is_popular": config.semestral.is_popular
+            }
+        }
+        
+        # Upsert pricing config
+        await db.pricing_config.update_one(
+            {"config_id": "main"},
+            {
+                "$set": {
+                    "plans": pricing_data,
+                    "updated_at": datetime.now(timezone.utc).isoformat(),
+                    "config_id": "main"
+                }
+            },
+            upsert=True
+        )
+        
+        logger.info("Pricing config updated successfully")
+        return {"success": True, "message": "Precios actualizados correctamente"}
+        
+    except Exception as e:
+        logger.error(f"Error updating pricing: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/admin/pricing/reset")
+async def reset_pricing(_: str = Depends(verify_admin_for_pricing)):
+    """Reset pricing to default values"""
+    try:
+        await db.pricing_config.delete_one({"config_id": "main"})
+        logger.info("Pricing config reset to defaults")
+        return {"success": True, "message": "Precios restaurados a valores por defecto"}
+    except Exception as e:
+        logger.error(f"Error resetting pricing: {e}")
+        raise HTTPException(status_code=500, detail=str(e))

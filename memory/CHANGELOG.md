@@ -1,5 +1,36 @@
 # Changelog - Remy Platform
 
+## [March 16, 2026] - Admin Pricing Management
+
+### Added
+- **New Admin Page: `/admin/pricing`**
+  - Edit monthly and semester plan prices
+  - Configure discount percentages
+  - Enable/disable discounts
+  - Set promotion start and end dates (for CyberDay, CyberMonday, etc.)
+  - Mark plans as "popular"
+  - Manage features list for each plan
+  - Live preview mode to see how prices will appear on landing page
+  - Reset to default values button
+
+- **New API Endpoints:**
+  - `GET /api/payments/admin/pricing` - Get current pricing configuration
+  - `PUT /api/payments/admin/pricing` - Update pricing configuration
+  - `POST /api/payments/admin/pricing/reset` - Reset to default values
+
+- **Database Storage:**
+  - Pricing config stored in `pricing_config` collection
+  - Supports promotional dates with automatic activation/deactivation
+  - Falls back to default values if no config in database
+
+### Changed
+- **`GET /api/payments/plans` endpoint** now reads from database
+  - Returns `original_amount` and `discount` when active
+  - Automatic discount calculation based on percentage or fixed final price
+  - Date-based promotion activation (promotion_start, promotion_end)
+
+---
+
 ## [March 12, 2026] - Landing Page Redesign
 
 ### Changed
