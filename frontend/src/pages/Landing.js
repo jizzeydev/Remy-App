@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import { 
-  BookOpen, Brain, Target, Clock, CheckCircle, Star, 
-  ChevronDown, ChevronRight, Sparkles, GraduationCap,
-  TrendingUp, MessageSquare, Lock, Zap, Users, Award
+  BookOpen, Target, Clock, CheckCircle, 
+  ChevronDown, ChevronRight, GraduationCap,
+  TrendingUp, Lock, Zap, Award, FileText, 
+  Search, ClipboardList, Lightbulb, BarChart3,
+  ArrowRight, X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -39,14 +41,16 @@ const HeroSection = () => {
               variant="ghost" 
               className="text-white hover:bg-white/10 text-sm md:text-base px-2 md:px-4"
               onClick={() => navigate('/auth')}
+              data-testid="nav-login-btn"
             >
               Ingresar
             </Button>
             <Button 
               className="bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold text-sm md:text-base px-3 md:px-4"
               onClick={() => navigate('/auth')}
+              data-testid="nav-signup-btn"
             >
-              <span className="hidden sm:inline">Comenzar gratis</span>
+              <span className="hidden sm:inline">Comenzar ahora</span>
               <span className="sm:hidden">Comenzar</span>
             </Button>
           </div>
@@ -59,15 +63,15 @@ const HeroSection = () => {
           <span className="text-cyan-400">Remonta</span> tus ramos
           <br />
           <span className="text-3xl md:text-5xl font-normal text-slate-300">
-            con tu tutor IA personal
+            con la mejor plataforma de estudio para la universidad
           </span>
         </h1>
         
-        <p className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed">
+        <p className="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed">
           Remy te ayuda a aprobar tus cursos universitarios con 
-          <span className="text-cyan-400 font-semibold"> lecciones de calidad</span>, 
+          <span className="text-cyan-400 font-semibold"> lecciones claras</span>, 
           <span className="text-cyan-400 font-semibold"> simulacros personalizados</span> y 
-          <span className="text-cyan-400 font-semibold"> asistencia IA 24/7</span>
+          <span className="text-cyan-400 font-semibold"> preguntas de prueba adaptadas a tu universidad</span>
         </p>
         
         {/* CTA Buttons */}
@@ -75,7 +79,8 @@ const HeroSection = () => {
           <Button 
             size="lg" 
             className="bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold text-lg px-8 py-6 rounded-full shadow-lg shadow-cyan-500/30 hover:shadow-cyan-400/40 transition-all"
-            onClick={() => document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' })}
+            onClick={() => navigate('/auth')}
+            data-testid="hero-cta-primary"
           >
             <Zap className="mr-2" size={24} />
             Comenzar ahora
@@ -85,6 +90,7 @@ const HeroSection = () => {
             variant="outline" 
             className="text-white border-slate-500 hover:bg-white/10 text-lg px-8 py-6 rounded-full"
             onClick={() => document.getElementById('courses').scrollIntoView({ behavior: 'smooth' })}
+            data-testid="hero-cta-secondary"
           >
             Ver cursos disponibles
           </Button>
@@ -99,67 +105,154 @@ const HeroSection = () => {
   );
 };
 
+// ==================== PROBLEM SECTION ====================
+const ProblemSection = () => {
+  const beforeItems = [
+    { icon: <Search size={20} />, text: "Buscar PDFs en internet" },
+    { icon: <FileText size={20} />, text: "Resolver ejercicios sueltos" },
+    { icon: <ClipboardList size={20} />, text: "Intentar encontrar pruebas antiguas" }
+  ];
+
+  const afterItems = [
+    { icon: <BookOpen size={20} />, text: "Lecciones claras e interactivas" },
+    { icon: <Target size={20} />, text: "Simulacros instantáneos" },
+    { icon: <GraduationCap size={20} />, text: "Práctica tipo examen" }
+  ];
+
+  return (
+    <section className="py-20 md:py-28 bg-white">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="text-center mb-12 md:mb-16">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-6 leading-tight">
+            Estudiar matemáticas en la universidad
+            <br />
+            <span className="text-cyan-500">no debería ser tan caótico</span>
+          </h2>
+          <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+            Muchos estudiantes estudian con PDFs desordenados, ejercicios sueltos y pruebas antiguas difíciles de encontrar.
+            <br className="hidden md:block" />
+            <span className="block mt-4">
+              Esto hace que estudiar tome demasiado tiempo y que practicar para los exámenes sea poco eficiente.
+            </span>
+          </p>
+        </div>
+
+        {/* Highlight box */}
+        <div className="bg-cyan-50 border border-cyan-200 rounded-2xl p-6 md:p-8 mb-12 md:mb-16 text-center max-w-4xl mx-auto">
+          <Lightbulb className="mx-auto mb-4 text-cyan-500" size={36} />
+          <p className="text-lg md:text-xl text-slate-700 font-medium">
+            <span className="text-cyan-600 font-bold">Remy</span> organiza el contenido, simplifica el estudio y te permite aprender y practicar en un solo lugar.
+          </p>
+        </div>
+
+        {/* Before/After comparison */}
+        <div className="grid md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
+          {/* Before */}
+          <Card className="border-2 border-slate-200 bg-slate-50">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center">
+                  <X className="text-slate-500" size={20} />
+                </div>
+                <CardTitle className="text-xl text-slate-600">ANTES</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <ul className="space-y-4">
+                {beforeItems.map((item, index) => (
+                  <li key={index} className="flex items-center gap-3 text-slate-600">
+                    <span className="text-slate-400">{item.icon}</span>
+                    <span>{item.text}</span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+
+          {/* After */}
+          <Card className="border-2 border-cyan-300 bg-gradient-to-br from-cyan-50 to-white shadow-lg">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-cyan-500 rounded-full flex items-center justify-center">
+                  <CheckCircle className="text-white" size={20} />
+                </div>
+                <CardTitle className="text-xl text-cyan-700">CON REMY</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <ul className="space-y-4">
+                {afterItems.map((item, index) => (
+                  <li key={index} className="flex items-center gap-3 text-slate-700 font-medium">
+                    <span className="text-cyan-500">{item.icon}</span>
+                    <span>{item.text}</span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 // ==================== FEATURES SECTION ====================
 const FeaturesSection = () => {
   const features = [
     {
       icon: <Target className="text-cyan-500" size={40} />,
       title: "Simulacros de Prueba",
-      description: "Practica con exámenes personalizados. Elige los temas, dificultad y tiempo. Recibe tu nota al instante con explicaciones detalladas.",
-      badge: "Disponible"
+      description: "Genera simulacros de 5 a 15 preguntas a partir de una gran base de ejercicios inspirados en pruebas reales de tu ramo.",
+      color: "cyan"
     },
     {
       icon: <BookOpen className="text-blue-500" size={40} />,
       title: "Lecciones de Calidad",
-      description: "Contenido creado por expertos con fórmulas matemáticas, gráficos interactivos y explicaciones paso a paso.",
-      badge: "Disponible"
+      description: "Lecciones claras con fórmulas, imágenes y gráficos interactivos diseñados para entender rápido los contenidos.",
+      color: "blue"
     },
     {
-      icon: <TrendingUp className="text-green-500" size={40} />,
-      title: "Seguimiento de Progreso",
-      description: "Visualiza tu avance en cada curso. Identifica tus fortalezas y áreas a mejorar con estadísticas detalladas.",
-      badge: "Próximamente"
+      icon: <GraduationCap className="text-purple-500" size={40} />,
+      title: "Práctica tipo Examen",
+      description: "Entrena con simulacros diseñados para parecerse a evaluaciones reales de distintas universidades.",
+      color: "purple"
     },
     {
-      icon: <MessageSquare className="text-purple-500" size={40} />,
-      title: "Tutor IA Remy 24/7",
-      description: "Pregúntale a Remy cualquier duda sobre tus materias. Disponible las 24 horas para ayudarte a entender los conceptos.",
-      badge: "Próximamente"
+      icon: <BarChart3 className="text-green-500" size={40} />,
+      title: "Progreso y Correcciones Inteligentes",
+      description: "Después de cada simulacro obtienes tu nota, ves exactamente en qué te equivocaste, accedes a las soluciones paso a paso y recibes recomendaciones sobre qué contenido debes repasar.",
+      color: "green"
     }
   ];
 
   return (
-    <section id="features" className="py-24 bg-white">
+    <section id="features" className="py-20 md:py-28 bg-slate-50">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12 md:mb-16">
           <Badge className="mb-4 bg-cyan-100 text-cyan-700 hover:bg-cyan-100">
             Funcionalidades
           </Badge>
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
             Todo lo que necesitas para <span className="text-cyan-500">aprobar</span>
           </h2>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-            Remy combina las mejores herramientas de estudio con inteligencia artificial para maximizar tu aprendizaje
+          <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto">
+            Herramientas diseñadas para que estudies de forma más inteligente
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-6 md:gap-8">
           {features.map((feature, index) => (
             <Card 
               key={index} 
-              className="border-2 hover:border-cyan-200 hover:shadow-xl transition-all group"
+              className="border-2 border-slate-200 hover:border-cyan-200 hover:shadow-xl transition-all group bg-white"
+              data-testid={`feature-card-${index}`}
             >
               <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="p-3 bg-slate-50 rounded-xl group-hover:bg-cyan-50 transition-colors">
-                    {feature.icon}
-                  </div>
-                  <Badge variant={feature.badge === "Disponible" ? "default" : "secondary"}>
-                    {feature.badge}
-                  </Badge>
+                <div className="p-3 bg-slate-50 rounded-xl group-hover:bg-cyan-50 transition-colors w-fit">
+                  {feature.icon}
                 </div>
-                <CardTitle className="text-2xl mt-4">{feature.title}</CardTitle>
-                <CardDescription className="text-lg">
+                <CardTitle className="text-xl md:text-2xl mt-4">{feature.title}</CardTitle>
+                <CardDescription className="text-base md:text-lg leading-relaxed">
                   {feature.description}
                 </CardDescription>
               </CardHeader>
@@ -171,12 +264,13 @@ const FeaturesSection = () => {
   );
 };
 
-// ==================== COURSES PREVIEW SECTION ====================
-const CoursesPreviewSection = () => {
+// ==================== COURSES SECTION (DYNAMIC) ====================
+const CoursesSection = () => {
   const [courses, setCourses] = useState([]);
   const [expandedCourse, setExpandedCourse] = useState(null);
   const [chapters, setChapters] = useState({});
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCourses();
@@ -220,17 +314,21 @@ const CoursesPreviewSection = () => {
   };
 
   return (
-    <section id="courses" className="py-24 bg-slate-50">
+    <section id="courses" className="py-20 md:py-28 bg-white">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12 md:mb-16">
           <Badge className="mb-4 bg-blue-100 text-blue-700 hover:bg-blue-100">
             Contenido
           </Badge>
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
             Cursos <span className="text-cyan-500">disponibles</span>
           </h2>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-            Explora todo el contenido de nuestros cursos. Suscríbete para acceder a las lecciones completas.
+          <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto mb-4">
+            Nuestros cursos cubren los contenidos fundamentales de matemáticas universitarias.
+          </p>
+          <p className="text-base text-slate-500 max-w-2xl mx-auto">
+            Las lecciones están diseñadas para estudiantes de cualquier universidad. 
+            Los simulacros pueden adaptarse según el tipo de evaluación de distintas universidades.
           </p>
         </div>
 
@@ -248,29 +346,29 @@ const CoursesPreviewSection = () => {
         ) : (
           <div className="space-y-6">
             {courses.map((course) => (
-              <Card key={course.id} className="overflow-hidden">
+              <Card key={course.id} className="overflow-hidden" data-testid={`course-card-${course.id}`}>
                 <CardHeader 
                   className="cursor-pointer hover:bg-slate-50 transition-colors"
                   onClick={() => toggleCourse(course.id)}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-xl flex items-center justify-center text-white text-2xl font-bold shadow-lg">
+                      <div className="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-xl flex items-center justify-center text-white text-xl md:text-2xl font-bold shadow-lg">
                         {course.title.charAt(0)}
                       </div>
                       <div>
-                        <CardTitle className="text-2xl">{course.title}</CardTitle>
-                        <CardDescription className="text-base">
+                        <CardTitle className="text-xl md:text-2xl">{course.title}</CardTitle>
+                        <CardDescription className="text-sm md:text-base">
                           {course.description}
                         </CardDescription>
-                        <div className="flex gap-2 mt-2">
+                        <div className="flex gap-2 mt-2 flex-wrap">
                           <Badge variant="outline">{course.level}</Badge>
                           <Badge variant="outline">{course.category}</Badge>
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
-                      <span className="text-slate-500 hidden sm:block">Ver contenido</span>
+                      <span className="text-slate-500 hidden sm:block text-sm">Ver contenido</span>
                       {expandedCourse === course.id ? 
                         <ChevronDown size={24} className="text-cyan-500" /> : 
                         <ChevronRight size={24} className="text-slate-400" />
@@ -295,7 +393,7 @@ const CoursesPreviewSection = () => {
                               <span className="w-8 h-8 bg-cyan-100 text-cyan-700 rounded-full flex items-center justify-center font-bold text-sm">
                                 {chIndex + 1}
                               </span>
-                              <h4 className="font-semibold text-lg">{chapter.title}</h4>
+                              <h4 className="font-semibold text-base md:text-lg">{chapter.title}</h4>
                               <Badge variant="secondary" className="ml-auto">
                                 {chapter.lessons?.length || 0} lecciones
                               </Badge>
@@ -309,7 +407,7 @@ const CoursesPreviewSection = () => {
                                     className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg group"
                                   >
                                     <Lock size={16} className="text-slate-400" />
-                                    <span className="text-slate-600 flex-1">
+                                    <span className="text-slate-600 flex-1 text-sm md:text-base">
                                       {lIndex + 1}. {lesson.title}
                                     </span>
                                     <span className="text-xs text-slate-400">
@@ -327,6 +425,7 @@ const CoursesPreviewSection = () => {
                           <Button 
                             className="bg-cyan-500 hover:bg-cyan-400 text-white rounded-full"
                             onClick={() => document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' })}
+                            data-testid="course-subscribe-btn"
                           >
                             <Lock className="mr-2" size={18} />
                             Suscríbete para acceder
@@ -345,133 +444,251 @@ const CoursesPreviewSection = () => {
   );
 };
 
-// ==================== PRICING SECTION ====================
-const PricingSection = () => {
-  const navigate = useNavigate();
-
-  const plans = [
-    {
-      id: "monthly",
-      name: "Mensual",
-      price: "9.990",
-      period: "/mes",
-      description: "Acceso completo por 1 mes",
-      features: [
-        "Acceso a todos los cursos",
-        "Simulacros ilimitados",
-        "Seguimiento de progreso",
-        "Tutor IA Remy 24/7",
-        "Soporte prioritario"
-      ],
-      cta: "Suscribirse",
-      popular: false
-    },
-    {
-      id: "semestral",
-      name: "Semestral",
-      price: "29.990",
-      originalPrice: "59.940",
-      period: "/6 meses",
-      description: "Ahorra 50% con el plan semestral",
-      features: [
-        "Acceso a todos los cursos",
-        "Simulacros ilimitados",
-        "Seguimiento de progreso",
-        "Tutor IA Remy 24/7",
-        "Soporte prioritario",
-        "Contenido exclusivo",
-        "Acceso anticipado a nuevos cursos"
-      ],
-      cta: "Suscribirse y Ahorrar",
-      popular: true,
-      badge: "50% DCTO"
-    }
+// ==================== SIMULATION SECTION ====================
+const SimulationSection = () => {
+  const benefits = [
+    { text: "Práctica rápida", icon: <Clock size={20} /> },
+    { text: "Preguntas variadas", icon: <Target size={20} /> },
+    { text: "Entrenamiento tipo examen", icon: <GraduationCap size={20} /> }
   ];
 
   return (
-    <section id="pricing" className="py-24 bg-gradient-to-b from-white to-slate-50">
+    <section className="py-20 md:py-28 bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900 text-white">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="text-center mb-12">
+          <Badge className="mb-4 bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/20 border-cyan-500/30">
+            Simulacros
+          </Badge>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
+            Practica como si estuvieras en un <span className="text-cyan-400">examen real</span>
+          </h2>
+          <p className="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-10">
+            Con Remy puedes generar simulacros en segundos y entrenar como si estuvieras rindiendo una prueba.
+          </p>
+        </div>
+
+        {/* Benefits */}
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-6 md:gap-12 mb-12">
+          {benefits.map((benefit, index) => (
+            <div key={index} className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-cyan-500/20 rounded-full flex items-center justify-center text-cyan-400">
+                {benefit.icon}
+              </div>
+              <span className="text-lg font-medium">{benefit.text}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Closing line */}
+        <div className="text-center">
+          <p className="text-lg text-cyan-300 font-medium italic">
+            "Una de las formas más efectivas de prepararte para tus evaluaciones."
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// ==================== PRICING SECTION (DYNAMIC) ====================
+const PricingSection = () => {
+  const navigate = useNavigate();
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchPlans();
+  }, []);
+
+  const fetchPlans = async () => {
+    try {
+      const response = await axios.get(`${API}/payments/plans`);
+      setPlans(response.data.plans || []);
+    } catch (error) {
+      console.error('Error fetching plans:', error);
+      // Fallback to default plans if API fails
+      setPlans([
+        {
+          id: "monthly",
+          name: "Plan Mensual",
+          description: "Acceso completo por 1 mes",
+          amount: 9990,
+          currency: "CLP",
+          features: [
+            "Acceso a todos los cursos",
+            "Simulacros ilimitados",
+            "Seguimiento de progreso",
+            "Correcciones detalladas"
+          ]
+        },
+        {
+          id: "semestral",
+          name: "Plan Semestral",
+          description: "El más popular - 6 meses de acceso",
+          amount: 29990,
+          original_amount: 59940,
+          currency: "CLP",
+          discount: "50%",
+          features: [
+            "Acceso a todos los cursos",
+            "Simulacros ilimitados",
+            "Seguimiento de progreso",
+            "Correcciones detalladas",
+            "Acceso anticipado a nuevos cursos"
+          ]
+        }
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatPrice = (amount) => {
+    return new Intl.NumberFormat('es-CL').format(amount);
+  };
+
+  const calculateDiscount = (original, current) => {
+    if (!original || original <= current) return null;
+    return Math.round(((original - current) / original) * 100);
+  };
+
+  if (loading) {
+    return (
+      <section id="pricing" className="py-20 md:py-28 bg-slate-50">
+        <div className="max-w-5xl mx-auto px-6 text-center">
+          <div className="animate-spin w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full mx-auto" />
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section id="pricing" className="py-20 md:py-28 bg-slate-50">
       <div className="max-w-5xl mx-auto px-6">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12 md:mb-16">
           <Badge className="mb-4 bg-green-100 text-green-700 hover:bg-green-100">
             Precios
           </Badge>
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
             Invierte en tu <span className="text-cyan-500">futuro</span>
           </h2>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto">
             Elige el plan que mejor se adapte a tus necesidades. Sin compromisos, cancela cuando quieras.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {plans.map((plan, index) => (
-            <Card 
-              key={index}
-              className={`relative overflow-hidden transition-all hover:shadow-2xl ${
-                plan.popular 
-                  ? 'border-2 border-cyan-500 shadow-xl scale-105' 
-                  : 'border-slate-200 hover:border-cyan-200'
-              }`}
-            >
-              {plan.badge && (
-                <div className="absolute top-4 right-4">
-                  <Badge className="bg-red-500 text-white hover:bg-red-500 text-sm px-3 py-1">
-                    {plan.badge}
-                  </Badge>
-                </div>
-              )}
-              
-              <CardHeader className={plan.popular ? 'bg-cyan-50' : ''}>
-                <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                <CardDescription>{plan.description}</CardDescription>
+        <div className="grid md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
+          {plans.map((plan, index) => {
+            const isPopular = plan.id === 'semestral';
+            const discount = calculateDiscount(plan.original_amount, plan.amount);
+            
+            return (
+              <Card 
+                key={plan.id}
+                className={`relative overflow-hidden transition-all hover:shadow-2xl ${
+                  isPopular 
+                    ? 'border-2 border-cyan-500 shadow-xl md:scale-105' 
+                    : 'border-slate-200 hover:border-cyan-200'
+                }`}
+                data-testid={`pricing-card-${plan.id}`}
+              >
+                {/* Popular badge */}
+                {isPopular && (
+                  <div className="absolute top-0 left-0 right-0 bg-cyan-500 text-white text-center py-1 text-sm font-semibold">
+                    MÁS POPULAR
+                  </div>
+                )}
                 
-                <div className="mt-4">
-                  {plan.originalPrice && (
-                    <span className="text-slate-400 line-through text-lg mr-2">
-                      ${plan.originalPrice}
+                {/* Discount badge */}
+                {discount && (
+                  <div className="absolute top-4 right-4">
+                    <Badge className="bg-red-500 text-white hover:bg-red-500 text-sm px-3 py-1">
+                      {discount}% DCTO
+                    </Badge>
+                  </div>
+                )}
+                
+                <CardHeader className={`${isPopular ? 'pt-10 bg-cyan-50' : ''}`}>
+                  <CardTitle className="text-xl md:text-2xl">{plan.name}</CardTitle>
+                  <CardDescription className="text-base">{plan.description}</CardDescription>
+                  
+                  <div className="mt-4">
+                    {plan.original_amount && (
+                      <span className="text-slate-400 line-through text-lg mr-2">
+                        ${formatPrice(plan.original_amount)}
+                      </span>
+                    )}
+                    <span className="text-4xl md:text-5xl font-bold text-slate-900">
+                      ${formatPrice(plan.amount)}
                     </span>
-                  )}
-                  <span className="text-5xl font-bold text-slate-900">
-                    ${plan.price}
-                  </span>
-                  <span className="text-slate-500 text-lg">{plan.period}</span>
-                </div>
-              </CardHeader>
-              
-              <CardContent className="pt-6">
-                <ul className="space-y-4 mb-8">
-                  {plan.features.map((feature, fIndex) => (
-                    <li key={fIndex} className="flex items-center gap-3">
-                      <CheckCircle className="text-cyan-500 flex-shrink-0" size={20} />
-                      <span className="text-slate-600">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
+                    <span className="text-slate-500 text-base md:text-lg">
+                      /{plan.id === 'monthly' ? 'mes' : '6 meses'}
+                    </span>
+                  </div>
+                </CardHeader>
                 
-                <Button 
-                  className={`w-full py-6 text-lg rounded-full ${
-                    plan.popular 
-                      ? 'bg-cyan-500 hover:bg-cyan-400 text-white shadow-lg shadow-cyan-500/30' 
-                      : 'bg-slate-900 hover:bg-slate-800 text-white'
-                  }`}
-                  onClick={() => navigate(`/auth?redirect=/subscribe?plan=${plan.id}`)}
-                  data-testid={`subscribe-btn-${plan.name.toLowerCase()}`}
-                >
-                  {plan.cta}
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+                <CardContent className="pt-6">
+                  <ul className="space-y-3 md:space-y-4 mb-8">
+                    {plan.features.map((feature, fIndex) => (
+                      <li key={fIndex} className="flex items-start gap-3">
+                        <CheckCircle className="text-cyan-500 flex-shrink-0 mt-0.5" size={20} />
+                        <span className="text-slate-600 text-sm md:text-base">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  
+                  <Button 
+                    className={`w-full py-5 md:py-6 text-base md:text-lg rounded-full ${
+                      isPopular 
+                        ? 'bg-cyan-500 hover:bg-cyan-400 text-white shadow-lg shadow-cyan-500/30' 
+                        : 'bg-slate-900 hover:bg-slate-800 text-white'
+                    }`}
+                    onClick={() => navigate(`/auth?redirect=/subscribe?plan=${plan.id}`)}
+                    data-testid={`subscribe-btn-${plan.id}`}
+                  >
+                    {isPopular ? 'Suscribirse y Ahorrar' : 'Suscribirse'}
+                  </Button>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
 
         {/* Guarantee */}
-        <div className="text-center mt-12 p-6 bg-slate-100 rounded-2xl max-w-2xl mx-auto">
+        <div className="text-center mt-10 md:mt-12 p-6 bg-white rounded-2xl border border-slate-200 max-w-2xl mx-auto shadow-sm">
           <Award className="mx-auto mb-3 text-cyan-500" size={32} />
           <h4 className="font-semibold text-lg mb-2">Garantía de satisfacción</h4>
           <p className="text-slate-600">
             Si no estás satisfecho en los primeros 7 días, te devolvemos el 100% de tu dinero. Sin preguntas.
           </p>
         </div>
+      </div>
+    </section>
+  );
+};
+
+// ==================== FINAL CTA SECTION ====================
+const FinalCTASection = () => {
+  const navigate = useNavigate();
+
+  return (
+    <section className="py-20 md:py-28 bg-white">
+      <div className="max-w-4xl mx-auto px-6 text-center">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-6">
+          Empieza a estudiar matemáticas de forma más <span className="text-cyan-500">inteligente</span>
+        </h2>
+        <p className="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto">
+          Menos tiempo buscando material. Más tiempo aprendiendo y practicando.
+        </p>
+        <Button 
+          size="lg" 
+          className="bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold text-lg px-10 py-6 rounded-full shadow-lg shadow-cyan-500/30 hover:shadow-cyan-400/40 transition-all"
+          onClick={() => navigate('/auth')}
+          data-testid="final-cta-btn"
+        >
+          Crear cuenta
+          <ArrowRight className="ml-2" size={24} />
+        </Button>
       </div>
     </section>
   );
@@ -495,7 +712,7 @@ const Footer = () => {
             </div>
           </div>
           
-          <div className="flex gap-8 text-slate-400">
+          <div className="flex gap-6 md:gap-8 text-slate-400 text-sm md:text-base">
             <a href="#features" className="hover:text-cyan-400 transition-colors">
               Funcionalidades
             </a>
@@ -543,9 +760,12 @@ const Landing = () => {
   return (
     <div className="min-h-screen">
       <HeroSection />
+      <ProblemSection />
       <FeaturesSection />
-      <CoursesPreviewSection />
+      <CoursesSection />
+      <SimulationSection />
       <PricingSection />
+      <FinalCTASection />
       <Footer />
     </div>
   );

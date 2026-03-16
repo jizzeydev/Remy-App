@@ -1,5 +1,38 @@
 # Changelog - Remy Platform
 
+## [March 12, 2026] - Landing Page Redesign
+
+### Changed
+- **Complete Landing Page Refactor**
+  - Removed all AI tutor references - Remy is now positioned as a "study platform"
+  - New hero message: "Remonta tus ramos con la mejor plataforma de estudio para la universidad"
+  - New subtitle focusing on: lecciones claras, simulacros personalizados, preguntas adaptadas
+
+### Added
+- **Problem Section**: "Estudiar matemáticas en la universidad no debería ser tan caótico"
+  - Before/After comparison: PDFs desordenados vs Remy organizado
+  - Highlight box explaining Remy's value proposition
+
+- **Features Section** (4 features):
+  1. Simulacros de Prueba
+  2. Lecciones de Calidad
+  3. Práctica tipo Examen
+  4. Progreso y Correcciones Inteligentes
+
+- **Simulation Section**: "Practica como si estuvieras en un examen real"
+  - Benefits: práctica rápida, preguntas variadas, entrenamiento tipo examen
+
+- **Final CTA Section**: "Empieza a estudiar matemáticas de forma más inteligente"
+
+### Dynamic Content
+- **Courses Section**: Loads dynamically from backend API (`/api/courses`)
+- **Pricing Section**: Loads dynamically from backend API (`/api/payments/plans`)
+  - Supports original/discounted prices
+  - Shows discount percentage automatically
+  - "MÁS POPULAR" badge for semestral plan
+
+---
+
 ## [March 12, 2026] - AI Content Generation Fix (Background Tasks)
 
 ### Fixed
