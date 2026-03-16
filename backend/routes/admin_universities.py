@@ -202,18 +202,19 @@ Instrucciones/Contenido:
 
 Recuerda: Devuelve SOLO el JSON array, sin texto adicional."""
 
+        session_id = str(uuid.uuid4())
         chat = LlmChat(
             api_key=os.environ.get('EMERGENT_LLM_KEY'),
-            model="gpt-5.2",
+            session_id=session_id,
             system_message=system_message
         )
         
         response = await chat.send_message(UserMessage(text=user_prompt))
+        response_text = response.text if hasattr(response, 'text') else str(response)
         
         # Parse JSON response
         import json
         # Clean response - find JSON array
-        response_text = response.strip()
         start_idx = response_text.find('[')
         end_idx = response_text.rfind(']') + 1
         
