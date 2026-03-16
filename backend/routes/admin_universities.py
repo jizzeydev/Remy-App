@@ -1,9 +1,11 @@
 """
 University Management Routes for Remy Platform
 Handles: Universities → Courses → Evaluations → Question Banks
+Supports: File uploads, AI generation from prompt/PDF, Markdown/LaTeX
 """
-from fastapi import APIRouter, HTTPException, status, Depends, UploadFile, File
+from fastapi import APIRouter, HTTPException, status, Depends, UploadFile, File, Form
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from datetime import datetime, timezone
 from typing import Optional, List, Dict, Any
@@ -11,7 +13,10 @@ from jose import JWTError, jwt
 import logging
 import uuid
 import os
-import base64
+import aiofiles
+from pathlib import Path
+import PyPDF2
+import io
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +27,10 @@ security = HTTPBearer()
 
 # MongoDB connection
 db = None
+
+# Upload directory for university logos
+UPLOADS_DIR = Path(__file__).parent.parent / 'uploads' / 'universities'
+UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def set_db(database):
@@ -68,7 +77,6 @@ async def verify_admin_token(credentials: HTTPAuthorizationCredentials = Depends
 class UniversityCreate(BaseModel):
     name: str
     short_name: Optional[str] = None
-    logo_url: Optional[str] = None
     city: Optional[str] = None
     active: bool = True
 
@@ -76,7 +84,6 @@ class UniversityCreate(BaseModel):
 class UniversityUpdate(BaseModel):
     name: Optional[str] = None
     short_name: Optional[str] = None
-    logo_url: Optional[str] = None
     city: Optional[str] = None
     active: Optional[bool] = None
 
@@ -88,23 +95,152 @@ class UniversityCourseCreate(BaseModel):
     department: Optional[str] = None
 
 
+class UniversityCourseUpdate(BaseModel):
+    name: Optional[str] = None
+    code: Optional[str] = None
+    description: Optional[str] = None
+    department: Optional[str] = None
+
+
 class EvaluationCreate(BaseModel):
     name: str  # e.g., "I1", "I2", "Midterm", "Exam"
     description: Optional[str] = None
-    year: Optional[int] = None
-    semester: Optional[int] = None  # 1 or 2
+
+
+class EvaluationUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
 
 
 class EvaluationQuestionCreate(BaseModel):
-    question_text: str
+    """Question with Markdown/LaTeX support"""
+    question_content: str  # Supports Markdown and LaTeX
+    solution_content: Optional[str] = None  # Supports Markdown and LaTeX
     question_type: str = "multiple_choice"  # multiple_choice, open
     options: Optional[List[str]] = None
     correct_answer: Optional[str] = None
-    solution: Optional[str] = None
     difficulty: str = "medio"  # facil, medio, dificil
     topic: Optional[str] = None
     tags: Optional[List[str]] = []
+    image_url: Optional[str] = None  # Optional image
     source: Optional[str] = None  # "manual", "ai_generated", "pdf_extracted"
+
+
+class AIGenerateRequest(BaseModel):
+    """Request for AI question generation"""
+    generation_type: str  # "prompt" or "pdf"
+    prompt: Optional[str] = None  # For prompt-based generation
+    pdf_content: Optional[str] = None  # Extracted PDF text
+    num_questions: int = 5
+    difficulty: str = "medio"
+    topic: Optional[str] = None
+
+
+# ==================== OPENAI INTEGRATION ====================
+
+async def get_openai_client():
+    """Get OpenAI client using environment variable"""
+    api_key = os.environ.get('OPENAI_API_KEY')
+    
+    if not api_key:
+        # Try to use Emergent LLM key as fallback
+        emergent_key = os.environ.get('EMERGENT_LLM_KEY')
+        if emergent_key:
+            try:
+                from emergentintegrations.llm.chat import LlmChat, UserMessage
+                return {"type": "emergent", "key": emergent_key}
+            except ImportError:
+                pass
+        raise HTTPException(
+            status_code=500, 
+            detail="OPENAI_API_KEY no configurada. Configure la variable de entorno."
+        )
+    
+    return {"type": "openai", "key": api_key}
+
+
+async def generate_questions_with_ai(
+    prompt: str, 
+    num_questions: int = 5, 
+    difficulty: str = "medio",
+    topic: Optional[str] = None
+) -> List[dict]:
+    """Generate questions using OpenAI or Emergent LLM"""
+    
+    try:
+        # Try Emergent integration first (already configured)
+        from emergentintegrations.llm.chat import LlmChat, UserMessage
+        
+        system_message = """Eres un experto en crear preguntas de examen para matemáticas universitarias.
+
+FORMATO DE RESPUESTA - Devuelve SOLO un JSON array con este formato exacto:
+[
+  {
+    "question_content": "Pregunta en Markdown con LaTeX: $\\\\frac{d}{dx}(x^2) = ?$",
+    "options": ["$2x$", "$x^2$", "$2$", "$x$"],
+    "correct_answer": "A",
+    "solution_content": "Explicación paso a paso con LaTeX...",
+    "difficulty": "medio",
+    "topic": "Derivadas"
+  }
+]
+
+REGLAS:
+- Usa LaTeX para fórmulas: $formula$ para inline, $$formula$$ para bloque
+- Cada pregunta debe tener 4 opciones (A, B, C, D)
+- La solución debe explicar el procedimiento completo
+- Varía la dificultad según se indique
+- NO incluyas texto antes o después del JSON"""
+
+        user_prompt = f"""Genera {num_questions} preguntas de examen.
+
+Dificultad: {difficulty}
+{f'Tema: {topic}' if topic else ''}
+
+Instrucciones/Contenido:
+{prompt}
+
+Recuerda: Devuelve SOLO el JSON array, sin texto adicional."""
+
+        chat = LlmChat(
+            api_key=os.environ.get('EMERGENT_LLM_KEY'),
+            model="gpt-5.2",
+            system_message=system_message
+        )
+        
+        response = await chat.send_message(UserMessage(text=user_prompt))
+        
+        # Parse JSON response
+        import json
+        # Clean response - find JSON array
+        response_text = response.strip()
+        start_idx = response_text.find('[')
+        end_idx = response_text.rfind(']') + 1
+        
+        if start_idx != -1 and end_idx > start_idx:
+            json_str = response_text[start_idx:end_idx]
+            questions = json.loads(json_str)
+            return questions
+        else:
+            logger.error(f"Could not find JSON in response: {response_text[:200]}")
+            return []
+            
+    except Exception as e:
+        logger.error(f"Error generating questions with AI: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error al generar preguntas: {str(e)}")
+
+
+async def extract_text_from_pdf(file_content: bytes) -> str:
+    """Extract text from PDF file"""
+    try:
+        pdf_reader = PyPDF2.PdfReader(io.BytesIO(file_content))
+        text = ""
+        for page in pdf_reader.pages:
+            text += page.extract_text() + "\n"
+        return text
+    except Exception as e:
+        logger.error(f"Error extracting PDF text: {str(e)}")
+        raise HTTPException(status_code=400, detail="Error al procesar el PDF")
 
 
 # ==================== UNIVERSITY ENDPOINTS ====================
@@ -123,24 +259,102 @@ async def list_universities(_: str = Depends(verify_admin_token)):
 
 
 @router.post("")
-async def create_university(data: UniversityCreate, _: str = Depends(verify_admin_token)):
-    """Create a new university"""
+async def create_university(
+    name: str = Form(...),
+    short_name: str = Form(None),
+    city: str = Form(None),
+    logo: UploadFile = File(None),
+    _: str = Depends(verify_admin_token)
+):
+    """Create a new university with optional logo upload"""
     uni_id = str(uuid.uuid4())
+    logo_path = None
+    
+    # Handle logo upload
+    if logo and logo.filename:
+        # Validate file type
+        allowed_types = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+        if logo.content_type not in allowed_types:
+            raise HTTPException(status_code=400, detail="Tipo de archivo no permitido. Use JPG, PNG, WebP o GIF.")
+        
+        # Save file
+        ext = logo.filename.split('.')[-1] if '.' in logo.filename else 'png'
+        filename = f"{uni_id}.{ext}"
+        file_path = UPLOADS_DIR / filename
+        
+        async with aiofiles.open(file_path, 'wb') as f:
+            content = await logo.read()
+            await f.write(content)
+        
+        logo_path = f"/api/admin/universities/logo/{filename}"
     
     university = {
         "id": uni_id,
-        "name": data.name,
-        "short_name": data.short_name or data.name[:10],
-        "logo_url": data.logo_url,
-        "city": data.city,
-        "active": data.active,
+        "name": name,
+        "short_name": short_name or name[:10],
+        "logo_path": logo_path,
+        "city": city,
+        "active": True,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
     await db.universities.insert_one(university)
-    logger.info(f"Created university: {data.name}")
+    logger.info(f"Created university: {name}")
     
-    return {"id": uni_id, "message": "Universidad creada exitosamente"}
+    return {"id": uni_id, "message": "Universidad creada exitosamente", "logo_path": logo_path}
+
+
+@router.get("/logo/{filename}")
+async def get_university_logo(filename: str):
+    """Serve university logo file"""
+    file_path = UPLOADS_DIR / filename
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Logo no encontrado")
+    return FileResponse(file_path)
+
+
+@router.post("/{university_id}/upload-logo")
+async def upload_university_logo(
+    university_id: str,
+    logo: UploadFile = File(...),
+    _: str = Depends(verify_admin_token)
+):
+    """Upload or update university logo"""
+    # Verify university exists
+    university = await db.universities.find_one({"id": university_id})
+    if not university:
+        raise HTTPException(status_code=404, detail="Universidad no encontrada")
+    
+    # Validate file type
+    allowed_types = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+    if logo.content_type not in allowed_types:
+        raise HTTPException(status_code=400, detail="Tipo de archivo no permitido. Use JPG, PNG, WebP o GIF.")
+    
+    # Delete old logo if exists
+    if university.get("logo_path"):
+        old_filename = university["logo_path"].split('/')[-1]
+        old_path = UPLOADS_DIR / old_filename
+        if old_path.exists():
+            old_path.unlink()
+    
+    # Save new file
+    ext = logo.filename.split('.')[-1] if '.' in logo.filename else 'png'
+    filename = f"{university_id}.{ext}"
+    file_path = UPLOADS_DIR / filename
+    
+    async with aiofiles.open(file_path, 'wb') as f:
+        content = await logo.read()
+        await f.write(content)
+    
+    logo_path = f"/api/admin/universities/logo/{filename}"
+    
+    # Update database
+    await db.universities.update_one(
+        {"id": university_id},
+        {"$set": {"logo_path": logo_path, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {"message": "Logo actualizado", "logo_path": logo_path}
 
 
 @router.get("/{university_id}")
@@ -159,7 +373,9 @@ async def get_university(university_id: str, _: str = Depends(verify_admin_token
     # Add evaluation counts for each course
     for course in courses:
         eval_count = await db.evaluations.count_documents({"course_id": course["id"]})
+        questions_count = await db.evaluation_questions.count_documents({"course_id": course["id"]})
         course["evaluations_count"] = eval_count
+        course["questions_count"] = questions_count
     
     university["courses"] = courses
     return university
@@ -204,6 +420,14 @@ async def delete_university(university_id: str, _: str = Depends(verify_admin_to
     
     # Delete courses
     await db.university_courses.delete_many({"university_id": university_id})
+    
+    # Delete university logo if exists
+    university = await db.universities.find_one({"id": university_id})
+    if university and university.get("logo_path"):
+        filename = university["logo_path"].split('/')[-1]
+        file_path = UPLOADS_DIR / filename
+        if file_path.exists():
+            file_path.unlink()
     
     # Delete university
     result = await db.universities.delete_one({"id": university_id})
@@ -291,6 +515,31 @@ async def get_university_course(
     return course
 
 
+@router.put("/{university_id}/courses/{course_id}")
+async def update_university_course(
+    university_id: str, 
+    course_id: str, 
+    data: UniversityCourseUpdate, 
+    _: str = Depends(verify_admin_token)
+):
+    """Update a course"""
+    update_data = {k: v for k, v in data.model_dump().items() if v is not None}
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No hay datos para actualizar")
+    
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    result = await db.university_courses.update_one(
+        {"id": course_id, "university_id": university_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Curso no encontrado")
+    
+    return {"message": "Curso actualizado"}
+
+
 @router.delete("/{university_id}/courses/{course_id}")
 async def delete_university_course(
     university_id: str, 
@@ -298,19 +547,24 @@ async def delete_university_course(
     _: str = Depends(verify_admin_token)
 ):
     """Delete course and all related evaluations/questions"""
-    # Delete questions
-    await db.evaluation_questions.delete_many({"course_id": course_id})
+    # Get all evaluations for this course
+    evaluations = await db.evaluations.find({"course_id": course_id}).to_list(100)
+    evaluation_ids = [e["id"] for e in evaluations]
+    
+    # Delete questions linked to these evaluations
+    await db.evaluation_questions.delete_many({"evaluation_id": {"$in": evaluation_ids}})
     
     # Delete evaluations
     await db.evaluations.delete_many({"course_id": course_id})
     
     # Delete course
-    result = await db.university_courses.delete_one({"id": course_id})
+    result = await db.university_courses.delete_one({"id": course_id, "university_id": university_id})
     
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Curso no encontrado")
     
-    return {"message": "Curso eliminado"}
+    logger.info(f"Deleted course {course_id} with {len(evaluations)} evaluations")
+    return {"message": "Curso eliminado junto con sus evaluaciones y preguntas"}
 
 
 # ==================== EVALUATION ENDPOINTS ====================
@@ -355,8 +609,6 @@ async def create_evaluation(
         "course_id": course_id,
         "name": data.name,
         "description": data.description,
-        "year": data.year,
-        "semester": data.semester,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
@@ -364,6 +616,32 @@ async def create_evaluation(
     logger.info(f"Created evaluation: {data.name}")
     
     return {"id": eval_id, "message": "Evaluación creada exitosamente"}
+
+
+@router.put("/{university_id}/courses/{course_id}/evaluations/{evaluation_id}")
+async def update_evaluation(
+    university_id: str, 
+    course_id: str, 
+    evaluation_id: str, 
+    data: EvaluationUpdate, 
+    _: str = Depends(verify_admin_token)
+):
+    """Update an evaluation"""
+    update_data = {k: v for k, v in data.model_dump().items() if v is not None}
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No hay datos para actualizar")
+    
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    result = await db.evaluations.update_one(
+        {"id": evaluation_id, "course_id": course_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Evaluación no encontrada")
+    
+    return {"message": "Evaluación actualizada"}
 
 
 @router.delete("/{university_id}/courses/{course_id}/evaluations/{evaluation_id}")
@@ -375,7 +653,7 @@ async def delete_evaluation(
 ):
     """Delete evaluation and all questions"""
     # Delete questions
-    await db.evaluation_questions.delete_many({"evaluation_id": evaluation_id})
+    deleted_questions = await db.evaluation_questions.delete_many({"evaluation_id": evaluation_id})
     
     # Delete evaluation
     result = await db.evaluations.delete_one({"id": evaluation_id})
@@ -383,7 +661,8 @@ async def delete_evaluation(
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Evaluación no encontrada")
     
-    return {"message": "Evaluación eliminada"}
+    logger.info(f"Deleted evaluation {evaluation_id} with {deleted_questions.deleted_count} questions")
+    return {"message": f"Evaluación eliminada con {deleted_questions.deleted_count} preguntas"}
 
 
 # ==================== EVALUATION QUESTION ENDPOINTS ====================
@@ -412,7 +691,7 @@ async def create_evaluation_question(
     data: EvaluationQuestionCreate, 
     _: str = Depends(verify_admin_token)
 ):
-    """Create a question for an evaluation"""
+    """Create a question for an evaluation (supports Markdown/LaTeX)"""
     # Verify evaluation exists
     evaluation = await db.evaluations.find_one({"id": evaluation_id})
     if not evaluation:
@@ -425,14 +704,15 @@ async def create_evaluation_question(
         "university_id": university_id,
         "course_id": course_id,
         "evaluation_id": evaluation_id,
-        "question_text": data.question_text,
+        "question_content": data.question_content,  # Markdown/LaTeX
+        "solution_content": data.solution_content,  # Markdown/LaTeX
         "question_type": data.question_type,
         "options": data.options or [],
         "correct_answer": data.correct_answer,
-        "solution": data.solution,
         "difficulty": data.difficulty,
         "topic": data.topic,
         "tags": data.tags or [],
+        "image_url": data.image_url,
         "source": data.source or "manual",
         "created_at": datetime.now(timezone.utc).isoformat()
     }
@@ -441,6 +721,30 @@ async def create_evaluation_question(
     logger.info(f"Created evaluation question")
     
     return {"id": question_id, "message": "Pregunta creada exitosamente"}
+
+
+@router.put("/{university_id}/courses/{course_id}/evaluations/{evaluation_id}/questions/{question_id}")
+async def update_evaluation_question(
+    university_id: str, 
+    course_id: str, 
+    evaluation_id: str,
+    question_id: str,
+    data: EvaluationQuestionCreate, 
+    _: str = Depends(verify_admin_token)
+):
+    """Update a question"""
+    update_data = data.model_dump()
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    result = await db.evaluation_questions.update_one(
+        {"id": question_id, "evaluation_id": evaluation_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Pregunta no encontrada")
+    
+    return {"message": "Pregunta actualizada"}
 
 
 @router.post("/{university_id}/courses/{course_id}/evaluations/{evaluation_id}/questions/bulk")
@@ -466,15 +770,16 @@ async def create_bulk_questions(
             "university_id": university_id,
             "course_id": course_id,
             "evaluation_id": evaluation_id,
-            "question_text": data.question_text,
+            "question_content": data.question_content,
+            "solution_content": data.solution_content,
             "question_type": data.question_type,
             "options": data.options or [],
             "correct_answer": data.correct_answer,
-            "solution": data.solution,
             "difficulty": data.difficulty,
             "topic": data.topic,
             "tags": data.tags or [],
-            "source": data.source or "manual",
+            "image_url": data.image_url,
+            "source": data.source or "ai_generated",
             "created_at": datetime.now(timezone.utc).isoformat()
         }
         
@@ -503,6 +808,171 @@ async def delete_evaluation_question(
     return {"message": "Pregunta eliminada"}
 
 
+# ==================== AI GENERATION ENDPOINTS ====================
+
+@router.post("/{university_id}/courses/{course_id}/evaluations/{evaluation_id}/generate")
+async def generate_questions_ai(
+    university_id: str, 
+    course_id: str, 
+    evaluation_id: str,
+    data: AIGenerateRequest,
+    _: str = Depends(verify_admin_token)
+):
+    """Generate questions using AI from prompt or PDF content"""
+    # Verify evaluation exists
+    evaluation = await db.evaluations.find_one({"id": evaluation_id})
+    if not evaluation:
+        raise HTTPException(status_code=404, detail="Evaluación no encontrada")
+    
+    # Get course info for context
+    course = await db.university_courses.find_one({"id": course_id})
+    university = await db.universities.find_one({"id": university_id})
+    
+    # Build prompt based on generation type
+    if data.generation_type == "prompt":
+        if not data.prompt:
+            raise HTTPException(status_code=400, detail="El prompt es requerido")
+        generation_prompt = data.prompt
+    elif data.generation_type == "pdf":
+        if not data.pdf_content:
+            raise HTTPException(status_code=400, detail="El contenido del PDF es requerido")
+        generation_prompt = f"""Analiza este contenido de un examen anterior y genera {data.num_questions} preguntas similares:
+
+CONTENIDO DEL EXAMEN:
+{data.pdf_content}
+
+Genera preguntas del mismo estilo, nivel de dificultad y temática."""
+    else:
+        raise HTTPException(status_code=400, detail="Tipo de generación inválido")
+    
+    # Add context
+    context = f"""
+Universidad: {university['name'] if university else 'N/A'}
+Curso: {course['name'] if course else 'N/A'}
+Evaluación: {evaluation['name']}
+"""
+    
+    full_prompt = f"{context}\n{generation_prompt}"
+    
+    # Generate questions
+    questions = await generate_questions_with_ai(
+        prompt=full_prompt,
+        num_questions=data.num_questions,
+        difficulty=data.difficulty,
+        topic=data.topic
+    )
+    
+    if not questions:
+        raise HTTPException(status_code=500, detail="No se pudieron generar preguntas")
+    
+    # Save questions to database
+    created_ids = []
+    for q in questions:
+        question_id = str(uuid.uuid4())
+        
+        question = {
+            "id": question_id,
+            "university_id": university_id,
+            "course_id": course_id,
+            "evaluation_id": evaluation_id,
+            "question_content": q.get("question_content", q.get("question_text", "")),
+            "solution_content": q.get("solution_content", q.get("explanation", "")),
+            "question_type": "multiple_choice",
+            "options": q.get("options", []),
+            "correct_answer": q.get("correct_answer"),
+            "difficulty": q.get("difficulty", data.difficulty),
+            "topic": q.get("topic", data.topic),
+            "tags": q.get("tags", []),
+            "image_url": None,
+            "source": f"ai_generated_{data.generation_type}",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+        await db.evaluation_questions.insert_one(question)
+        created_ids.append(question_id)
+    
+    logger.info(f"AI generated {len(created_ids)} questions for evaluation {evaluation_id}")
+    
+    return {
+        "success": True,
+        "created_count": len(created_ids),
+        "questions": questions,
+        "ids": created_ids
+    }
+
+
+@router.post("/{university_id}/courses/{course_id}/evaluations/{evaluation_id}/upload-pdf")
+async def upload_pdf_for_extraction(
+    university_id: str, 
+    course_id: str, 
+    evaluation_id: str,
+    pdf_file: UploadFile = File(...),
+    _: str = Depends(verify_admin_token)
+):
+    """Upload a PDF and extract text for question generation"""
+    # Validate file type
+    if pdf_file.content_type != 'application/pdf':
+        raise HTTPException(status_code=400, detail="Solo se permiten archivos PDF")
+    
+    # Read and extract text
+    content = await pdf_file.read()
+    text = await extract_text_from_pdf(content)
+    
+    if not text or len(text.strip()) < 50:
+        raise HTTPException(status_code=400, detail="No se pudo extraer texto del PDF. Asegúrese de que el PDF tenga texto seleccionable.")
+    
+    return {
+        "success": True,
+        "filename": pdf_file.filename,
+        "extracted_text": text,
+        "text_length": len(text)
+    }
+
+
+# ==================== QUESTION IMAGE UPLOAD ====================
+
+@router.post("/{university_id}/courses/{course_id}/evaluations/{evaluation_id}/questions/upload-image")
+async def upload_question_image(
+    university_id: str, 
+    course_id: str, 
+    evaluation_id: str,
+    image: UploadFile = File(...),
+    _: str = Depends(verify_admin_token)
+):
+    """Upload an image for a question"""
+    # Validate file type
+    allowed_types = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+    if image.content_type not in allowed_types:
+        raise HTTPException(status_code=400, detail="Tipo de imagen no permitido. Use JPG, PNG, WebP o GIF.")
+    
+    # Create questions images directory
+    questions_dir = UPLOADS_DIR.parent / 'questions'
+    questions_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Save file
+    image_id = str(uuid.uuid4())
+    ext = image.filename.split('.')[-1] if '.' in image.filename else 'png'
+    filename = f"{image_id}.{ext}"
+    file_path = questions_dir / filename
+    
+    async with aiofiles.open(file_path, 'wb') as f:
+        content = await image.read()
+        await f.write(content)
+    
+    image_url = f"/api/admin/universities/question-image/{filename}"
+    
+    return {"success": True, "image_url": image_url}
+
+
+@router.get("/question-image/{filename}")
+async def get_question_image(filename: str):
+    """Serve question image file"""
+    file_path = UPLOADS_DIR.parent / 'questions' / filename
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Imagen no encontrada")
+    return FileResponse(file_path)
+
+
 # ==================== STATS ENDPOINTS ====================
 
 @router.get("/stats/summary")
@@ -513,9 +983,19 @@ async def get_universities_stats(_: str = Depends(verify_admin_token)):
     total_evaluations = await db.evaluations.count_documents({})
     total_questions = await db.evaluation_questions.count_documents({})
     
+    # Questions by source
+    ai_questions = await db.evaluation_questions.count_documents({"source": {"$regex": "ai_generated"}})
+    pdf_questions = await db.evaluation_questions.count_documents({"source": "ai_generated_pdf"})
+    manual_questions = await db.evaluation_questions.count_documents({"source": "manual"})
+    
     return {
         "total_universities": total_universities,
         "total_courses": total_courses,
         "total_evaluations": total_evaluations,
-        "total_questions": total_questions
+        "total_questions": total_questions,
+        "questions_by_source": {
+            "ai_generated": ai_questions,
+            "pdf_extracted": pdf_questions,
+            "manual": manual_questions
+        }
     }
