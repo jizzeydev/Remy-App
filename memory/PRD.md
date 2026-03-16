@@ -189,21 +189,28 @@ Usuario con Suscripción Activa:
 
 ## ✅ Sistema de Universidades (Backend) - IMPLEMENTADO (March 16, 2026)
 - [x] CRUD completo: Universidades → Cursos → Evaluaciones → Preguntas
-- [x] Upload de logos de universidades
 - [x] Generación de preguntas con IA (Emergent LLM)
 - [x] Extracción de texto de PDFs
 - [x] Estadísticas de contenido
-- [x] Tests 100% pasando
+- [x] Backend Tests 100% pasando (25/25)
+
+## ✅ Admin UI de Universidades - IMPLEMENTADO (March 16, 2026)
+- [x] Lista de universidades con búsqueda
+- [x] Crear/Editar/Eliminar universidades (nombre + sigla)
+- [x] Vista detalle con layout 3 columnas (Cursos | Evaluaciones | Preguntas)
+- [x] CRUD de cursos, evaluaciones y preguntas
+- [x] Diálogo de generación de preguntas con IA
+- [x] Frontend Tests 100% pasando (10/10)
 
 ## Backlog (Post-MVP)
 
 ### P0 - En Progreso
-- [ ] Frontend Admin para gestionar Universidades (UI)
+- [ ] Sección "Tu Universidad" para estudiantes
 - [ ] Dashboard de métricas con gráficos (conectar backend analytics)
 
 ### P1 - Próximo
-- [ ] Sección "Tu Universidad" para estudiantes
 - [ ] Editor de texto enriquecido (LaTeX/Markdown) para preguntas
+- [ ] Renderizar LaTeX en lista de preguntas (KaTeX)
 - [ ] Configuración de OPENAI_API_KEY desde admin
 
 ### P2 - Futuro
