@@ -51,8 +51,8 @@ const HeroSection = () => {
               onClick={() => navigate('/auth')}
               data-testid="nav-signup-btn"
             >
-              <span className="hidden sm:inline">Comenzar ahora</span>
-              <span className="sm:hidden">Comenzar</span>
+              <span className="hidden sm:inline">Empieza gratis</span>
+              <span className="sm:hidden">Gratis</span>
             </Button>
           </div>
         </div>
@@ -84,7 +84,7 @@ const HeroSection = () => {
             data-testid="hero-cta-primary"
           >
             <Zap className="mr-2" size={24} />
-            Comenzar ahora
+            Empieza gratis
           </Button>
           <Button 
             size="lg" 
@@ -95,6 +95,12 @@ const HeroSection = () => {
           >
             Ver cursos disponibles
           </Button>
+        </div>
+        
+        {/* Free Trial Badge */}
+        <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-8">
+          <Clock size={18} className="text-cyan-400" />
+          <span className="text-white/90 text-sm">Prueba gratuita de 7 días · Sin tarjeta de crédito</span>
         </div>
         
         {/* Scroll indicator */}
@@ -614,6 +620,70 @@ const PricingSection = () => {
   );
 };
 
+// ==================== FREE TRIAL SECTION ====================
+const FreeTrialSection = () => {
+  const navigate = useNavigate();
+
+  const trialFeatures = [
+    "Acceso a todas las lecciones",
+    "Hasta 10 simulacros durante la prueba",
+    "Seguimiento de progreso",
+    "Cancela cuando quieras"
+  ];
+
+  return (
+    <section className="py-20 md:py-28 bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900 text-white overflow-hidden relative">
+      {/* Background decorations */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl" />
+      
+      <div className="max-w-5xl mx-auto px-6 relative z-10">
+        <div className="text-center mb-12">
+          <Badge className="mb-4 bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/20 border-cyan-500/30 px-4 py-1">
+            <Clock size={14} className="mr-1 inline" />
+            Sin tarjeta de crédito
+          </Badge>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+            Pruébalo <span className="text-cyan-400">gratis</span> por 7 días
+          </h2>
+          <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto">
+            Explora todas las lecciones, genera simulacros y descubre cómo Remy puede ayudarte a estudiar más rápido.
+          </p>
+        </div>
+
+        {/* Features Grid */}
+        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+          {trialFeatures.map((feature, index) => (
+            <div 
+              key={index}
+              className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-xl p-4 text-center"
+            >
+              <CheckCircle className="mx-auto mb-2 text-cyan-400" size={24} />
+              <p className="text-sm font-medium">{feature}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <div className="text-center">
+          <Button 
+            size="lg" 
+            className="bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold text-lg px-10 py-6 rounded-full shadow-lg shadow-cyan-500/30"
+            onClick={() => navigate('/auth')}
+            data-testid="trial-section-cta"
+          >
+            <Zap className="mr-2" size={24} />
+            Crear cuenta gratis
+          </Button>
+          <p className="text-slate-400 text-sm mt-4">
+            Configura tu cuenta en menos de 1 minuto
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 // ==================== FINAL CTA SECTION ====================
 const FinalCTASection = () => {
   const navigate = useNavigate();
@@ -633,7 +703,7 @@ const FinalCTASection = () => {
           onClick={() => navigate('/auth')}
           data-testid="final-cta-btn"
         >
-          Crear cuenta
+          Crear cuenta gratis
           <ArrowRight className="ml-2" size={24} />
         </Button>
       </div>
@@ -712,6 +782,7 @@ const Landing = () => {
       <CoursesSection />
       <SimulationSection />
       <PricingSection />
+      <FreeTrialSection />
       <FinalCTASection />
       <Footer />
     </div>

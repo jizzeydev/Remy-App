@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { useAuth } from '../contexts/AuthContext';
 import SubscriptionRequired from '../components/SubscriptionRequired';
+import TrialBanner from '../components/TrialBanner';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -115,6 +116,9 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-8 pb-24 lg:pb-8">
+      {/* Trial Banner - Shows trial status or subscription prompt */}
+      <TrialBanner />
+      
       {/* Welcome Section */}
       <div data-testid="welcome-section">
         <div className="flex items-center gap-3 mb-2">

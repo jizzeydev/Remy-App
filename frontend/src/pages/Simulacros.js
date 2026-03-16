@@ -264,7 +264,19 @@ const CreateQuizDialog = ({ open, onOpenChange, onQuizCreated }) => {
     } catch (error) {
       console.error('Error creating quiz:', error);
       const errorMsg = error.response?.data?.detail || 'Error al crear el simulacro';
-      toast.error(errorMsg);
+      
+      // Check if it's a trial limit error
+      if (error.response?.status === 403 && errorMsg.includes('límite')) {
+        toast.error(errorMsg, {
+          duration: 8000,
+          action: {
+            label: 'Suscribirme',
+            onClick: () => window.location.href = '/subscribe'
+          }
+        });
+      } else {
+        toast.error(errorMsg);
+      }
     } finally {
       setCreating(false);
     }

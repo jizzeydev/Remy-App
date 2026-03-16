@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useAuth } from '../contexts/AuthContext';
 import { usePricing } from '../hooks/usePricing';
+import TrialBanner from '../components/TrialBanner';
 import { toast } from 'sonner';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -16,7 +17,7 @@ const API = `${BACKEND_URL}/api`;
 const Biblioteca = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user, hasActiveSubscription } = useAuth();
+  const { user, hasActiveSubscription, canAccessContent } = useAuth();
   const { monthly, formatPrice, getLowestPrice, loading: pricingLoading } = usePricing();
   const [courses, setCourses] = useState([]);
   const [coursesStats, setCoursesStats] = useState({});
@@ -113,6 +114,7 @@ const Biblioteca = () => {
   };
 
   const isSubscribed = hasActiveSubscription();
+  const hasAccess = canAccessContent(); // Subscription OR active trial
 
   if (loading) {
     return (
@@ -127,8 +129,11 @@ const Biblioteca = () => {
 
   return (
     <div className="space-y-6 pb-24 lg:pb-8" data-testid="biblioteca-page">
-      {/* Subscription Banner - Dynamic Pricing */}
-      {!isSubscribed && (
+      {/* Trial Banner - Shows trial status */}
+      <TrialBanner />
+      
+      {/* Subscription Banner - Only show if no trial and no subscription */}
+      {!hasAccess && (
         <Card className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white border-0 shadow-lg">
           <CardContent className="flex flex-col sm:flex-row items-center justify-between py-6 gap-4">
             <div className="flex items-center gap-4">
@@ -153,20 +158,12 @@ const Biblioteca = () => {
         </Card>
       )}
 
-      {/* Active Subscription Badge */}
-      {isSubscribed && (
-        <div className="flex items-center gap-2 text-green-600 bg-green-50 px-4 py-2 rounded-lg w-fit">
-          <CheckCircle size={18} />
-          <span className="text-sm font-medium">Suscripción activa - Acceso completo</span>
-        </div>
-      )}
-
       <div>
         <h1 className="text-3xl font-bold">Biblioteca de Cursos</h1>
         <p className="text-slate-600 mt-1">
-          {isSubscribed 
+          {hasAccess 
             ? 'Explora todos los cursos disponibles' 
-            : 'Suscríbete para acceder a todo el contenido'}
+            : 'Crea una cuenta gratis para comenzar'}
         </p>
       </div>
 
@@ -186,13 +183,13 @@ const Biblioteca = () => {
               <Card
                 key={course.id}
                 className={`cursor-pointer hover:shadow-lg transition-all course-card ${
-                  !isSubscribed ? 'opacity-90' : ''
+                  !hasAccess ? 'opacity-90' : ''
                 }`}
                 onClick={() => handleCourseClick(course)}
                 data-testid={`course-card-${index}`}
               >
                 <CardHeader className="relative">
-                  {!isSubscribed && (
+                  {!hasAccess && (
                     <div className="absolute top-4 right-4 z-10">
                       <div className="bg-slate-900/80 text-white rounded-full p-2">
                         <Lock size={16} />
@@ -239,19 +236,19 @@ const Biblioteca = () => {
                   
                   <Button
                     className="w-full"
-                    variant={isSubscribed ? "default" : "secondary"}
+                    variant={hasAccess ? "default" : "secondary"}
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (isSubscribed) {
+                      if (hasAccess) {
                         navigate(`/course/${course.id}`);
                       } else {
-                        navigate('/subscribe');
+                        navigate('/auth');
                       }
                     }}
                   >
-                    {isSubscribed 
+                    {hasAccess 
                       ? (stats.progress === 0 ? 'Comenzar' : stats.progress === 100 ? 'Repasar' : 'Continuar')
-                      : 'Suscribirse para acceder'
+                      : 'Crear cuenta gratis'
                     }
                   </Button>
                 </CardContent>

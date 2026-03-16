@@ -154,12 +154,67 @@ export const AuthProvider = ({ children }) => {
     return false;
   };
 
+  // Check if user has active trial
+  const hasActiveTrial = () => {
+    if (!user) return false;
+    if (hasActiveSubscription()) return false; // Subscription takes priority
+    
+    if (!user.trial_active) return false;
+    
+    // Check if trial hasn't expired
+    if (user.trial_end_date) {
+      try {
+        const trialEnd = new Date(user.trial_end_date);
+        const now = new Date();
+        if (trialEnd > now) {
+          return true;
+        }
+      } catch (e) {
+        console.error('Error parsing trial_end_date:', e);
+      }
+    }
+    
+    return false;
+  };
+
+  // Get trial days remaining
+  const getTrialDaysRemaining = () => {
+    if (!user || !user.trial_end_date) return 0;
+    
+    try {
+      const trialEnd = new Date(user.trial_end_date);
+      const now = new Date();
+      const diffTime = trialEnd - now;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return Math.max(0, diffDays);
+    } catch (e) {
+      return 0;
+    }
+  };
+
+  // Get trial simulations remaining
+  const getTrialSimulationsRemaining = () => {
+    if (!user) return 0;
+    const used = user.trial_simulations_used || 0;
+    const limit = user.trial_simulations_limit || 10;
+    return Math.max(0, limit - used);
+  };
+
+  // Check if user can access content (subscription OR active trial)
+  const canAccessContent = () => {
+    return hasActiveSubscription() || hasActiveTrial();
+  };
+
   const value = {
     user,
     loading,
     error,
     isAuthenticated: !!user,
     hasActiveSubscription,
+    hasActiveTrial,
+    getTrialDaysRemaining,
+    getTrialSimulationsRemaining,
+    canAccessContent,
     loginWithGoogle,
     processGoogleCallback,
     logout,

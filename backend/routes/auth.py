@@ -132,6 +132,10 @@ def user_to_response(user: dict) -> dict:
     if sub_end and isinstance(sub_end, datetime):
         sub_end = sub_end.isoformat()
     
+    trial_end = user.get("trial_end_date")
+    if trial_end and isinstance(trial_end, datetime):
+        trial_end = trial_end.isoformat()
+    
     return {
         "user_id": user["user_id"],
         "email": user["email"],
@@ -140,7 +144,12 @@ def user_to_response(user: dict) -> dict:
         "subscription_status": user.get("subscription_status", "inactive"),
         "subscription_type": user.get("subscription_type"),
         "subscription_plan": user.get("subscription_plan"),
-        "subscription_end": sub_end
+        "subscription_end": sub_end,
+        # Trial fields
+        "trial_active": user.get("trial_active", False),
+        "trial_end_date": trial_end,
+        "trial_simulations_used": user.get("trial_simulations_used", 0),
+        "trial_simulations_limit": 10  # Constant
     }
 
 
@@ -209,6 +218,17 @@ async def process_google_session(request: Request, response: Response):
         if name and user.get("name") != name:
             update_data["name"] = name
         
+        # Check if trial has expired
+        if user.get("trial_active"):
+            trial_end = user.get("trial_end_date")
+            if trial_end:
+                if isinstance(trial_end, str):
+                    trial_end = datetime.fromisoformat(trial_end.replace('Z', '+00:00'))
+                if datetime.now(timezone.utc) > trial_end:
+                    update_data["trial_active"] = False
+                    user["trial_active"] = False
+                    logger.info(f"Trial expired for user: {email}")
+        
         if update_data:
             await db.users.update_one(
                 {"user_id": user["user_id"]},
@@ -219,8 +239,11 @@ async def process_google_session(request: Request, response: Response):
         user_id = user["user_id"]
         logger.info(f"Google user logged in: {email}")
     else:
-        # Create new user
+        # Create new user with FREE TRIAL
         user_id = generate_user_id()
+        now = datetime.now(timezone.utc)
+        trial_end = now + timedelta(days=7)
+        
         user = {
             "user_id": user_id,
             "email": email,
@@ -234,10 +257,15 @@ async def process_google_session(request: Request, response: Response):
             "subscription_id": None,
             "subscription_start": None,
             "subscription_end": None,
-            "created_at": datetime.now(timezone.utc).isoformat()
+            "created_at": now.isoformat(),
+            # Free trial fields
+            "trial_active": True,
+            "trial_start_date": now.isoformat(),
+            "trial_end_date": trial_end.isoformat(),
+            "trial_simulations_used": 0
         }
         await db.users.insert_one(user)
-        logger.info(f"New Google user registered: {email}")
+        logger.info(f"New Google user registered with 7-day trial: {email}")
         
         # Send email notifications (non-blocking)
         try:
@@ -388,3 +416,89 @@ async def require_active_subscription(user: dict) -> dict:
             )
     
     return user
+
+
+@router.get("/trial-status")
+async def get_trial_status(
+    request: Request,
+    session_token: Optional[str] = Cookie(default=None)
+):
+    """Get current user's trial status"""
+    # Get session token from cookie or header
+    token = session_token
+    if not token:
+        auth_header = request.headers.get("Authorization")
+        if auth_header and auth_header.startswith("Bearer "):
+            token = auth_header[7:]
+    
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="No autenticado"
+        )
+    
+    # Get session
+    session = await db.sessions.find_one({"session_token": token}, {"_id": 0})
+    if not session:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Sesión inválida"
+        )
+    
+    user = await get_user_by_id(session["user_id"])
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Usuario no encontrado"
+        )
+    
+    # Check subscription status first
+    has_subscription = user.get("subscription_status") == "active"
+    
+    if has_subscription:
+        return {
+            "has_subscription": True,
+            "trial_active": False,
+            "trial_expired": True,
+            "days_remaining": 0,
+            "simulations_remaining": None,
+            "simulations_used": 0
+        }
+    
+    # Calculate trial status
+    trial_active = user.get("trial_active", False)
+    trial_end = user.get("trial_end_date")
+    trial_simulations_used = user.get("trial_simulations_used", 0)
+    
+    days_remaining = 0
+    trial_expired = True
+    
+    if trial_end:
+        if isinstance(trial_end, str):
+            trial_end_dt = datetime.fromisoformat(trial_end.replace('Z', '+00:00'))
+        else:
+            trial_end_dt = trial_end
+        
+        now = datetime.now(timezone.utc)
+        if now < trial_end_dt:
+            days_remaining = (trial_end_dt - now).days + 1
+            trial_expired = False
+        else:
+            trial_active = False
+            # Update trial_active in database
+            await db.users.update_one(
+                {"user_id": user["user_id"]},
+                {"$set": {"trial_active": False}}
+            )
+    
+    simulations_remaining = max(0, 10 - trial_simulations_used) if trial_active else 0
+    
+    return {
+        "has_subscription": False,
+        "trial_active": trial_active and not trial_expired,
+        "trial_expired": trial_expired,
+        "days_remaining": days_remaining,
+        "simulations_remaining": simulations_remaining,
+        "simulations_used": trial_simulations_used,
+        "simulations_limit": 10
+    }

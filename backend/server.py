@@ -434,6 +434,47 @@ async def search_formulas(request: FormulaSearchRequest):
 async def start_quiz(request: QuizStartRequest):
     import random
     
+    # Check trial limits for users without active subscription
+    user = await db.users.find_one({"user_id": request.user_id}, {"_id": 0})
+    
+    if user:
+        has_subscription = user.get("subscription_status") == "active"
+        
+        if not has_subscription:
+            # Check trial status
+            trial_active = user.get("trial_active", False)
+            trial_end = user.get("trial_end_date")
+            
+            # Check if trial has expired
+            if trial_end:
+                if isinstance(trial_end, str):
+                    trial_end_dt = datetime.fromisoformat(trial_end.replace('Z', '+00:00'))
+                else:
+                    trial_end_dt = trial_end
+                
+                if datetime.now(timezone.utc) > trial_end_dt:
+                    trial_active = False
+                    # Update in database
+                    await db.users.update_one(
+                        {"user_id": request.user_id},
+                        {"$set": {"trial_active": False}}
+                    )
+            
+            if trial_active:
+                # Check simulation limit
+                trial_simulations_used = user.get("trial_simulations_used", 0)
+                if trial_simulations_used >= 10:
+                    raise HTTPException(
+                        status_code=403,
+                        detail="Has alcanzado el límite de 10 simulacros de la prueba gratuita. Suscríbete para seguir generando simulacros ilimitados."
+                    )
+            else:
+                # Trial expired or not active and no subscription
+                raise HTTPException(
+                    status_code=403,
+                    detail="Tu prueba gratuita ha terminado. Suscríbete para acceder a los simulacros."
+                )
+    
     # Build query based on chapter_ids and lesson_ids
     query = {"course_id": request.course_id}
     
@@ -501,6 +542,13 @@ async def start_quiz(request: QuizStartRequest):
     doc = quiz_attempt.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
     await db.quiz_attempts.insert_one(doc)
+    
+    # Increment trial simulation counter if user is on trial
+    if user and user.get("trial_active") and user.get("subscription_status") != "active":
+        await db.users.update_one(
+            {"user_id": request.user_id},
+            {"$inc": {"trial_simulations_used": 1}}
+        )
     
     # Return questions without answers for the quiz
     questions_for_quiz = [

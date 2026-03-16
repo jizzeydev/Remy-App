@@ -1,6 +1,6 @@
 /**
  * Subscription Guard Component
- * Blocks access to content for non-subscribed users
+ * Blocks access to content for non-subscribed users (except during active trial)
  * Uses dynamic pricing from backend API
  */
 import { useNavigate } from 'react-router-dom';
@@ -12,11 +12,11 @@ import { Badge } from '@/components/ui/badge';
 
 const SubscriptionRequired = ({ children, feature = "este contenido" }) => {
   const navigate = useNavigate();
-  const { user, hasActiveSubscription, isAuthenticated } = useAuth();
+  const { user, hasActiveSubscription, canAccessContent, isAuthenticated } = useAuth();
   const { monthly, semestral, formatPrice, loading: pricingLoading } = usePricing();
 
-  // If user has active subscription, show content
-  if (hasActiveSubscription()) {
+  // If user has active subscription OR active trial, show content
+  if (canAccessContent()) {
     return children;
   }
 

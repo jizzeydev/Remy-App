@@ -1,5 +1,56 @@
 # Changelog - Remy Platform
 
+## [March 16, 2026] - Free Trial System
+
+### Added - Trial System
+- **7-Day Free Trial for New Users**
+  - Automatically granted when creating a new account via Google login
+  - Full access to all lessons and course content
+  - Limited to 10 simulations during trial period
+  
+- **Trial Fields in User Model:**
+  - `trial_active` - boolean, true when trial is active
+  - `trial_start_date` - datetime, when trial started
+  - `trial_end_date` - datetime, 7 days after registration
+  - `trial_simulations_used` - integer, counter for simulations
+  
+- **New API Endpoint:**
+  - `GET /api/auth/trial-status` - Get current user's trial status
+  
+- **Backend Trial Logic:**
+  - `/api/quiz/start` now checks trial limits before creating quiz
+  - Returns 403 error when trial limit (10 simulations) reached
+  - Returns 403 error when trial has expired
+  - Automatically increments `trial_simulations_used` after quiz creation
+  
+- **Frontend Components:**
+  - `TrialBanner` component - Shows trial status in Dashboard
+    - Days remaining + simulations remaining
+    - Warning banner when 2 or less days remain
+    - Expired banner with subscription CTA
+  
+- **AuthContext Updates:**
+  - `hasActiveTrial()` - Check if user has active trial
+  - `getTrialDaysRemaining()` - Get days left in trial
+  - `getTrialSimulationsRemaining()` - Get simulations left
+  - `canAccessContent()` - Returns true if subscription OR active trial
+  
+- **Landing Page Updates:**
+  - All CTAs changed from "Comenzar ahora" to "Empieza gratis"
+  - New "Pruébalo gratis por 7 días" section below pricing
+  - Badge "Prueba gratuita de 7 días · Sin tarjeta de crédito"
+  
+- **SubscriptionRequired Component:**
+  - Now allows access during active trial (not just subscriptions)
+  
+### Technical Notes
+- Trial expiration is checked on every login
+- Trial status is verified before each simulation creation
+- Users can access content with EITHER active subscription OR active trial
+- When trial expires without subscription, user loses access to simulations
+
+---
+
 ## [March 16, 2026] - Centralized Dynamic Pricing
 
 ### Added
