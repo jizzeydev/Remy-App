@@ -175,19 +175,44 @@ Usuario con Suscripción Activa:
 - **Webhook URL:** `https://remy.seremonta.store/api/payments/webhook/mercadopago`
 - **Admin Google Email:** seremonta.cl@gmail.com
 
+## ✅ Sistema de Trial Gratuito - IMPLEMENTADO (March 16, 2026)
+- [x] 7 días de trial para usuarios nuevos
+- [x] Límite de 10 simulaciones durante trial
+- [x] Banners de trial en dashboard
+- [x] Conversión automática a no-suscrito al expirar
+
+## ✅ Sistema de Precios Dinámicos - IMPLEMENTADO (March 16, 2026)
+- [x] Panel admin `/admin/pricing` para gestionar precios
+- [x] Hook `usePricing` centralizado en frontend
+- [x] Precios dinámicos en landing y suscripción
+- [x] Eliminados hardcodes de precios
+
+## ✅ Sistema de Universidades (Backend) - IMPLEMENTADO (March 16, 2026)
+- [x] CRUD completo: Universidades → Cursos → Evaluaciones → Preguntas
+- [x] Upload de logos de universidades
+- [x] Generación de preguntas con IA (Emergent LLM)
+- [x] Extracción de texto de PDFs
+- [x] Estadísticas de contenido
+- [x] Tests 100% pasando
+
 ## Backlog (Post-MVP)
 
-### P1 - Mejoras
-- [ ] Refactorizar server.py en routers separados
-- [ ] Dashboard admin con métricas de ingresos
-- [ ] Password reset functionality
-- [ ] Email de confirmación de suscripción
+### P0 - En Progreso
+- [ ] Frontend Admin para gestionar Universidades (UI)
+- [ ] Dashboard de métricas con gráficos (conectar backend analytics)
+
+### P1 - Próximo
+- [ ] Sección "Tu Universidad" para estudiantes
+- [ ] Editor de texto enriquecido (LaTeX/Markdown) para preguntas
+- [ ] Configuración de OPENAI_API_KEY desde admin
 
 ### P2 - Futuro
+- [ ] Refactorizar server.py en routers separados
 - [ ] Tutor IA Remy 24/7
-- [ ] Exportar contenido a PDF
-- [ ] Push notifications
-- [ ] App móvil
+- [ ] Emails de recordatorio de suscripción
+- [ ] Testimonios en landing page
+- [ ] Modo oscuro
+- [ ] Gamificación (badges, logros)
 
 ## Notas para Producción
 
