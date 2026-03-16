@@ -1,5 +1,36 @@
 # Changelog - Remy Platform
 
+## [March 16, 2026] - Centralized Dynamic Pricing
+
+### Added
+- **`usePricing` Hook** (`/app/frontend/src/hooks/usePricing.js`)
+  - Centralized pricing data management
+  - Fetches prices from `/api/payments/plans` API
+  - Provides `formatPrice()` utility function
+  - Returns `monthly`, `semestral` plan objects with all metadata
+  - Falls back to default values only if API fails
+
+- **`PricingProvider` Context** - Wraps app to provide pricing data globally
+
+### Changed
+- **ALL pricing displays now use `usePricing` hook:**
+  - `Landing.js` - Pricing section
+  - `SubscriptionRequired.js` - Premium paywall
+  - `Biblioteca.js` - Subscription banner
+  - `MiSuscripcion.js` - Plan selection and details
+
+### Removed
+- All hardcoded price values (`$9.990`, `$29.990`, `$59.940`)
+- Fallback price arrays in individual components
+
+### Technical Notes
+- Prices now update instantly when admin changes them
+- No code deployment needed to change prices
+- Discount badges show automatically when `discount_active: true`
+- Original price crossed out when `original_amount` is set
+
+---
+
 ## [March 16, 2026] - Admin Pricing Management
 
 ### Added

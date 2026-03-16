@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useAuth } from '../contexts/AuthContext';
+import { usePricing } from '../hooks/usePricing';
 import { toast } from 'sonner';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -16,6 +17,7 @@ const Biblioteca = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user, hasActiveSubscription } = useAuth();
+  const { monthly, formatPrice, getLowestPrice, loading: pricingLoading } = usePricing();
   const [courses, setCourses] = useState([]);
   const [coursesStats, setCoursesStats] = useState({});
   const [loading, setLoading] = useState(true);
@@ -120,9 +122,12 @@ const Biblioteca = () => {
     );
   }
 
+  // Get the lowest price for the banner
+  const lowestPrice = pricingLoading ? '...' : formatPrice(getLowestPrice());
+
   return (
     <div className="space-y-6 pb-24 lg:pb-8" data-testid="biblioteca-page">
-      {/* Subscription Banner */}
+      {/* Subscription Banner - Dynamic Pricing */}
       {!isSubscribed && (
         <Card className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white border-0 shadow-lg">
           <CardContent className="flex flex-col sm:flex-row items-center justify-between py-6 gap-4">
@@ -133,7 +138,7 @@ const Biblioteca = () => {
               <div>
                 <h3 className="font-bold text-lg">Desbloquea todo el contenido</h3>
                 <p className="text-cyan-100 text-sm">
-                  Accede a todos los cursos, simulacros ilimitados y más desde $9.990/mes
+                  Accede a todos los cursos, simulacros ilimitados y más desde {lowestPrice}/{monthly.period}
                 </p>
               </div>
             </div>

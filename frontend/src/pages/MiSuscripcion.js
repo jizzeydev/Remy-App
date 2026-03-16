@@ -1,10 +1,11 @@
 /**
  * Mi Suscripción - User Subscription Management Page
- * Beautiful redesigned version with modern UI
+ * Uses dynamic pricing from backend API
  */
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { usePricing } from '../hooks/usePricing';
 import axios from 'axios';
 import { 
   Crown, Calendar, CreditCard, Clock, AlertTriangle,
@@ -33,6 +34,7 @@ const API = `${BACKEND_URL}/api`;
 const MiSuscripcion = () => {
   const navigate = useNavigate();
   const { user, refreshUser, hasActiveSubscription } = useAuth();
+  const { monthly, semestral, formatPrice, loading: pricingLoading } = usePricing();
   const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState(false);
@@ -99,15 +101,28 @@ const MiSuscripcion = () => {
     });
   };
 
+  // Get plan details from dynamic pricing
   const getPlanDetails = (plan) => {
-    const plans = {
-      'monthly': { name: 'Plan Mensual', price: '$9.990', period: 'mes', color: 'from-cyan-500 to-blue-600' },
-      'semestral': { name: 'Plan Semestral', price: '$29.990', period: '6 meses', color: 'from-purple-500 to-pink-600' }
-    };
-    return plans[plan] || { name: 'Plan', price: '-', period: '', color: 'from-slate-500 to-slate-600' };
+    if (plan === 'monthly') {
+      return { 
+        name: monthly.name, 
+        price: formatPrice(monthly.amount), 
+        period: monthly.period, 
+        color: 'from-cyan-500 to-blue-600' 
+      };
+    }
+    if (plan === 'semestral') {
+      return { 
+        name: semestral.name, 
+        price: formatPrice(semestral.amount), 
+        period: semestral.period, 
+        color: 'from-purple-500 to-pink-600' 
+      };
+    }
+    return { name: 'Plan', price: '-', period: '', color: 'from-slate-500 to-slate-600' };
   };
 
-  if (loading) {
+  if (loading || pricingLoading) {
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="animate-spin text-cyan-500" size={32} />
@@ -154,7 +169,7 @@ const MiSuscripcion = () => {
                 { icon: Sparkles, label: 'Cursos ilimitados', color: 'text-cyan-500' },
                 { icon: ClipboardCheck, label: 'Simulacros', color: 'text-purple-500' },
                 { icon: TrendingUp, label: 'Progreso', color: 'text-green-500' },
-                { icon: Zap, label: 'Soporte 24/7', color: 'text-yellow-500' }
+                { icon: Zap, label: 'Correcciones', color: 'text-yellow-500' }
               ].map((item, idx) => (
                 <div key={idx} className="text-center p-4 rounded-xl bg-slate-50">
                   <item.icon className={`mx-auto mb-2 ${item.color}`} size={24} />
@@ -163,33 +178,56 @@ const MiSuscripcion = () => {
               ))}
             </div>
 
-            {/* Plans */}
+            {/* Plans - Dynamic Pricing */}
             <div className="grid md:grid-cols-2 gap-4 mb-8">
               {/* Monthly */}
               <div 
                 className="relative p-6 rounded-2xl border-2 border-slate-200 hover:border-cyan-300 cursor-pointer transition-all hover:shadow-lg"
                 onClick={() => navigate('/subscribe?plan=monthly')}
               >
-                <h3 className="font-bold text-lg mb-1">Plan Mensual</h3>
-                <p className="text-3xl font-bold text-slate-900 mb-2">
-                  $9.990 <span className="text-sm font-normal text-slate-500">CLP/mes</span>
-                </p>
+                {monthly.discount_active && (
+                  <div className="absolute -top-3 right-4 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                    -{monthly.discount_percentage}%
+                  </div>
+                )}
+                <h3 className="font-bold text-lg mb-1">{monthly.name}</h3>
+                <div className="mb-2">
+                  {monthly.discount_active && monthly.original_amount && (
+                    <span className="text-sm text-slate-400 line-through mr-2">
+                      {formatPrice(monthly.original_amount)}
+                    </span>
+                  )}
+                  <span className="text-3xl font-bold text-slate-900">
+                    {formatPrice(monthly.amount)}
+                  </span>
+                  <span className="text-sm font-normal text-slate-500"> CLP/{monthly.period}</span>
+                </div>
                 <p className="text-sm text-slate-500">Flexibilidad total, cancela cuando quieras</p>
                 <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300" size={24} />
               </div>
 
               {/* Semestral */}
               <div 
-                className="relative p-6 rounded-2xl border-2 border-cyan-500 bg-gradient-to-br from-cyan-50 to-blue-50 cursor-pointer transition-all hover:shadow-lg"
+                className={`relative p-6 rounded-2xl border-2 ${semestral.is_popular ? 'border-cyan-500 bg-gradient-to-br from-cyan-50 to-blue-50' : 'border-slate-200'} cursor-pointer transition-all hover:shadow-lg`}
                 onClick={() => navigate('/subscribe?plan=semestral')}
               >
-                <div className="absolute -top-3 right-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">
-                  AHORRA 50%
+                {semestral.discount_active && (
+                  <div className="absolute -top-3 right-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+                    AHORRA {semestral.discount_percentage}%
+                  </div>
+                )}
+                <h3 className="font-bold text-lg mb-1">{semestral.name}</h3>
+                <div className="mb-2">
+                  {semestral.discount_active && semestral.original_amount && (
+                    <span className="text-sm text-slate-400 line-through mr-2">
+                      {formatPrice(semestral.original_amount)}
+                    </span>
+                  )}
+                  <span className="text-3xl font-bold text-slate-900">
+                    {formatPrice(semestral.amount)}
+                  </span>
+                  <span className="text-sm font-normal text-slate-500"> CLP/{semestral.period}</span>
                 </div>
-                <h3 className="font-bold text-lg mb-1">Plan Semestral</h3>
-                <p className="text-3xl font-bold text-slate-900 mb-2">
-                  $29.990 <span className="text-sm font-normal text-slate-500">CLP/6 meses</span>
-                </p>
                 <p className="text-sm text-slate-500">El mejor valor para tu aprendizaje</p>
                 <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 text-cyan-500" size={24} />
               </div>
@@ -318,23 +356,14 @@ const MiSuscripcion = () => {
             </div>
           )}
 
-          {/* Benefits */}
+          {/* Benefits - Use features from pricing */}
           <div>
             <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
               <Zap className="text-cyan-500" size={18} />
               Incluido en tu plan
             </h3>
             <div className="grid grid-cols-2 gap-3">
-              {[
-                'Acceso a todos los cursos',
-                'Simulacros ilimitados',
-                'Seguimiento de progreso',
-                'Soporte prioritario',
-                ...(subscription?.subscription_plan === 'semestral' ? [
-                  'Contenido exclusivo',
-                  'Acceso anticipado'
-                ] : [])
-              ].map((benefit, idx) => (
+              {(subscription?.subscription_plan === 'semestral' ? semestral.features : monthly.features).map((benefit, idx) => (
                 <div key={idx} className="flex items-center gap-2 text-sm text-slate-600">
                   <CheckCircle size={16} className="text-green-500 flex-shrink-0" />
                   {benefit}

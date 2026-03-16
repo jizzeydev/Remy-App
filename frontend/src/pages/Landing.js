@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
+import { usePricing } from '../hooks/usePricing';
 import { 
   BookOpen, Target, Clock, CheckCircle, 
   ChevronDown, ChevronRight, GraduationCap,
@@ -493,64 +494,7 @@ const SimulationSection = () => {
 // ==================== PRICING SECTION (DYNAMIC) ====================
 const PricingSection = () => {
   const navigate = useNavigate();
-  const [plans, setPlans] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchPlans();
-  }, []);
-
-  const fetchPlans = async () => {
-    try {
-      const response = await axios.get(`${API}/payments/plans`);
-      setPlans(response.data.plans || []);
-    } catch (error) {
-      console.error('Error fetching plans:', error);
-      // Fallback to default plans if API fails
-      setPlans([
-        {
-          id: "monthly",
-          name: "Plan Mensual",
-          description: "Acceso completo por 1 mes",
-          amount: 9990,
-          currency: "CLP",
-          features: [
-            "Acceso a todos los cursos",
-            "Simulacros ilimitados",
-            "Seguimiento de progreso",
-            "Correcciones detalladas"
-          ]
-        },
-        {
-          id: "semestral",
-          name: "Plan Semestral",
-          description: "El más popular - 6 meses de acceso",
-          amount: 29990,
-          original_amount: 59940,
-          currency: "CLP",
-          discount: "50%",
-          features: [
-            "Acceso a todos los cursos",
-            "Simulacros ilimitados",
-            "Seguimiento de progreso",
-            "Correcciones detalladas",
-            "Acceso anticipado a nuevos cursos"
-          ]
-        }
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const formatPrice = (amount) => {
-    return new Intl.NumberFormat('es-CL').format(amount);
-  };
-
-  const calculateDiscount = (original, current) => {
-    if (!original || original <= current) return null;
-    return Math.round(((original - current) / original) * 100);
-  };
+  const { monthly, semestral, plans, formatPrice, loading } = usePricing();
 
   if (loading) {
     return (
@@ -561,6 +505,9 @@ const PricingSection = () => {
       </section>
     );
   }
+
+  // Create plans array for rendering
+  const pricingPlans = [monthly, semestral];
 
   return (
     <section id="pricing" className="py-20 md:py-28 bg-slate-50">
@@ -578,9 +525,9 @@ const PricingSection = () => {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
-          {plans.map((plan, index) => {
-            const isPopular = plan.id === 'semestral';
-            const discount = calculateDiscount(plan.original_amount, plan.amount);
+          {pricingPlans.map((plan) => {
+            const isPopular = plan.is_popular;
+            const hasDiscount = plan.discount_active && plan.discount_percentage > 0;
             
             return (
               <Card 
@@ -600,10 +547,10 @@ const PricingSection = () => {
                 )}
                 
                 {/* Discount badge */}
-                {discount && (
+                {hasDiscount && (
                   <div className="absolute top-4 right-4">
                     <Badge className="bg-red-500 text-white hover:bg-red-500 text-sm px-3 py-1">
-                      {discount}% DCTO
+                      {plan.discount_percentage}% DCTO
                     </Badge>
                   </div>
                 )}
@@ -613,16 +560,16 @@ const PricingSection = () => {
                   <CardDescription className="text-base">{plan.description}</CardDescription>
                   
                   <div className="mt-4">
-                    {plan.original_amount && (
+                    {hasDiscount && plan.original_amount && (
                       <span className="text-slate-400 line-through text-lg mr-2">
-                        ${formatPrice(plan.original_amount)}
+                        {formatPrice(plan.original_amount)}
                       </span>
                     )}
                     <span className="text-4xl md:text-5xl font-bold text-slate-900">
-                      ${formatPrice(plan.amount)}
+                      {formatPrice(plan.amount)}
                     </span>
                     <span className="text-slate-500 text-base md:text-lg">
-                      /{plan.id === 'monthly' ? 'mes' : '6 meses'}
+                      /{plan.period}
                     </span>
                   </div>
                 </CardHeader>

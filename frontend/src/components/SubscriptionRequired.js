@@ -1,15 +1,19 @@
 /**
  * Subscription Guard Component
  * Blocks access to content for non-subscribed users
+ * Uses dynamic pricing from backend API
  */
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Crown, Lock, Sparkles, BookOpen, ClipboardCheck, TrendingUp } from 'lucide-react';
+import { usePricing } from '../hooks/usePricing';
+import { Crown, Lock, Sparkles, BookOpen, ClipboardCheck, TrendingUp, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 const SubscriptionRequired = ({ children, feature = "este contenido" }) => {
   const navigate = useNavigate();
   const { user, hasActiveSubscription, isAuthenticated } = useAuth();
+  const { monthly, semestral, formatPrice, loading: pricingLoading } = usePricing();
 
   // If user has active subscription, show content
   if (hasActiveSubscription()) {
@@ -48,7 +52,7 @@ const SubscriptionRequired = ({ children, feature = "este contenido" }) => {
               { icon: BookOpen, text: "Acceso ilimitado a todos los cursos" },
               { icon: ClipboardCheck, text: "Simulacros de práctica ilimitados" },
               { icon: TrendingUp, text: "Seguimiento detallado de tu progreso" },
-              { icon: Crown, text: "Soporte prioritario" }
+              { icon: Crown, text: "Correcciones detalladas" }
             ].map((item, idx) => (
               <li key={idx} className="flex items-center gap-3 text-slate-700">
                 <div className="bg-cyan-100 rounded-lg p-1.5">
@@ -60,27 +64,56 @@ const SubscriptionRequired = ({ children, feature = "este contenido" }) => {
           </ul>
         </div>
 
-        {/* Pricing preview */}
-        <div className="flex gap-4 justify-center mb-6">
-          <div className="bg-white rounded-xl p-4 shadow-sm border flex-1 max-w-[160px]">
-            <p className="text-xs text-slate-500 mb-1">Mensual</p>
-            <p className="text-xl font-bold text-slate-900">$9.990</p>
-            <p className="text-xs text-slate-400">CLP/mes</p>
+        {/* Pricing preview - Dynamic from API */}
+        {pricingLoading ? (
+          <div className="flex justify-center mb-6">
+            <Loader2 className="animate-spin text-cyan-500" size={24} />
           </div>
-          <div className="bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl p-4 shadow-lg flex-1 max-w-[160px] text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 bg-yellow-400 text-yellow-900 text-[10px] font-bold px-2 py-0.5 rounded-bl">
-              -50%
+        ) : (
+          <div className="flex gap-4 justify-center mb-6">
+            {/* Monthly Plan */}
+            <div className="bg-white rounded-xl p-4 shadow-sm border flex-1 max-w-[160px] relative">
+              {monthly.discount_active && (
+                <div className="absolute -top-2 -right-2">
+                  <Badge className="bg-red-500 text-white text-[10px] px-1.5">
+                    -{monthly.discount_percentage}%
+                  </Badge>
+                </div>
+              )}
+              <p className="text-xs text-slate-500 mb-1">Mensual</p>
+              {monthly.discount_active && monthly.original_amount && (
+                <p className="text-xs text-slate-400 line-through">
+                  {formatPrice(monthly.original_amount)}
+                </p>
+              )}
+              <p className="text-xl font-bold text-slate-900">{formatPrice(monthly.amount)}</p>
+              <p className="text-xs text-slate-400">CLP/{monthly.period}</p>
             </div>
-            <p className="text-xs text-cyan-100 mb-1">Semestral</p>
-            <p className="text-xl font-bold">$29.990</p>
-            <p className="text-xs text-cyan-200">CLP/6 meses</p>
+            
+            {/* Semestral Plan */}
+            <div className="bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl p-4 shadow-lg flex-1 max-w-[160px] text-white relative overflow-hidden">
+              {semestral.discount_active && (
+                <div className="absolute top-0 right-0 bg-yellow-400 text-yellow-900 text-[10px] font-bold px-2 py-0.5 rounded-bl">
+                  -{semestral.discount_percentage}%
+                </div>
+              )}
+              <p className="text-xs text-cyan-100 mb-1">Semestral</p>
+              {semestral.discount_active && semestral.original_amount && (
+                <p className="text-xs text-cyan-200 line-through">
+                  {formatPrice(semestral.original_amount)}
+                </p>
+              )}
+              <p className="text-xl font-bold">{formatPrice(semestral.amount)}</p>
+              <p className="text-xs text-cyan-200">CLP/{semestral.period}</p>
+            </div>
           </div>
-        </div>
+        )}
 
         <Button 
           size="lg"
           className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-8 py-6 text-lg rounded-full shadow-lg shadow-cyan-500/30 w-full max-w-xs"
           onClick={() => navigate('/subscribe')}
+          data-testid="subscription-required-cta"
         >
           <Crown className="mr-2" size={20} />
           Suscribirme ahora

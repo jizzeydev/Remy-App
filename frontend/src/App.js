@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { Toaster } from '@/components/ui/sonner';
 import { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { PricingProvider } from './hooks/usePricing';
 import Layout from './components/Layout';
 import AdminLayout from './components/AdminLayout';
 import Landing from './pages/Landing';
@@ -121,10 +122,12 @@ function App() {
   return (
     <div className="App">
       <AuthProvider>
-        <BrowserRouter>
-          <AppRouter />
-        </BrowserRouter>
-        <Toaster richColors position="top-right" />
+        <PricingProvider>
+          <BrowserRouter>
+            <AppRouter />
+          </BrowserRouter>
+          <Toaster richColors position="top-right" />
+        </PricingProvider>
       </AuthProvider>
     </div>
   );
