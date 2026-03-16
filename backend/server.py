@@ -28,6 +28,8 @@ generation_tasks: Dict[str, Dict[str, Any]] = {}
 from routes import auth as auth_routes
 from routes import payments as payments_routes
 from routes import admin_users as admin_users_routes
+from routes import admin_universities as admin_universities_routes
+from routes import admin_analytics as admin_analytics_routes
 
 ROOT_DIR = Path(__file__).parent
 UPLOADS_DIR = ROOT_DIR / 'uploads'
@@ -43,6 +45,8 @@ db = client[os.environ['DB_NAME']]
 auth_routes.set_db(db)
 payments_routes.set_db(db)
 admin_users_routes.set_db(db)
+admin_universities_routes.set_db(db)
+admin_analytics_routes.set_db(db)
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
@@ -388,7 +392,11 @@ async def get_uploaded_image(filename: str):
 
 @api_router.get("/courses", response_model=List[Course])
 async def get_courses():
-    courses = await db.courses.find({}, {"_id": 0}).to_list(100)
+    # Only show courses visible to students
+    courses = await db.courses.find(
+        {"$or": [{"visible_to_students": True}, {"visible_to_students": {"$exists": False}}]}, 
+        {"_id": 0}
+    ).to_list(100)
     for course in courses:
         if isinstance(course.get('created_at'), str):
             course['created_at'] = datetime.fromisoformat(course['created_at'])
@@ -396,7 +404,10 @@ async def get_courses():
 
 @api_router.get("/courses/{course_id}", response_model=Course)
 async def get_course(course_id: str):
-    course = await db.courses.find_one({"id": course_id}, {"_id": 0})
+    course = await db.courses.find_one(
+        {"id": course_id, "$or": [{"visible_to_students": True}, {"visible_to_students": {"$exists": False}}]}, 
+        {"_id": 0}
+    )
     if not course:
         raise HTTPException(status_code=404, detail="Curso no encontrado")
     if isinstance(course.get('created_at'), str):
@@ -862,10 +873,24 @@ async def admin_google_login(request: GoogleLoginRequest):
 async def verify_admin(username: str = Depends(verify_admin_token)):
     return {"username": username, "verified": True}
 
+# Get all courses for admin (including hidden ones)
+@admin_router.get("/courses")
+async def admin_get_courses(_: str = Depends(verify_admin_token)):
+    """Get all courses including hidden ones"""
+    courses = await db.courses.find({}, {"_id": 0}).to_list(100)
+    for course in courses:
+        if isinstance(course.get('created_at'), str):
+            course['created_at'] = course['created_at']
+        # Add visibility field if not present
+        if 'visible_to_students' not in course:
+            course['visible_to_students'] = True
+    return courses
+
 @admin_router.post("/courses", response_model=Course)
 async def create_course(course: Course, _: str = Depends(verify_admin_token)):
     doc = course.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
+    doc['visible_to_students'] = True  # Default to visible
     await db.courses.insert_one(doc)
     return course
 
@@ -877,6 +902,18 @@ async def update_course(course_id: str, course: Course, _: str = Depends(verify_
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Curso no encontrado")
     return course
+
+# Toggle course visibility
+@admin_router.patch("/courses/{course_id}/visibility")
+async def toggle_course_visibility(course_id: str, visible: bool, _: str = Depends(verify_admin_token)):
+    """Toggle course visibility for students"""
+    result = await db.courses.update_one(
+        {"id": course_id}, 
+        {"$set": {"visible_to_students": visible}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Curso no encontrado")
+    return {"message": f"Curso {'visible' if visible else 'oculto'} para estudiantes", "visible_to_students": visible}
 
 @admin_router.delete("/courses/{course_id}")
 async def delete_course(course_id: str, _: str = Depends(verify_admin_token)):
@@ -1941,6 +1978,8 @@ app.include_router(admin_router)
 app.include_router(auth_routes.router)
 app.include_router(payments_routes.router)
 app.include_router(admin_users_routes.router)
+app.include_router(admin_universities_routes.router)
+app.include_router(admin_analytics_routes.router)
 
 # CORS configuration - allow all origins since we use Bearer tokens (not cookies)
 app.add_middleware(

@@ -24,6 +24,8 @@ import AdminCourses from './pages/admin/AdminCourses';
 import AdminQuestions from './pages/admin/AdminQuestions';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminPricing from './pages/admin/AdminPricing';
+import AdminUniversities from './pages/admin/AdminUniversities';
+import UniversityDetail from './pages/admin/UniversityDetail';
 import CourseContentEditor from './pages/admin/CourseContentEditor';
 import '@/App.css';
 
@@ -113,6 +115,8 @@ function AppRouter() {
         <Route path="/admin/questions" element={<AdminQuestions />} />
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/pricing" element={<AdminPricing />} />
+        <Route path="/admin/universities" element={<AdminUniversities />} />
+        <Route path="/admin/universities/:universityId" element={<UniversityDetail />} />
       </Route>
     </Routes>
   );

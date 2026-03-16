@@ -1,5 +1,49 @@
 # Changelog - Remy Platform
 
+## [March 16, 2026] - Admin Dashboard Refactor
+
+### Added - Backend Analytics Endpoints
+- **`/api/admin/analytics/dashboard`** - Complete dashboard metrics:
+  - Users: total, new this month, trial active, growth %
+  - Subscriptions: active, by type (MP/manual), conversion rate
+  - Revenue: total, this month, MRR, growth %
+  - Simulations: total, this month
+  - Content: courses, lessons, questions, universities
+  
+- **`/api/admin/analytics/revenue/chart`** - Daily revenue data for charts
+- **`/api/admin/analytics/users/chart`** - User registration trends
+- **`/api/admin/analytics/simulations/chart`** - Simulation activity
+- **`/api/admin/analytics/activity/recent`** - Recent platform activity feed
+
+### Added - Universities System (NEW)
+- **`/api/admin/universities`** - CRUD for universities
+- **Hierarchical structure**: University → Courses → Evaluations → Questions
+- **Each evaluation has its own question bank**
+- **AI question generation per evaluation**
+- **Bulk question creation endpoint**
+
+### Added - Course Visibility
+- **`visible_to_students`** field on courses
+- Courses can be hidden while in development
+- **`PATCH /api/admin/courses/{id}/visibility`** - Toggle visibility
+
+### Frontend - New Admin Pages
+- **AdminDashboard.js** - Real-time metrics with mini charts
+- **AdminUniversities.js** - University management
+- **UniversityDetail.js** - 3-column layout for managing courses/evaluations/questions
+
+### Menu Updates
+- Added "Universidades" link in admin navigation
+
+### Technical Notes
+- All metrics calculated from real database data
+- Charts support 7/14/30/60/90 day periods
+- Activity feed combines user registrations, subscriptions, simulations
+- Questions support manual creation or AI generation
+- AI questions automatically saved to evaluation question bank
+
+---
+
 ## [March 16, 2026] - Free Trial System
 
 ### Added - Trial System
