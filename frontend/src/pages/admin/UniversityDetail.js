@@ -52,11 +52,11 @@ const UniversityDetail = () => {
   const [courseForm, setCourseForm] = useState({ name: '', code: '', description: '', department: '' });
   const [evaluationForm, setEvaluationForm] = useState({ name: '', description: '', year: '', semester: '' });
   const [questionForm, setQuestionForm] = useState({
-    question_text: '',
+    question_content: '',
     question_type: 'multiple_choice',
     options: ['', '', '', ''],
     correct_answer: '',
-    solution: '',
+    solution_content: '',
     difficulty: 'medio',
     topic: '',
     tags: []
@@ -212,7 +212,7 @@ const UniversityDetail = () => {
 
   // Question CRUD
   const handleCreateQuestion = async () => {
-    if (!questionForm.question_text.trim()) {
+    if (!questionForm.question_content.trim()) {
       toast.error('El texto de la pregunta es requerido');
       return;
     }
@@ -258,7 +258,7 @@ const UniversityDetail = () => {
     }
   };
 
-  // AI Generation
+  // AI Generation - Uses the university-specific endpoint
   const handleAIGenerate = async () => {
     if (!aiPrompt.trim()) {
       toast.error('Describe el tema o pega contenido de un PDF');
@@ -269,16 +269,14 @@ const UniversityDetail = () => {
     try {
       const token = localStorage.getItem('admin_token');
       
-      // Use the existing admin question generation endpoint
+      // Use the university-specific generation endpoint
       const response = await axios.post(
-        `${BACKEND_URL}/api/admin/generate-questions`,
+        `${API}/${universityId}/courses/${selectedCourse.id}/evaluations/${selectedEvaluation.id}/generate`,
         {
           generation_type: 'prompt',
-          topic: aiPrompt,
-          course_id: selectedCourse.id,
-          chapter_id: null,
-          difficulty: 'medio',
-          num_questions: aiNumQuestions
+          prompt: aiPrompt,
+          num_questions: aiNumQuestions,
+          difficulty: 'medio'
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -286,28 +284,8 @@ const UniversityDetail = () => {
         }
       );
       
-      if (response.data.questions && response.data.questions.length > 0) {
-        // Convert and save to evaluation questions
-        const questionsToSave = response.data.questions.map(q => ({
-          question_text: q.question_text,
-          question_type: 'multiple_choice',
-          options: q.options,
-          correct_answer: q.correct_answer,
-          solution: q.explanation,
-          difficulty: q.difficulty,
-          topic: q.topic,
-          tags: q.tags || [],
-          source: 'ai_generated'
-        }));
-        
-        // Bulk create
-        await axios.post(
-          `${API}/${universityId}/courses/${selectedCourse.id}/evaluations/${selectedEvaluation.id}/questions/bulk`,
-          questionsToSave,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        
-        toast.success(`${questionsToSave.length} preguntas generadas y guardadas`);
+      if (response.data.success && response.data.created_count > 0) {
+        toast.success(`${response.data.created_count} preguntas generadas y guardadas`);
         setShowAIGenerateDialog(false);
         setAiPrompt('');
         fetchQuestions(selectedEvaluation.id);
@@ -324,11 +302,11 @@ const UniversityDetail = () => {
 
   const resetQuestionForm = () => {
     setQuestionForm({
-      question_text: '',
+      question_content: '',
       question_type: 'multiple_choice',
       options: ['', '', '', ''],
       correct_answer: '',
-      solution: '',
+      solution_content: '',
       difficulty: 'medio',
       topic: '',
       tags: []
@@ -351,21 +329,17 @@ const UniversityDetail = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Button variant="ghost" onClick={() => navigate('/admin/universities')}>
+        <Button variant="ghost" onClick={() => navigate('/admin/universities')} data-testid="back-btn">
           <ChevronLeft size={20} className="mr-1" />
           Volver
         </Button>
         <div className="flex items-center gap-3">
-          {university.logo_url ? (
-            <img src={university.logo_url} alt={university.name} className="w-12 h-12 object-contain rounded-lg" />
-          ) : (
-            <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
-              {university.name.charAt(0)}
-            </div>
-          )}
+          <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+            {university.short_name ? university.short_name.substring(0, 2) : university.name.charAt(0)}
+          </div>
           <div>
             <h1 className="text-2xl font-bold">{university.name}</h1>
-            {university.city && <p className="text-slate-500">{university.city}</p>}
+            {university.short_name && <Badge variant="outline">{university.short_name}</Badge>}
           </div>
         </div>
       </div>
@@ -380,7 +354,7 @@ const UniversityDetail = () => {
                 <BookOpen size={20} className="text-cyan-500" />
                 Cursos
               </CardTitle>
-              <Button size="sm" onClick={() => setShowCourseDialog(true)}>
+              <Button size="sm" onClick={() => setShowCourseDialog(true)} data-testid="add-course-btn">
                 <Plus size={16} />
               </Button>
             </div>
@@ -424,7 +398,7 @@ const UniversityDetail = () => {
                 Evaluaciones
               </CardTitle>
               {selectedCourse && (
-                <Button size="sm" onClick={() => setShowEvaluationDialog(true)}>
+                <Button size="sm" onClick={() => setShowEvaluationDialog(true)} data-testid="add-evaluation-btn">
                   <Plus size={16} />
                 </Button>
               )}
@@ -499,11 +473,11 @@ const UniversityDetail = () => {
               </CardTitle>
               {selectedEvaluation && (
                 <div className="flex gap-2">
-                  <Button size="sm" variant="outline" onClick={() => setShowAIGenerateDialog(true)}>
+                  <Button size="sm" variant="outline" onClick={() => setShowAIGenerateDialog(true)} data-testid="ai-generate-btn">
                     <Sparkles size={16} className="mr-1" />
                     IA
                   </Button>
-                  <Button size="sm" onClick={() => setShowQuestionDialog(true)}>
+                  <Button size="sm" onClick={() => setShowQuestionDialog(true)} data-testid="add-question-btn">
                     <Plus size={16} />
                   </Button>
                 </div>
@@ -532,13 +506,13 @@ const UniversityDetail = () => {
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium line-clamp-2">
-                          {index + 1}. {q.question_text}
+                          {index + 1}. {q.question_content}
                         </p>
                         <div className="flex items-center gap-2 mt-2">
                           <Badge variant="outline" className="text-xs">
                             {q.difficulty}
                           </Badge>
-                          {q.source === 'ai_generated' && (
+                          {q.source?.includes('ai_generated') && (
                             <Badge variant="secondary" className="text-xs">
                               <Sparkles size={10} className="mr-1" />
                               IA
@@ -669,11 +643,11 @@ const UniversityDetail = () => {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <Label>Pregunta *</Label>
+              <Label>Pregunta * (soporta LaTeX: $formula$)</Label>
               <Textarea
-                placeholder="Escribe la pregunta..."
-                value={questionForm.question_text}
-                onChange={(e) => setQuestionForm({...questionForm, question_text: e.target.value})}
+                placeholder="Escribe la pregunta... Usa $x^2$ para fórmulas LaTeX"
+                value={questionForm.question_content}
+                onChange={(e) => setQuestionForm({...questionForm, question_content: e.target.value})}
                 rows={3}
               />
             </div>
@@ -715,11 +689,11 @@ const UniversityDetail = () => {
               </div>
             </div>
             <div>
-              <Label>Solución/Explicación</Label>
+              <Label>Solución/Explicación (soporta LaTeX)</Label>
               <Textarea
                 placeholder="Explicación paso a paso..."
-                value={questionForm.solution}
-                onChange={(e) => setQuestionForm({...questionForm, solution: e.target.value})}
+                value={questionForm.solution_content}
+                onChange={(e) => setQuestionForm({...questionForm, solution_content: e.target.value})}
                 rows={4}
               />
             </div>
