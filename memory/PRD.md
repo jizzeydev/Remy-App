@@ -222,14 +222,32 @@ Usuario con Suscripción Activa:
 - [x] **KaTeX en lista** - Fórmulas renderizadas en vista admin
 - [x] Backend Tests 100% (12/12)
 
+## ✅ Dashboard de Métricas - IMPLEMENTADO (March 17, 2026)
+- [x] KPIs principales: Ingresos, Suscripciones, Usuarios, Simulacros
+- [x] Gráficos de barras interactivos (últimos 30 días)
+- [x] Selector de período (7/14/30/60/90 días)
+- [x] Estadísticas de contenido (cursos, lecciones, preguntas)
+- [x] Actividad reciente con timestamps
+- [x] Métricas de conversión (tasa, MRR, simulacros/usuario)
+
+## ✅ Almacenamiento Persistente de Imágenes (GridFS) - IMPLEMENTADO (March 17, 2026)
+- [x] Imágenes almacenadas en MongoDB GridFS (NO se pierden con reinicios)
+- [x] Upload de imágenes para preguntas (simulacros normales y universitarios)
+- [x] API /api/images/{id} para servir imágenes
+- [x] Cache headers optimizados (1 año)
+- [x] Soporte para JPG, PNG, WebP, GIF (máx 5MB)
+- [x] Backend Tests 100% (19/19)
+
 ## Backlog (Post-MVP)
 
-### P0 - En Progreso
-- [ ] Dashboard de métricas con gráficos (conectar backend analytics)
+### P0 - Próximo
+- [ ] Refactorizar server.py en módulos separados
+- [ ] Modo oscuro
 
-### P1 - Próximo
+### P1 - Futuro
 - [ ] Historial de simulaciones del estudiante
-- [ ] Agregar imágenes desde generación IA (actualmente solo manual)
+- [ ] Configurar OpenAI API Key desde admin (si se exceden límites Emergent LLM)
+- [ ] Agregar imágenes desde generación IA
 
 ### P2 - Futuro
 - [ ] Refactorizar server.py en routers separados
