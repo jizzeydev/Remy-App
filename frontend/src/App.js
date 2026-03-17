@@ -15,6 +15,7 @@ import Dashboard from './pages/Dashboard';
 import Simulacros from './pages/Simulacros';
 import Biblioteca from './pages/Biblioteca';
 import Progreso from './pages/Progreso';
+import TuUniversidad from './pages/TuUniversidad';
 import CourseViewer from './pages/student/CourseViewer';
 import LessonViewer from './pages/student/LessonViewer';
 import AdminLogin from './pages/admin/AdminLogin';
@@ -99,6 +100,7 @@ function AppRouter() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/simulacros" element={<Simulacros />} />
         <Route path="/biblioteca" element={<Biblioteca />} />
+        <Route path="/tu-universidad" element={<TuUniversidad />} />
         <Route path="/course/:courseId" element={<CourseViewer />} />
         <Route path="/lesson/:lessonId" element={<LessonViewer />} />
         <Route path="/progreso" element={<Progreso />} />

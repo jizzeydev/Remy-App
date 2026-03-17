@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Home, ClipboardCheck, BookOpen, TrendingUp, Menu, LogOut, User, Crown, CreditCard } from 'lucide-react';
+import { Home, ClipboardCheck, BookOpen, TrendingUp, Menu, LogOut, User, Crown, CreditCard, GraduationCap } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -23,6 +23,7 @@ const Layout = () => {
   const navItems = [
     { icon: Home, label: 'Inicio', path: '/dashboard' },
     { icon: ClipboardCheck, label: 'Simulacros', path: '/simulacros' },
+    { icon: GraduationCap, label: 'Tu Universidad', path: '/tu-universidad' },
     { icon: BookOpen, label: 'Biblioteca', path: '/biblioteca' },
     { icon: TrendingUp, label: 'Progreso', path: '/progreso' },
   ];

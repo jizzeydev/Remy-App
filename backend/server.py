@@ -30,6 +30,7 @@ from routes import payments as payments_routes
 from routes import admin_users as admin_users_routes
 from routes import admin_universities as admin_universities_routes
 from routes import admin_analytics as admin_analytics_routes
+from routes import student_universities as student_universities_routes
 
 ROOT_DIR = Path(__file__).parent
 UPLOADS_DIR = ROOT_DIR / 'uploads'
@@ -47,6 +48,7 @@ payments_routes.set_db(db)
 admin_users_routes.set_db(db)
 admin_universities_routes.set_db(db)
 admin_analytics_routes.set_db(db)
+student_universities_routes.set_db(db)
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
@@ -1980,6 +1982,7 @@ app.include_router(payments_routes.router)
 app.include_router(admin_users_routes.router)
 app.include_router(admin_universities_routes.router)
 app.include_router(admin_analytics_routes.router)
+app.include_router(student_universities_routes.router)
 
 # CORS configuration - allow all origins since we use Bearer tokens (not cookies)
 app.add_middleware(
