@@ -200,18 +200,27 @@ Usuario con Suscripción Activa:
 - [x] Vista detalle con layout 3 columnas (Cursos | Evaluaciones | Preguntas)
 - [x] CRUD de cursos, evaluaciones y preguntas
 - [x] Diálogo de generación de preguntas con IA
+- [x] Upload de PDF para extracción y generación de preguntas
 - [x] Frontend Tests 100% pasando (10/10)
+
+## ✅ Tu Universidad (Estudiantes) - IMPLEMENTADO (March 17, 2026)
+- [x] Página de selección: Universidad → Curso → Evaluación
+- [x] Configuración de número de preguntas (5, 10, 15, 20)
+- [x] Generación de simulacro con preguntas aleatorias del banco
+- [x] Quiz interactivo con navegación entre preguntas
+- [x] Pantalla de resultados con score y soluciones
+- [x] Enlace en menú lateral de estudiantes
+- [x] Backend Tests 100% (14/14), Frontend Tests 100% (12/12)
 
 ## Backlog (Post-MVP)
 
 ### P0 - En Progreso
-- [ ] Sección "Tu Universidad" para estudiantes
 - [ ] Dashboard de métricas con gráficos (conectar backend analytics)
 
 ### P1 - Próximo
-- [ ] Editor de texto enriquecido (LaTeX/Markdown) para preguntas
-- [ ] Renderizar LaTeX en lista de preguntas (KaTeX)
-- [ ] Configuración de OPENAI_API_KEY desde admin
+- [ ] Renderizar LaTeX en preguntas y resultados (KaTeX)
+- [ ] Editor de texto enriquecido (LaTeX/Markdown) para admin
+- [ ] Historial de simulaciones del estudiante
 
 ### P2 - Futuro
 - [ ] Refactorizar server.py en routers separados
