@@ -7,7 +7,7 @@ import { InlineMath, BlockMath } from 'react-katex';
 import { 
   GraduationCap, Building2, BookOpen, 
   ChevronRight, Play, Loader2, ArrowLeft,
-  CheckCircle, Image as ImageIcon
+  CheckCircle, Image as ImageIcon, Lock
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -19,6 +19,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../components/ui/select';
+import { useAuth } from '../contexts/AuthContext';
+import SubscriptionRequired from '../components/SubscriptionRequired';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -80,6 +82,13 @@ const MathText = ({ text }) => {
 
 const TuUniversidad = () => {
   const navigate = useNavigate();
+  const { user, hasActiveSubscription, isInTrial, trialSimulationsRemaining } = useAuth();
+  
+  // Check access
+  const hasAccess = hasActiveSubscription || isInTrial;
+  const uniSimsUsed = user?.trial_university_simulations_used || 0;
+  const uniSimsLimit = user?.trial_university_simulations_limit || 1;
+  const canDoUniSimulation = hasActiveSubscription || (isInTrial && uniSimsUsed < uniSimsLimit);
   
   // Selection state
   const [universities, setUniversities] = useState([]);
@@ -102,8 +111,10 @@ const TuUniversidad = () => {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    fetchUniversities();
-  }, []);
+    if (hasAccess) {
+      fetchUniversities();
+    }
+  }, [hasAccess]);
 
   const fetchUniversities = async () => {
     setLoading(true);
@@ -215,6 +226,16 @@ const TuUniversidad = () => {
     setAnswers({});
     setCurrentQuestionIndex(0);
   };
+
+  // Show paywall if no access
+  if (!hasAccess) {
+    return (
+      <SubscriptionRequired 
+        feature="Tu Universidad" 
+        description="Accede a simulacros personalizados con preguntas de exámenes reales de tu universidad."
+      />
+    );
+  }
 
   // Render active quiz (Light Mode)
   if (activeQuiz && !quizResult) {
@@ -591,13 +612,43 @@ const TuUniversidad = () => {
                         </Select>
                       </div>
                       
+                      {/* Trial limit warning */}
+                      {isInTrial && !hasActiveSubscription && (
+                        <div className={`p-3 rounded-lg text-sm ${
+                          canDoUniSimulation 
+                            ? 'bg-amber-50 border border-amber-200 text-amber-700'
+                            : 'bg-red-50 border border-red-200 text-red-700'
+                        }`}>
+                          {canDoUniSimulation ? (
+                            <>
+                              <Lock size={14} className="inline mr-1" />
+                              Prueba gratuita: {uniSimsLimit - uniSimsUsed} simulacro(s) universitario(s) disponible(s)
+                            </>
+                          ) : (
+                            <>
+                              <Lock size={14} className="inline mr-1" />
+                              Ya usaste tu simulacro universitario de prueba. 
+                              <Button 
+                                variant="link" 
+                                className="p-0 h-auto text-red-700 underline ml-1"
+                                onClick={() => navigate('/suscribirse')}
+                              >
+                                Suscríbete para acceso ilimitado
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                      )}
+                      
                       <Button 
                         onClick={handleStartSimulation}
-                        disabled={generatingQuiz || selectedEvaluation.questions_count === 0}
+                        disabled={generatingQuiz || selectedEvaluation.questions_count === 0 || !canDoUniSimulation}
                         className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
                       >
                         {generatingQuiz ? (
                           <><Loader2 className="animate-spin mr-2" size={16} /> Generando...</>
+                        ) : !canDoUniSimulation ? (
+                          <><Lock size={16} className="mr-2" /> Límite alcanzado</>
                         ) : (
                           <><Play size={16} className="mr-2" /> Iniciar Simulacro</>
                         )}

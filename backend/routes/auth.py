@@ -149,7 +149,9 @@ def user_to_response(user: dict) -> dict:
         "trial_active": user.get("trial_active", False),
         "trial_end_date": trial_end,
         "trial_simulations_used": user.get("trial_simulations_used", 0),
-        "trial_simulations_limit": 10  # Constant
+        "trial_simulations_limit": user.get("trial_simulations_limit", 10),
+        "trial_university_simulations_used": user.get("trial_university_simulations_used", 0),
+        "trial_university_simulations_limit": user.get("trial_university_simulations_limit", 1)
     }
 
 
@@ -239,10 +241,22 @@ async def process_google_session(request: Request, response: Response):
         user_id = user["user_id"]
         logger.info(f"Google user logged in: {email}")
     else:
-        # Create new user with FREE TRIAL
+        # Create new user - check if free trial is enabled
         user_id = generate_user_id()
         now = datetime.now(timezone.utc)
-        trial_end = now + timedelta(days=7)
+        
+        # Get trial settings from platform settings
+        trial_settings = await db.platform_settings.find_one({"key": "free_trial"}, {"_id": 0})
+        trial_enabled = True
+        trial_days = 7
+        simulations_limit = 10
+        uni_simulations_limit = 1
+        
+        if trial_settings and trial_settings.get("value"):
+            trial_enabled = trial_settings["value"].get("enabled", True)
+            trial_days = trial_settings["value"].get("trial_days", 7)
+            simulations_limit = trial_settings["value"].get("simulations_limit", 10)
+            uni_simulations_limit = trial_settings["value"].get("university_simulations_limit", 1)
         
         user = {
             "user_id": user_id,
@@ -258,14 +272,21 @@ async def process_google_session(request: Request, response: Response):
             "subscription_start": None,
             "subscription_end": None,
             "created_at": now.isoformat(),
-            # Free trial fields
-            "trial_active": True,
-            "trial_start_date": now.isoformat(),
-            "trial_end_date": trial_end.isoformat(),
-            "trial_simulations_used": 0
+            # Free trial fields - only active if enabled
+            "trial_active": trial_enabled,
+            "trial_start_date": now.isoformat() if trial_enabled else None,
+            "trial_end_date": (now + timedelta(days=trial_days)).isoformat() if trial_enabled else None,
+            "trial_simulations_used": 0,
+            "trial_simulations_limit": simulations_limit,
+            "trial_university_simulations_used": 0,
+            "trial_university_simulations_limit": uni_simulations_limit
         }
         await db.users.insert_one(user)
-        logger.info(f"New Google user registered with 7-day trial: {email}")
+        
+        if trial_enabled:
+            logger.info(f"New Google user registered with {trial_days}-day trial: {email}")
+        else:
+            logger.info(f"New Google user registered (no trial): {email}")
         
         # Send email notifications (non-blocking)
         try:

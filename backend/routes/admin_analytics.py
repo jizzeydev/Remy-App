@@ -492,3 +492,67 @@ async def get_top_content(_: str = Depends(verify_admin_token)):
         "top_attempted_courses": top_courses[:5],
         "courses_by_lessons": course_lessons[:5]
     }
+
+
+
+# ==================== PLATFORM SETTINGS ====================
+
+@router.get("/settings/trial")
+async def get_trial_settings(_: str = Depends(verify_admin_token)):
+    """Get current free trial settings"""
+    settings = await db.platform_settings.find_one({"key": "free_trial"}, {"_id": 0})
+    
+    if not settings:
+        # Default settings
+        return {
+            "enabled": True,
+            "trial_days": 7,
+            "simulations_limit": 10,
+            "university_simulations_limit": 1
+        }
+    
+    return settings.get("value", {})
+
+
+@router.put("/settings/trial")
+async def update_trial_settings(
+    enabled: bool,
+    trial_days: int = 7,
+    simulations_limit: int = 10,
+    university_simulations_limit: int = 1,
+    _: str = Depends(verify_admin_token)
+):
+    """Update free trial settings"""
+    settings = {
+        "enabled": enabled,
+        "trial_days": trial_days,
+        "simulations_limit": simulations_limit,
+        "university_simulations_limit": university_simulations_limit,
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.platform_settings.update_one(
+        {"key": "free_trial"},
+        {"$set": {"key": "free_trial", "value": settings}},
+        upsert=True
+    )
+    
+    logger.info(f"Updated trial settings: enabled={enabled}, days={trial_days}")
+    
+    return {"success": True, "settings": settings}
+
+
+# Public endpoint (no auth) for landing page
+@router.get("/public/trial-status")
+async def get_public_trial_status():
+    """Get trial status for landing page (public endpoint)"""
+    settings = await db.platform_settings.find_one({"key": "free_trial"}, {"_id": 0})
+    
+    if not settings:
+        return {"enabled": True, "trial_days": 7}
+    
+    value = settings.get("value", {})
+    return {
+        "enabled": value.get("enabled", True),
+        "trial_days": value.get("trial_days", 7)
+    }

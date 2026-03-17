@@ -74,7 +74,7 @@ const Layout = () => {
           <div className="flex-1 text-left">
             <p className="font-medium text-sm text-slate-900 truncate">{user?.name || 'Usuario'}</p>
             <div className="flex items-center gap-1">
-              {hasActiveSubscription() ? (
+              {hasActiveSubscription ? (
                 <Badge className="bg-green-100 text-green-700 text-xs py-0">
                   <Crown size={10} className="mr-1" />
                   Premium
@@ -98,7 +98,7 @@ const Layout = () => {
           <CreditCard size={16} className="mr-2" />
           Mi Suscripción
         </DropdownMenuItem>
-        {!hasActiveSubscription() && (
+        {!hasActiveSubscription && (
           <DropdownMenuItem onClick={() => navigate('/subscribe')} className="text-cyan-600">
             <Crown size={16} className="mr-2" />
             Suscribirse

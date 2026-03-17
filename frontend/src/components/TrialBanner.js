@@ -20,7 +20,7 @@ const TrialBanner = () => {
   } = useAuth();
 
   // Don't show if user has active subscription
-  if (hasActiveSubscription()) {
+  if (hasActiveSubscription) {
     return null;
   }
 

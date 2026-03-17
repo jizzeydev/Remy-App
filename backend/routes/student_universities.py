@@ -133,11 +133,42 @@ async def generate_simulation(
 ):
     """Generate a simulation from the evaluation's question bank"""
     
+    # Check subscription/trial status - MUST be authenticated
+    if not user:
+        raise HTTPException(
+            status_code=403, 
+            detail="Necesitas una suscripción activa para acceder a simulacros universitarios."
+        )
+    
+    has_subscription = user.get("subscription_status") == "active"
+    trial_active = user.get("trial_active", False)
+    
+    if not has_subscription:
+        if trial_active:
+            # Check university simulation limit for trial users
+            uni_sims_used = user.get("trial_university_simulations_used", 0)
+            uni_sims_limit = user.get("trial_university_simulations_limit", 1)
+            
+            if uni_sims_used >= uni_sims_limit:
+                raise HTTPException(
+                    status_code=403, 
+                    detail=f"Has alcanzado el límite de {uni_sims_limit} simulacro(s) universitario(s) en tu prueba gratuita. Suscríbete para acceso ilimitado."
+                )
+        else:
+            # No subscription and no trial
+            raise HTTPException(
+                status_code=403, 
+                detail="Necesitas una suscripción activa para acceder a simulacros universitarios."
+            )
+    
     # Verify evaluation exists
     evaluation = await db.evaluations.find_one({
         "id": request.evaluation_id,
         "course_id": course_id
     })
+    
+    if not evaluation:
+        raise HTTPException(status_code=404, detail="Evaluación no encontrada")
     
     if not evaluation:
         raise HTTPException(status_code=404, detail="Evaluación no encontrada")
@@ -204,6 +235,14 @@ async def generate_simulation(
     
     # Save simulation to database
     await db.university_simulations.insert_one(simulation)
+    
+    # Increment trial university simulation counter if user is on trial
+    if user and user.get("trial_active") and user.get("subscription_status") != "active":
+        await db.users.update_one(
+            {"id": user["id"]},
+            {"$inc": {"trial_university_simulations_used": 1}}
+        )
+        logger.info(f"Incremented university simulation count for trial user {user.get('email')}")
     
     # Prepare response (without correct answers for the quiz)
     quiz_questions = []

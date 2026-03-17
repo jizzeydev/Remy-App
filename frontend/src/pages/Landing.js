@@ -18,7 +18,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 // ==================== HERO SECTION ====================
-const HeroSection = () => {
+const HeroSection = ({ trialEnabled = true, trialDays = 7 }) => {
   const navigate = useNavigate();
   
   return (
@@ -51,8 +51,8 @@ const HeroSection = () => {
               onClick={() => navigate('/auth')}
               data-testid="nav-signup-btn"
             >
-              <span className="hidden sm:inline">Empieza gratis</span>
-              <span className="sm:hidden">Gratis</span>
+              <span className="hidden sm:inline">{trialEnabled ? 'Empieza gratis' : 'Suscríbete'}</span>
+              <span className="sm:hidden">{trialEnabled ? 'Gratis' : 'Iniciar'}</span>
             </Button>
           </div>
         </div>
@@ -84,7 +84,7 @@ const HeroSection = () => {
             data-testid="hero-cta-primary"
           >
             <Zap className="mr-2" size={24} />
-            Empieza gratis
+            {trialEnabled ? 'Empieza gratis' : 'Suscríbete ahora'}
           </Button>
           <Button 
             size="lg" 
@@ -97,11 +97,13 @@ const HeroSection = () => {
           </Button>
         </div>
         
-        {/* Free Trial Badge */}
-        <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-8">
-          <Clock size={18} className="text-cyan-400" />
-          <span className="text-white/90 text-sm">Prueba gratuita de 7 días · Sin tarjeta de crédito</span>
-        </div>
+        {/* Free Trial Badge - Only show if trial enabled */}
+        {trialEnabled && (
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-8">
+            <Clock size={18} className="text-cyan-400" />
+            <span className="text-white/90 text-sm">Prueba gratuita de {trialDays} días · Sin tarjeta de crédito</span>
+          </div>
+        )}
         
         {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
@@ -621,7 +623,7 @@ const PricingSection = () => {
 };
 
 // ==================== FREE TRIAL SECTION ====================
-const FreeTrialSection = () => {
+const FreeTrialSection = ({ trialDays = 7 }) => {
   const navigate = useNavigate();
 
   const trialFeatures = [
@@ -644,7 +646,7 @@ const FreeTrialSection = () => {
             Sin tarjeta de crédito
           </Badge>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-            Pruébalo <span className="text-cyan-400">gratis</span> por 7 días
+            Pruébalo <span className="text-cyan-400">gratis</span> por {trialDays} días
           </h2>
           <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto">
             Explora todas las lecciones, genera simulacros y descubre cómo Remy puede ayudarte a estudiar más rápido.
@@ -754,6 +756,23 @@ const Footer = () => {
 const Landing = () => {
   const navigate = useNavigate();
   const { isAuthenticated, loading } = useAuth();
+  const [trialEnabled, setTrialEnabled] = useState(true);
+  const [trialDays, setTrialDays] = useState(7);
+
+  // Load trial status from backend
+  useEffect(() => {
+    const fetchTrialStatus = async () => {
+      try {
+        const response = await axios.get(`${API}/admin/analytics/public/trial-status`);
+        setTrialEnabled(response.data.enabled);
+        setTrialDays(response.data.trial_days || 7);
+      } catch (error) {
+        // Default to enabled if API fails
+        console.error('Error fetching trial status:', error);
+      }
+    };
+    fetchTrialStatus();
+  }, []);
 
   // Redirect authenticated users to dashboard
   useEffect(() => {
@@ -776,14 +795,14 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen">
-      <HeroSection />
+      <HeroSection trialEnabled={trialEnabled} trialDays={trialDays} />
       <ProblemSection />
       <FeaturesSection />
       <CoursesSection />
       <SimulationSection />
       <PricingSection />
-      <FreeTrialSection />
-      <FinalCTASection />
+      {trialEnabled && <FreeTrialSection trialDays={trialDays} />}
+      <FinalCTASection trialEnabled={trialEnabled} />
       <Footer />
     </div>
   );

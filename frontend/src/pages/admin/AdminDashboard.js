@@ -4,11 +4,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { 
   Users, DollarSign, TrendingUp, CreditCard, 
   ClipboardList, BookOpen, GraduationCap, RefreshCw,
   ArrowUpRight, ArrowDownRight, Activity, UserPlus,
-  Building2, Target
+  Building2, Target, Gift, Settings
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -90,8 +93,18 @@ const AdminDashboard = () => {
   const [simulationsChart, setSimulationsChart] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
   
+  // Trial settings
+  const [trialSettings, setTrialSettings] = useState({
+    enabled: true,
+    trial_days: 7,
+    simulations_limit: 10,
+    university_simulations_limit: 1
+  });
+  const [savingTrial, setSavingTrial] = useState(false);
+  
   useEffect(() => {
     fetchAllData();
+    fetchTrialSettings();
   }, []);
 
   useEffect(() => {
@@ -162,6 +175,53 @@ const AdminDashboard = () => {
     await fetchAllData();
     setRefreshing(false);
     toast.success('Datos actualizados');
+  };
+
+  const fetchTrialSettings = async () => {
+    try {
+      const token = localStorage.getItem('admin_token');
+      const response = await axios.get(`${API}/admin/analytics/settings/trial`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setTrialSettings(response.data);
+    } catch (error) {
+      console.error('Error fetching trial settings:', error);
+    }
+  };
+
+  const handleTrialToggle = async (enabled) => {
+    setSavingTrial(true);
+    try {
+      const token = localStorage.getItem('admin_token');
+      await axios.put(
+        `${API}/admin/analytics/settings/trial?enabled=${enabled}&trial_days=${trialSettings.trial_days}&simulations_limit=${trialSettings.simulations_limit}&university_simulations_limit=${trialSettings.university_simulations_limit}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setTrialSettings(prev => ({ ...prev, enabled }));
+      toast.success(enabled ? 'Prueba gratuita activada' : 'Prueba gratuita desactivada');
+    } catch (error) {
+      toast.error('Error al actualizar configuración');
+    } finally {
+      setSavingTrial(false);
+    }
+  };
+
+  const handleTrialSettingsUpdate = async () => {
+    setSavingTrial(true);
+    try {
+      const token = localStorage.getItem('admin_token');
+      await axios.put(
+        `${API}/admin/analytics/settings/trial?enabled=${trialSettings.enabled}&trial_days=${trialSettings.trial_days}&simulations_limit=${trialSettings.simulations_limit}&university_simulations_limit=${trialSettings.university_simulations_limit}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success('Configuración guardada');
+    } catch (error) {
+      toast.error('Error al guardar configuración');
+    } finally {
+      setSavingTrial(false);
+    }
   };
 
   if (loading || !metrics) {
@@ -426,6 +486,107 @@ const AdminDashboard = () => {
               </p>
               <p className="text-sm text-slate-500 mt-1">Simulacros/Usuario</p>
               <p className="text-xs text-slate-400">Engagement promedio</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Trial Settings Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Gift size={20} className="text-purple-500" />
+            Configuración de Prueba Gratuita
+          </CardTitle>
+          <CardDescription>
+            Controla si los nuevos usuarios obtienen prueba gratuita y sus límites
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            {/* Main toggle */}
+            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+              <div>
+                <p className="font-medium">Prueba Gratuita</p>
+                <p className="text-sm text-slate-500">
+                  {trialSettings.enabled 
+                    ? 'Los nuevos usuarios reciben prueba gratuita al registrarse'
+                    : 'Desactivada - Los nuevos usuarios no reciben prueba gratuita'}
+                </p>
+              </div>
+              <Switch
+                checked={trialSettings.enabled}
+                onCheckedChange={handleTrialToggle}
+                disabled={savingTrial}
+              />
+            </div>
+
+            {/* Settings grid */}
+            {trialSettings.enabled && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label className="text-sm">Días de prueba</Label>
+                  <Input
+                    type="number"
+                    min="1"
+                    max="30"
+                    value={trialSettings.trial_days}
+                    onChange={(e) => setTrialSettings(prev => ({ 
+                      ...prev, 
+                      trial_days: parseInt(e.target.value) || 7 
+                    }))}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm">Límite simulacros normales</Label>
+                  <Input
+                    type="number"
+                    min="1"
+                    max="100"
+                    value={trialSettings.simulations_limit}
+                    onChange={(e) => setTrialSettings(prev => ({ 
+                      ...prev, 
+                      simulations_limit: parseInt(e.target.value) || 10 
+                    }))}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm">Límite simulacros universitarios</Label>
+                  <Input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={trialSettings.university_simulations_limit}
+                    onChange={(e) => setTrialSettings(prev => ({ 
+                      ...prev, 
+                      university_simulations_limit: parseInt(e.target.value) || 1 
+                    }))}
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Save button */}
+            {trialSettings.enabled && (
+              <Button 
+                onClick={handleTrialSettingsUpdate} 
+                disabled={savingTrial}
+                className="w-full md:w-auto"
+              >
+                <Settings size={16} className="mr-2" />
+                {savingTrial ? 'Guardando...' : 'Guardar Configuración'}
+              </Button>
+            )}
+
+            {/* Marketing tip */}
+            <div className="p-4 bg-cyan-50 border border-cyan-200 rounded-lg">
+              <p className="text-sm text-cyan-800">
+                <strong>Tip de marketing:</strong> Activa la prueba gratuita durante el lanzamiento para atraer usuarios. 
+                Luego puedes desactivarla para generar urgencia ("Últimos días de prueba gratuita").
+              </p>
             </div>
           </div>
         </CardContent>

@@ -113,7 +113,7 @@ const Biblioteca = () => {
     return colors[level] || 'bg-gray-100 text-gray-800';
   };
 
-  const isSubscribed = hasActiveSubscription();
+  const isSubscribed = hasActiveSubscription;
   const hasAccess = canAccessContent(); // Subscription OR active trial
 
   if (loading) {
