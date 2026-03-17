@@ -214,6 +214,7 @@ async def generate_simulation(
             "options": q.get("options", []),
             "difficulty": q.get("difficulty", "medio"),
             "topic": q.get("topic"),
+            "image_url": q.get("image_url"),  # Include image URL
             # Don't include correct_answer or solution in response
         })
     
@@ -271,7 +272,8 @@ async def submit_simulation(
             "correct_answer": correct_answer,
             "is_correct": is_correct,
             "solution_content": question.get("solution_content", question.get("solution", "")),
-            "topic": question.get("topic")
+            "topic": question.get("topic"),
+            "image_url": question.get("image_url")
         })
     
     total = len(simulation["questions"])

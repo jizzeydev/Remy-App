@@ -68,6 +68,15 @@ const UniversityDetail = () => {
   const [uploadingPdf, setUploadingPdf] = useState(false);
   const [pdfText, setPdfText] = useState('');
   
+  // Edit question state
+  const [editingQuestion, setEditingQuestion] = useState(null);
+  const [showEditQuestionDialog, setShowEditQuestionDialog] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  
+  // AI Review state (for questions pending approval)
+  const [pendingQuestions, setPendingQuestions] = useState([]);
+  const [showReviewDialog, setShowReviewDialog] = useState(false);
+  
   // Questions list
   const [questions, setQuestions] = useState([]);
 
@@ -302,9 +311,8 @@ const UniversityDetail = () => {
     }
   };
 
-  // AI Generation - Uses the university-specific endpoint
+  // AI Generation - Uses review flow
   const handleAIGenerate = async () => {
-    // Check if we have either a prompt or PDF content
     if (!aiPrompt.trim() && !pdfText) {
       toast.error('Describe el tema o sube un PDF de examen anterior');
       return;
@@ -313,12 +321,10 @@ const UniversityDetail = () => {
     setGenerating(true);
     try {
       const token = localStorage.getItem('admin_token');
-      
-      // Determine generation type based on available content
       const generationType = pdfText ? 'pdf' : 'prompt';
       const content = pdfText || aiPrompt;
       
-      // Use the university-specific generation endpoint
+      // Generate but don't auto-save - use review flow
       const response = await axios.post(
         `${API}/${universityId}/courses/${selectedCourse.id}/evaluations/${selectedEvaluation.id}/generate`,
         {
@@ -326,7 +332,8 @@ const UniversityDetail = () => {
           prompt: generationType === 'prompt' ? content : null,
           pdf_content: generationType === 'pdf' ? content : null,
           num_questions: aiNumQuestions,
-          difficulty: 'medio'
+          difficulty: 'medio',
+          auto_save: false  // Don't save automatically
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -334,13 +341,23 @@ const UniversityDetail = () => {
         }
       );
       
-      if (response.data.success && response.data.created_count > 0) {
-        toast.success(`${response.data.created_count} preguntas generadas y guardadas`);
+      if (response.data.success && response.data.questions?.length > 0) {
+        // Show review dialog with generated questions
+        setPendingQuestions(response.data.questions.map((q, idx) => ({
+          ...q,
+          temp_id: response.data.ids[idx],
+          approved: true,  // Default to approved
+          question_content: q.question_content || q.question_text || '',
+          solution_content: q.solution_content || q.explanation || '',
+          options: q.options || [],
+          correct_answer: q.correct_answer || '',
+          difficulty: q.difficulty || 'medio',
+          topic: q.topic || '',
+          image_url: null
+        })));
         setShowAIGenerateDialog(false);
-        setAiPrompt('');
-        setPdfFile(null);
-        setPdfText('');
-        fetchQuestions(selectedEvaluation.id);
+        setShowReviewDialog(true);
+        toast.success(`${response.data.questions.length} preguntas generadas. Revisa y aprueba.`);
       } else {
         toast.error('No se pudieron generar preguntas');
       }
@@ -349,6 +366,133 @@ const UniversityDetail = () => {
       toast.error(error.response?.data?.detail || 'Error al generar preguntas');
     } finally {
       setGenerating(false);
+    }
+  };
+
+  // Save approved questions from review
+  const handleSaveApprovedQuestions = async () => {
+    const approvedQuestions = pendingQuestions.filter(q => q.approved);
+    
+    if (approvedQuestions.length === 0) {
+      toast.error('Selecciona al menos una pregunta para guardar');
+      return;
+    }
+    
+    setSaving(true);
+    try {
+      const token = localStorage.getItem('admin_token');
+      
+      // Use bulk create endpoint
+      await axios.post(
+        `${API}/${universityId}/courses/${selectedCourse.id}/evaluations/${selectedEvaluation.id}/questions/bulk`,
+        approvedQuestions.map(q => ({
+          question_content: q.question_content,
+          solution_content: q.solution_content,
+          question_type: 'multiple_choice',
+          options: q.options,
+          correct_answer: q.correct_answer,
+          difficulty: q.difficulty,
+          topic: q.topic,
+          tags: q.tags || [],
+          image_url: q.image_url,
+          source: 'ai_generated'
+        })),
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      toast.success(`${approvedQuestions.length} preguntas guardadas`);
+      setShowReviewDialog(false);
+      setPendingQuestions([]);
+      setAiPrompt('');
+      setPdfFile(null);
+      setPdfText('');
+      fetchQuestions(selectedEvaluation.id);
+    } catch (error) {
+      toast.error('Error al guardar preguntas');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Edit question functions
+  const openEditQuestion = (question) => {
+    setEditingQuestion({
+      ...question,
+      options: question.options || ['', '', '', '']
+    });
+    setShowEditQuestionDialog(true);
+  };
+
+  const handleUpdateQuestion = async () => {
+    if (!editingQuestion.question_content.trim()) {
+      toast.error('El texto de la pregunta es requerido');
+      return;
+    }
+    
+    setSaving(true);
+    try {
+      const token = localStorage.getItem('admin_token');
+      await axios.put(
+        `${API}/${universityId}/courses/${selectedCourse.id}/evaluations/${selectedEvaluation.id}/questions/${editingQuestion.id}`,
+        {
+          question_content: editingQuestion.question_content,
+          solution_content: editingQuestion.solution_content,
+          question_type: editingQuestion.question_type || 'multiple_choice',
+          options: editingQuestion.options.filter(o => o.trim()),
+          correct_answer: editingQuestion.correct_answer,
+          difficulty: editingQuestion.difficulty,
+          topic: editingQuestion.topic,
+          tags: editingQuestion.tags || [],
+          image_url: editingQuestion.image_url
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      toast.success('Pregunta actualizada');
+      setShowEditQuestionDialog(false);
+      setEditingQuestion(null);
+      fetchQuestions(selectedEvaluation.id);
+    } catch (error) {
+      toast.error('Error al actualizar pregunta');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Upload image for question
+  const handleImageUpload = async (questionId, file) => {
+    if (!file) return;
+    
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Tipo de archivo no permitido. Use JPG, PNG, WebP o GIF.');
+      return;
+    }
+    
+    setUploadingImage(true);
+    try {
+      const token = localStorage.getItem('admin_token');
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      const response = await axios.post(
+        `${API}/${universityId}/courses/${selectedCourse.id}/evaluations/${selectedEvaluation.id}/questions/${questionId}/upload-image`,
+        formData,
+        { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }
+      );
+      
+      toast.success('Imagen subida');
+      
+      // Update editing question with new image URL
+      if (editingQuestion) {
+        setEditingQuestion(prev => ({ ...prev, image_url: response.data.image_url }));
+      }
+      
+      fetchQuestions(selectedEvaluation.id);
+    } catch (error) {
+      toast.error('Error al subir imagen');
+    } finally {
+      setUploadingImage(false);
     }
   };
 
@@ -560,6 +704,15 @@ const UniversityDetail = () => {
                         <p className="text-sm font-medium line-clamp-2">
                           {index + 1}. {q.question_content}
                         </p>
+                        {q.image_url && (
+                          <div className="mt-2">
+                            <img 
+                              src={`${BACKEND_URL}${q.image_url}`} 
+                              alt="Imagen" 
+                              className="max-h-20 rounded border"
+                            />
+                          </div>
+                        )}
                         <div className="flex items-center gap-2 mt-2">
                           <Badge variant="outline" className="text-xs">
                             {q.difficulty}
@@ -572,14 +725,24 @@ const UniversityDetail = () => {
                           )}
                         </div>
                       </div>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        className="text-red-500 hover:text-red-600"
-                        onClick={() => handleDeleteQuestion(q.id)}
-                      >
-                        <Trash2 size={14} />
-                      </Button>
+                      <div className="flex flex-col gap-1">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          className="text-cyan-500 hover:text-cyan-600"
+                          onClick={() => openEditQuestion(q)}
+                        >
+                          <Edit size={14} />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          className="text-red-500 hover:text-red-600"
+                          onClick={() => handleDeleteQuestion(q.id)}
+                        >
+                          <Trash2 size={14} />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -883,6 +1046,245 @@ const UniversityDetail = () => {
                 </>
               )}
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Question Dialog */}
+      <Dialog open={showEditQuestionDialog} onOpenChange={setShowEditQuestionDialog}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Editar Pregunta</DialogTitle>
+          </DialogHeader>
+          {editingQuestion && (
+            <div className="space-y-4 py-4">
+              <div>
+                <Label>Pregunta * (soporta LaTeX: $formula$)</Label>
+                <Textarea
+                  placeholder="Escribe la pregunta..."
+                  value={editingQuestion.question_content}
+                  onChange={(e) => setEditingQuestion({...editingQuestion, question_content: e.target.value})}
+                  rows={3}
+                />
+              </div>
+              
+              {/* Image Upload */}
+              <div className="border-2 border-dashed border-slate-300 rounded-lg p-4">
+                <Label className="flex items-center gap-2 mb-2">
+                  <Upload size={16} />
+                  Imagen de la pregunta (opcional)
+                </Label>
+                {editingQuestion.image_url && (
+                  <div className="mb-3">
+                    <img 
+                      src={`${BACKEND_URL}${editingQuestion.image_url}`} 
+                      alt="Imagen actual" 
+                      className="max-h-32 rounded border"
+                    />
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="text-red-500 mt-2"
+                      onClick={() => setEditingQuestion({...editingQuestion, image_url: null})}
+                    >
+                      Eliminar imagen
+                    </Button>
+                  </div>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageUpload(editingQuestion.id, e.target.files[0])}
+                  className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-cyan-50 file:text-cyan-700 hover:file:bg-cyan-100"
+                  disabled={uploadingImage}
+                />
+                {uploadingImage && <p className="text-xs text-slate-500 mt-1">Subiendo imagen...</p>}
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                {editingQuestion.options.map((opt, idx) => (
+                  <div key={idx}>
+                    <Label>Opción {String.fromCharCode(65 + idx)}</Label>
+                    <Input
+                      value={opt}
+                      onChange={(e) => {
+                        const newOptions = [...editingQuestion.options];
+                        newOptions[idx] = e.target.value;
+                        setEditingQuestion({...editingQuestion, options: newOptions});
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Respuesta Correcta</Label>
+                  <Input
+                    placeholder="A, B, C o D"
+                    value={editingQuestion.correct_answer}
+                    onChange={(e) => setEditingQuestion({...editingQuestion, correct_answer: e.target.value.toUpperCase()})}
+                  />
+                </div>
+                <div>
+                  <Label>Dificultad</Label>
+                  <select
+                    className="w-full h-10 rounded-md border border-input bg-background px-3"
+                    value={editingQuestion.difficulty}
+                    onChange={(e) => setEditingQuestion({...editingQuestion, difficulty: e.target.value})}
+                  >
+                    <option value="facil">Fácil</option>
+                    <option value="medio">Medio</option>
+                    <option value="dificil">Difícil</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <Label>Solución/Explicación (soporta LaTeX)</Label>
+                <Textarea
+                  placeholder="Explicación paso a paso..."
+                  value={editingQuestion.solution_content || ''}
+                  onChange={(e) => setEditingQuestion({...editingQuestion, solution_content: e.target.value})}
+                  rows={4}
+                />
+              </div>
+              <div>
+                <Label>Tema</Label>
+                <Input
+                  placeholder="Derivadas, Integrales..."
+                  value={editingQuestion.topic || ''}
+                  onChange={(e) => setEditingQuestion({...editingQuestion, topic: e.target.value})}
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setShowEditQuestionDialog(false);
+              setEditingQuestion(null);
+            }}>Cancelar</Button>
+            <Button onClick={handleUpdateQuestion} disabled={saving}>
+              {saving ? 'Guardando...' : 'Guardar Cambios'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* AI Review Dialog */}
+      <Dialog open={showReviewDialog} onOpenChange={setShowReviewDialog}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Revisar Preguntas Generadas</DialogTitle>
+            <DialogDescription>
+              Revisa las preguntas generadas por IA. Edita, aprueba o descarta antes de guardar.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            {pendingQuestions.map((q, idx) => (
+              <Card key={q.temp_id} className={`${!q.approved ? 'opacity-50' : ''}`}>
+                <CardContent className="pt-4">
+                  <div className="flex items-start gap-4">
+                    <input
+                      type="checkbox"
+                      checked={q.approved}
+                      onChange={(e) => {
+                        const updated = [...pendingQuestions];
+                        updated[idx].approved = e.target.checked;
+                        setPendingQuestions(updated);
+                      }}
+                      className="mt-1 w-5 h-5 rounded border-slate-300"
+                    />
+                    <div className="flex-1 space-y-3">
+                      <div>
+                        <Label className="text-xs text-slate-500">Pregunta {idx + 1}</Label>
+                        <Textarea
+                          value={q.question_content}
+                          onChange={(e) => {
+                            const updated = [...pendingQuestions];
+                            updated[idx].question_content = e.target.value;
+                            setPendingQuestions(updated);
+                          }}
+                          rows={2}
+                          className="mt-1"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        {(q.options || []).map((opt, optIdx) => (
+                          <div key={optIdx} className="flex items-center gap-2">
+                            <span className="text-xs font-medium w-4">{String.fromCharCode(65 + optIdx)}.</span>
+                            <Input
+                              value={opt}
+                              onChange={(e) => {
+                                const updated = [...pendingQuestions];
+                                updated[idx].options[optIdx] = e.target.value;
+                                setPendingQuestions(updated);
+                              }}
+                              className="h-8 text-sm"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      <div className="flex gap-4">
+                        <div className="flex-1">
+                          <Label className="text-xs">Respuesta</Label>
+                          <Input
+                            value={q.correct_answer}
+                            onChange={(e) => {
+                              const updated = [...pendingQuestions];
+                              updated[idx].correct_answer = e.target.value.toUpperCase();
+                              setPendingQuestions(updated);
+                            }}
+                            className="h-8"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <Label className="text-xs">Dificultad</Label>
+                          <select
+                            className="w-full h-8 rounded-md border border-input bg-background px-2 text-sm"
+                            value={q.difficulty}
+                            onChange={(e) => {
+                              const updated = [...pendingQuestions];
+                              updated[idx].difficulty = e.target.value;
+                              setPendingQuestions(updated);
+                            }}
+                          >
+                            <option value="facil">Fácil</option>
+                            <option value="medio">Medio</option>
+                            <option value="dificil">Difícil</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-xs">Solución</Label>
+                        <Textarea
+                          value={q.solution_content || ''}
+                          onChange={(e) => {
+                            const updated = [...pendingQuestions];
+                            updated[idx].solution_content = e.target.value;
+                            setPendingQuestions(updated);
+                          }}
+                          rows={2}
+                          className="mt-1"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <DialogFooter className="flex justify-between">
+            <div className="text-sm text-slate-500">
+              {pendingQuestions.filter(q => q.approved).length} de {pendingQuestions.length} seleccionadas
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => {
+                setShowReviewDialog(false);
+                setPendingQuestions([]);
+              }}>Cancelar</Button>
+              <Button onClick={handleSaveApprovedQuestions} disabled={saving}>
+                {saving ? 'Guardando...' : `Guardar ${pendingQuestions.filter(q => q.approved).length} Preguntas`}
+              </Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>

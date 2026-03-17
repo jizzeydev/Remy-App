@@ -133,6 +133,7 @@ class AIGenerateRequest(BaseModel):
     num_questions: int = 5
     difficulty: str = "medio"
     topic: Optional[str] = None
+    auto_save: bool = True  # If false, returns questions for review without saving
 
 
 # ==================== OPENAI INTEGRATION ====================
@@ -724,6 +725,53 @@ async def delete_evaluation_question(
     return {"message": "Pregunta eliminada"}
 
 
+@router.post("/{university_id}/courses/{course_id}/evaluations/{evaluation_id}/questions/{question_id}/upload-image")
+async def upload_question_image(
+    university_id: str,
+    course_id: str,
+    evaluation_id: str,
+    question_id: str,
+    image: UploadFile = File(...),
+    _: str = Depends(verify_admin_token)
+):
+    """Upload an image for a question"""
+    # Validate file type
+    allowed_types = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+    if image.content_type not in allowed_types:
+        raise HTTPException(status_code=400, detail="Tipo de archivo no permitido. Use JPG, PNG, WebP o GIF.")
+    
+    # Save file
+    ext = image.filename.split('.')[-1] if '.' in image.filename else 'png'
+    filename = f"{question_id}.{ext}"
+    file_path = UPLOADS_DIR / filename
+    
+    async with aiofiles.open(file_path, 'wb') as f:
+        content = await image.read()
+        await f.write(content)
+    
+    image_url = f"/api/admin/universities/question-image/{filename}"
+    
+    # Update question with image URL
+    await db.evaluation_questions.update_one(
+        {"id": question_id},
+        {"$set": {"image_url": image_url, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    logger.info(f"Uploaded image for question {question_id}")
+    
+    return {"message": "Imagen subida", "image_url": image_url}
+
+
+@router.get("/question-image/{filename}")
+async def get_question_image(filename: str):
+    """Serve question image file"""
+    from fastapi.responses import FileResponse
+    file_path = UPLOADS_DIR / filename
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Imagen no encontrada")
+    return FileResponse(file_path)
+
+
 # ==================== AI GENERATION ENDPOINTS ====================
 
 @router.post("/{university_id}/courses/{course_id}/evaluations/{evaluation_id}/generate")
@@ -804,16 +852,26 @@ Evaluación: {evaluation['name']}
             "created_at": datetime.now(timezone.utc).isoformat()
         }
         
-        await db.evaluation_questions.insert_one(question)
-        created_ids.append(question_id)
+        # Only save if auto_save is True
+        if data.auto_save:
+            await db.evaluation_questions.insert_one(question)
+            created_ids.append(question_id)
+        else:
+            # Return question with temp ID for review
+            question["temp_id"] = question_id
+            created_ids.append(question_id)
     
-    logger.info(f"AI generated {len(created_ids)} questions for evaluation {evaluation_id}")
+    if data.auto_save:
+        logger.info(f"AI generated and saved {len(created_ids)} questions for evaluation {evaluation_id}")
+    else:
+        logger.info(f"AI generated {len(questions)} questions for review (not saved)")
     
     return {
         "success": True,
-        "created_count": len(created_ids),
+        "created_count": len(created_ids) if data.auto_save else 0,
         "questions": questions,
-        "ids": created_ids
+        "ids": created_ids,
+        "auto_saved": data.auto_save
     }
 
 

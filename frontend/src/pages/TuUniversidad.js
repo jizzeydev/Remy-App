@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
+import 'katex/dist/katex.min.css';
+import { InlineMath, BlockMath } from 'react-katex';
 import { 
-  GraduationCap, Building2, BookOpen, FileText, 
+  GraduationCap, Building2, BookOpen, 
   ChevronRight, Play, Loader2, ArrowLeft,
-  CheckCircle, Clock, Target
+  CheckCircle, Image as ImageIcon
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
 import {
   Select,
   SelectContent,
@@ -21,6 +21,62 @@ import {
 } from '../components/ui/select';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
+
+// Component to render text with LaTeX
+const MathText = ({ text }) => {
+  if (!text) return null;
+  
+  // Split by $ for inline math and $$ for block math
+  const parts = [];
+  let remaining = text;
+  let key = 0;
+  
+  // Handle block math first ($$...$$)
+  while (remaining.includes('$$')) {
+    const start = remaining.indexOf('$$');
+    const end = remaining.indexOf('$$', start + 2);
+    
+    if (end === -1) break;
+    
+    if (start > 0) {
+      parts.push(<span key={key++}>{remaining.substring(0, start)}</span>);
+    }
+    
+    const math = remaining.substring(start + 2, end);
+    try {
+      parts.push(<BlockMath key={key++} math={math} />);
+    } catch (e) {
+      parts.push(<span key={key++} className="text-red-500">{math}</span>);
+    }
+    remaining = remaining.substring(end + 2);
+  }
+  
+  // Handle inline math ($...$)
+  if (remaining.includes('$')) {
+    const regex = /\$([^$]+)\$/g;
+    let lastIndex = 0;
+    let match;
+    
+    while ((match = regex.exec(remaining)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push(<span key={key++}>{remaining.substring(lastIndex, match.index)}</span>);
+      }
+      try {
+        parts.push(<InlineMath key={key++} math={match[1]} />);
+      } catch (e) {
+        parts.push(<span key={key++} className="text-red-500">{match[1]}</span>);
+      }
+      lastIndex = regex.lastIndex;
+    }
+    if (lastIndex < remaining.length) {
+      parts.push(<span key={key++}>{remaining.substring(lastIndex)}</span>);
+    }
+  } else if (remaining) {
+    parts.push(<span key={key++}>{remaining}</span>);
+  }
+  
+  return <>{parts}</>;
+};
 
 const TuUniversidad = () => {
   const navigate = useNavigate();
@@ -45,7 +101,6 @@ const TuUniversidad = () => {
   const [quizResult, setQuizResult] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
-  // Load universities on mount
   useEffect(() => {
     fetchUniversities();
   }, []);
@@ -56,7 +111,6 @@ const TuUniversidad = () => {
       const response = await axios.get(`${API_URL}/api/universities`);
       setUniversities(response.data);
     } catch (error) {
-      console.error('Error fetching universities:', error);
       toast.error('Error al cargar universidades');
     } finally {
       setLoading(false);
@@ -117,7 +171,6 @@ const TuUniversidad = () => {
       setQuizResult(null);
       toast.success(`Simulacro iniciado con ${response.data.total_questions} preguntas`);
     } catch (error) {
-      console.error('Error starting simulation:', error);
       toast.error(error.response?.data?.detail || 'Error al iniciar simulacro');
     } finally {
       setGeneratingQuiz(false);
@@ -125,10 +178,7 @@ const TuUniversidad = () => {
   };
 
   const handleSelectAnswer = (questionId, answer) => {
-    setAnswers(prev => ({
-      ...prev,
-      [questionId]: answer
-    }));
+    setAnswers(prev => ({ ...prev, [questionId]: answer }));
   };
 
   const handleSubmitQuiz = async () => {
@@ -166,26 +216,26 @@ const TuUniversidad = () => {
     setCurrentQuestionIndex(0);
   };
 
-  // Render active quiz
+  // Render active quiz (Light Mode)
   if (activeQuiz && !quizResult) {
     const currentQuestion = activeQuiz.questions[currentQuestionIndex];
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-8 px-4">
+      <div className="min-h-screen bg-gradient-to-b from-white to-cyan-50/30 py-8 px-4">
         <div className="max-w-3xl mx-auto">
           {/* Quiz Header */}
           <div className="mb-6 flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold text-white">{activeQuiz.evaluation}</h1>
-              <p className="text-slate-400 text-sm">{activeQuiz.course} - {activeQuiz.university}</p>
+              <h1 className="text-xl font-bold text-slate-800">{activeQuiz.evaluation}</h1>
+              <p className="text-slate-500 text-sm">{activeQuiz.course} - {activeQuiz.university}</p>
             </div>
-            <Badge variant="outline" className="text-cyan-400 border-cyan-400">
+            <Badge className="bg-cyan-100 text-cyan-700">
               {currentQuestionIndex + 1} / {activeQuiz.total_questions}
             </Badge>
           </div>
           
           {/* Progress bar */}
-          <div className="h-2 bg-slate-700 rounded-full mb-8 overflow-hidden">
+          <div className="h-2 bg-slate-200 rounded-full mb-8 overflow-hidden">
             <div 
               className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 transition-all duration-300"
               style={{ width: `${((currentQuestionIndex + 1) / activeQuiz.total_questions) * 100}%` }}
@@ -193,11 +243,22 @@ const TuUniversidad = () => {
           </div>
           
           {/* Question Card */}
-          <Card className="bg-slate-800/50 border-slate-700 mb-6">
+          <Card className="mb-6 shadow-lg">
             <CardContent className="pt-6">
-              <p className="text-lg text-white mb-6 whitespace-pre-wrap">
-                {currentQuestion.question_content}
-              </p>
+              <div className="text-lg text-slate-800 mb-6">
+                <MathText text={currentQuestion.question_content} />
+              </div>
+              
+              {/* Question Image */}
+              {currentQuestion.image_url && (
+                <div className="mb-6 flex justify-center">
+                  <img 
+                    src={currentQuestion.image_url} 
+                    alt="Imagen de la pregunta"
+                    className="max-w-full max-h-80 rounded-lg border border-slate-200"
+                  />
+                </div>
+              )}
               
               {/* Options */}
               <div className="space-y-3">
@@ -209,18 +270,20 @@ const TuUniversidad = () => {
                     <button
                       key={idx}
                       onClick={() => handleSelectAnswer(currentQuestion.id, letter)}
-                      className={`w-full p-4 rounded-lg text-left transition-all flex items-start gap-3 ${
+                      className={`w-full p-4 rounded-lg text-left transition-all flex items-start gap-3 border-2 ${
                         isSelected 
-                          ? 'bg-cyan-500/20 border-2 border-cyan-500 text-white' 
-                          : 'bg-slate-700/50 border-2 border-transparent text-slate-300 hover:bg-slate-700 hover:text-white'
+                          ? 'bg-cyan-50 border-cyan-500 text-slate-800' 
+                          : 'bg-white border-slate-200 text-slate-600 hover:border-cyan-300 hover:bg-cyan-50/50'
                       }`}
                     >
-                      <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                        isSelected ? 'bg-cyan-500 text-white' : 'bg-slate-600 text-slate-300'
+                      <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
+                        isSelected ? 'bg-cyan-500 text-white' : 'bg-slate-100 text-slate-500'
                       }`}>
                         {letter}
                       </span>
-                      <span className="flex-1 pt-1">{option}</span>
+                      <span className="flex-1 pt-1">
+                        <MathText text={option} />
+                      </span>
                     </button>
                   );
                 })}
@@ -234,12 +297,11 @@ const TuUniversidad = () => {
               variant="outline"
               onClick={() => setCurrentQuestionIndex(prev => prev - 1)}
               disabled={currentQuestionIndex === 0}
-              className="border-slate-600 text-slate-300 hover:text-white"
             >
               Anterior
             </Button>
             
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap justify-center">
               {activeQuiz.questions.map((_, idx) => (
                 <button
                   key={idx}
@@ -248,8 +310,8 @@ const TuUniversidad = () => {
                     idx === currentQuestionIndex
                       ? 'bg-cyan-500 text-white'
                       : answers[activeQuiz.questions[idx].id]
-                        ? 'bg-green-500/30 text-green-400 border border-green-500'
-                        : 'bg-slate-700 text-slate-400'
+                        ? 'bg-green-100 text-green-600 border-2 border-green-500'
+                        : 'bg-slate-100 text-slate-400'
                   }`}
                 >
                   {idx + 1}
@@ -258,23 +320,12 @@ const TuUniversidad = () => {
             </div>
             
             {currentQuestionIndex < activeQuiz.total_questions - 1 ? (
-              <Button
-                onClick={() => setCurrentQuestionIndex(prev => prev + 1)}
-                className="bg-cyan-500 hover:bg-cyan-600"
-              >
+              <Button onClick={() => setCurrentQuestionIndex(prev => prev + 1)} className="bg-cyan-500 hover:bg-cyan-600">
                 Siguiente
               </Button>
             ) : (
-              <Button
-                onClick={handleSubmitQuiz}
-                disabled={submitting}
-                className="bg-green-500 hover:bg-green-600"
-              >
-                {submitting ? (
-                  <><Loader2 className="animate-spin mr-2" size={16} /> Enviando...</>
-                ) : (
-                  'Finalizar'
-                )}
+              <Button onClick={handleSubmitQuiz} disabled={submitting} className="bg-green-500 hover:bg-green-600">
+                {submitting ? <><Loader2 className="animate-spin mr-2" size={16} /> Enviando...</> : 'Finalizar'}
               </Button>
             )}
           </div>
@@ -283,30 +334,30 @@ const TuUniversidad = () => {
     );
   }
 
-  // Render quiz result
+  // Render quiz result (Light Mode)
   if (quizResult) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-8 px-4">
+      <div className="min-h-screen bg-gradient-to-b from-white to-cyan-50/30 py-8 px-4">
         <div className="max-w-3xl mx-auto">
           {/* Result Header */}
-          <Card className="bg-slate-800/50 border-slate-700 mb-6">
+          <Card className="mb-6 shadow-lg">
             <CardContent className="pt-6 text-center">
               <div className={`w-24 h-24 mx-auto rounded-full flex items-center justify-center mb-4 ${
-                quizResult.score >= 60 ? 'bg-green-500/20' : 'bg-red-500/20'
+                quizResult.score >= 60 ? 'bg-green-100' : 'bg-red-100'
               }`}>
                 <span className={`text-4xl font-bold ${
-                  quizResult.score >= 60 ? 'text-green-400' : 'text-red-400'
+                  quizResult.score >= 60 ? 'text-green-600' : 'text-red-600'
                 }`}>
                   {quizResult.score}%
                 </span>
               </div>
-              <h2 className="text-2xl font-bold text-white mb-2">
-                {quizResult.score >= 60 ? 'Buen trabajo!' : 'Sigue practicando'}
+              <h2 className="text-2xl font-bold text-slate-800 mb-2">
+                {quizResult.score >= 60 ? '¡Buen trabajo!' : 'Sigue practicando'}
               </h2>
-              <p className="text-slate-400">
+              <p className="text-slate-500">
                 {quizResult.correct_count} de {quizResult.total_questions} respuestas correctas
               </p>
-              <div className="mt-4 text-sm text-slate-500">
+              <div className="mt-4 text-sm text-slate-400">
                 {quizResult.university} - {quizResult.course} - {quizResult.evaluation}
               </div>
             </CardContent>
@@ -317,15 +368,11 @@ const TuUniversidad = () => {
             {quizResult.results.map((r, idx) => (
               <Card 
                 key={idx} 
-                className={`border-l-4 ${
-                  r.is_correct 
-                    ? 'border-l-green-500 bg-green-500/5' 
-                    : 'border-l-red-500 bg-red-500/5'
-                } bg-slate-800/50 border-slate-700`}
+                className={`border-l-4 ${r.is_correct ? 'border-l-green-500' : 'border-l-red-500'}`}
               >
                 <CardContent className="pt-4">
                   <div className="flex items-start gap-3">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
                       r.is_correct ? 'bg-green-500' : 'bg-red-500'
                     }`}>
                       {r.is_correct ? (
@@ -335,20 +382,32 @@ const TuUniversidad = () => {
                       )}
                     </div>
                     <div className="flex-1">
-                      <p className="text-white text-sm mb-2">{r.question_content}</p>
+                      <div className="text-slate-800 text-sm mb-2">
+                        <MathText text={r.question_content} />
+                      </div>
+                      
+                      {/* Question Image in Results */}
+                      {r.image_url && (
+                        <div className="mb-3">
+                          <img 
+                            src={r.image_url} 
+                            alt="Imagen"
+                            className="max-w-xs max-h-40 rounded border border-slate-200"
+                          />
+                        </div>
+                      )}
+                      
                       <div className="flex gap-4 text-xs">
-                        <span className={r.is_correct ? 'text-green-400' : 'text-red-400'}>
+                        <span className={r.is_correct ? 'text-green-600' : 'text-red-600'}>
                           Tu respuesta: {r.user_answer || '-'}
                         </span>
                         {!r.is_correct && (
-                          <span className="text-green-400">
-                            Correcta: {r.correct_answer}
-                          </span>
+                          <span className="text-green-600">Correcta: {r.correct_answer}</span>
                         )}
                       </div>
                       {r.solution_content && (
-                        <div className="mt-2 p-2 bg-slate-700/50 rounded text-xs text-slate-300">
-                          <strong>Solución:</strong> {r.solution_content}
+                        <div className="mt-2 p-3 bg-slate-50 rounded text-sm text-slate-600 border border-slate-200">
+                          <strong>Solución:</strong> <MathText text={r.solution_content} />
                         </div>
                       )}
                     </div>
@@ -360,20 +419,11 @@ const TuUniversidad = () => {
           
           {/* Actions */}
           <div className="flex gap-4">
-            <Button 
-              variant="outline" 
-              onClick={resetQuiz}
-              className="flex-1 border-slate-600 text-slate-300"
-            >
-              <ArrowLeft size={16} className="mr-2" />
-              Volver
+            <Button variant="outline" onClick={resetQuiz} className="flex-1">
+              <ArrowLeft size={16} className="mr-2" /> Volver
             </Button>
-            <Button 
-              onClick={handleStartSimulation}
-              className="flex-1 bg-cyan-500 hover:bg-cyan-600"
-            >
-              <Play size={16} className="mr-2" />
-              Nuevo Simulacro
+            <Button onClick={handleStartSimulation} className="flex-1 bg-cyan-500 hover:bg-cyan-600">
+              <Play size={16} className="mr-2" /> Nuevo Simulacro
             </Button>
           </div>
         </div>
@@ -381,231 +431,194 @@ const TuUniversidad = () => {
     );
   }
 
-  // Render selection UI
+  // Render selection UI (Light Mode)
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-8 px-4">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-10">
-          <div className="w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <GraduationCap size={32} className="text-white" />
-          </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Tu Universidad</h1>
-          <p className="text-slate-400 max-w-xl mx-auto">
-            Selecciona tu universidad, curso y evaluación para generar un simulacro 
-            personalizado con preguntas de exámenes anteriores.
-          </p>
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="text-center">
+        <div className="w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <GraduationCap size={32} className="text-white" />
         </div>
+        <h1 className="text-3xl font-bold text-slate-800 mb-2">Tu Universidad</h1>
+        <p className="text-slate-500 max-w-xl mx-auto">
+          Selecciona tu universidad, curso y evaluación para generar un simulacro 
+          personalizado con preguntas de exámenes anteriores.
+        </p>
+      </div>
 
-        {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="animate-spin text-cyan-500" size={40} />
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="animate-spin text-cyan-500" size={40} />
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-3 gap-6">
+          {/* Step 1: Universities */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 rounded-full bg-cyan-500 flex items-center justify-center text-white font-bold">1</div>
+              <h2 className="text-lg font-semibold text-slate-800">Universidad</h2>
+            </div>
+            <div className="space-y-2">
+              {universities.map(uni => (
+                <button
+                  key={uni.id}
+                  onClick={() => handleSelectUniversity(uni)}
+                  className={`w-full p-4 rounded-lg text-left transition-all border-2 ${
+                    selectedUniversity?.id === uni.id
+                      ? 'bg-cyan-50 border-cyan-500'
+                      : 'bg-white border-slate-200 hover:border-cyan-300'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                      {uni.short_name?.substring(0, 2) || uni.name.charAt(0)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-slate-800 font-medium truncate">{uni.name}</p>
+                      <p className="text-slate-400 text-sm">{uni.courses_count} cursos</p>
+                    </div>
+                    {selectedUniversity?.id === uni.id && (
+                      <ChevronRight className="text-cyan-500" size={20} />
+                    )}
+                  </div>
+                </button>
+              ))}
+              {universities.length === 0 && (
+                <p className="text-slate-400 text-center py-8">No hay universidades disponibles</p>
+              )}
+            </div>
           </div>
-        ) : (
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* Step 1: Universities */}
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-full bg-cyan-500 flex items-center justify-center text-white font-bold">
-                  1
-                </div>
-                <h2 className="text-lg font-semibold text-white">Universidad</h2>
-              </div>
+
+          {/* Step 2: Courses */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
+                selectedUniversity ? 'bg-cyan-500 text-white' : 'bg-slate-200 text-slate-400'
+              }`}>2</div>
+              <h2 className="text-lg font-semibold text-slate-800">Curso</h2>
+            </div>
+            {selectedUniversity ? (
               <div className="space-y-2">
-                {universities.map(uni => (
+                {courses.map(course => (
                   <button
-                    key={uni.id}
-                    onClick={() => handleSelectUniversity(uni)}
-                    className={`w-full p-4 rounded-lg text-left transition-all ${
-                      selectedUniversity?.id === uni.id
-                        ? 'bg-cyan-500/20 border-2 border-cyan-500'
-                        : 'bg-slate-800/50 border-2 border-transparent hover:border-slate-600'
+                    key={course.id}
+                    onClick={() => handleSelectCourse(course)}
+                    className={`w-full p-4 rounded-lg text-left transition-all border-2 ${
+                      selectedCourse?.id === course.id
+                        ? 'bg-cyan-50 border-cyan-500'
+                        : 'bg-white border-slate-200 hover:border-cyan-300'
                     }`}
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
-                        {uni.short_name?.substring(0, 2) || uni.name.charAt(0)}
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-slate-800 font-medium">{course.name}</p>
+                        {course.code && (
+                          <Badge variant="outline" className="text-slate-400 mt-1">{course.code}</Badge>
+                        )}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-white font-medium truncate">{uni.name}</p>
-                        <p className="text-slate-400 text-sm">{uni.courses_count} cursos</p>
-                      </div>
-                      {selectedUniversity?.id === uni.id && (
-                        <ChevronRight className="text-cyan-400" size={20} />
-                      )}
+                      <span className="text-slate-400 text-sm">{course.evaluations_count} eval.</span>
                     </div>
                   </button>
                 ))}
-                {universities.length === 0 && (
-                  <p className="text-slate-500 text-center py-8">
-                    No hay universidades disponibles
-                  </p>
+                {courses.length === 0 && (
+                  <p className="text-slate-400 text-center py-8">No hay cursos disponibles</p>
                 )}
               </div>
-            </div>
-
-            {/* Step 2: Courses */}
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
-                  selectedUniversity ? 'bg-cyan-500 text-white' : 'bg-slate-700 text-slate-400'
-                }`}>
-                  2
-                </div>
-                <h2 className="text-lg font-semibold text-white">Curso</h2>
+            ) : (
+              <div className="bg-slate-50 rounded-lg p-8 text-center border-2 border-dashed border-slate-200">
+                <Building2 className="mx-auto text-slate-300 mb-2" size={32} />
+                <p className="text-slate-400">Selecciona una universidad</p>
               </div>
-              {selectedUniversity ? (
+            )}
+          </div>
+
+          {/* Step 3: Evaluations & Start */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
+                selectedCourse ? 'bg-cyan-500 text-white' : 'bg-slate-200 text-slate-400'
+              }`}>3</div>
+              <h2 className="text-lg font-semibold text-slate-800">Evaluación</h2>
+            </div>
+            {selectedCourse ? (
+              <div className="space-y-4">
                 <div className="space-y-2">
-                  {courses.map(course => (
+                  {evaluations.map(evaluation => (
                     <button
-                      key={course.id}
-                      onClick={() => handleSelectCourse(course)}
-                      className={`w-full p-4 rounded-lg text-left transition-all ${
-                        selectedCourse?.id === course.id
-                          ? 'bg-cyan-500/20 border-2 border-cyan-500'
-                          : 'bg-slate-800/50 border-2 border-transparent hover:border-slate-600'
+                      key={evaluation.id}
+                      onClick={() => setSelectedEvaluation(evaluation)}
+                      className={`w-full p-4 rounded-lg text-left transition-all border-2 ${
+                        selectedEvaluation?.id === evaluation.id
+                          ? 'bg-cyan-50 border-cyan-500'
+                          : 'bg-white border-slate-200 hover:border-cyan-300'
                       }`}
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-white font-medium">{course.name}</p>
-                          {course.code && (
-                            <Badge variant="outline" className="text-slate-400 border-slate-600 mt-1">
-                              {course.code}
-                            </Badge>
+                          <p className="text-slate-800 font-medium">{evaluation.name}</p>
+                          {evaluation.description && (
+                            <p className="text-slate-400 text-sm mt-1">{evaluation.description}</p>
                           )}
                         </div>
-                        <span className="text-slate-400 text-sm">
-                          {course.evaluations_count} eval.
-                        </span>
+                        <Badge className="bg-slate-100 text-slate-600">{evaluation.questions_count} preg.</Badge>
                       </div>
                     </button>
                   ))}
-                  {courses.length === 0 && (
-                    <p className="text-slate-500 text-center py-8">
-                      No hay cursos disponibles
-                    </p>
+                  {evaluations.length === 0 && (
+                    <p className="text-slate-400 text-center py-4">No hay evaluaciones disponibles</p>
                   )}
                 </div>
-              ) : (
-                <div className="bg-slate-800/30 rounded-lg p-8 text-center">
-                  <Building2 className="mx-auto text-slate-600 mb-2" size={32} />
-                  <p className="text-slate-500">Selecciona una universidad</p>
-                </div>
-              )}
-            </div>
 
-            {/* Step 3: Evaluations & Start */}
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
-                  selectedCourse ? 'bg-cyan-500 text-white' : 'bg-slate-700 text-slate-400'
-                }`}>
-                  3
-                </div>
-                <h2 className="text-lg font-semibold text-white">Evaluación</h2>
-              </div>
-              {selectedCourse ? (
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    {evaluations.map(evaluation => (
-                      <button
-                        key={evaluation.id}
-                        onClick={() => setSelectedEvaluation(evaluation)}
-                        className={`w-full p-4 rounded-lg text-left transition-all ${
-                          selectedEvaluation?.id === evaluation.id
-                            ? 'bg-cyan-500/20 border-2 border-cyan-500'
-                            : 'bg-slate-800/50 border-2 border-transparent hover:border-slate-600'
-                        }`}
+                {/* Quiz Configuration */}
+                {selectedEvaluation && (
+                  <Card className="shadow-md">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-base">Configuración</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div>
+                        <label className="text-sm text-slate-600 mb-1 block">Número de preguntas</label>
+                        <Select value={numQuestions.toString()} onValueChange={(v) => setNumQuestions(parseInt(v))}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="5">5 preguntas</SelectItem>
+                            <SelectItem value="10">10 preguntas</SelectItem>
+                            <SelectItem value="15">15 preguntas</SelectItem>
+                            <SelectItem value="20">20 preguntas</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <Button 
+                        onClick={handleStartSimulation}
+                        disabled={generatingQuiz || selectedEvaluation.questions_count === 0}
+                        className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
                       >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-white font-medium">{evaluation.name}</p>
-                            {evaluation.description && (
-                              <p className="text-slate-400 text-sm mt-1">{evaluation.description}</p>
-                            )}
-                          </div>
-                          <Badge className="bg-slate-700">
-                            {evaluation.questions_count} preguntas
-                          </Badge>
-                        </div>
-                      </button>
-                    ))}
-                    {evaluations.length === 0 && (
-                      <p className="text-slate-500 text-center py-4">
-                        No hay evaluaciones disponibles
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Quiz Configuration */}
-                  {selectedEvaluation && (
-                    <Card className="bg-slate-800/50 border-slate-700">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-white text-base">Configuración</CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div>
-                          <Label className="text-slate-300">Número de preguntas</Label>
-                          <Select 
-                            value={numQuestions.toString()} 
-                            onValueChange={(v) => setNumQuestions(parseInt(v))}
-                          >
-                            <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="5">5 preguntas</SelectItem>
-                              <SelectItem value="10">10 preguntas</SelectItem>
-                              <SelectItem value="15">15 preguntas</SelectItem>
-                              <SelectItem value="20">20 preguntas</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        
-                        <Button 
-                          onClick={handleStartSimulation}
-                          disabled={generatingQuiz || selectedEvaluation.questions_count === 0}
-                          className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
-                        >
-                          {generatingQuiz ? (
-                            <><Loader2 className="animate-spin mr-2" size={16} /> Generando...</>
-                          ) : (
-                            <><Play size={16} className="mr-2" /> Iniciar Simulacro</>
-                          )}
-                        </Button>
-                        
-                        {selectedEvaluation.questions_count === 0 && (
-                          <p className="text-amber-400 text-xs text-center">
-                            Esta evaluación aún no tiene preguntas
-                          </p>
+                        {generatingQuiz ? (
+                          <><Loader2 className="animate-spin mr-2" size={16} /> Generando...</>
+                        ) : (
+                          <><Play size={16} className="mr-2" /> Iniciar Simulacro</>
                         )}
-                      </CardContent>
-                    </Card>
-                  )}
-                </div>
-              ) : (
-                <div className="bg-slate-800/30 rounded-lg p-8 text-center">
-                  <BookOpen className="mx-auto text-slate-600 mb-2" size={32} />
-                  <p className="text-slate-500">Selecciona un curso</p>
-                </div>
-              )}
-            </div>
+                      </Button>
+                      
+                      {selectedEvaluation.questions_count === 0 && (
+                        <p className="text-amber-600 text-xs text-center">Esta evaluación aún no tiene preguntas</p>
+                      )}
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            ) : (
+              <div className="bg-slate-50 rounded-lg p-8 text-center border-2 border-dashed border-slate-200">
+                <BookOpen className="mx-auto text-slate-300 mb-2" size={32} />
+                <p className="text-slate-400">Selecciona un curso</p>
+              </div>
+            )}
           </div>
-        )}
-
-        {/* Back to Dashboard */}
-        <div className="mt-10 text-center">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate('/student')}
-            className="text-slate-400 hover:text-white"
-          >
-            <ArrowLeft size={16} className="mr-2" />
-            Volver al Dashboard
-          </Button>
         </div>
-      </div>
+      )}
     </div>
   );
 };
