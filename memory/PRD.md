@@ -210,7 +210,17 @@ Usuario con Suscripción Activa:
 - [x] Quiz interactivo con navegación entre preguntas
 - [x] Pantalla de resultados con score y soluciones
 - [x] Enlace en menú lateral de estudiantes
+- [x] **Modo claro** (consistente con resto de la app)
+- [x] **KaTeX** para renderizar fórmulas matemáticas
+- [x] **Soporte de imágenes** en preguntas
 - [x] Backend Tests 100% (14/14), Frontend Tests 100% (12/12)
+
+## ✅ Mejoras Admin Universidades - IMPLEMENTADO (March 17, 2026)
+- [x] **Editar preguntas** - Modal completo con todos los campos
+- [x] **Upload de imágenes** para preguntas
+- [x] **Flujo de revisión IA** - Aprobar/editar preguntas antes de guardar
+- [x] **KaTeX en lista** - Fórmulas renderizadas en vista admin
+- [x] Backend Tests 100% (12/12)
 
 ## Backlog (Post-MVP)
 
@@ -218,9 +228,8 @@ Usuario con Suscripción Activa:
 - [ ] Dashboard de métricas con gráficos (conectar backend analytics)
 
 ### P1 - Próximo
-- [ ] Renderizar LaTeX en preguntas y resultados (KaTeX)
-- [ ] Editor de texto enriquecido (LaTeX/Markdown) para admin
 - [ ] Historial de simulaciones del estudiante
+- [ ] Agregar imágenes desde generación IA (actualmente solo manual)
 
 ### P2 - Futuro
 - [ ] Refactorizar server.py en routers separados

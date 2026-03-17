@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import 'katex/dist/katex.min.css';
+import { InlineMath } from 'react-katex';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,6 +30,40 @@ import {
   Loader2, Upload, Target
 } from 'lucide-react';
 import { toast } from 'sonner';
+
+// Simple inline math renderer for list preview
+const MathPreview = ({ text }) => {
+  if (!text) return null;
+  
+  // Simple inline math rendering for preview
+  const parts = [];
+  let remaining = text;
+  let key = 0;
+  
+  if (remaining.includes('$')) {
+    const regex = /\$([^$]+)\$/g;
+    let lastIndex = 0;
+    let match;
+    
+    while ((match = regex.exec(remaining)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push(<span key={key++}>{remaining.substring(lastIndex, match.index)}</span>);
+      }
+      try {
+        parts.push(<InlineMath key={key++} math={match[1]} />);
+      } catch (e) {
+        parts.push(<span key={key++} className="text-red-500">{match[1]}</span>);
+      }
+      lastIndex = regex.lastIndex;
+    }
+    if (lastIndex < remaining.length) {
+      parts.push(<span key={key++}>{remaining.substring(lastIndex)}</span>);
+    }
+    return <>{parts}</>;
+  }
+  
+  return <span>{text}</span>;
+};
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api/admin/universities`;
@@ -702,7 +738,7 @@ const UniversityDetail = () => {
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium line-clamp-2">
-                          {index + 1}. {q.question_content}
+                          {index + 1}. <MathPreview text={q.question_content} />
                         </p>
                         {q.image_url && (
                           <div className="mt-2">
