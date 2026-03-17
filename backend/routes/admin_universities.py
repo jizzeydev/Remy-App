@@ -734,22 +734,34 @@ async def upload_question_image(
     image: UploadFile = File(...),
     _: str = Depends(verify_admin_token)
 ):
-    """Upload an image for a question"""
+    """Upload an image for a question - stores in MongoDB GridFS for persistence"""
+    from services.image_storage import save_image, get_image_url
+    
     # Validate file type
     allowed_types = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
     if image.content_type not in allowed_types:
         raise HTTPException(status_code=400, detail="Tipo de archivo no permitido. Use JPG, PNG, WebP o GIF.")
     
-    # Save file
-    ext = image.filename.split('.')[-1] if '.' in image.filename else 'png'
-    filename = f"{question_id}.{ext}"
-    file_path = UPLOADS_DIR / filename
+    # Read content
+    content = await image.read()
     
-    async with aiofiles.open(file_path, 'wb') as f:
-        content = await image.read()
-        await f.write(content)
+    # Validate size (max 5MB)
+    if len(content) > 5 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="Archivo muy grande. Máximo 5MB.")
     
-    image_url = f"/api/admin/universities/question-image/{filename}"
+    # Save to GridFS (persistent storage)
+    image_id = await save_image(
+        content,
+        image.filename,
+        image.content_type,
+        metadata={
+            "question_id": question_id,
+            "evaluation_id": evaluation_id,
+            "source": "question_upload"
+        }
+    )
+    
+    image_url = get_image_url(image_id)
     
     # Update question with image URL
     await db.evaluation_questions.update_one(
@@ -757,19 +769,37 @@ async def upload_question_image(
         {"$set": {"image_url": image_url, "updated_at": datetime.now(timezone.utc).isoformat()}}
     )
     
-    logger.info(f"Uploaded image for question {question_id}")
+    logger.info(f"Uploaded image {image_id} for question {question_id} to GridFS")
     
-    return {"message": "Imagen subida", "image_url": image_url}
+    return {"message": "Imagen subida", "image_url": image_url, "image_id": image_id}
 
 
 @router.get("/question-image/{filename}")
 async def get_question_image(filename: str):
-    """Serve question image file"""
-    from fastapi.responses import FileResponse
+    """
+    Legacy endpoint for old images - redirects to new GridFS endpoint
+    New images use /api/images/{image_id}
+    """
+    from fastapi.responses import FileResponse, RedirectResponse
+    
+    # First try GridFS (new storage)
+    image_id = filename.split('.')[0] if '.' in filename else filename
+    from services.image_storage import get_image
+    image_data = await get_image(image_id)
+    
+    if image_data:
+        from fastapi.responses import Response
+        return Response(
+            content=image_data["content"],
+            media_type=image_data["content_type"]
+        )
+    
+    # Fallback to filesystem (old storage)
     file_path = UPLOADS_DIR / filename
-    if not file_path.exists():
-        raise HTTPException(status_code=404, detail="Imagen no encontrada")
-    return FileResponse(file_path)
+    if file_path.exists():
+        return FileResponse(file_path)
+    
+    raise HTTPException(status_code=404, detail="Imagen no encontrada")
 
 
 # ==================== AI GENERATION ENDPOINTS ====================

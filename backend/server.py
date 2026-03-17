@@ -31,6 +31,8 @@ from routes import admin_users as admin_users_routes
 from routes import admin_universities as admin_universities_routes
 from routes import admin_analytics as admin_analytics_routes
 from routes import student_universities as student_universities_routes
+from routes import images as images_routes
+from services.image_storage import init_image_storage
 
 ROOT_DIR = Path(__file__).parent
 UPLOADS_DIR = ROOT_DIR / 'uploads'
@@ -49,6 +51,9 @@ admin_users_routes.set_db(db)
 admin_universities_routes.set_db(db)
 admin_analytics_routes.set_db(db)
 student_universities_routes.set_db(db)
+
+# Initialize image storage with GridFS
+init_image_storage(db)
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
@@ -382,15 +387,31 @@ def extract_text_from_pdf(pdf_file: bytes) -> str:
 async def root():
     return {"message": "Bienvenido a Remy - Tu plataforma de estudio inteligente"}
 
-# Serve uploaded images
-from fastapi.responses import FileResponse
+# Serve uploaded images - supports both GridFS and filesystem
+from fastapi.responses import FileResponse, Response
 
 @api_router.get("/uploads/{filename}")
 async def get_uploaded_image(filename: str):
+    """Serve images - checks GridFS first, then filesystem for backward compatibility"""
+    from services.image_storage import get_image
+    
+    # Try GridFS first (new persistent storage)
+    image_id = filename.split('.')[0] if '.' in filename else filename
+    image_data = await get_image(image_id)
+    
+    if image_data:
+        return Response(
+            content=image_data["content"],
+            media_type=image_data["content_type"],
+            headers={"Cache-Control": "public, max-age=31536000"}
+        )
+    
+    # Fallback to filesystem (legacy)
     file_path = UPLOADS_DIR / filename
-    if not file_path.exists():
-        raise HTTPException(status_code=404, detail="Imagen no encontrada")
-    return FileResponse(file_path)
+    if file_path.exists():
+        return FileResponse(file_path)
+    
+    raise HTTPException(status_code=404, detail="Imagen no encontrada")
 
 @api_router.get("/courses", response_model=List[Course])
 async def get_courses():
@@ -1904,30 +1925,39 @@ Requirements: Clear labels if needed, high contrast, easy to understand, no text
         logging.error(f"Error generating image: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# Upload image from file
+# Upload image from file - now uses GridFS for persistent storage
 @admin_router.post("/upload-image")
 async def upload_image(
     file: UploadFile = File(...),
     _: str = Depends(verify_admin_token)
 ):
+    """Upload image to MongoDB GridFS for permanent storage"""
+    from services.image_storage import save_image, get_image_url
+    
     try:
         if not file.content_type.startswith('image/'):
             raise HTTPException(status_code=400, detail="Solo se permiten archivos de imagen")
         
-        # Generate unique filename
-        ext = file.filename.split('.')[-1] if '.' in file.filename else 'png'
-        image_id = str(uuid.uuid4())
-        image_filename = f"{image_id}.{ext}"
-        image_path = UPLOADS_DIR / image_filename
-        
-        # Save file
+        # Read file content
         image_data = await file.read()
-        async with aiofiles.open(image_path, 'wb') as f:
-            await f.write(image_data)
         
-        # Return URL path
-        image_url = f"/api/uploads/{image_filename}"
-        return {"image_url": image_url}
+        # Validate size (max 5MB)
+        if len(image_data) > 5 * 1024 * 1024:
+            raise HTTPException(status_code=400, detail="Archivo muy grande. Máximo 5MB.")
+        
+        # Save to GridFS (persistent storage)
+        image_id = await save_image(
+            image_data,
+            file.filename,
+            file.content_type,
+            metadata={"source": "admin_upload"}
+        )
+        
+        # Return URL using the images API
+        image_url = get_image_url(image_id)
+        
+        logging.info(f"Uploaded image {image_id} to GridFS ({len(image_data)} bytes)")
+        return {"image_url": image_url, "image_id": image_id}
     except Exception as e:
         logging.error(f"Error uploading image: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -1937,15 +1967,27 @@ async def upload_course_image(
     file: UploadFile = File(...),
     _: str = Depends(verify_admin_token)
 ):
+    """Upload course image to MongoDB GridFS"""
+    from services.image_storage import save_image, get_image_url
+    
     if not file.content_type.startswith('image/'):
         raise HTTPException(status_code=400, detail="Solo se permiten archivos de imagen")
     
     image_data = await file.read()
-    import base64
-    image_base64 = base64.b64encode(image_data).decode('utf-8')
-    image_url = f"data:{file.content_type};base64,{image_base64}"
     
-    return {"image_url": image_url}
+    # Validate size
+    if len(image_data) > 5 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="Archivo muy grande. Máximo 5MB.")
+    
+    # Save to GridFS
+    image_id = await save_image(
+        image_data,
+        file.filename,
+        file.content_type,
+        metadata={"source": "course_image"}
+    )
+    
+    return {"image_url": get_image_url(image_id), "image_id": image_id}
 
 # Public endpoints for students to view course content
 @api_router.get("/courses/{course_id}/chapters")
@@ -1983,6 +2025,7 @@ app.include_router(admin_users_routes.router)
 app.include_router(admin_universities_routes.router)
 app.include_router(admin_analytics_routes.router)
 app.include_router(student_universities_routes.router)
+app.include_router(images_routes.router)
 
 # CORS configuration - allow all origins since we use Bearer tokens (not cookies)
 app.add_middleware(
