@@ -38,10 +38,10 @@ const formatTime = (seconds) => {
 
 // Get grade color based on Chilean scale
 const getGradeColor = (grade) => {
-  if (grade >= 6.0) return 'text-green-600 bg-green-100';
-  if (grade >= 5.0) return 'text-blue-600 bg-blue-100';
-  if (grade >= 4.0) return 'text-yellow-600 bg-yellow-100';
-  return 'text-red-600 bg-red-100';
+  if (grade >= 6.0) return 'text-green-600 dark:text-green-400 bg-green-500/20';
+  if (grade >= 5.0) return 'text-blue-600 dark:text-blue-400 bg-blue-500/20';
+  if (grade >= 4.0) return 'text-yellow-600 dark:text-yellow-400 bg-yellow-500/20';
+  return 'text-red-600 dark:text-red-400 bg-red-500/20';
 };
 
 // ==================== QUIZ CARD COMPONENT ====================
@@ -328,15 +328,15 @@ const CreateQuizDialog = ({ open, onOpenChange, onQuizCreated }) => {
                   <Loader2 className="animate-spin text-primary" size={24} />
                 </div>
               ) : chapters.length === 0 ? (
-                <p className="text-sm text-slate-500 py-4">
+                <p className="text-sm text-muted-foreground py-4">
                   Este curso no tiene capítulos disponibles
                 </p>
               ) : (
-                <div className="border rounded-lg divide-y max-h-[250px] overflow-y-auto">
+                <div className="border border-border rounded-lg divide-y divide-border max-h-[250px] overflow-y-auto">
                   {chapters.map(chapter => (
                     <div key={chapter.id}>
                       <div 
-                        className="flex items-center gap-3 p-3 hover:bg-slate-50 cursor-pointer"
+                        className="flex items-center gap-3 p-3 hover:bg-secondary cursor-pointer"
                         onClick={() => toggleChapter(chapter.id)}
                       >
                         <Checkbox
@@ -348,21 +348,21 @@ const CreateQuizDialog = ({ open, onOpenChange, onQuizCreated }) => {
                           <ChevronDown size={16} /> : 
                           <ChevronRight size={16} />
                         }
-                        <span className="font-medium flex-1">{chapter.title}</span>
+                        <span className="font-medium flex-1 text-foreground">{chapter.title}</span>
                         <Badge variant="secondary" className="text-xs">
                           {chapter.lessons?.length || 0} lecciones
                         </Badge>
                       </div>
                       
                       {expandedChapters[chapter.id] && chapter.lessons?.length > 0 && (
-                        <div className="bg-slate-50 pl-12 pr-3 py-2 space-y-2">
+                        <div className="bg-secondary/50 pl-12 pr-3 py-2 space-y-2">
                           {chapter.lessons.map(lesson => (
                             <div key={lesson.id} className="flex items-center gap-3">
                               <Checkbox
                                 checked={selectedLessons[lesson.id] || false}
                                 onCheckedChange={(checked) => handleLessonToggle(lesson, chapter.id, checked)}
                               />
-                              <span className="text-sm">{lesson.title}</span>
+                              <span className="text-sm text-foreground">{lesson.title}</span>
                             </div>
                           ))}
                         </div>
@@ -519,11 +519,11 @@ const ActiveQuizView = ({ quiz, onComplete, onCancel }) => {
   return (
     <div className="max-w-4xl mx-auto pb-24 lg:pb-8" data-testid="active-quiz">
       {/* Header with timer */}
-      <div className="sticky top-0 z-40 bg-white border-b mb-6 -mx-4 px-4 py-3 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+      <div className="sticky top-0 z-40 bg-card border-b border-border mb-6 -mx-4 px-4 py-3 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
         <div className="flex items-center justify-between max-w-4xl mx-auto">
           <div>
-            <h2 className="font-bold text-lg">{quiz.course_title || 'Simulacro'}</h2>
-            <p className="text-sm text-slate-500">
+            <h2 className="font-bold text-lg text-foreground">{quiz.course_title || 'Simulacro'}</h2>
+            <p className="text-sm text-muted-foreground">
               {answeredCount}/{totalQuestions} respondidas
             </p>
           </div>
@@ -532,8 +532,8 @@ const ActiveQuizView = ({ quiz, onComplete, onCancel }) => {
             {/* Timer display */}
             <div className={`flex items-center gap-2 px-4 py-2 rounded-full font-mono text-lg ${
               timeLeft !== null && timeLeft < 60 
-                ? 'bg-red-100 text-red-600 animate-pulse' 
-                : 'bg-slate-100 text-slate-700'
+                ? 'bg-red-500/20 text-red-600 dark:text-red-400 animate-pulse' 
+                : 'bg-secondary text-foreground'
             }`}>
               <Timer size={20} />
               {timeLeft !== null ? formatTime(timeLeft) : formatTime(timeSpent)}
@@ -550,32 +550,32 @@ const ActiveQuizView = ({ quiz, onComplete, onCancel }) => {
 
       {/* Results header */}
       {showResults && results && (
-        <Card className="mb-6 bg-gradient-to-r from-primary/10 to-cyan-50">
+        <Card className="mb-6 bg-gradient-to-r from-primary/10 to-primary/5">
           <CardContent className="py-6">
             <div className="flex items-center justify-around text-center">
               <div>
                 <div className={`text-4xl font-bold ${getGradeColor(results.grade)} inline-block px-4 py-2 rounded-full`}>
                   {results.grade}
                 </div>
-                <p className="text-sm text-slate-600 mt-2">Nota Final</p>
+                <p className="text-sm text-muted-foreground mt-2">Nota Final</p>
               </div>
               <div>
-                <div className="text-3xl font-bold text-slate-800">
+                <div className="text-3xl font-bold text-foreground">
                   {results.correct_count}/{results.total_questions}
                 </div>
-                <p className="text-sm text-slate-600 mt-2">Correctas</p>
+                <p className="text-sm text-muted-foreground mt-2">Correctas</p>
               </div>
               <div>
-                <div className="text-3xl font-bold text-slate-800">
+                <div className="text-3xl font-bold text-foreground">
                   {Math.round(results.score)}%
                 </div>
-                <p className="text-sm text-slate-600 mt-2">Porcentaje</p>
+                <p className="text-sm text-muted-foreground mt-2">Porcentaje</p>
               </div>
               <div>
-                <div className="text-3xl font-bold text-slate-800">
+                <div className="text-3xl font-bold text-foreground">
                   {formatTime(timeSpent)}
                 </div>
-                <p className="text-sm text-slate-600 mt-2">Tiempo</p>
+                <p className="text-sm text-muted-foreground mt-2">Tiempo</p>
               </div>
             </div>
           </CardContent>
@@ -752,8 +752,8 @@ const Simulacros = () => {
     <div className="space-y-6 pb-24 lg:pb-8" data-testid="simulacros-page">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Simulacros de Prueba</h1>
-          <p className="text-slate-600 mt-1">Practica con exámenes personalizados</p>
+          <h1 className="text-3xl font-bold text-foreground">Simulacros de Prueba</h1>
+          <p className="text-muted-foreground mt-1">Practica con exámenes personalizados</p>
         </div>
         <Button 
           onClick={() => setCreateDialogOpen(true)} 
@@ -778,9 +778,9 @@ const Simulacros = () => {
       ) : quizzes.length === 0 ? (
         <Card className="text-center py-12">
           <CardContent>
-            <Clock className="mx-auto mb-4 text-slate-400" size={48} />
-            <h3 className="text-xl font-semibold mb-2">No hay simulacros aún</h3>
-            <p className="text-slate-500 mb-6">Crea tu primer simulacro para empezar a practicar</p>
+            <Clock className="mx-auto mb-4 text-muted-foreground" size={48} />
+            <h3 className="text-xl font-semibold mb-2 text-foreground">No hay simulacros aún</h3>
+            <p className="text-muted-foreground mb-6">Crea tu primer simulacro para empezar a practicar</p>
             <Button 
               onClick={() => setCreateDialogOpen(true)} 
               className="rounded-full"

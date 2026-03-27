@@ -37,6 +37,50 @@ code {
         --input: 214.3 31.8% 91.4%;
         --ring: 187 100% 42%;
         --radius: 0.75rem;
+        
+        /* Sidebar specific */
+        --sidebar-bg: 0 0% 100%;
+        --sidebar-border: 214.3 31.8% 91.4%;
+        --sidebar-text: 222 47% 11%;
+        --sidebar-text-muted: 215.4 16.3% 46.9%;
+        
+        /* Navigation */
+        --nav-bg: 0 0% 100%;
+        --nav-active-bg: 187 100% 42%;
+        --nav-hover-bg: 186 70% 93%;
+    }
+    
+    .dark {
+        --background: 222 47% 8%;
+        --foreground: 210 40% 98%;
+        --card: 222 47% 11%;
+        --card-foreground: 210 40% 98%;
+        --popover: 222 47% 11%;
+        --popover-foreground: 210 40% 98%;
+        --primary: 187 100% 42%;
+        --primary-foreground: 222 47% 11%;
+        --secondary: 217 33% 17%;
+        --secondary-foreground: 186 70% 80%;
+        --muted: 217 33% 17%;
+        --muted-foreground: 215 20% 65%;
+        --accent: 45 100% 51%;
+        --accent-foreground: 222 47% 11%;
+        --destructive: 0 62.8% 50.6%;
+        --destructive-foreground: 210 40% 98%;
+        --border: 217 33% 20%;
+        --input: 217 33% 20%;
+        --ring: 187 100% 42%;
+        
+        /* Sidebar specific */
+        --sidebar-bg: 222 47% 11%;
+        --sidebar-border: 217 33% 20%;
+        --sidebar-text: 210 40% 98%;
+        --sidebar-text-muted: 215 20% 65%;
+        
+        /* Navigation */
+        --nav-bg: 222 47% 11%;
+        --nav-active-bg: 187 100% 42%;
+        --nav-hover-bg: 217 33% 17%;
     }
 }
 

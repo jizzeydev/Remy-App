@@ -122,12 +122,12 @@ const Dashboard = () => {
       {/* Welcome Section */}
       <div data-testid="welcome-section">
         <div className="flex items-center gap-3 mb-2">
-          <Sparkles className="text-cyan-500" size={28} />
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-900">
+          <Sparkles className="text-primary" size={28} />
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground">
             Hola, {userName} 👋
           </h1>
         </div>
-        <p className="text-slate-600 text-lg">¿Listo para aprender hoy?</p>
+        <p className="text-muted-foreground text-lg">¿Listo para aprender hoy?</p>
       </div>
 
       {/* Quick Actions */}
@@ -174,21 +174,21 @@ const Dashboard = () => {
                     return (
                       <div
                         key={course.id}
-                        className="flex items-center gap-4 p-4 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer"
+                        className="flex items-center gap-4 p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors cursor-pointer"
                         data-testid={`course-item-${index}`}
                         onClick={() => navigate(`/course/${course.id}`)}
                       >
-                        <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-xl flex items-center justify-center text-white font-bold text-xl">
+                        <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-primary to-primary/70 rounded-xl flex items-center justify-center text-primary-foreground font-bold text-xl">
                           {course.title.charAt(0)}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold truncate text-slate-900">{course.title}</h4>
-                          <p className="text-sm text-slate-500">
+                          <h4 className="font-semibold truncate text-foreground">{course.title}</h4>
+                          <p className="text-sm text-muted-foreground">
                             {progress.completed}/{progress.total} lecciones completadas
                           </p>
                           <Progress value={progress.percentage} className="mt-2 h-2" />
                         </div>
-                        <ChevronRight className="text-slate-400" size={20} />
+                        <ChevronRight className="text-muted-foreground" size={20} />
                       </div>
                     );
                   })}

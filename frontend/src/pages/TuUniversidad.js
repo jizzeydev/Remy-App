@@ -237,28 +237,28 @@ const TuUniversidad = () => {
     );
   }
 
-  // Render active quiz (Light Mode)
+  // Render active quiz
   if (activeQuiz && !quizResult) {
     const currentQuestion = activeQuiz.questions[currentQuestionIndex];
     
     return (
-      <div className="min-h-screen bg-gradient-to-b from-white to-cyan-50/30 py-8 px-4">
+      <div className="min-h-screen bg-background py-8 px-4">
         <div className="max-w-3xl mx-auto">
           {/* Quiz Header */}
           <div className="mb-6 flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold text-slate-800">{activeQuiz.evaluation}</h1>
-              <p className="text-slate-500 text-sm">{activeQuiz.course} - {activeQuiz.university}</p>
+              <h1 className="text-xl font-bold text-foreground">{activeQuiz.evaluation}</h1>
+              <p className="text-muted-foreground text-sm">{activeQuiz.course} - {activeQuiz.university}</p>
             </div>
-            <Badge className="bg-cyan-100 text-cyan-700">
+            <Badge className="bg-primary/20 text-primary">
               {currentQuestionIndex + 1} / {activeQuiz.total_questions}
             </Badge>
           </div>
           
           {/* Progress bar */}
-          <div className="h-2 bg-slate-200 rounded-full mb-8 overflow-hidden">
+          <div className="h-2 bg-secondary rounded-full mb-8 overflow-hidden">
             <div 
-              className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 transition-all duration-300"
+              className="h-full bg-gradient-to-r from-primary to-blue-500 transition-all duration-300"
               style={{ width: `${((currentQuestionIndex + 1) / activeQuiz.total_questions) * 100}%` }}
             />
           </div>
@@ -266,7 +266,7 @@ const TuUniversidad = () => {
           {/* Question Card */}
           <Card className="mb-6 shadow-lg">
             <CardContent className="pt-6">
-              <div className="text-lg text-slate-800 mb-6">
+              <div className="text-lg text-foreground mb-6">
                 <MathText text={currentQuestion.question_content} />
               </div>
               
@@ -276,7 +276,7 @@ const TuUniversidad = () => {
                   <img 
                     src={currentQuestion.image_url} 
                     alt="Imagen de la pregunta"
-                    className="max-w-full max-h-80 rounded-lg border border-slate-200"
+                    className="max-w-full max-h-80 rounded-lg border border-border"
                   />
                 </div>
               )}
@@ -293,12 +293,12 @@ const TuUniversidad = () => {
                       onClick={() => handleSelectAnswer(currentQuestion.id, letter)}
                       className={`w-full p-4 rounded-lg text-left transition-all flex items-start gap-3 border-2 ${
                         isSelected 
-                          ? 'bg-cyan-50 border-cyan-500 text-slate-800' 
-                          : 'bg-white border-slate-200 text-slate-600 hover:border-cyan-300 hover:bg-cyan-50/50'
+                          ? 'bg-primary/10 border-primary text-foreground' 
+                          : 'bg-card border-border text-muted-foreground hover:border-primary/50 hover:bg-primary/5'
                       }`}
                     >
                       <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
-                        isSelected ? 'bg-cyan-500 text-white' : 'bg-slate-100 text-slate-500'
+                        isSelected ? 'bg-primary text-primary-foreground' : 'bg-secondary text-muted-foreground'
                       }`}>
                         {letter}
                       </span>
@@ -329,10 +329,10 @@ const TuUniversidad = () => {
                   onClick={() => setCurrentQuestionIndex(idx)}
                   className={`w-8 h-8 rounded-full text-xs font-medium transition-all ${
                     idx === currentQuestionIndex
-                      ? 'bg-cyan-500 text-white'
+                      ? 'bg-primary text-primary-foreground'
                       : answers[activeQuiz.questions[idx].id]
-                        ? 'bg-green-100 text-green-600 border-2 border-green-500'
-                        : 'bg-slate-100 text-slate-400'
+                        ? 'bg-green-500/20 text-green-600 dark:text-green-400 border-2 border-green-500'
+                        : 'bg-secondary text-muted-foreground'
                   }`}
                 >
                   {idx + 1}
@@ -341,7 +341,7 @@ const TuUniversidad = () => {
             </div>
             
             {currentQuestionIndex < activeQuiz.total_questions - 1 ? (
-              <Button onClick={() => setCurrentQuestionIndex(prev => prev + 1)} className="bg-cyan-500 hover:bg-cyan-600">
+              <Button onClick={() => setCurrentQuestionIndex(prev => prev + 1)} className="bg-primary hover:bg-primary/90">
                 Siguiente
               </Button>
             ) : (

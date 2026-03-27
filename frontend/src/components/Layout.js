@@ -1,7 +1,8 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Home, ClipboardCheck, BookOpen, TrendingUp, Menu, LogOut, User, Crown, CreditCard, GraduationCap } from 'lucide-react';
+import { Home, ClipboardCheck, BookOpen, TrendingUp, Menu, LogOut, User, Crown, CreditCard, GraduationCap, Moon, Sun } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +19,7 @@ const Layout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout, hasActiveSubscription } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
@@ -48,8 +50,8 @@ const Layout = () => {
             data-testid={`nav-${item.label.toLowerCase().replace(' ', '-')}`}
             className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
               isActive
-                ? 'bg-primary text-white shadow-[0_4px_14px_rgba(0,188,212,0.3)]'
-                : 'text-slate-600 hover:bg-secondary hover:text-primary'
+                ? 'bg-primary text-primary-foreground shadow-[0_4px_14px_rgba(0,188,212,0.3)]'
+                : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
             }`}
           >
             <Icon size={20} />
@@ -60,22 +62,33 @@ const Layout = () => {
     </div>
   );
 
+  const ThemeToggle = () => (
+    <button
+      onClick={toggleTheme}
+      data-testid="theme-toggle"
+      className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+      aria-label={isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+    >
+      {isDark ? <Sun size={20} /> : <Moon size={20} />}
+    </button>
+  );
+
   const UserMenu = ({ className = "" }) => (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className={`flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors w-full ${className}`}>
+        <button className={`flex items-center gap-3 p-3 rounded-xl hover:bg-secondary transition-colors w-full ${className}`}>
           {user?.picture ? (
             <img src={user.picture} alt={user.name} className="w-10 h-10 rounded-full" />
           ) : (
-            <div className="w-10 h-10 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-700 font-semibold">
+            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold">
               {user?.name?.charAt(0)?.toUpperCase() || 'U'}
             </div>
           )}
           <div className="flex-1 text-left">
-            <p className="font-medium text-sm text-slate-900 truncate">{user?.name || 'Usuario'}</p>
+            <p className="font-medium text-sm text-foreground truncate">{user?.name || 'Usuario'}</p>
             <div className="flex items-center gap-1">
               {hasActiveSubscription ? (
-                <Badge className="bg-green-100 text-green-700 text-xs py-0">
+                <Badge className="bg-green-500/20 text-green-600 dark:text-green-400 text-xs py-0">
                   <Crown size={10} className="mr-1" />
                   Premium
                 </Badge>
@@ -90,7 +103,7 @@ const Layout = () => {
         <DropdownMenuLabel>
           <div>
             <p className="font-medium">{user?.name}</p>
-            <p className="text-xs text-slate-500 truncate">{user?.email}</p>
+            <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -99,13 +112,13 @@ const Layout = () => {
           Mi Suscripción
         </DropdownMenuItem>
         {!hasActiveSubscription && (
-          <DropdownMenuItem onClick={() => navigate('/subscribe')} className="text-cyan-600">
+          <DropdownMenuItem onClick={() => navigate('/subscribe')} className="text-primary">
             <Crown size={16} className="mr-2" />
             Suscribirse
           </DropdownMenuItem>
         )}
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+        <DropdownMenuItem onClick={handleLogout} className="text-destructive">
           <LogOut size={16} className="mr-2" />
           Cerrar sesión
         </DropdownMenuItem>
@@ -114,8 +127,8 @@ const Layout = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-cyan-50/30">
-      <aside className="hidden lg:fixed lg:left-0 lg:top-0 lg:h-screen lg:w-64 lg:flex lg:flex-col lg:border-r lg:border-slate-100 lg:bg-white lg:p-6">
+    <div className="min-h-screen bg-background">
+      <aside className="hidden lg:fixed lg:left-0 lg:top-0 lg:h-screen lg:w-64 lg:flex lg:flex-col lg:border-r lg:border-border lg:bg-card lg:p-6">
         <div className="mb-8 flex items-center gap-3">
           <img 
             src="/remy-logo.png" 
@@ -124,20 +137,24 @@ const Layout = () => {
           />
           <div>
             <h1 className="text-2xl font-bold text-primary" data-testid="app-logo">Remy</h1>
-            <p className="text-xs text-slate-500">Tu plataforma de estudio</p>
+            <p className="text-xs text-muted-foreground">Tu plataforma de estudio</p>
           </div>
         </div>
         <nav className="flex-1">
           <NavContent />
         </nav>
         
-        {/* User info at bottom of sidebar */}
-        <div className="border-t border-slate-100 pt-4 mt-4">
+        {/* Theme toggle and user info at bottom of sidebar */}
+        <div className="border-t border-border pt-4 mt-4 space-y-2">
+          <div className="flex items-center justify-between px-2">
+            <span className="text-sm text-muted-foreground">Tema</span>
+            <ThemeToggle />
+          </div>
           <UserMenu />
         </div>
       </aside>
 
-      <header className="lg:hidden sticky top-0 z-50 bg-white border-b border-slate-100 px-4 py-3 flex items-center justify-between">
+      <header className="lg:hidden sticky top-0 z-50 bg-card border-b border-border px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <img 
             src="/remy-logo.png" 
@@ -146,10 +163,11 @@ const Layout = () => {
           />
           <div>
             <h1 className="text-xl font-bold text-primary" data-testid="app-logo-mobile">Remy</h1>
-            <p className="text-xs text-slate-500">Tu plataforma de estudio</p>
+            <p className="text-xs text-muted-foreground">Tu plataforma de estudio</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <UserMenu className="p-2" />
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
@@ -175,7 +193,7 @@ const Layout = () => {
         </div>
       </main>
 
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-2 py-2 flex items-center justify-around z-50">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border px-2 py-2 flex items-center justify-around z-50">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
@@ -185,7 +203,7 @@ const Layout = () => {
               onClick={() => navigate(item.path)}
               data-testid={`mobile-nav-${item.label.toLowerCase().replace(' ', '-')}`}
               className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors min-w-[44px] ${
-                isActive ? 'text-primary' : 'text-slate-500'
+                isActive ? 'text-primary' : 'text-muted-foreground'
               }`}
             >
               <Icon size={20} />

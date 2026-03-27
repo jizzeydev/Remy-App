@@ -106,11 +106,11 @@ const Biblioteca = () => {
 
   const getLevelColor = (level) => {
     const colors = {
-      'Básico': 'bg-green-100 text-green-800',
-      'Intermedio': 'bg-blue-100 text-blue-800',
-      'Avanzado': 'bg-purple-100 text-purple-800'
+      'Básico': 'bg-green-500/20 text-green-700 dark:text-green-400',
+      'Intermedio': 'bg-blue-500/20 text-blue-700 dark:text-blue-400',
+      'Avanzado': 'bg-purple-500/20 text-purple-700 dark:text-purple-400'
     };
-    return colors[level] || 'bg-gray-100 text-gray-800';
+    return colors[level] || 'bg-muted text-muted-foreground';
   };
 
   const isSubscribed = hasActiveSubscription;
@@ -159,8 +159,8 @@ const Biblioteca = () => {
       )}
 
       <div>
-        <h1 className="text-3xl font-bold">Biblioteca de Cursos</h1>
-        <p className="text-slate-600 mt-1">
+        <h1 className="text-3xl font-bold text-foreground">Biblioteca de Cursos</h1>
+        <p className="text-muted-foreground mt-1">
           {hasAccess 
             ? 'Explora todos los cursos disponibles' 
             : 'Crea una cuenta gratis para comenzar'}
@@ -170,9 +170,9 @@ const Biblioteca = () => {
       {courses.length === 0 ? (
         <Card className="text-center py-12">
           <CardContent>
-            <GraduationCap className="mx-auto mb-4 text-slate-400" size={48} />
-            <h3 className="text-xl font-semibold mb-2">No hay cursos disponibles</h3>
-            <p className="text-slate-500">Los cursos aparecerán aquí cuando estén disponibles</p>
+            <GraduationCap className="mx-auto mb-4 text-muted-foreground" size={48} />
+            <h3 className="text-xl font-semibold mb-2 text-foreground">No hay cursos disponibles</h3>
+            <p className="text-muted-foreground">Los cursos aparecerán aquí cuando estén disponibles</p>
           </CardContent>
         </Card>
       ) : (
@@ -203,7 +203,7 @@ const Biblioteca = () => {
                     <Badge className={getLevelColor(course.level)}>
                       {course.level}
                     </Badge>
-                    <div className="flex items-center gap-3 text-sm text-slate-500">
+                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Layers size={14} />
                         {stats.chapters}
@@ -221,13 +221,13 @@ const Biblioteca = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center justify-between text-sm mb-3">
-                    <span className="text-slate-600">{course.instructor || 'Se Remonta'}</span>
-                    <span className="text-xs bg-slate-100 px-2 py-1 rounded">{course.category}</span>
+                    <span className="text-muted-foreground">{course.instructor || 'Se Remonta'}</span>
+                    <span className="text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded">{course.category}</span>
                   </div>
                   
                   {/* Progress bar */}
                   <div className="mb-3">
-                    <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
                       <span>Progreso</span>
                       <span>{stats.completedLessons}/{stats.lessons} lecciones</span>
                     </div>
