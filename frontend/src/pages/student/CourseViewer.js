@@ -84,8 +84,8 @@ const CourseViewer = () => {
     return chapters[0]?.lessons?.[0];
   };
 
-  if (loading) return <div className="text-center py-12">Cargando...</div>;
-  if (!course) return <div className="text-center py-12">Curso no encontrado</div>;
+  if (loading) return <div className="text-center py-12 text-foreground">Cargando...</div>;
+  if (!course) return <div className="text-center py-12 text-foreground">Curso no encontrado</div>;
 
   const nextLesson = findNextLesson();
 
@@ -97,9 +97,9 @@ const CourseViewer = () => {
       </Button>
 
       {/* Course header */}
-      <div className="bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl p-8 text-white">
+      <div className="bg-gradient-to-r from-primary to-blue-600 rounded-xl p-8 text-white">
         <h1 className="text-4xl font-bold mb-2">{course.title}</h1>
-        <p className="text-xl text-cyan-50 mb-4">{course.description}</p>
+        <p className="text-xl text-primary-foreground/80 mb-4">{course.description}</p>
         <div className="flex items-center gap-4 text-sm mb-6">
           <span className="bg-white/20 px-3 py-1 rounded-full">{course.level}</span>
           <span className="bg-white/20 px-3 py-1 rounded-full">
@@ -120,7 +120,7 @@ const CourseViewer = () => {
           
           {nextLesson && (
             <Button 
-              className="mt-4 bg-white text-cyan-600 hover:bg-cyan-50"
+              className="mt-4 bg-white text-primary hover:bg-white/90"
               onClick={() => navigate(`/lesson/${nextLesson.id}`)}
             >
               {completedLessons.length === 0 ? 'Comenzar curso' : 
@@ -132,12 +132,12 @@ const CourseViewer = () => {
 
       {/* Course content */}
       <div className="space-y-4">
-        <h2 className="text-2xl font-bold">Contenido del Curso</h2>
+        <h2 className="text-2xl font-bold text-foreground">Contenido del Curso</h2>
         {chapters.length === 0 ? (
           <Card>
             <CardContent className="text-center py-12">
-              <BookOpen className="mx-auto mb-4 text-slate-400" size={48} />
-              <p className="text-slate-500">Este curso aún no tiene contenido disponible</p>
+              <BookOpen className="mx-auto mb-4 text-muted-foreground" size={48} />
+              <p className="text-muted-foreground">Este curso aún no tiene contenido disponible</p>
             </CardContent>
           </Card>
         ) : (
@@ -150,27 +150,27 @@ const CourseViewer = () => {
 
             return (
               <Card key={chapter.id}>
-                <CardHeader className="bg-slate-50">
+                <CardHeader className="bg-secondary/50">
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-3">
                       <span className={`flex items-center justify-center w-10 h-10 rounded-full font-bold ${
                         chapterProgress === 100 
                           ? 'bg-green-500 text-white' 
-                          : 'bg-primary text-white'
+                          : 'bg-primary text-primary-foreground'
                       }`}>
                         {chapterProgress === 100 ? <CheckCircle size={20} /> : index + 1}
                       </span>
-                      {chapter.title}
+                      <span className="text-foreground">{chapter.title}</span>
                     </CardTitle>
-                    <span className="text-sm text-slate-500">
+                    <span className="text-sm text-muted-foreground">
                       {chapterCompleted}/{chapterLessons.length} completadas
                     </span>
                   </div>
-                  <p className="text-sm text-slate-600 ml-13">{chapter.description}</p>
+                  <p className="text-sm text-muted-foreground ml-13">{chapter.description}</p>
                 </CardHeader>
                 <CardContent className="pt-4">
                   {chapterLessons.length === 0 ? (
-                    <p className="text-sm text-slate-500 italic">No hay lecciones disponibles</p>
+                    <p className="text-sm text-muted-foreground italic">No hay lecciones disponibles</p>
                   ) : (
                     <div className="space-y-2">
                       {chapterLessons.map((lesson, lessonIndex) => {
@@ -181,35 +181,35 @@ const CourseViewer = () => {
                             onClick={() => navigate(`/lesson/${lesson.id}`)}
                             className={`w-full flex items-center justify-between p-4 border rounded-lg transition-all group ${
                               isCompleted 
-                                ? 'border-green-200 bg-green-50 hover:bg-green-100' 
-                                : 'border-slate-200 hover:bg-cyan-50 hover:border-primary'
+                                ? 'border-green-500/30 bg-green-500/10 hover:bg-green-500/20' 
+                                : 'border-border hover:bg-primary/10 hover:border-primary'
                             }`}
                           >
                             <div className="flex items-center gap-3">
                               <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
                                 isCompleted 
                                   ? 'bg-green-500 text-white' 
-                                  : 'bg-slate-100 group-hover:bg-primary group-hover:text-white'
+                                  : 'bg-secondary group-hover:bg-primary group-hover:text-primary-foreground'
                               }`}>
                                 {isCompleted ? <CheckCircle size={16} /> : <Play size={16} />}
                               </div>
                               <div className="text-left">
                                 <p className={`font-medium transition-colors ${
-                                  isCompleted ? 'text-green-700' : 'group-hover:text-primary'
+                                  isCompleted ? 'text-green-600 dark:text-green-400' : 'text-foreground group-hover:text-primary'
                                 }`}>
                                   {lessonIndex + 1}. {lesson.title}
                                 </p>
-                                <div className="flex items-center gap-2 text-xs text-slate-500 mt-1">
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
                                   <Clock size={12} />
                                   {lesson.duration_minutes} min
                                   {isCompleted && (
-                                    <span className="text-green-600 font-medium ml-2">✓ Completada</span>
+                                    <span className="text-green-600 dark:text-green-400 font-medium ml-2">✓ Completada</span>
                                   )}
                                 </div>
                               </div>
                             </div>
                             <ArrowLeft size={20} className={`rotate-180 transition-colors ${
-                              isCompleted ? 'text-green-400' : 'text-slate-400 group-hover:text-primary'
+                              isCompleted ? 'text-green-500' : 'text-muted-foreground group-hover:text-primary'
                             }`} />
                           </button>
                         );

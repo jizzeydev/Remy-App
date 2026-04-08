@@ -25,7 +25,7 @@ const formatCLP = (amount) => {
 
 // Simple bar chart component
 const MiniBarChart = ({ data, dataKey, color = "#06b6d4", height = 60 }) => {
-  if (!data || data.length === 0) return <div className="h-[60px] bg-slate-100 rounded animate-pulse" />;
+  if (!data || data.length === 0) return <div className="h-[60px] bg-secondary rounded animate-pulse" />;
   
   const max = Math.max(...data.map(d => d[dataKey] || 0), 1);
   
@@ -50,11 +50,11 @@ const MiniBarChart = ({ data, dataKey, color = "#06b6d4", height = 60 }) => {
 // Stat Card Component
 const StatCard = ({ title, value, subtitle, icon: Icon, trend, trendValue, color = "cyan" }) => {
   const colorClasses = {
-    cyan: "bg-cyan-50 text-cyan-600",
-    green: "bg-green-50 text-green-600",
-    purple: "bg-purple-50 text-purple-600",
-    blue: "bg-blue-50 text-blue-600",
-    yellow: "bg-yellow-50 text-yellow-600"
+    cyan: "bg-cyan-500/20 text-cyan-600 dark:text-cyan-400",
+    green: "bg-green-500/20 text-green-600 dark:text-green-400",
+    purple: "bg-purple-500/20 text-purple-600 dark:text-purple-400",
+    blue: "bg-blue-500/20 text-blue-600 dark:text-blue-400",
+    yellow: "bg-yellow-500/20 text-yellow-600 dark:text-yellow-400"
   };
 
   return (
@@ -65,16 +65,16 @@ const StatCard = ({ title, value, subtitle, icon: Icon, trend, trendValue, color
             <Icon size={20} />
           </div>
           {trend !== undefined && (
-            <div className={`flex items-center gap-1 text-sm ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <div className={`flex items-center gap-1 text-sm ${trend >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
               {trend >= 0 ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
               {Math.abs(trendValue || trend)}%
             </div>
           )}
         </div>
         <div className="mt-4">
-          <h3 className="text-2xl font-bold">{value}</h3>
-          <p className="text-sm text-slate-500">{title}</p>
-          {subtitle && <p className="text-xs text-slate-400 mt-1">{subtitle}</p>}
+          <h3 className="text-2xl font-bold text-foreground">{value}</h3>
+          <p className="text-sm text-muted-foreground">{title}</p>
+          {subtitle && <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>}
         </div>
       </CardContent>
     </Card>
@@ -234,7 +234,7 @@ const AdminDashboard = () => {
           {[1, 2, 3, 4].map(i => (
             <Card key={i}>
               <CardContent className="pt-6">
-                <div className="h-24 bg-slate-100 rounded animate-pulse" />
+                <div className="h-24 bg-secondary rounded animate-pulse" />
               </CardContent>
             </Card>
           ))}
@@ -249,7 +249,7 @@ const AdminDashboard = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-slate-500 mt-1">Métricas de negocio y contenido</p>
+          <p className="text-muted-foreground mt-1">Métricas de negocio y contenido</p>
         </div>
         <div className="flex items-center gap-4">
           <Select value={String(chartDays)} onValueChange={(v) => setChartDays(Number(v))}>
@@ -317,7 +317,7 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <MiniBarChart data={revenueChart} dataKey="revenue" color="#22c55e" />
-            <div className="mt-2 text-sm text-slate-500">
+            <div className="mt-2 text-sm text-muted-foreground">
               Total período: {formatCLP(revenueChart.reduce((sum, d) => sum + (d.revenue || 0), 0))}
             </div>
           </CardContent>
@@ -333,7 +333,7 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <MiniBarChart data={usersChart} dataKey="new_users" color="#3b82f6" />
-            <div className="mt-2 text-sm text-slate-500">
+            <div className="mt-2 text-sm text-muted-foreground">
               Total período: {usersChart.reduce((sum, d) => sum + (d.new_users || 0), 0)} usuarios
             </div>
           </CardContent>
@@ -349,7 +349,7 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <MiniBarChart data={simulationsChart} dataKey="simulations" color="#06b6d4" />
-            <div className="mt-2 text-sm text-slate-500">
+            <div className="mt-2 text-sm text-muted-foreground">
               Total período: {simulationsChart.reduce((sum, d) => sum + (d.simulations || 0), 0)} simulacros
             </div>
           </CardContent>
@@ -367,40 +367,40 @@ const AdminDashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-secondary rounded-lg">
               <div className="flex items-center gap-3">
                 <GraduationCap size={20} className="text-blue-500" />
-                <span>Cursos</span>
+                <span className="text-foreground">Cursos</span>
               </div>
-              <span className="font-bold">{metrics.content.courses}</span>
+              <span className="font-bold text-foreground">{metrics.content.courses}</span>
             </div>
-            <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-secondary rounded-lg">
               <div className="flex items-center gap-3">
                 <BookOpen size={20} className="text-green-500" />
-                <span>Lecciones</span>
+                <span className="text-foreground">Lecciones</span>
               </div>
-              <span className="font-bold">{metrics.content.lessons}</span>
+              <span className="font-bold text-foreground">{metrics.content.lessons}</span>
             </div>
-            <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-secondary rounded-lg">
               <div className="flex items-center gap-3">
                 <ClipboardList size={20} className="text-purple-500" />
-                <span>Preguntas</span>
+                <span className="text-foreground">Preguntas</span>
               </div>
-              <span className="font-bold">{metrics.content.questions}</span>
+              <span className="font-bold text-foreground">{metrics.content.questions}</span>
             </div>
-            <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-secondary rounded-lg">
               <div className="flex items-center gap-3">
                 <Building2 size={20} className="text-orange-500" />
-                <span>Universidades</span>
+                <span className="text-foreground">Universidades</span>
               </div>
-              <span className="font-bold">{metrics.content.universities}</span>
+              <span className="font-bold text-foreground">{metrics.content.universities}</span>
             </div>
-            <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-secondary rounded-lg">
               <div className="flex items-center gap-3">
                 <Target size={20} className="text-red-500" />
-                <span>Preguntas Uni.</span>
+                <span className="text-foreground">Preguntas Uni.</span>
               </div>
-              <span className="font-bold">{metrics.content.university_questions}</span>
+              <span className="font-bold text-foreground">{metrics.content.university_questions}</span>
             </div>
           </CardContent>
         </Card>
@@ -415,30 +415,30 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             {recentActivity.length === 0 ? (
-              <p className="text-slate-500 text-center py-8">Sin actividad reciente</p>
+              <p className="text-muted-foreground text-center py-8">Sin actividad reciente</p>
             ) : (
               <div className="space-y-3 max-h-[400px] overflow-y-auto">
                 {recentActivity.map((activity, index) => (
                   <div 
                     key={index}
-                    className="flex items-center gap-4 p-3 bg-slate-50 rounded-lg"
+                    className="flex items-center gap-4 p-3 bg-secondary rounded-lg"
                   >
                     <div className={`p-2 rounded-full ${
-                      activity.type === 'user_registration' ? 'bg-blue-100 text-blue-600' :
-                      activity.type === 'subscription' ? 'bg-green-100 text-green-600' :
-                      'bg-cyan-100 text-cyan-600'
+                      activity.type === 'user_registration' ? 'bg-blue-500/20 text-blue-600 dark:text-blue-400' :
+                      activity.type === 'subscription' ? 'bg-green-500/20 text-green-600 dark:text-green-400' :
+                      'bg-cyan-500/20 text-cyan-600 dark:text-cyan-400'
                     }`}>
                       {activity.type === 'user_registration' && <UserPlus size={16} />}
                       {activity.type === 'subscription' && <CreditCard size={16} />}
                       {activity.type === 'simulation' && <Target size={16} />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate">
+                      <p className="font-medium text-sm truncate text-foreground">
                         {activity.type === 'user_registration' && `Nuevo usuario: ${activity.name || activity.email}`}
                         {activity.type === 'subscription' && `Suscripción ${activity.plan}: ${activity.name || activity.email}`}
                         {activity.type === 'simulation' && `Simulacro: ${activity.course || 'N/A'}`}
                       </p>
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs text-muted-foreground">
                         {activity.timestamp ? new Date(activity.timestamp).toLocaleString('es-CL') : ''}
                       </p>
                     </div>
@@ -465,27 +465,27 @@ const AdminDashboard = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="text-center p-4 bg-slate-50 rounded-xl">
-              <p className="text-3xl font-bold text-cyan-600">{metrics.subscriptions.conversion_rate}%</p>
-              <p className="text-sm text-slate-500 mt-1">Tasa de conversión</p>
-              <p className="text-xs text-slate-400">Usuarios → Suscriptores</p>
+            <div className="text-center p-4 bg-secondary rounded-xl">
+              <p className="text-3xl font-bold text-cyan-600 dark:text-cyan-400">{metrics.subscriptions.conversion_rate}%</p>
+              <p className="text-sm text-muted-foreground mt-1">Tasa de conversión</p>
+              <p className="text-xs text-muted-foreground">Usuarios → Suscriptores</p>
             </div>
-            <div className="text-center p-4 bg-slate-50 rounded-xl">
-              <p className="text-3xl font-bold text-purple-600">{metrics.users.trial_active}</p>
-              <p className="text-sm text-slate-500 mt-1">En prueba gratuita</p>
-              <p className="text-xs text-slate-400">Trial activo</p>
+            <div className="text-center p-4 bg-secondary rounded-xl">
+              <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">{metrics.users.trial_active}</p>
+              <p className="text-sm text-muted-foreground mt-1">En prueba gratuita</p>
+              <p className="text-xs text-muted-foreground">Trial activo</p>
             </div>
-            <div className="text-center p-4 bg-slate-50 rounded-xl">
-              <p className="text-3xl font-bold text-green-600">{formatCLP(metrics.revenue.mrr)}</p>
-              <p className="text-sm text-slate-500 mt-1">MRR</p>
-              <p className="text-xs text-slate-400">Ingresos recurrentes</p>
+            <div className="text-center p-4 bg-secondary rounded-xl">
+              <p className="text-3xl font-bold text-green-600 dark:text-green-400">{formatCLP(metrics.revenue.mrr)}</p>
+              <p className="text-sm text-muted-foreground mt-1">MRR</p>
+              <p className="text-xs text-muted-foreground">Ingresos recurrentes</p>
             </div>
-            <div className="text-center p-4 bg-slate-50 rounded-xl">
-              <p className="text-3xl font-bold text-blue-600">
+            <div className="text-center p-4 bg-secondary rounded-xl">
+              <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
                 {metrics.users.total > 0 ? (metrics.simulations.total / metrics.users.total).toFixed(1) : 0}
               </p>
-              <p className="text-sm text-slate-500 mt-1">Simulacros/Usuario</p>
-              <p className="text-xs text-slate-400">Engagement promedio</p>
+              <p className="text-sm text-muted-foreground mt-1">Simulacros/Usuario</p>
+              <p className="text-xs text-muted-foreground">Engagement promedio</p>
             </div>
           </div>
         </CardContent>
@@ -505,10 +505,10 @@ const AdminDashboard = () => {
         <CardContent>
           <div className="space-y-6">
             {/* Main toggle */}
-            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+            <div className="flex items-center justify-between p-4 bg-secondary rounded-xl">
               <div>
-                <p className="font-medium">Prueba Gratuita</p>
-                <p className="text-sm text-slate-500">
+                <p className="font-medium text-foreground">Prueba Gratuita</p>
+                <p className="text-sm text-muted-foreground">
                   {trialSettings.enabled 
                     ? 'Los nuevos usuarios reciben prueba gratuita al registrarse'
                     : 'Desactivada - Los nuevos usuarios no reciben prueba gratuita'}

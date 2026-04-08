@@ -74,7 +74,7 @@ const QuizCard = ({ quiz, onStart, onDelete }) => {
               </>
             )}
           </span>
-          <span className="block text-xs text-slate-400">
+          <span className="block text-xs text-muted-foreground">
             {quiz.created_at && new Date(quiz.created_at).toLocaleDateString('es-CL', {
               day: 'numeric',
               month: 'short',

@@ -109,7 +109,7 @@ const LessonViewer = () => {
         navigate(`/lesson/${nextLesson.id}`);
       } else {
         // Course completed!
-        toast.success('🎉 ¡Felicidades! Has completado el curso');
+        toast.success('¡Felicidades! Has completado el curso');
         navigate(`/course/${course.id}`);
       }
     } catch (error) {
@@ -131,8 +131,8 @@ const LessonViewer = () => {
     }
   };
 
-  if (loading) return <div className="text-center py-12">Cargando...</div>;
-  if (!lesson) return <div className="text-center py-12">Lección no encontrada</div>;
+  if (loading) return <div className="text-center py-12 text-foreground">Cargando...</div>;
+  if (!lesson) return <div className="text-center py-12 text-foreground">Lección no encontrada</div>;
 
   const isLastLesson = currentIndex === allLessons.length - 1;
   const isFirstLesson = currentIndex === 0;
@@ -147,7 +147,7 @@ const LessonViewer = () => {
         </Button>
         
         {allLessons.length > 0 && (
-          <span className="text-sm text-slate-500">
+          <span className="text-sm text-muted-foreground">
             Lección {currentIndex + 1} de {allLessons.length}
           </span>
         )}
@@ -158,26 +158,26 @@ const LessonViewer = () => {
         <CardContent className="pt-6">
           <div className="mb-6">
             {chapter && (
-              <div className="flex items-center gap-2 text-sm text-cyan-600 mb-2">
+              <div className="flex items-center gap-2 text-sm text-primary mb-2">
                 <BookOpen size={16} />
                 <span>{chapter.title}</span>
               </div>
             )}
-            <h1 className="text-3xl font-bold mb-3">{lesson.title}</h1>
-            <div className="flex items-center gap-2 text-sm text-slate-600">
+            <h1 className="text-3xl font-bold mb-3 text-foreground">{lesson.title}</h1>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Clock size={16} />
               <span>{lesson.duration_minutes} minutos</span>
             </div>
           </div>
 
-          <div className="prose prose-slate max-w-none">
+          <div className="prose prose-slate dark:prose-invert max-w-none">
             <MarkdownRenderer content={lesson.content} />
           </div>
         </CardContent>
       </Card>
 
       {/* Navigation footer */}
-      <Card className="bg-slate-50">
+      <Card className="bg-secondary/50">
         <CardContent className="py-4">
           <div className="flex items-center justify-between">
             <Button
@@ -193,7 +193,7 @@ const LessonViewer = () => {
             <Button
               onClick={handleNextLesson}
               disabled={markingComplete}
-              className="gap-2 bg-cyan-500 hover:bg-cyan-600"
+              className="gap-2 bg-primary hover:bg-primary/90"
               size="lg"
             >
               {markingComplete ? (
@@ -216,7 +216,7 @@ const LessonViewer = () => {
           </div>
           
           {/* Progress hint */}
-          <p className="text-center text-xs text-slate-500 mt-3">
+          <p className="text-center text-xs text-muted-foreground mt-3">
             {isLastLesson 
               ? 'Esta es la última lección del curso' 
               : `Siguiente: ${allLessons[currentIndex + 1]?.title || ''}`

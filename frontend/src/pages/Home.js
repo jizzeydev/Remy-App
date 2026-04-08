@@ -46,7 +46,7 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-cyan-50/30 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-background via-primary/5 to-background">
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
@@ -62,11 +62,11 @@ const Home = () => {
                 Nueva plataforma
               </span>
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 text-foreground">
               Domina ciencias y
               <span className="block text-primary mt-2">matemáticas sin estrés</span>
             </h1>
-            <p className="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto mb-8 leading-relaxed">
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto mb-8 leading-relaxed">
               Remy es tu tutor inteligente 24/7. Resuelve tus dudas al instante, genera simulacros personalizados y crea resúmenes automáticos de tus materiales.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -97,7 +97,7 @@ const Home = () => {
             className="mt-16 relative"
           >
             <div className="relative mx-auto max-w-4xl">
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-200/40 to-blue-200/40 blur-3xl rounded-full"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-blue-500/20 blur-3xl rounded-full"></div>
               <img
                 src="https://images.unsplash.com/photo-1758521541622-d1e6be8c39bb"
                 alt="Estudiante usando Remy"
@@ -110,13 +110,13 @@ const Home = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-card">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-foreground">
               ¿Por qué elegir Remy?
             </h2>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Una herramienta suprema para la educación. Todo lo que necesitas para dominar tus ramos.
             </p>
           </div>
@@ -132,13 +132,13 @@ const Home = () => {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   viewport={{ once: true }}
                   data-testid={`feature-card-${index}`}
-                  className="bg-white border border-slate-100 rounded-2xl p-6 hover:shadow-[0_8px_24px_rgba(0,188,212,0.15)] transition-all duration-300 hover:-translate-y-1"
+                  className="bg-card border border-border rounded-2xl p-6 hover:shadow-[0_8px_24px_rgba(0,188,212,0.15)] transition-all duration-300 hover:-translate-y-1"
                 >
                   <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${feature.color} mb-4`}>
                     <Icon className="text-white" size={24} />
                   </div>
-                  <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-                  <p className="text-slate-600 leading-relaxed">{feature.description}</p>
+                  <h3 className="text-xl font-semibold mb-3 text-foreground">{feature.title}</h3>
+                  <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
                 </motion.div>
               );
             })}
@@ -147,18 +147,18 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-cyan-500 to-blue-500">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-primary to-blue-500">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
             Comienza a estudiar de forma inteligente
           </h2>
-          <p className="text-xl text-cyan-50 mb-8">
+          <p className="text-xl text-white/80 mb-8">
             Únete a más de 1,000 estudiantes que ya están mejorando sus calificaciones con Remy.
           </p>
           <Button
             onClick={() => navigate('/dashboard')}
             data-testid="cta-button"
-            className="px-8 py-6 text-lg rounded-full bg-white text-primary hover:bg-cyan-50 shadow-xl"
+            className="px-8 py-6 text-lg rounded-full bg-white text-primary hover:bg-white/90 shadow-xl"
           >
             Empezar gratis
           </Button>

@@ -116,16 +116,16 @@ const Progreso = () => {
 
   // Get grade color
   const getGradeColor = (grade) => {
-    if (grade >= 6) return 'text-green-600';
-    if (grade >= 5) return 'text-cyan-600';
-    if (grade >= 4) return 'text-yellow-600';
-    return 'text-red-600';
+    if (grade >= 6) return 'text-green-600 dark:text-green-400';
+    if (grade >= 5) return 'text-primary';
+    if (grade >= 4) return 'text-yellow-600 dark:text-yellow-400';
+    return 'text-red-600 dark:text-red-400';
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="animate-spin text-cyan-500" size={32} />
+        <Loader2 className="animate-spin text-primary" size={32} />
       </div>
     );
   }
@@ -133,47 +133,47 @@ const Progreso = () => {
   return (
     <div className="space-y-6 pb-24 lg:pb-8" data-testid="progreso-page">
       <div>
-        <h1 className="text-3xl font-bold text-slate-900">Mi Progreso</h1>
-        <p className="text-slate-600 mt-1">Tu avance de aprendizaje en Remy</p>
+        <h1 className="text-3xl font-bold text-foreground">Mi Progreso</h1>
+        <p className="text-muted-foreground mt-1">Tu avance de aprendizaje en Remy</p>
       </div>
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Lessons Completed */}
-        <Card className="border-0 shadow-md bg-gradient-to-br from-cyan-50 to-white">
+        <Card className="border-0 shadow-md bg-gradient-to-br from-primary/10 to-transparent">
           <CardContent className="pt-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-slate-500 mb-1">Lecciones completadas</p>
-                <p className="text-4xl font-bold text-slate-900">{completedLessons}</p>
-                <p className="text-sm text-slate-500 mt-1">de {totalLessons} totales</p>
+                <p className="text-sm text-muted-foreground mb-1">Lecciones completadas</p>
+                <p className="text-4xl font-bold text-foreground">{completedLessons}</p>
+                <p className="text-sm text-muted-foreground mt-1">de {totalLessons} totales</p>
               </div>
-              <div className="bg-cyan-100 p-3 rounded-xl">
-                <BookOpen className="text-cyan-600" size={24} />
+              <div className="bg-primary/20 p-3 rounded-xl">
+                <BookOpen className="text-primary" size={24} />
               </div>
             </div>
             <Progress value={overallProgress} className="mt-4 h-2" />
-            <p className="text-xs text-slate-500 mt-2">{overallProgress}% completado</p>
+            <p className="text-xs text-muted-foreground mt-2">{overallProgress}% completado</p>
           </CardContent>
         </Card>
 
         {/* Quizzes Taken */}
-        <Card className="border-0 shadow-md bg-gradient-to-br from-purple-50 to-white">
+        <Card className="border-0 shadow-md bg-gradient-to-br from-purple-500/10 to-transparent">
           <CardContent className="pt-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-slate-500 mb-1">Simulacros realizados</p>
-                <p className="text-4xl font-bold text-slate-900">{quizStats.total}</p>
-                <p className="text-sm text-slate-500 mt-1">simulacros de práctica</p>
+                <p className="text-sm text-muted-foreground mb-1">Simulacros realizados</p>
+                <p className="text-4xl font-bold text-foreground">{quizStats.total}</p>
+                <p className="text-sm text-muted-foreground mt-1">simulacros de práctica</p>
               </div>
-              <div className="bg-purple-100 p-3 rounded-xl">
-                <ClipboardCheck className="text-purple-600" size={24} />
+              <div className="bg-purple-500/20 p-3 rounded-xl">
+                <ClipboardCheck className="text-purple-600 dark:text-purple-400" size={24} />
               </div>
             </div>
             {quizStats.total > 0 && (
               <Button 
                 variant="link" 
-                className="p-0 h-auto mt-4 text-purple-600"
+                className="p-0 h-auto mt-4 text-purple-600 dark:text-purple-400"
                 onClick={() => navigate('/simulacros')}
               >
                 Ver historial <ChevronRight size={16} />
@@ -183,31 +183,31 @@ const Progreso = () => {
         </Card>
 
         {/* Average Grade */}
-        <Card className="border-0 shadow-md bg-gradient-to-br from-green-50 to-white">
+        <Card className="border-0 shadow-md bg-gradient-to-br from-green-500/10 to-transparent">
           <CardContent className="pt-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-slate-500 mb-1">Nota promedio</p>
+                <p className="text-sm text-muted-foreground mb-1">Nota promedio</p>
                 {quizStats.total > 0 ? (
                   <>
                     <p className={`text-4xl font-bold ${getGradeColor(quizStats.average)}`}>
                       {quizStats.average}
                     </p>
-                    <p className="text-sm text-slate-500 mt-1">escala 1.0 - 7.0</p>
+                    <p className="text-sm text-muted-foreground mt-1">escala 1.0 - 7.0</p>
                   </>
                 ) : (
                   <>
-                    <p className="text-4xl font-bold text-slate-300">-</p>
-                    <p className="text-sm text-slate-400 mt-1">Sin simulacros aún</p>
+                    <p className="text-4xl font-bold text-muted-foreground">-</p>
+                    <p className="text-sm text-muted-foreground mt-1">Sin simulacros aún</p>
                   </>
                 )}
               </div>
-              <div className="bg-green-100 p-3 rounded-xl">
-                <Award className="text-green-600" size={24} />
+              <div className="bg-green-500/20 p-3 rounded-xl">
+                <Award className="text-green-600 dark:text-green-400" size={24} />
               </div>
             </div>
             {quizStats.average >= 4 && quizStats.total > 0 && (
-              <div className="mt-4 text-sm text-green-600 flex items-center gap-1">
+              <div className="mt-4 text-sm text-green-600 dark:text-green-400 flex items-center gap-1">
                 <TrendingUp size={14} />
                 {quizStats.average >= 6 ? '¡Excelente trabajo!' : 
                  quizStats.average >= 5 ? '¡Vas muy bien!' : 'Sigue practicando'}
@@ -225,7 +225,7 @@ const Progreso = () => {
         </CardHeader>
         <CardContent>
           {courses.length === 0 ? (
-            <div className="text-center py-8 text-slate-500">
+            <div className="text-center py-8 text-muted-foreground">
               No hay cursos disponibles aún
             </div>
           ) : (
@@ -235,17 +235,17 @@ const Progreso = () => {
                 return (
                   <div 
                     key={course.id} 
-                    className="p-4 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer"
+                    className="p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors cursor-pointer"
                     onClick={() => navigate(`/course/${course.id}`)}
                   >
                     <div className="flex items-center justify-between mb-3">
                       <div>
-                        <h4 className="font-semibold text-slate-900">{course.title}</h4>
-                        <p className="text-sm text-slate-500">{course.category}</p>
+                        <h4 className="font-semibold text-foreground">{course.title}</h4>
+                        <p className="text-sm text-muted-foreground">{course.category}</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-lg font-bold text-cyan-600">{progress.percentage}%</p>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-lg font-bold text-primary">{progress.percentage}%</p>
+                        <p className="text-xs text-muted-foreground">
                           {progress.completed}/{progress.total} lecciones
                         </p>
                       </div>
@@ -272,10 +272,10 @@ const Progreso = () => {
                 <div 
                   key={idx}
                   className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg ${
-                    grade >= 6 ? 'bg-green-100 text-green-700' :
-                    grade >= 5 ? 'bg-cyan-100 text-cyan-700' :
-                    grade >= 4 ? 'bg-yellow-100 text-yellow-700' :
-                    'bg-red-100 text-red-700'
+                    grade >= 6 ? 'bg-green-500/20 text-green-600 dark:text-green-400' :
+                    grade >= 5 ? 'bg-primary/20 text-primary' :
+                    grade >= 4 ? 'bg-yellow-500/20 text-yellow-600 dark:text-yellow-400' :
+                    'bg-red-500/20 text-red-600 dark:text-red-400'
                   }`}
                 >
                   {grade.toFixed(1)}
@@ -290,16 +290,16 @@ const Progreso = () => {
       {completedLessons === 0 && quizStats.total === 0 && (
         <Card className="border-dashed">
           <CardContent className="py-12 text-center">
-            <div className="w-16 h-16 bg-cyan-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-              <TrendingUp className="text-cyan-600" size={32} />
+            <div className="w-16 h-16 bg-primary/20 rounded-full mx-auto mb-4 flex items-center justify-center">
+              <TrendingUp className="text-primary" size={32} />
             </div>
-            <h3 className="text-xl font-semibold text-slate-900 mb-2">
+            <h3 className="text-xl font-semibold text-foreground mb-2">
               ¡Comienza tu aventura de aprendizaje!
             </h3>
-            <p className="text-slate-500 mb-6 max-w-md mx-auto">
+            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
               Completa lecciones y realiza simulacros para ver tu progreso aquí.
             </p>
-            <Button onClick={() => navigate('/biblioteca')} className="bg-cyan-500 hover:bg-cyan-600">
+            <Button onClick={() => navigate('/biblioteca')} className="bg-primary hover:bg-primary/90">
               Explorar cursos
             </Button>
           </CardContent>

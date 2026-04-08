@@ -195,7 +195,7 @@ const Dashboard = () => {
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <p className="text-slate-500 mb-4">No hay cursos disponibles aún</p>
+                  <p className="text-muted-foreground mb-4">No hay cursos disponibles aún</p>
                   <Button onClick={() => navigate('/biblioteca')} data-testid="browse-courses-button">
                     Explorar cursos
                   </Button>
@@ -215,8 +215,8 @@ const Dashboard = () => {
             <CardContent className="space-y-4">
               <div>
                 <div className="flex justify-between mb-2">
-                  <span className="text-sm font-medium text-slate-600">Lecciones completadas</span>
-                  <span className="text-sm font-bold text-cyan-600">
+                  <span className="text-sm font-medium text-muted-foreground">Lecciones completadas</span>
+                  <span className="text-sm font-bold text-primary">
                     {stats.lessons}/{stats.totalLessons}
                   </span>
                 </div>
@@ -227,18 +227,18 @@ const Dashboard = () => {
               </div>
               <div>
                 <div className="flex justify-between mb-2">
-                  <span className="text-sm font-medium text-slate-600">Simulacros realizados</span>
-                  <span className="text-sm font-bold text-purple-600">{stats.quizzes}</span>
+                  <span className="text-sm font-medium text-muted-foreground">Simulacros realizados</span>
+                  <span className="text-sm font-bold text-purple-600 dark:text-purple-400">{stats.quizzes}</span>
                 </div>
               </div>
               {stats.quizzes > 0 && (
                 <div>
                   <div className="flex justify-between mb-2">
-                    <span className="text-sm font-medium text-slate-600">Nota promedio</span>
+                    <span className="text-sm font-medium text-muted-foreground">Nota promedio</span>
                     <span className={`text-sm font-bold ${
-                      stats.average >= 6 ? 'text-green-600' :
-                      stats.average >= 5 ? 'text-cyan-600' :
-                      stats.average >= 4 ? 'text-yellow-600' : 'text-red-600'
+                      stats.average >= 6 ? 'text-green-600 dark:text-green-400' :
+                      stats.average >= 5 ? 'text-primary' :
+                      stats.average >= 4 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400'
                     }`}>
                       {stats.average}
                     </span>
@@ -246,7 +246,7 @@ const Dashboard = () => {
                 </div>
               )}
               <Button
-                className="w-full mt-4 rounded-full bg-cyan-500 hover:bg-cyan-600"
+                className="w-full mt-4 rounded-full bg-primary hover:bg-primary/90"
                 onClick={() => navigate('/progreso')}
                 data-testid="view-progress-button"
               >
@@ -257,13 +257,13 @@ const Dashboard = () => {
           </Card>
 
           {/* Study Tip */}
-          <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200" data-testid="study-tip-card">
+          <Card className="bg-gradient-to-br from-amber-500/10 to-orange-500/10 border-amber-500/20" data-testid="study-tip-card">
             <CardHeader>
-              <CardTitle className="text-lg text-amber-900">Consejo del día</CardTitle>
+              <CardTitle className="text-lg text-amber-600 dark:text-amber-400">Consejo del día</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-amber-800 leading-relaxed text-sm">
-                💡 Estudia en bloques de 25 minutos seguidos de 5 minutos de descanso. Esta técnica mejora la concentración y retención.
+              <p className="text-foreground leading-relaxed text-sm">
+                Estudia en bloques de 25 minutos seguidos de 5 minutos de descanso. Esta técnica mejora la concentración y retención.
               </p>
             </CardContent>
           </Card>

@@ -355,30 +355,30 @@ const TuUniversidad = () => {
     );
   }
 
-  // Render quiz result (Light Mode)
+  // Render quiz result
   if (quizResult) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-white to-cyan-50/30 py-8 px-4">
+      <div className="min-h-screen bg-background py-8 px-4">
         <div className="max-w-3xl mx-auto">
           {/* Result Header */}
           <Card className="mb-6 shadow-lg">
             <CardContent className="pt-6 text-center">
               <div className={`w-24 h-24 mx-auto rounded-full flex items-center justify-center mb-4 ${
-                quizResult.score >= 60 ? 'bg-green-100' : 'bg-red-100'
+                quizResult.score >= 60 ? 'bg-green-500/20' : 'bg-red-500/20'
               }`}>
                 <span className={`text-4xl font-bold ${
-                  quizResult.score >= 60 ? 'text-green-600' : 'text-red-600'
+                  quizResult.score >= 60 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
                 }`}>
                   {quizResult.score}%
                 </span>
               </div>
-              <h2 className="text-2xl font-bold text-slate-800 mb-2">
+              <h2 className="text-2xl font-bold text-foreground mb-2">
                 {quizResult.score >= 60 ? '¡Buen trabajo!' : 'Sigue practicando'}
               </h2>
-              <p className="text-slate-500">
+              <p className="text-muted-foreground">
                 {quizResult.correct_count} de {quizResult.total_questions} respuestas correctas
               </p>
-              <div className="mt-4 text-sm text-slate-400">
+              <div className="mt-4 text-sm text-muted-foreground">
                 {quizResult.university} - {quizResult.course} - {quizResult.evaluation}
               </div>
             </CardContent>
@@ -403,7 +403,7 @@ const TuUniversidad = () => {
                       )}
                     </div>
                     <div className="flex-1">
-                      <div className="text-slate-800 text-sm mb-2">
+                      <div className="text-foreground text-sm mb-2">
                         <MathText text={r.question_content} />
                       </div>
                       
@@ -413,21 +413,21 @@ const TuUniversidad = () => {
                           <img 
                             src={r.image_url} 
                             alt="Imagen"
-                            className="max-w-xs max-h-40 rounded border border-slate-200"
+                            className="max-w-xs max-h-40 rounded border border-border"
                           />
                         </div>
                       )}
                       
                       <div className="flex gap-4 text-xs">
-                        <span className={r.is_correct ? 'text-green-600' : 'text-red-600'}>
+                        <span className={r.is_correct ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>
                           Tu respuesta: {r.user_answer || '-'}
                         </span>
                         {!r.is_correct && (
-                          <span className="text-green-600">Correcta: {r.correct_answer}</span>
+                          <span className="text-green-600 dark:text-green-400">Correcta: {r.correct_answer}</span>
                         )}
                       </div>
                       {r.solution_content && (
-                        <div className="mt-2 p-3 bg-slate-50 rounded text-sm text-slate-600 border border-slate-200">
+                        <div className="mt-2 p-3 bg-secondary rounded text-sm text-foreground border border-border">
                           <strong>Solución:</strong> <MathText text={r.solution_content} />
                         </div>
                       )}
@@ -443,7 +443,7 @@ const TuUniversidad = () => {
             <Button variant="outline" onClick={resetQuiz} className="flex-1">
               <ArrowLeft size={16} className="mr-2" /> Volver
             </Button>
-            <Button onClick={handleStartSimulation} className="flex-1 bg-cyan-500 hover:bg-cyan-600">
+            <Button onClick={handleStartSimulation} className="flex-1 bg-primary hover:bg-primary/90">
               <Play size={16} className="mr-2" /> Nuevo Simulacro
             </Button>
           </div>
@@ -452,16 +452,16 @@ const TuUniversidad = () => {
     );
   }
 
-  // Render selection UI (Light Mode)
+  // Render selection UI
   return (
     <div className="space-y-8">
       {/* Header */}
       <div className="text-center">
-        <div className="w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-gradient-to-br from-primary to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
           <GraduationCap size={32} className="text-white" />
         </div>
-        <h1 className="text-3xl font-bold text-slate-800 mb-2">Tu Universidad</h1>
-        <p className="text-slate-500 max-w-xl mx-auto">
+        <h1 className="text-3xl font-bold text-foreground mb-2">Tu Universidad</h1>
+        <p className="text-muted-foreground max-w-xl mx-auto">
           Selecciona tu universidad, curso y evaluación para generar un simulacro 
           personalizado con preguntas de exámenes anteriores.
         </p>
@@ -469,15 +469,15 @@ const TuUniversidad = () => {
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="animate-spin text-cyan-500" size={40} />
+          <Loader2 className="animate-spin text-primary" size={40} />
         </div>
       ) : (
         <div className="grid md:grid-cols-3 gap-6">
           {/* Step 1: Universities */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-full bg-cyan-500 flex items-center justify-center text-white font-bold">1</div>
-              <h2 className="text-lg font-semibold text-slate-800">Universidad</h2>
+              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold">1</div>
+              <h2 className="text-lg font-semibold text-foreground">Universidad</h2>
             </div>
             <div className="space-y-2">
               {universities.map(uni => (
@@ -486,26 +486,26 @@ const TuUniversidad = () => {
                   onClick={() => handleSelectUniversity(uni)}
                   className={`w-full p-4 rounded-lg text-left transition-all border-2 ${
                     selectedUniversity?.id === uni.id
-                      ? 'bg-cyan-50 border-cyan-500'
-                      : 'bg-white border-slate-200 hover:border-cyan-300'
+                      ? 'bg-primary/10 border-primary'
+                      : 'bg-card border-border hover:border-primary/50'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                    <div className="w-10 h-10 bg-gradient-to-br from-primary to-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
                       {uni.short_name?.substring(0, 2) || uni.name.charAt(0)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-slate-800 font-medium truncate">{uni.name}</p>
-                      <p className="text-slate-400 text-sm">{uni.courses_count} cursos</p>
+                      <p className="text-foreground font-medium truncate">{uni.name}</p>
+                      <p className="text-muted-foreground text-sm">{uni.courses_count} cursos</p>
                     </div>
                     {selectedUniversity?.id === uni.id && (
-                      <ChevronRight className="text-cyan-500" size={20} />
+                      <ChevronRight className="text-primary" size={20} />
                     )}
                   </div>
                 </button>
               ))}
               {universities.length === 0 && (
-                <p className="text-slate-400 text-center py-8">No hay universidades disponibles</p>
+                <p className="text-muted-foreground text-center py-8">No hay universidades disponibles</p>
               )}
             </div>
           </div>
@@ -514,9 +514,9 @@ const TuUniversidad = () => {
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
-                selectedUniversity ? 'bg-cyan-500 text-white' : 'bg-slate-200 text-slate-400'
+                selectedUniversity ? 'bg-primary text-primary-foreground' : 'bg-secondary text-muted-foreground'
               }`}>2</div>
-              <h2 className="text-lg font-semibold text-slate-800">Curso</h2>
+              <h2 className="text-lg font-semibold text-foreground">Curso</h2>
             </div>
             {selectedUniversity ? (
               <div className="space-y-2">
@@ -526,29 +526,29 @@ const TuUniversidad = () => {
                     onClick={() => handleSelectCourse(course)}
                     className={`w-full p-4 rounded-lg text-left transition-all border-2 ${
                       selectedCourse?.id === course.id
-                        ? 'bg-cyan-50 border-cyan-500'
-                        : 'bg-white border-slate-200 hover:border-cyan-300'
+                        ? 'bg-primary/10 border-primary'
+                        : 'bg-card border-border hover:border-primary/50'
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-slate-800 font-medium">{course.name}</p>
+                        <p className="text-foreground font-medium">{course.name}</p>
                         {course.code && (
-                          <Badge variant="outline" className="text-slate-400 mt-1">{course.code}</Badge>
+                          <Badge variant="outline" className="text-muted-foreground mt-1">{course.code}</Badge>
                         )}
                       </div>
-                      <span className="text-slate-400 text-sm">{course.evaluations_count} eval.</span>
+                      <span className="text-muted-foreground text-sm">{course.evaluations_count} eval.</span>
                     </div>
                   </button>
                 ))}
                 {courses.length === 0 && (
-                  <p className="text-slate-400 text-center py-8">No hay cursos disponibles</p>
+                  <p className="text-muted-foreground text-center py-8">No hay cursos disponibles</p>
                 )}
               </div>
             ) : (
-              <div className="bg-slate-50 rounded-lg p-8 text-center border-2 border-dashed border-slate-200">
-                <Building2 className="mx-auto text-slate-300 mb-2" size={32} />
-                <p className="text-slate-400">Selecciona una universidad</p>
+              <div className="bg-secondary/50 rounded-lg p-8 text-center border-2 border-dashed border-border">
+                <Building2 className="mx-auto text-muted-foreground mb-2" size={32} />
+                <p className="text-muted-foreground">Selecciona una universidad</p>
               </div>
             )}
           </div>
@@ -557,9 +557,9 @@ const TuUniversidad = () => {
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
-                selectedCourse ? 'bg-cyan-500 text-white' : 'bg-slate-200 text-slate-400'
+                selectedCourse ? 'bg-primary text-primary-foreground' : 'bg-secondary text-muted-foreground'
               }`}>3</div>
-              <h2 className="text-lg font-semibold text-slate-800">Evaluación</h2>
+              <h2 className="text-lg font-semibold text-foreground">Evaluación</h2>
             </div>
             {selectedCourse ? (
               <div className="space-y-4">
@@ -570,23 +570,23 @@ const TuUniversidad = () => {
                       onClick={() => setSelectedEvaluation(evaluation)}
                       className={`w-full p-4 rounded-lg text-left transition-all border-2 ${
                         selectedEvaluation?.id === evaluation.id
-                          ? 'bg-cyan-50 border-cyan-500'
-                          : 'bg-white border-slate-200 hover:border-cyan-300'
+                          ? 'bg-primary/10 border-primary'
+                          : 'bg-card border-border hover:border-primary/50'
                       }`}
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-slate-800 font-medium">{evaluation.name}</p>
+                          <p className="text-foreground font-medium">{evaluation.name}</p>
                           {evaluation.description && (
-                            <p className="text-slate-400 text-sm mt-1">{evaluation.description}</p>
+                            <p className="text-muted-foreground text-sm mt-1">{evaluation.description}</p>
                           )}
                         </div>
-                        <Badge className="bg-slate-100 text-slate-600">{evaluation.questions_count} preg.</Badge>
+                        <Badge className="bg-secondary text-secondary-foreground">{evaluation.questions_count} preg.</Badge>
                       </div>
                     </button>
                   ))}
                   {evaluations.length === 0 && (
-                    <p className="text-slate-400 text-center py-4">No hay evaluaciones disponibles</p>
+                    <p className="text-muted-foreground text-center py-4">No hay evaluaciones disponibles</p>
                   )}
                 </div>
 
@@ -598,7 +598,7 @@ const TuUniversidad = () => {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div>
-                        <label className="text-sm text-slate-600 mb-1 block">Número de preguntas</label>
+                        <label className="text-sm text-muted-foreground mb-1 block">Número de preguntas</label>
                         <Select value={numQuestions.toString()} onValueChange={(v) => setNumQuestions(parseInt(v))}>
                           <SelectTrigger>
                             <SelectValue />
@@ -616,8 +616,8 @@ const TuUniversidad = () => {
                       {isInTrial && !hasActiveSubscription && (
                         <div className={`p-3 rounded-lg text-sm ${
                           canDoUniSimulation 
-                            ? 'bg-amber-50 border border-amber-200 text-amber-700'
-                            : 'bg-red-50 border border-red-200 text-red-700'
+                            ? 'bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400'
+                            : 'bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400'
                         }`}>
                           {canDoUniSimulation ? (
                             <>
@@ -630,7 +630,7 @@ const TuUniversidad = () => {
                               Ya usaste tu simulacro universitario de prueba. 
                               <Button 
                                 variant="link" 
-                                className="p-0 h-auto text-red-700 underline ml-1"
+                                className="p-0 h-auto text-red-600 dark:text-red-400 underline ml-1"
                                 onClick={() => navigate('/suscribirse')}
                               >
                                 Suscríbete para acceso ilimitado
@@ -643,7 +643,7 @@ const TuUniversidad = () => {
                       <Button 
                         onClick={handleStartSimulation}
                         disabled={generatingQuiz || selectedEvaluation.questions_count === 0 || !canDoUniSimulation}
-                        className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
+                        className="w-full bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-700"
                       >
                         {generatingQuiz ? (
                           <><Loader2 className="animate-spin mr-2" size={16} /> Generando...</>
@@ -655,16 +655,16 @@ const TuUniversidad = () => {
                       </Button>
                       
                       {selectedEvaluation.questions_count === 0 && (
-                        <p className="text-amber-600 text-xs text-center">Esta evaluación aún no tiene preguntas</p>
+                        <p className="text-amber-600 dark:text-amber-400 text-xs text-center">Esta evaluación aún no tiene preguntas</p>
                       )}
                     </CardContent>
                   </Card>
                 )}
               </div>
             ) : (
-              <div className="bg-slate-50 rounded-lg p-8 text-center border-2 border-dashed border-slate-200">
-                <BookOpen className="mx-auto text-slate-300 mb-2" size={32} />
-                <p className="text-slate-400">Selecciona un curso</p>
+              <div className="bg-secondary/50 rounded-lg p-8 text-center border-2 border-dashed border-border">
+                <BookOpen className="mx-auto text-muted-foreground mb-2" size={32} />
+                <p className="text-muted-foreground">Selecciona un curso</p>
               </div>
             )}
           </div>

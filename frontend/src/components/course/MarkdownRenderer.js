@@ -10,10 +10,10 @@ const DesmosEmbed = lazy(() => import('./DesmosEmbed'));
 
 // Loading fallback for visualizations
 const VisualizationLoader = ({ type }) => (
-  <div className="my-6 p-8 bg-slate-100 rounded-lg border border-slate-200 animate-pulse">
+  <div className="my-6 p-8 bg-secondary rounded-lg border border-border animate-pulse">
     <div className="flex items-center justify-center gap-3">
-      <div className="w-6 h-6 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
-      <span className="text-slate-600">Cargando {type}...</span>
+      <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+      <span className="text-muted-foreground">Cargando {type}...</span>
     </div>
   </div>
 );
@@ -146,17 +146,17 @@ const MarkdownRenderer = ({ content }) => {
       // Render image placeholder - inline style for better flow
       return (
         <div key={key} className="my-4 mx-auto max-w-2xl">
-          <div className="bg-gradient-to-r from-slate-50 to-slate-100 border-2 border-dashed border-slate-300 rounded-xl p-5 text-center">
+          <div className="bg-gradient-to-r from-secondary to-secondary/50 border-2 border-dashed border-border rounded-xl p-5 text-center">
             <div className="flex items-center justify-center gap-2 mb-3">
-              <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              <span className="text-sm font-medium text-slate-500">Imagen por insertar</span>
+              <span className="text-sm font-medium text-muted-foreground">Imagen por insertar</span>
             </div>
-            <p className="text-slate-600 text-sm leading-relaxed">
+            <p className="text-foreground text-sm leading-relaxed">
               {part.config}
             </p>
-            <p className="text-xs text-slate-400 mt-3 italic">
+            <p className="text-xs text-muted-foreground mt-3 italic">
               Genera esta imagen con GPAI y súbela desde el BackOffice
             </p>
           </div>
@@ -166,14 +166,14 @@ const MarkdownRenderer = ({ content }) => {
     
     // For any other visualization type, show a message
     return (
-      <div key={key} className="my-4 p-4 bg-slate-100 border border-slate-200 rounded-lg text-slate-600 text-sm">
-        <span className="font-medium">📊 Visualización:</span> Este contenido requiere actualización.
+      <div key={key} className="my-4 p-4 bg-secondary border border-border rounded-lg text-muted-foreground text-sm">
+        <span className="font-medium">Visualización:</span> Este contenido requiere actualización.
       </div>
     );
   };
 
   return (
-    <div className="markdown-content prose prose-slate max-w-none">
+    <div className="markdown-content prose prose-slate dark:prose-invert max-w-none">
       {parts.map((part, index) => (
         part.type === 'markdown' ? (
           <ReactMarkdown
@@ -183,73 +183,73 @@ const MarkdownRenderer = ({ content }) => {
             components={{
               // Headings with nice styling
               h1: ({ node, ...props }) => (
-                <h1 className="text-3xl font-bold mb-4 mt-6 text-slate-900 border-b-2 border-cyan-500 pb-2" {...props} />
+                <h1 className="text-3xl font-bold mb-4 mt-6 text-foreground border-b-2 border-primary pb-2" {...props} />
               ),
               h2: ({ node, ...props }) => (
-                <h2 className="text-2xl font-semibold mb-3 mt-6 text-slate-800 border-b border-slate-200 pb-2" {...props} />
+                <h2 className="text-2xl font-semibold mb-3 mt-6 text-foreground border-b border-border pb-2" {...props} />
               ),
               h3: ({ node, ...props }) => (
-                <h3 className="text-xl font-semibold mb-2 mt-4 text-slate-700" {...props} />
+                <h3 className="text-xl font-semibold mb-2 mt-4 text-foreground" {...props} />
               ),
               h4: ({ node, ...props }) => (
-                <h4 className="text-lg font-semibold mb-2 mt-3 text-slate-600" {...props} />
+                <h4 className="text-lg font-semibold mb-2 mt-3 text-foreground" {...props} />
               ),
               
               // Paragraphs and text
               p: ({ node, ...props }) => (
-                <p className="mb-4 leading-relaxed text-slate-700" {...props} />
+                <p className="mb-4 leading-relaxed text-foreground" {...props} />
               ),
               strong: ({ node, ...props }) => (
-                <strong className="font-bold text-slate-900" {...props} />
+                <strong className="font-bold text-foreground" {...props} />
               ),
               em: ({ node, ...props }) => (
-                <em className="italic text-slate-600" {...props} />
+                <em className="italic text-muted-foreground" {...props} />
               ),
               
               // Lists
               ul: ({ node, ...props }) => (
-                <ul className="list-disc ml-6 mb-4 space-y-2 text-slate-700" {...props} />
+                <ul className="list-disc ml-6 mb-4 space-y-2 text-foreground" {...props} />
               ),
               ol: ({ node, ...props }) => (
-                <ol className="list-decimal ml-6 mb-4 space-y-2 text-slate-700" {...props} />
+                <ol className="list-decimal ml-6 mb-4 space-y-2 text-foreground" {...props} />
               ),
               li: ({ node, ...props }) => (
-                <li className="text-slate-700 leading-relaxed pl-1" {...props} />
+                <li className="text-foreground leading-relaxed pl-1" {...props} />
               ),
               
               // Tables with professional styling
               table: ({ node, ...props }) => (
-                <div className="overflow-x-auto my-6 rounded-lg border border-slate-200 shadow-sm">
-                  <table className="min-w-full divide-y divide-slate-200" {...props} />
+                <div className="overflow-x-auto my-6 rounded-lg border border-border shadow-sm">
+                  <table className="min-w-full divide-y divide-border" {...props} />
                 </div>
               ),
               thead: ({ node, ...props }) => (
-                <thead className="bg-gradient-to-r from-cyan-500 to-blue-500" {...props} />
+                <thead className="bg-gradient-to-r from-primary to-blue-500" {...props} />
               ),
               tbody: ({ node, ...props }) => (
-                <tbody className="bg-white divide-y divide-slate-100" {...props} />
+                <tbody className="bg-card divide-y divide-border" {...props} />
               ),
               tr: ({ node, ...props }) => (
-                <tr className="hover:bg-cyan-50/50 transition-colors" {...props} />
+                <tr className="hover:bg-primary/10 transition-colors" {...props} />
               ),
               th: ({ node, ...props }) => (
                 <th className="px-4 py-3 text-left text-sm font-semibold text-white uppercase tracking-wider" {...props} />
               ),
               td: ({ node, ...props }) => (
-                <td className="px-4 py-3 text-slate-700 text-sm" {...props} />
+                <td className="px-4 py-3 text-foreground text-sm" {...props} />
               ),
               
               // Code blocks
               code: ({ node, inline, className, children, ...props }) => {
                 if (inline) {
                   return (
-                    <code className="bg-cyan-50 text-cyan-700 px-1.5 py-0.5 rounded text-sm font-mono border border-cyan-100" {...props}>
+                    <code className="bg-primary/10 text-primary px-1.5 py-0.5 rounded text-sm font-mono border border-primary/20" {...props}>
                       {children}
                     </code>
                   );
                 }
                 return (
-                  <pre className="bg-slate-900 text-slate-100 p-4 rounded-lg mb-4 overflow-x-auto shadow-lg">
+                  <pre className="bg-slate-900 dark:bg-slate-950 text-slate-100 p-4 rounded-lg mb-4 overflow-x-auto shadow-lg">
                     <code className="font-mono text-sm" {...props}>
                       {children}
                     </code>
@@ -260,21 +260,21 @@ const MarkdownRenderer = ({ content }) => {
               // Blockquotes for tips and important notes
               blockquote: ({ node, ...props }) => (
                 <blockquote 
-                  className="border-l-4 border-cyan-500 bg-gradient-to-r from-cyan-50 to-white pl-4 py-3 my-4 text-slate-700 rounded-r-lg shadow-sm"
+                  className="border-l-4 border-primary bg-gradient-to-r from-primary/10 to-transparent pl-4 py-3 my-4 text-foreground rounded-r-lg shadow-sm"
                   {...props} 
                 />
               ),
               
               // Horizontal rules
               hr: ({ node, ...props }) => (
-                <hr className="my-8 border-slate-200" {...props} />
+                <hr className="my-8 border-border" {...props} />
               ),
               
               // Links
               a: ({ node, href, ...props }) => (
                 <a 
                   href={href} 
-                  className="text-cyan-600 hover:text-cyan-800 underline underline-offset-2 font-medium transition-colors"
+                  className="text-primary hover:text-primary/80 underline underline-offset-2 font-medium transition-colors"
                   target="_blank"
                   rel="noopener noreferrer"
                   {...props} 
@@ -291,7 +291,7 @@ const MarkdownRenderer = ({ content }) => {
                     {...props} 
                   />
                   {alt && (
-                    <figcaption className="text-center text-sm text-slate-500 mt-2 italic">
+                    <figcaption className="text-center text-sm text-muted-foreground mt-2 italic">
                       {alt}
                     </figcaption>
                   )}
