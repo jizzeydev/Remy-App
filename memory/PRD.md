@@ -247,8 +247,13 @@ https://res.cloudinary.com/de7loz0sr/image/upload/q_auto,f_auto/remy/questions/{
 ## Backlog (Post-MVP)
 
 ### P0 - Próximo
+- [x] **Modo oscuro** - Implementado en April 8, 2026
+  - Toggle de tema en sidebars (estudiante y admin)
+  - Persiste en localStorage
+  - Variables CSS para colores adaptativos
+  - Soporte para KaTeX en modo oscuro
+  - Todas las páginas principales actualizadas
 - [ ] Refactorizar server.py en módulos separados
-- [ ] Modo oscuro (iniciado - falta completar todas las páginas)
 
 ### P1 - Futuro
 - [ ] Historial de simulaciones del estudiante
