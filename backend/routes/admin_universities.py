@@ -726,7 +726,7 @@ async def delete_evaluation_question(
 
 
 @router.post("/{university_id}/courses/{course_id}/evaluations/{evaluation_id}/questions/{question_id}/upload-image")
-async def upload_question_image(
+async def upload_question_image_for_existing(
     university_id: str,
     course_id: str,
     evaluation_id: str,
@@ -734,7 +734,7 @@ async def upload_question_image(
     image: UploadFile = File(...),
     _: str = Depends(verify_admin_token)
 ):
-    """Upload an image for a question - stores in MongoDB GridFS for persistence"""
+    """Upload an image for a question - stores in Cloudinary for permanent persistence"""
     from services.image_storage import save_image, get_image_url
     
     # Validate file type
@@ -745,11 +745,11 @@ async def upload_question_image(
     # Read content
     content = await image.read()
     
-    # Validate size (max 5MB)
-    if len(content) > 5 * 1024 * 1024:
-        raise HTTPException(status_code=400, detail="Archivo muy grande. Máximo 5MB.")
+    # Validate size (max 10MB for Cloudinary)
+    if len(content) > 10 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="Archivo muy grande. Máximo 10MB.")
     
-    # Save to GridFS (persistent storage)
+    # Save to Cloudinary (permanent storage)
     image_id = await save_image(
         content,
         image.filename,
@@ -758,7 +758,8 @@ async def upload_question_image(
             "question_id": question_id,
             "evaluation_id": evaluation_id,
             "source": "question_upload"
-        }
+        },
+        folder="remy/questions"
     )
     
     image_url = get_image_url(image_id)
@@ -769,35 +770,36 @@ async def upload_question_image(
         {"$set": {"image_url": image_url, "updated_at": datetime.now(timezone.utc).isoformat()}}
     )
     
-    logger.info(f"Uploaded image {image_id} for question {question_id} to GridFS")
+    logger.info(f"Uploaded image {image_id} for question {question_id} to Cloudinary")
     
-    return {"message": "Imagen subida", "image_url": image_url, "image_id": image_id}
+    return {"message": "Imagen subida a Cloudinary", "image_url": image_url, "image_id": image_id}
 
 
 @router.get("/question-image/{filename}")
-async def get_question_image(filename: str):
+async def get_question_image_legacy(filename: str):
     """
-    Legacy endpoint for old images - redirects to new GridFS endpoint
-    New images use /api/images/{image_id}
+    Legacy endpoint for old images - redirects to Cloudinary or returns 404
+    New images use direct Cloudinary URLs
     """
     from fastapi.responses import FileResponse, RedirectResponse
+    import os
     
-    # First try GridFS (new storage)
+    # Try to get image ID
     image_id = filename.split('.')[0] if '.' in filename else filename
-    from services.image_storage import get_image
-    image_data = await get_image(image_id)
     
-    if image_data:
-        from fastapi.responses import Response
-        return Response(
-            content=image_data["content"],
-            media_type=image_data["content_type"]
-        )
+    # Check Cloudinary
+    cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME')
+    if cloud_name:
+        # Try common Cloudinary paths
+        cloudinary_url = f"https://res.cloudinary.com/{cloud_name}/image/upload/q_auto,f_auto/remy/questions/{image_id}"
+        return RedirectResponse(url=cloudinary_url, status_code=302)
     
-    # Fallback to filesystem (old storage)
-    file_path = UPLOADS_DIR / filename
+    # Fallback to filesystem (old storage - likely gone)
+    file_path = UPLOADS_DIR.parent / 'questions' / filename
     if file_path.exists():
         return FileResponse(file_path)
+    
+    raise HTTPException(status_code=404, detail="Imagen no encontrada. Las imágenes antiguas pueden haberse perdido.")
     
     raise HTTPException(status_code=404, detail="Imagen no encontrada")
 
@@ -936,45 +938,41 @@ async def upload_pdf_for_extraction(
 # ==================== QUESTION IMAGE UPLOAD ====================
 
 @router.post("/{university_id}/courses/{course_id}/evaluations/{evaluation_id}/questions/upload-image")
-async def upload_question_image(
+async def upload_question_image_new(
     university_id: str, 
     course_id: str, 
     evaluation_id: str,
     image: UploadFile = File(...),
     _: str = Depends(verify_admin_token)
 ):
-    """Upload an image for a question"""
+    """Upload an image for a new question - stores in Cloudinary"""
+    from services.image_storage import save_image, get_image_url
+    
     # Validate file type
     allowed_types = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
     if image.content_type not in allowed_types:
         raise HTTPException(status_code=400, detail="Tipo de imagen no permitido. Use JPG, PNG, WebP o GIF.")
     
-    # Create questions images directory
-    questions_dir = UPLOADS_DIR.parent / 'questions'
-    questions_dir.mkdir(parents=True, exist_ok=True)
+    # Read content
+    content = await image.read()
     
-    # Save file
-    image_id = str(uuid.uuid4())
-    ext = image.filename.split('.')[-1] if '.' in image.filename else 'png'
-    filename = f"{image_id}.{ext}"
-    file_path = questions_dir / filename
+    # Validate size (max 10MB for Cloudinary)
+    if len(content) > 10 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="Archivo muy grande. Máximo 10MB.")
     
-    async with aiofiles.open(file_path, 'wb') as f:
-        content = await image.read()
-        await f.write(content)
+    # Save to Cloudinary
+    image_id = await save_image(
+        content,
+        image.filename,
+        image.content_type,
+        folder="remy/questions"
+    )
     
-    image_url = f"/api/admin/universities/question-image/{filename}"
+    image_url = get_image_url(image_id)
     
-    return {"success": True, "image_url": image_url}
-
-
-@router.get("/question-image/{filename}")
-async def get_question_image(filename: str):
-    """Serve question image file"""
-    file_path = UPLOADS_DIR.parent / 'questions' / filename
-    if not file_path.exists():
-        raise HTTPException(status_code=404, detail="Imagen no encontrada")
-    return FileResponse(file_path)
+    logger.info(f"Uploaded image {image_id} to Cloudinary for new question")
+    
+    return {"success": True, "image_url": image_url, "image_id": image_id}
 
 
 # ==================== STATS ENDPOINTS ====================

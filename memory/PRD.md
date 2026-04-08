@@ -230,19 +230,25 @@ Usuario con Suscripción Activa:
 - [x] Actividad reciente con timestamps
 - [x] Métricas de conversión (tasa, MRR, simulacros/usuario)
 
-## ✅ Almacenamiento Persistente de Imágenes (GridFS) - IMPLEMENTADO (March 17, 2026)
-- [x] Imágenes almacenadas en MongoDB GridFS (NO se pierden con reinicios)
+## ✅ Almacenamiento de Imágenes (Cloudinary) - ACTUALIZADO (April 8, 2026)
+- [x] **MIGRADO A CLOUDINARY** - Imágenes permanentes en CDN global
+- [x] URLs directas de Cloudinary (nunca expiran, no se pierden)
 - [x] Upload de imágenes para preguntas (simulacros normales y universitarios)
-- [x] API /api/images/{id} para servir imágenes
-- [x] Cache headers optimizados (1 año)
-- [x] Soporte para JPG, PNG, WebP, GIF (máx 5MB)
-- [x] Backend Tests 100% (19/19)
+- [x] Optimización automática (q_auto, f_auto)
+- [x] Soporte para JPG, PNG, WebP, GIF (máx 10MB)
+- [x] Configuración: Cloud Name `de7loz0sr`
+- [x] Folder structure: `remy/questions/`
+
+### URLs de ejemplo:
+```
+https://res.cloudinary.com/de7loz0sr/image/upload/q_auto,f_auto/remy/questions/{image_id}
+```
 
 ## Backlog (Post-MVP)
 
 ### P0 - Próximo
 - [ ] Refactorizar server.py en módulos separados
-- [ ] Modo oscuro
+- [ ] Modo oscuro (iniciado - falta completar todas las páginas)
 
 ### P1 - Futuro
 - [ ] Historial de simulaciones del estudiante
