@@ -1009,6 +1009,152 @@ async def delete_question(question_id: str, _: str = Depends(verify_admin_token)
         raise HTTPException(status_code=404, detail="Pregunta no encontrada")
     return {"message": "Pregunta eliminada exitosamente"}
 
+
+# ==================== CSV IMPORT FOR QUESTIONS ====================
+@admin_router.post("/questions/import-csv/{course_id}")
+async def import_questions_csv(
+    course_id: str,
+    csv_file: UploadFile = File(...),
+    _: str = Depends(verify_admin_token)
+):
+    """
+    Import questions from CSV file for a specific course.
+    
+    CSV format:
+    chapter_id,lesson_id,question_text,options,correct_answer,explanation,difficulty
+    
+    - chapter_id: Optional - chapter UUID
+    - lesson_id: Optional - lesson UUID  
+    - question_text: Required - question content (supports LaTeX with $)
+    - options: Required - pipe-separated options (A|B|C|D)
+    - correct_answer: Required - correct option letter (A, B, C, D)
+    - explanation: Optional - solution explanation
+    - difficulty: Optional - fácil, medio, difícil (default: medio)
+    """
+    import csv as csv_module
+    
+    # Validate file type
+    if not csv_file.filename.endswith('.csv'):
+        raise HTTPException(status_code=400, detail="El archivo debe ser CSV")
+    
+    # Verify course exists
+    course = await db.courses.find_one({"id": course_id}, {"_id": 0})
+    if not course:
+        raise HTTPException(status_code=404, detail="Curso no encontrado")
+    
+    # Read CSV content
+    content = await csv_file.read()
+    
+    # Try different encodings
+    text_content = None
+    for encoding in ['utf-8', 'utf-8-sig', 'latin-1', 'cp1252']:
+        try:
+            text_content = content.decode(encoding)
+            break
+        except UnicodeDecodeError:
+            continue
+    
+    if not text_content:
+        raise HTTPException(status_code=400, detail="No se pudo decodificar el archivo CSV. Use UTF-8.")
+    
+    # Parse CSV
+    csv_reader = csv_module.DictReader(io.StringIO(text_content))
+    
+    created_questions = []
+    errors = []
+    row_num = 1
+    
+    for row in csv_reader:
+        row_num += 1
+        try:
+            # Required field
+            question_text = row.get('question_text', '').strip()
+            if not question_text:
+                errors.append(f"Fila {row_num}: question_text es requerido")
+                continue
+            
+            # Parse options (pipe-separated)
+            options_str = row.get('options', '').strip()
+            if not options_str:
+                errors.append(f"Fila {row_num}: options es requerido")
+                continue
+            
+            options = [opt.strip() for opt in options_str.split('|') if opt.strip()]
+            if len(options) < 2:
+                errors.append(f"Fila {row_num}: Se necesitan al menos 2 opciones separadas por |")
+                continue
+            
+            # Get correct answer
+            correct_answer = row.get('correct_answer', '').strip().upper()
+            if not correct_answer:
+                errors.append(f"Fila {row_num}: correct_answer es requerido")
+                continue
+            
+            # Get other fields
+            chapter_id = row.get('chapter_id', '').strip() or None
+            lesson_id = row.get('lesson_id', '').strip() or None
+            explanation = row.get('explanation', '').strip() or None
+            difficulty = row.get('difficulty', '').strip().lower() or 'medio'
+            
+            # Normalize difficulty
+            difficulty_map = {'fácil': 'fácil', 'facil': 'fácil', 'medio': 'medio', 'difícil': 'difícil', 'dificil': 'difícil'}
+            difficulty = difficulty_map.get(difficulty, 'medio')
+            
+            # Create question
+            question_id = str(uuid.uuid4())
+            question = {
+                "id": question_id,
+                "course_id": course_id,
+                "chapter_id": chapter_id,
+                "lesson_id": lesson_id,
+                "question_text": question_text,
+                "question_type": "multiple_choice",
+                "options": options,
+                "correct_answer": correct_answer,
+                "explanation": explanation,
+                "difficulty": difficulty,
+                "image_url": None,
+                "source": "csv_import",
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
+            
+            await db.questions.insert_one(question)
+            created_questions.append(question_id)
+            
+        except Exception as e:
+            errors.append(f"Fila {row_num}: {str(e)}")
+    
+    logging.info(f"CSV Import: Created {len(created_questions)} questions for course {course_id}")
+    
+    return {
+        "success": True,
+        "created_count": len(created_questions),
+        "errors_count": len(errors),
+        "errors": errors[:10],  # Return first 10 errors
+        "question_ids": created_questions
+    }
+
+
+@admin_router.get("/questions/csv-template")
+async def get_questions_csv_template(_: str = Depends(verify_admin_token)):
+    """Get CSV template for importing questions"""
+    from fastapi.responses import Response
+    
+    csv_content = """chapter_id,lesson_id,question_text,options,correct_answer,explanation,difficulty
+,"","Calcule la derivada de $f(x) = x^3 + 2x$","$3x^2 + 2$|$3x^2$|$x^2 + 2$|$3x + 2$",A,"La derivada de $x^3$ es $3x^2$ y la derivada de $2x$ es $2$. Por lo tanto: $f'(x) = 3x^2 + 2$",medio
+,"","Resuelva la integral $\\int x^2 dx$","$\\frac{x^3}{3} + C$|$x^3 + C$|$2x + C$|$\\frac{x^2}{2} + C$",A,"Usando la regla de potencias: $\\int x^n dx = \\frac{x^{n+1}}{n+1} + C$",fácil
+,"","Si $\\lim_{x \\to 0} \\frac{\\sin(x)}{x} = L$, ¿cuál es el valor de $L$?","$0$|$1$|$\\infty$|No existe",B,"Este es un límite notable. $\\lim_{x \\to 0} \\frac{\\sin(x)}{x} = 1$",medio
+"""
+    
+    return Response(
+        content=csv_content,
+        media_type="text/csv",
+        headers={
+            "Content-Disposition": "attachment; filename=plantilla_preguntas.csv"
+        }
+    )
+
+
 @admin_router.post("/upload-pdf")
 async def upload_pdf(
     file: UploadFile = File(...),
