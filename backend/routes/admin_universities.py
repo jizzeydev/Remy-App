@@ -775,6 +775,161 @@ async def upload_question_image_for_existing(
     return {"message": "Imagen subida a Cloudinary", "image_url": image_url, "image_id": image_id}
 
 
+# ==================== CSV IMPORT ====================
+
+@router.post("/{university_id}/courses/{course_id}/evaluations/{evaluation_id}/import-csv")
+async def import_questions_from_csv(
+    university_id: str,
+    course_id: str,
+    evaluation_id: str,
+    csv_file: UploadFile = File(...),
+    _: str = Depends(verify_admin_token)
+):
+    """
+    Import questions from CSV file.
+    
+    Expected CSV format:
+    question_content,options,correct_answer,solution_content,difficulty,topic,tags
+    
+    - question_content: The question text (supports LaTeX with $ delimiters)
+    - options: Pipe-separated options for multiple choice (e.g., "A|B|C|D")
+    - correct_answer: The correct option (e.g., "A", "B", etc.)
+    - solution_content: Solution explanation (optional, supports LaTeX)
+    - difficulty: facil, medio, dificil (default: medio)
+    - topic: Topic/theme of the question (optional)
+    - tags: Comma-separated tags (optional)
+    """
+    import csv
+    import io
+    
+    # Validate file type
+    if not csv_file.filename.endswith('.csv'):
+        raise HTTPException(status_code=400, detail="El archivo debe ser CSV")
+    
+    # Verify evaluation exists
+    university = await db.universities.find_one({"id": university_id})
+    if not university:
+        raise HTTPException(status_code=404, detail="Universidad no encontrada")
+    
+    course = next((c for c in university.get("courses", []) if c["id"] == course_id), None)
+    if not course:
+        raise HTTPException(status_code=404, detail="Curso no encontrado")
+    
+    evaluation = next((e for e in course.get("evaluations", []) if e["id"] == evaluation_id), None)
+    if not evaluation:
+        raise HTTPException(status_code=404, detail="Evaluación no encontrada")
+    
+    # Read CSV content
+    content = await csv_file.read()
+    
+    # Try different encodings
+    for encoding in ['utf-8', 'utf-8-sig', 'latin-1', 'cp1252']:
+        try:
+            text_content = content.decode(encoding)
+            break
+        except UnicodeDecodeError:
+            continue
+    else:
+        raise HTTPException(status_code=400, detail="No se pudo decodificar el archivo CSV. Use UTF-8.")
+    
+    # Parse CSV
+    csv_reader = csv.DictReader(io.StringIO(text_content))
+    
+    created_questions = []
+    errors = []
+    row_num = 1
+    
+    for row in csv_reader:
+        row_num += 1
+        try:
+            # Required field
+            question_content = row.get('question_content', '').strip()
+            if not question_content:
+                errors.append(f"Fila {row_num}: question_content es requerido")
+                continue
+            
+            # Parse options (pipe-separated)
+            options_str = row.get('options', '').strip()
+            options = [opt.strip() for opt in options_str.split('|') if opt.strip()] if options_str else None
+            
+            # Get other fields
+            correct_answer = row.get('correct_answer', '').strip() or None
+            solution_content = row.get('solution_content', '').strip() or None
+            difficulty = row.get('difficulty', '').strip().lower() or 'medio'
+            topic = row.get('topic', '').strip() or None
+            
+            # Parse tags (comma-separated)
+            tags_str = row.get('tags', '').strip()
+            tags = [tag.strip() for tag in tags_str.split(',') if tag.strip()] if tags_str else []
+            
+            # Validate difficulty
+            if difficulty not in ['facil', 'medio', 'dificil']:
+                difficulty = 'medio'
+            
+            # Create question
+            question_id = str(uuid.uuid4())
+            question = {
+                "id": question_id,
+                "evaluation_id": evaluation_id,
+                "course_id": course_id,
+                "university_id": university_id,
+                "question_content": question_content,
+                "solution_content": solution_content,
+                "question_type": "multiple_choice" if options else "open",
+                "options": options,
+                "correct_answer": correct_answer,
+                "difficulty": difficulty,
+                "topic": topic,
+                "tags": tags,
+                "image_url": None,
+                "source": "csv_import",
+                "status": "approved",
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
+            
+            await db.evaluation_questions.insert_one(question)
+            created_questions.append(question_id)
+            
+        except Exception as e:
+            errors.append(f"Fila {row_num}: {str(e)}")
+    
+    logger.info(f"CSV Import: Created {len(created_questions)} questions for evaluation {evaluation_id}")
+    
+    return {
+        "success": True,
+        "created_count": len(created_questions),
+        "errors_count": len(errors),
+        "errors": errors[:10],  # Return first 10 errors only
+        "question_ids": created_questions
+    }
+
+
+@router.get("/{university_id}/courses/{course_id}/evaluations/{evaluation_id}/csv-template")
+async def get_csv_template(
+    university_id: str,
+    course_id: str,
+    evaluation_id: str,
+    _: str = Depends(verify_admin_token)
+):
+    """Get a CSV template for importing questions"""
+    from fastapi.responses import Response
+    
+    # CSV header and example rows
+    csv_content = """question_content,options,correct_answer,solution_content,difficulty,topic,tags
+"Calcule la derivada de $f(x) = x^3 + 2x$","$3x^2 + 2$|$3x^2$|$x^2 + 2$|$3x + 2$",A,"La derivada de $x^3$ es $3x^2$ y la derivada de $2x$ es $2$. Por lo tanto: $f'(x) = 3x^2 + 2$",medio,Derivadas,"cálculo,derivadas"
+"Resuelva la integral $\\int x^2 dx$","$\\frac{x^3}{3} + C$|$x^3 + C$|$2x + C$|$\\frac{x^2}{2} + C$",A,"Usando la regla de potencias: $\\int x^n dx = \\frac{x^{n+1}}{n+1} + C$",facil,Integrales,"cálculo,integrales"
+"Si $\\lim_{x \\to 0} \\frac{\\sin(x)}{x} = L$, ¿cuál es el valor de $L$?","$0$|$1$|$\\infty$|No existe",B,"Este es un límite notable. $\\lim_{x \\to 0} \\frac{\\sin(x)}{x} = 1$",medio,Límites,"cálculo,límites"
+"""
+    
+    return Response(
+        content=csv_content,
+        media_type="text/csv",
+        headers={
+            "Content-Disposition": f"attachment; filename=plantilla_preguntas_{evaluation_id}.csv"
+        }
+    )
+
+
 @router.get("/question-image/{filename}")
 async def get_question_image_legacy(filename: str):
     """

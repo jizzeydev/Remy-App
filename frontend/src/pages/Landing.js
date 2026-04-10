@@ -22,32 +22,32 @@ const HeroSection = ({ trialEnabled = true, trialDays = 7 }) => {
   const navigate = useNavigate();
   
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-white via-cyan-50/30 to-white overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900 overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl" />
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-400/5 rounded-full blur-3xl" />
       </div>
       
       {/* Top Navigation */}
-      <nav className="absolute top-0 left-0 right-0 z-20 p-4 md:p-6 bg-white/80 backdrop-blur-sm border-b border-slate-100">
+      <nav className="absolute top-0 left-0 right-0 z-20 p-4 md:p-6">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img src="/remy-logo.png" alt="Remy" className="w-8 h-8 md:w-10 md:h-10 object-contain" />
-            <span className="text-slate-800 font-bold text-lg md:text-xl">Remy</span>
+            <span className="text-white font-bold text-lg md:text-xl">Remy</span>
           </div>
           <div className="flex items-center gap-2 md:gap-4">
             <Button 
               variant="ghost" 
-              className="text-slate-600 hover:bg-slate-100 text-sm md:text-base px-2 md:px-4"
+              className="text-white hover:bg-white/10 text-sm md:text-base px-2 md:px-4"
               onClick={() => navigate('/auth')}
               data-testid="nav-login-btn"
             >
               Ingresar
             </Button>
             <Button 
-              className="bg-cyan-500 hover:bg-cyan-600 text-white font-semibold text-sm md:text-base px-3 md:px-4"
+              className="bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold text-sm md:text-base px-3 md:px-4"
               onClick={() => navigate('/auth')}
               data-testid="nav-signup-btn"
             >
@@ -60,26 +60,26 @@ const HeroSection = ({ trialEnabled = true, trialDays = 7 }) => {
       
       <div className="relative z-10 max-w-6xl mx-auto px-6 py-20 text-center">
         {/* Main heading */}
-        <h1 className="text-5xl md:text-7xl font-bold text-slate-800 mb-6 leading-tight">
-          <span className="text-cyan-500">Remonta</span> tus ramos
+        <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+          <span className="text-cyan-400">Remonta</span> tus ramos
           <br />
-          <span className="text-3xl md:text-5xl font-normal text-slate-500">
+          <span className="text-3xl md:text-5xl font-normal text-slate-300">
             con la mejor plataforma de estudio para la universidad
           </span>
         </h1>
         
-        <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto mb-10 leading-relaxed">
+        <p className="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed">
           Remy te ayuda a aprobar tus cursos universitarios con 
-          <span className="text-cyan-600 font-semibold"> lecciones claras</span>, 
-          <span className="text-cyan-600 font-semibold"> simulacros personalizados</span> y 
-          <span className="text-cyan-600 font-semibold"> preguntas de prueba adaptadas a tu universidad</span>
+          <span className="text-cyan-400 font-semibold"> lecciones claras</span>, 
+          <span className="text-cyan-400 font-semibold"> simulacros personalizados</span> y 
+          <span className="text-cyan-400 font-semibold"> preguntas de prueba adaptadas a tu universidad</span>
         </p>
         
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
           <Button 
             size="lg" 
-            className="bg-cyan-500 hover:bg-cyan-600 text-white font-bold text-lg px-8 py-6 rounded-full shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/40 transition-all"
+            className="bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold text-lg px-8 py-6 rounded-full shadow-lg shadow-cyan-500/30 hover:shadow-cyan-400/40 transition-all"
             onClick={() => navigate('/auth')}
             data-testid="hero-cta-primary"
           >
@@ -89,7 +89,7 @@ const HeroSection = ({ trialEnabled = true, trialDays = 7 }) => {
           <Button 
             size="lg" 
             variant="outline" 
-            className="text-slate-700 border-slate-300 hover:bg-slate-100 text-lg px-8 py-6 rounded-full"
+            className="text-white border-slate-500 hover:bg-white/10 text-lg px-8 py-6 rounded-full"
             onClick={() => document.getElementById('courses').scrollIntoView({ behavior: 'smooth' })}
             data-testid="hero-cta-secondary"
           >
@@ -99,15 +99,15 @@ const HeroSection = ({ trialEnabled = true, trialDays = 7 }) => {
         
         {/* Free Trial Badge - Only show if trial enabled */}
         {trialEnabled && (
-          <div className="inline-flex items-center gap-2 bg-cyan-50 border border-cyan-200 rounded-full px-4 py-2 mb-8">
-            <Clock size={18} className="text-cyan-600" />
-            <span className="text-slate-700 text-sm">Prueba gratuita de {trialDays} días · Sin tarjeta de crédito</span>
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-8">
+            <Clock size={18} className="text-cyan-400" />
+            <span className="text-white/90 text-sm">Prueba gratuita de {trialDays} días · Sin tarjeta de crédito</span>
           </div>
         )}
         
         {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-          <ChevronDown size={32} className="text-slate-400" />
+          <ChevronDown size={32} className="text-slate-500" />
         </div>
       </div>
     </section>
@@ -634,21 +634,21 @@ const FreeTrialSection = ({ trialDays = 7 }) => {
   ];
 
   return (
-    <section className="py-20 md:py-28 bg-gradient-to-br from-cyan-50 via-white to-blue-50 overflow-hidden relative">
+    <section className="py-20 md:py-28 bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900 text-white overflow-hidden relative">
       {/* Background decorations */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl" />
       <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl" />
       
       <div className="max-w-5xl mx-auto px-6 relative z-10">
         <div className="text-center mb-12">
-          <Badge className="mb-4 bg-cyan-100 text-cyan-700 hover:bg-cyan-100 border-cyan-200 px-4 py-1">
+          <Badge className="mb-4 bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/20 border-cyan-500/30 px-4 py-1">
             <Clock size={14} className="mr-1 inline" />
             Sin tarjeta de crédito
           </Badge>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-800 mb-4">
-            Pruébalo <span className="text-cyan-500">gratis</span> por {trialDays} días
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+            Pruébalo <span className="text-cyan-400">gratis</span> por {trialDays} días
           </h2>
-          <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto">
             Explora todas las lecciones, genera simulacros y descubre cómo Remy puede ayudarte a estudiar más rápido.
           </p>
         </div>
@@ -658,10 +658,10 @@ const FreeTrialSection = ({ trialDays = 7 }) => {
           {trialFeatures.map((feature, index) => (
             <div 
               key={index}
-              className="bg-white border border-slate-200 rounded-xl p-4 text-center shadow-sm"
+              className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-xl p-4 text-center"
             >
-              <CheckCircle className="mx-auto mb-2 text-cyan-500" size={24} />
-              <p className="text-sm font-medium text-slate-700">{feature}</p>
+              <CheckCircle className="mx-auto mb-2 text-cyan-400" size={24} />
+              <p className="text-sm font-medium">{feature}</p>
             </div>
           ))}
         </div>
@@ -670,14 +670,14 @@ const FreeTrialSection = ({ trialDays = 7 }) => {
         <div className="text-center">
           <Button 
             size="lg" 
-            className="bg-cyan-500 hover:bg-cyan-600 text-white font-bold text-lg px-10 py-6 rounded-full shadow-lg shadow-cyan-500/30"
+            className="bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold text-lg px-10 py-6 rounded-full shadow-lg shadow-cyan-500/30"
             onClick={() => navigate('/auth')}
             data-testid="trial-section-cta"
           >
             <Zap className="mr-2" size={24} />
             Crear cuenta gratis
           </Button>
-          <p className="text-slate-500 text-sm mt-4">
+          <p className="text-slate-400 text-sm mt-4">
             Configura tu cuenta en menos de 1 minuto
           </p>
         </div>
@@ -716,7 +716,7 @@ const FinalCTASection = () => {
 // ==================== FOOTER ====================
 const Footer = () => {
   return (
-    <footer className="bg-slate-100 text-slate-800 py-12 border-t border-slate-200">
+    <footer className="bg-slate-900 text-white py-12">
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
@@ -726,19 +726,19 @@ const Footer = () => {
               className="w-12 h-12 object-contain"
             />
             <div>
-              <h3 className="font-bold text-xl text-slate-800">Remy</h3>
-              <p className="text-slate-500 text-sm">by Se Remonta</p>
+              <h3 className="font-bold text-xl">Remy</h3>
+              <p className="text-slate-400 text-sm">by Se Remonta</p>
             </div>
           </div>
           
-          <div className="flex gap-6 md:gap-8 text-slate-600 text-sm md:text-base">
-            <a href="#features" className="hover:text-cyan-600 transition-colors">
+          <div className="flex gap-6 md:gap-8 text-slate-400 text-sm md:text-base">
+            <a href="#features" className="hover:text-cyan-400 transition-colors">
               Funcionalidades
             </a>
-            <a href="#courses" className="hover:text-cyan-600 transition-colors">
+            <a href="#courses" className="hover:text-cyan-400 transition-colors">
               Cursos
             </a>
-            <a href="#pricing" className="hover:text-cyan-600 transition-colors">
+            <a href="#pricing" className="hover:text-cyan-400 transition-colors">
               Precios
             </a>
           </div>
@@ -784,7 +784,7 @@ const Landing = () => {
   // Show loading while checking auth
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900 flex items-center justify-center">
         <div className="text-center">
           <img src="/remy-logo.png" alt="Remy" className="w-16 h-16 mx-auto mb-4 animate-pulse" />
           <div className="animate-spin w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full mx-auto" />

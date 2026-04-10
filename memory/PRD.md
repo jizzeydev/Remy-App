@@ -230,6 +230,20 @@ Usuario con Suscripción Activa:
 - [x] Actividad reciente con timestamps
 - [x] Métricas de conversión (tasa, MRR, simulacros/usuario)
 
+## ✅ Importación CSV de Preguntas - IMPLEMENTADO (April 10, 2026)
+- [x] Endpoint POST `/api/admin/universities/{id}/courses/{id}/evaluations/{id}/import-csv`
+- [x] Endpoint GET para descargar plantilla CSV
+- [x] UI con botón "CSV" en sección de preguntas del admin
+- [x] Dialog para subir archivo y descargar plantilla
+- [x] Soporte para LaTeX en preguntas y opciones
+- [x] Documentación y prompt para generar preguntas con Claude
+
+### Formato CSV:
+```
+question_content,options,correct_answer,solution_content,difficulty,topic,tags
+"Pregunta con $LaTeX$","Opción A|Opción B|Opción C|Opción D",A,"Solución",medio,Tema,"tag1,tag2"
+```
+
 ## ✅ Almacenamiento de Imágenes (Cloudinary) - ACTUALIZADO (April 8, 2026)
 - [x] **MIGRADO A CLOUDINARY** - Imágenes permanentes en CDN global
 - [x] URLs directas de Cloudinary (nunca expiran, no se pierden)

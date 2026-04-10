@@ -113,6 +113,11 @@ const UniversityDetail = () => {
   const [pendingQuestions, setPendingQuestions] = useState([]);
   const [showReviewDialog, setShowReviewDialog] = useState(false);
   
+  // CSV Import state
+  const [showCsvImportDialog, setShowCsvImportDialog] = useState(false);
+  const [csvFile, setCsvFile] = useState(null);
+  const [importingCsv, setImportingCsv] = useState(false);
+  
   // Questions list
   const [questions, setQuestions] = useState([]);
 
@@ -450,6 +455,75 @@ const UniversityDetail = () => {
     }
   };
 
+  // CSV Import functions
+  const handleCsvImport = async () => {
+    if (!csvFile) {
+      toast.error('Selecciona un archivo CSV');
+      return;
+    }
+    
+    setImportingCsv(true);
+    try {
+      const token = localStorage.getItem('admin_token');
+      const formData = new FormData();
+      formData.append('csv_file', csvFile);
+      
+      const response = await axios.post(
+        `${API}/${universityId}/courses/${selectedCourse.id}/evaluations/${selectedEvaluation.id}/import-csv`,
+        formData,
+        { 
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          } 
+        }
+      );
+      
+      if (response.data.success) {
+        toast.success(`${response.data.created_count} preguntas importadas correctamente`);
+        if (response.data.errors_count > 0) {
+          toast.warning(`${response.data.errors_count} errores durante la importación`);
+          console.log('Import errors:', response.data.errors);
+        }
+        setShowCsvImportDialog(false);
+        setCsvFile(null);
+        fetchQuestions(selectedEvaluation.id);
+      }
+    } catch (error) {
+      console.error('Error importing CSV:', error);
+      toast.error(error.response?.data?.detail || 'Error al importar CSV');
+    } finally {
+      setImportingCsv(false);
+    }
+  };
+
+  const handleDownloadCsvTemplate = async () => {
+    try {
+      const token = localStorage.getItem('admin_token');
+      const response = await axios.get(
+        `${API}/${universityId}/courses/${selectedCourse.id}/evaluations/${selectedEvaluation.id}/csv-template`,
+        { 
+          headers: { Authorization: `Bearer ${token}` },
+          responseType: 'blob'
+        }
+      );
+      
+      // Create download link
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `plantilla_preguntas_${selectedEvaluation.id}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      
+      toast.success('Plantilla descargada');
+    } catch (error) {
+      toast.error('Error al descargar plantilla');
+    }
+  };
+
   // Edit question functions
   const openEditQuestion = (question) => {
     setEditingQuestion({
@@ -705,6 +779,10 @@ const UniversityDetail = () => {
               </CardTitle>
               {selectedEvaluation && (
                 <div className="flex gap-2">
+                  <Button size="sm" variant="outline" onClick={() => setShowCsvImportDialog(true)} data-testid="csv-import-btn">
+                    <Upload size={16} className="mr-1" />
+                    CSV
+                  </Button>
                   <Button size="sm" variant="outline" onClick={() => setShowAIGenerateDialog(true)} data-testid="ai-generate-btn">
                     <Sparkles size={16} className="mr-1" />
                     IA
@@ -1321,6 +1399,80 @@ const UniversityDetail = () => {
                 {saving ? 'Guardando...' : `Guardar ${pendingQuestions.filter(q => q.approved).length} Preguntas`}
               </Button>
             </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* CSV Import Dialog */}
+      <Dialog open={showCsvImportDialog} onOpenChange={setShowCsvImportDialog}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Importar Preguntas desde CSV</DialogTitle>
+            <DialogDescription>
+              Sube un archivo CSV con preguntas para importarlas masivamente
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {/* Download Template Button */}
+            <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4">
+              <h4 className="font-medium text-sm mb-2">Formato requerido:</h4>
+              <p className="text-xs text-slate-600 mb-3">
+                El CSV debe tener las columnas: question_content, options, correct_answer, solution_content, difficulty, topic, tags
+              </p>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handleDownloadCsvTemplate}
+                className="w-full"
+              >
+                <FileText size={16} className="mr-2" />
+                Descargar Plantilla CSV
+              </Button>
+            </div>
+            
+            {/* File Upload */}
+            <div>
+              <Label htmlFor="csv-upload">Archivo CSV</Label>
+              <Input
+                id="csv-upload"
+                type="file"
+                accept=".csv"
+                onChange={(e) => setCsvFile(e.target.files[0])}
+                className="mt-1"
+              />
+              {csvFile && (
+                <p className="text-sm text-green-600 mt-1">
+                  Archivo seleccionado: {csvFile.name}
+                </p>
+              )}
+            </div>
+            
+            {/* Tips */}
+            <div className="text-xs text-slate-500 space-y-1">
+              <p>• Las opciones se separan con | (pipe)</p>
+              <p>• Las fórmulas LaTeX usan $ como delimitador</p>
+              <p>• Dificultad: facil, medio, dificil</p>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowCsvImportDialog(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleCsvImport} disabled={!csvFile || importingCsv}>
+              {importingCsv ? (
+                <>
+                  <Loader2 className="animate-spin mr-2" size={16} />
+                  Importando...
+                </>
+              ) : (
+                <>
+                  <Upload size={16} className="mr-2" />
+                  Importar
+                </>
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
