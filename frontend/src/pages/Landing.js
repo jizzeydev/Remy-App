@@ -346,7 +346,7 @@ const CoursesSection = () => {
             <div className="animate-spin w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full mx-auto" />
           </div>
         ) : courses.length === 0 ? (
-          <Card className="text-center py-12">
+          <Card className="text-center py-12 bg-white border-slate-200">
             <CardContent>
               <GraduationCap className="mx-auto mb-4 text-slate-400" size={48} />
               <p className="text-slate-500">Próximamente más cursos disponibles</p>
@@ -355,9 +355,9 @@ const CoursesSection = () => {
         ) : (
           <div className="space-y-6">
             {courses.map((course) => (
-              <Card key={course.id} className="overflow-hidden" data-testid={`course-card-${course.id}`}>
+              <Card key={course.id} className="overflow-hidden bg-white border-slate-200" data-testid={`course-card-${course.id}`}>
                 <CardHeader 
-                  className="cursor-pointer hover:bg-slate-50 transition-colors"
+                  className="cursor-pointer hover:bg-slate-50 transition-colors bg-white"
                   onClick={() => toggleCourse(course.id)}
                 >
                   <div className="flex items-center justify-between">
@@ -366,13 +366,13 @@ const CoursesSection = () => {
                         {course.title.charAt(0)}
                       </div>
                       <div>
-                        <CardTitle className="text-xl md:text-2xl">{course.title}</CardTitle>
-                        <CardDescription className="text-sm md:text-base">
+                        <CardTitle className="text-xl md:text-2xl text-slate-900">{course.title}</CardTitle>
+                        <CardDescription className="text-sm md:text-base text-slate-600">
                           {course.description}
                         </CardDescription>
                         <div className="flex gap-2 mt-2 flex-wrap">
-                          <Badge variant="outline">{course.level}</Badge>
-                          <Badge variant="outline">{course.category}</Badge>
+                          <Badge variant="outline" className="border-slate-300 text-slate-700 bg-white">{course.level}</Badge>
+                          <Badge variant="outline" className="border-slate-300 text-slate-700 bg-white">{course.category}</Badge>
                         </div>
                       </div>
                     </div>
@@ -387,7 +387,7 @@ const CoursesSection = () => {
                 </CardHeader>
 
                 {expandedCourse === course.id && (
-                  <CardContent className="bg-slate-50 border-t">
+                  <CardContent className="bg-slate-50 border-t border-slate-200">
                     {!chapters[course.id] ? (
                       <div className="text-center py-8">
                         <div className="animate-spin w-6 h-6 border-2 border-cyan-500 border-t-transparent rounded-full mx-auto" />
@@ -397,13 +397,13 @@ const CoursesSection = () => {
                     ) : (
                       <div className="space-y-4">
                         {chapters[course.id].map((chapter, chIndex) => (
-                          <div key={chapter.id} className="bg-white rounded-lg p-4 shadow-sm">
+                          <div key={chapter.id} className="bg-white rounded-lg p-4 shadow-sm border border-slate-100">
                             <div className="flex items-center gap-3 mb-3">
                               <span className="w-8 h-8 bg-cyan-100 text-cyan-700 rounded-full flex items-center justify-center font-bold text-sm">
                                 {chIndex + 1}
                               </span>
-                              <h4 className="font-semibold text-base md:text-lg">{chapter.title}</h4>
-                              <Badge variant="secondary" className="ml-auto">
+                              <h4 className="font-semibold text-base md:text-lg text-slate-900">{chapter.title}</h4>
+                              <Badge variant="secondary" className="ml-auto bg-slate-100 text-slate-700">
                                 {chapter.lessons?.length || 0} lecciones
                               </Badge>
                             </div>
@@ -413,13 +413,13 @@ const CoursesSection = () => {
                                 {chapter.lessons.map((lesson, lIndex) => (
                                   <div 
                                     key={lesson.id}
-                                    className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg group"
+                                    className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg group border border-slate-100"
                                   >
                                     <Lock size={16} className="text-slate-400" />
-                                    <span className="text-slate-600 flex-1 text-sm md:text-base">
+                                    <span className="text-slate-700 flex-1 text-sm md:text-base">
                                       {lIndex + 1}. {lesson.title}
                                     </span>
-                                    <span className="text-xs text-slate-400">
+                                    <span className="text-xs text-slate-500">
                                       {lesson.duration_minutes} min
                                     </span>
                                   </div>
@@ -540,7 +540,7 @@ const PricingSection = () => {
             return (
               <Card 
                 key={plan.id}
-                className={`relative overflow-hidden transition-all hover:shadow-2xl ${
+                className={`relative overflow-hidden transition-all hover:shadow-2xl bg-white ${
                   isPopular 
                     ? 'border-2 border-cyan-500 shadow-xl md:scale-105' 
                     : 'border-slate-200 hover:border-cyan-200'
@@ -563,9 +563,9 @@ const PricingSection = () => {
                   </div>
                 )}
                 
-                <CardHeader className={`${isPopular ? 'pt-10 bg-cyan-50' : ''}`}>
-                  <CardTitle className="text-xl md:text-2xl">{plan.name}</CardTitle>
-                  <CardDescription className="text-base">{plan.description}</CardDescription>
+                <CardHeader className={`${isPopular ? 'pt-10 bg-cyan-50' : 'bg-white'}`}>
+                  <CardTitle className="text-xl md:text-2xl text-slate-900">{plan.name}</CardTitle>
+                  <CardDescription className="text-base text-slate-600">{plan.description}</CardDescription>
                   
                   <div className="mt-4">
                     {hasDiscount && plan.original_amount && (
@@ -582,7 +582,7 @@ const PricingSection = () => {
                   </div>
                 </CardHeader>
                 
-                <CardContent className="pt-6">
+                <CardContent className="pt-6 bg-white">
                   <ul className="space-y-3 md:space-y-4 mb-8">
                     {plan.features.map((feature, fIndex) => (
                       <li key={fIndex} className="flex items-start gap-3">
@@ -612,7 +612,7 @@ const PricingSection = () => {
         {/* Guarantee */}
         <div className="text-center mt-10 md:mt-12 p-6 bg-white rounded-2xl border border-slate-200 max-w-2xl mx-auto shadow-sm">
           <Award className="mx-auto mb-3 text-cyan-500" size={32} />
-          <h4 className="font-semibold text-lg mb-2">Garantía de satisfacción</h4>
+          <h4 className="font-semibold text-lg mb-2 text-slate-900">Garantía de satisfacción</h4>
           <p className="text-slate-600">
             Si no estás satisfecho en los primeros 7 días, te devolvemos el 100% de tu dinero. Sin preguntas.
           </p>
@@ -758,6 +758,22 @@ const Landing = () => {
   const { isAuthenticated, loading } = useAuth();
   const [trialEnabled, setTrialEnabled] = useState(true);
   const [trialDays, setTrialDays] = useState(7);
+
+  // Force light mode on landing page - remove dark class if present
+  useEffect(() => {
+    const root = document.documentElement;
+    const wasDark = root.classList.contains('dark');
+    if (wasDark) {
+      root.classList.remove('dark');
+    }
+    // Restore dark mode when leaving if it was set
+    return () => {
+      const theme = localStorage.getItem('remy-theme');
+      if (theme === 'dark') {
+        root.classList.add('dark');
+      }
+    };
+  }, []);
 
   // Load trial status from backend
   useEffect(() => {
