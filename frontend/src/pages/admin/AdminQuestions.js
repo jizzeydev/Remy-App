@@ -209,6 +209,10 @@ const QuestionManager = ({ course, onBack }) => {
     return questions.filter(q => q.chapter_id === chapterId);
   };
 
+  const getUncategorizedQuestions = () => {
+    return questions.filter(q => !q.chapter_id);
+  };
+
   const getDifficultyBadge = (difficulty) => {
     const styles = {
       'fácil': 'bg-green-100 text-green-800',
@@ -755,6 +759,76 @@ const QuestionManager = ({ course, onBack }) => {
               </Card>
             );
           })
+        )}
+        
+        {/* Uncategorized Questions Section */}
+        {getUncategorizedQuestions().length > 0 && (
+          <Card className="border-orange-200 bg-orange-50/30">
+            <CardHeader 
+              className="cursor-pointer hover:bg-orange-50"
+              onClick={() => toggleChapter('uncategorized')}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  {expandedChapters['uncategorized'] ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
+                  <CardTitle className="text-lg text-orange-800">Sin Categorizar (Importadas CSV)</CardTitle>
+                  <Badge className="bg-orange-200 text-orange-800">{getUncategorizedQuestions().length} preguntas</Badge>
+                </div>
+              </div>
+            </CardHeader>
+            
+            {expandedChapters['uncategorized'] && (
+              <CardContent className="pt-0">
+                <p className="text-sm text-orange-700 mb-4 p-3 bg-orange-100 rounded-lg">
+                  Estas preguntas fueron importadas sin capítulo asignado. Puedes editarlas para asignarles un capítulo.
+                </p>
+                <div className="space-y-3">
+                  {getUncategorizedQuestions().map((question, idx) => (
+                    <div 
+                      key={question.id}
+                      className="border border-orange-200 rounded-lg p-4 hover:bg-orange-50 transition-colors bg-white"
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Badge className={getDifficultyBadge(question.difficulty)}>
+                              {question.difficulty}
+                            </Badge>
+                            <Badge variant="outline" className="text-xs text-orange-600 border-orange-300">
+                              CSV Import
+                            </Badge>
+                            <span className="text-xs text-slate-400">
+                              Respuesta: {question.correct_answer}
+                            </span>
+                          </div>
+                          <div className="text-sm">
+                            <QuestionContent content={question.question_text} />
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="ghost"
+                            onClick={() => openEditQuestion(question)}
+                          >
+                            <Edit size={16} />
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="ghost"
+                            className="text-red-600 hover:text-red-700"
+                            onClick={() => handleDeleteQuestion(question.id)}
+                          >
+                            <Trash2 size={16} />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            )}
+          </Card>
         )}
       </div>
 
