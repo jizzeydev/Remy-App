@@ -82,7 +82,7 @@ class Course(BaseModel):
     category: str
     level: str
     modules_count: int
-    instructor: str
+    university_id: Optional[str] = None  # None = "General", otherwise university ID
     rating: float = 4.8
     cover_image_url: Optional[str] = None
     summary: Optional[str] = None
@@ -414,15 +414,46 @@ async def get_uploaded_image(filename: str):
     raise HTTPException(status_code=404, detail="Imagen no encontrada")
 
 @api_router.get("/courses", response_model=List[Course])
-async def get_courses():
-    # Only show courses visible to students
-    courses = await db.courses.find(
-        {"$or": [{"visible_to_students": True}, {"visible_to_students": {"$exists": False}}]}, 
-        {"_id": 0}
-    ).to_list(100)
+async def get_courses(
+    university_id: Optional[str] = None,
+    search: Optional[str] = None
+):
+    """Get visible courses with optional filters"""
+    query = {"$or": [{"visible_to_students": True}, {"visible_to_students": {"$exists": False}}]}
+    
+    # Filter by university
+    if university_id:
+        if university_id == "general":
+            query["$and"] = [
+                query.pop("$or"),
+                {"$or": [{"university_id": None}, {"university_id": {"$exists": False}}]}
+            ]
+            query["$or"] = query["$and"][0]
+            query["$and"] = [{"$or": query.pop("$or")}, query["$and"][1]]
+        else:
+            query["university_id"] = university_id
+    
+    # Search by title
+    if search:
+        query["title"] = {"$regex": search, "$options": "i"}
+    
+    courses = await db.courses.find(query, {"_id": 0}).to_list(500)
+    
     for course in courses:
         if isinstance(course.get('created_at'), str):
             course['created_at'] = datetime.fromisoformat(course['created_at'])
+        
+        # Add university info
+        uni_id = course.get('university_id')
+        if uni_id:
+            uni = await db.library_universities.find_one(
+                {"id": uni_id},
+                {"_id": 0, "name": 1, "short_name": 1, "logo_url": 1}
+            )
+            course['university'] = uni
+        else:
+            course['university'] = {"name": "General", "short_name": "GEN"}
+    
     return courses
 
 @api_router.get("/courses/{course_id}", response_model=Course)
@@ -898,15 +929,46 @@ async def verify_admin(username: str = Depends(verify_admin_token)):
 
 # Get all courses for admin (including hidden ones)
 @admin_router.get("/courses")
-async def admin_get_courses(_: str = Depends(verify_admin_token)):
-    """Get all courses including hidden ones"""
-    courses = await db.courses.find({}, {"_id": 0}).to_list(100)
+async def admin_get_courses(
+    university_id: Optional[str] = None,
+    search: Optional[str] = None,
+    _: str = Depends(verify_admin_token)
+):
+    """Get all courses including hidden ones, with optional filters"""
+    query = {}
+    
+    # Filter by university
+    if university_id:
+        if university_id == "general":
+            query["$or"] = [{"university_id": None}, {"university_id": {"$exists": False}}]
+        else:
+            query["university_id"] = university_id
+    
+    # Search by title
+    if search:
+        query["title"] = {"$regex": search, "$options": "i"}
+    
+    courses = await db.courses.find(query, {"_id": 0}).to_list(500)
+    
+    # Add university info to each course
     for course in courses:
         if isinstance(course.get('created_at'), str):
             course['created_at'] = course['created_at']
         # Add visibility field if not present
         if 'visible_to_students' not in course:
             course['visible_to_students'] = True
+        
+        # Add university info
+        uni_id = course.get('university_id')
+        if uni_id:
+            uni = await db.library_universities.find_one(
+                {"id": uni_id},
+                {"_id": 0, "name": 1, "short_name": 1, "logo_url": 1}
+            )
+            course['university'] = uni
+        else:
+            course['university'] = {"name": "General", "short_name": "GEN"}
+    
     return courses
 
 @admin_router.post("/courses", response_model=Course)
@@ -1437,6 +1499,163 @@ async def delete_chapter(chapter_id: str, _: str = Depends(verify_admin_token)):
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Capítulo no encontrado")
     return {"message": "Capítulo y sus lecciones eliminadas exitosamente"}
+
+# Import chapters from another course (for content splitting/reuse)
+class ImportChaptersRequest(BaseModel):
+    source_course_id: str
+    chapter_ids: List[str]  # Chapters to import
+    include_lessons: bool = True
+    include_questions: bool = True
+
+@admin_router.post("/courses/{target_course_id}/import-chapters")
+async def import_chapters(
+    target_course_id: str,
+    request: ImportChaptersRequest,
+    _: str = Depends(verify_admin_token)
+):
+    """
+    Import chapters (with lessons and questions) from another course.
+    Creates copies with new IDs, linked to the target course.
+    """
+    # Verify target course exists
+    target_course = await db.courses.find_one({"id": target_course_id}, {"_id": 0})
+    if not target_course:
+        raise HTTPException(status_code=404, detail="Curso destino no encontrado")
+    
+    # Verify source course exists
+    source_course = await db.courses.find_one({"id": request.source_course_id}, {"_id": 0})
+    if not source_course:
+        raise HTTPException(status_code=404, detail="Curso origen no encontrado")
+    
+    # Get max order in target course
+    max_order_result = await db.chapters.find_one(
+        {"course_id": target_course_id},
+        {"order": 1},
+        sort=[("order", -1)]
+    )
+    current_max_order = max_order_result.get("order", 0) if max_order_result else 0
+    
+    imported_chapters = []
+    imported_lessons = []
+    imported_questions = []
+    
+    for chapter_id in request.chapter_ids:
+        # Get source chapter
+        source_chapter = await db.chapters.find_one({"id": chapter_id}, {"_id": 0})
+        if not source_chapter:
+            continue
+        
+        # Create new chapter with new ID
+        current_max_order += 1
+        new_chapter_id = str(uuid.uuid4())
+        new_chapter = {
+            "id": new_chapter_id,
+            "course_id": target_course_id,
+            "title": source_chapter.get("title"),
+            "description": source_chapter.get("description", ""),
+            "order": current_max_order,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "imported_from": {
+                "course_id": request.source_course_id,
+                "course_title": source_course.get("title"),
+                "chapter_id": chapter_id
+            }
+        }
+        await db.chapters.insert_one(new_chapter)
+        imported_chapters.append(new_chapter_id)
+        
+        if request.include_lessons:
+            # Get lessons from source chapter
+            source_lessons = await db.lessons.find(
+                {"chapter_id": chapter_id},
+                {"_id": 0}
+            ).sort("order", 1).to_list(100)
+            
+            for source_lesson in source_lessons:
+                old_lesson_id = source_lesson.get("id")
+                new_lesson_id = str(uuid.uuid4())
+                new_lesson = {
+                    "id": new_lesson_id,
+                    "chapter_id": new_chapter_id,  # Link to new chapter
+                    "title": source_lesson.get("title"),
+                    "content": source_lesson.get("content", ""),
+                    "order": source_lesson.get("order", 0),
+                    "duration_minutes": source_lesson.get("duration_minutes", 30),
+                    "created_at": datetime.now(timezone.utc).isoformat()
+                }
+                await db.lessons.insert_one(new_lesson)
+                imported_lessons.append(new_lesson_id)
+                
+                if request.include_questions:
+                    # Get questions linked to this lesson
+                    source_questions = await db.questions.find(
+                        {"lesson_id": old_lesson_id},
+                        {"_id": 0}
+                    ).to_list(500)
+                    
+                    for source_q in source_questions:
+                        new_q_id = str(uuid.uuid4())
+                        new_question = {
+                            "id": new_q_id,
+                            "course_id": target_course_id,
+                            "chapter_id": new_chapter_id,
+                            "lesson_id": new_lesson_id,
+                            "topic": source_q.get("topic"),
+                            "subtopic": source_q.get("subtopic"),
+                            "difficulty": source_q.get("difficulty", "medio"),
+                            "question_text": source_q.get("question_text"),
+                            "question_type": source_q.get("question_type", "multiple_choice"),
+                            "options": source_q.get("options", []),
+                            "correct_answer": source_q.get("correct_answer"),
+                            "explanation": source_q.get("explanation"),
+                            "image_url": source_q.get("image_url"),
+                            "created_at": datetime.now(timezone.utc).isoformat(),
+                            "source": "imported"
+                        }
+                        await db.questions.insert_one(new_question)
+                        imported_questions.append(new_q_id)
+            
+            if request.include_questions:
+                # Also import questions linked to chapter (not specific lesson)
+                chapter_questions = await db.questions.find(
+                    {"chapter_id": chapter_id, "lesson_id": None},
+                    {"_id": 0}
+                ).to_list(500)
+                
+                for source_q in chapter_questions:
+                    new_q_id = str(uuid.uuid4())
+                    new_question = {
+                        "id": new_q_id,
+                        "course_id": target_course_id,
+                        "chapter_id": new_chapter_id,
+                        "lesson_id": None,
+                        "topic": source_q.get("topic"),
+                        "subtopic": source_q.get("subtopic"),
+                        "difficulty": source_q.get("difficulty", "medio"),
+                        "question_text": source_q.get("question_text"),
+                        "question_type": source_q.get("question_type", "multiple_choice"),
+                        "options": source_q.get("options", []),
+                        "correct_answer": source_q.get("correct_answer"),
+                        "explanation": source_q.get("explanation"),
+                        "image_url": source_q.get("image_url"),
+                        "created_at": datetime.now(timezone.utc).isoformat(),
+                        "source": "imported"
+                    }
+                    await db.questions.insert_one(new_question)
+                    imported_questions.append(new_q_id)
+    
+    logging.info(f"Imported {len(imported_chapters)} chapters, {len(imported_lessons)} lessons, {len(imported_questions)} questions to course {target_course_id}")
+    
+    return {
+        "success": True,
+        "message": f"Importación completada",
+        "imported": {
+            "chapters": len(imported_chapters),
+            "lessons": len(imported_lessons),
+            "questions": len(imported_questions)
+        },
+        "chapter_ids": imported_chapters
+    }
 
 # Lessons endpoints
 @admin_router.get("/chapters/{chapter_id}/lessons")
@@ -2221,6 +2440,54 @@ async def get_lesson(lesson_id: str):
         lesson['created_at'] = datetime.fromisoformat(lesson['created_at'])
     return lesson
 
+# ==================== APP SETTINGS ====================
+
+@api_router.get("/settings")
+async def get_app_settings():
+    """Get public app settings"""
+    settings = await db.app_settings.find_one({"id": "main"}, {"_id": 0})
+    if not settings:
+        settings = {
+            "id": "main",
+            "tu_universidad_enabled": False,  # Default disabled
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+    return settings
+
+@admin_router.get("/settings")
+async def get_admin_settings(_: str = Depends(verify_admin_token)):
+    """Get all app settings (admin)"""
+    settings = await db.app_settings.find_one({"id": "main"}, {"_id": 0})
+    if not settings:
+        settings = {
+            "id": "main",
+            "tu_universidad_enabled": False,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.app_settings.insert_one(settings)
+    return settings
+
+class UpdateSettingsRequest(BaseModel):
+    tu_universidad_enabled: Optional[bool] = None
+
+@admin_router.put("/settings")
+async def update_admin_settings(
+    request: UpdateSettingsRequest,
+    _: str = Depends(verify_admin_token)
+):
+    """Update app settings"""
+    update_data = {k: v for k, v in request.model_dump().items() if v is not None}
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.app_settings.update_one(
+        {"id": "main"},
+        {"$set": update_data},
+        upsert=True
+    )
+    
+    settings = await db.app_settings.find_one({"id": "main"}, {"_id": 0})
+    return {"success": True, "settings": settings}
+
 app.include_router(api_router)
 app.include_router(admin_router)
 
@@ -2232,6 +2499,14 @@ app.include_router(admin_universities_routes.router)
 app.include_router(admin_analytics_routes.router)
 app.include_router(student_universities_routes.router)
 app.include_router(images_routes.router)
+
+# Import and include new routers
+from routes import library_universities as library_universities_routes
+from routes import enrollments as enrollments_routes
+library_universities_routes.set_db(db)
+enrollments_routes.set_db(db)
+app.include_router(library_universities_routes.router, prefix="/api")
+app.include_router(enrollments_routes.router, prefix="/api")
 
 # CORS configuration - allow all origins since we use Bearer tokens (not cookies)
 app.add_middleware(

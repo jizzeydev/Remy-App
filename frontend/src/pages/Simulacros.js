@@ -120,10 +120,11 @@ const CreateQuizDialog = ({ open, onOpenChange, onQuizCreated }) => {
   const [timeLimit, setTimeLimit] = useState("none");
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [hasEnrolledCourses, setHasEnrolledCourses] = useState(true);
 
   useEffect(() => {
     if (open) {
-      fetchCourses();
+      fetchEnrolledCourses();
     }
   }, [open]);
 
@@ -137,12 +138,30 @@ const CreateQuizDialog = ({ open, onOpenChange, onQuizCreated }) => {
     }
   }, [selectedCourse]);
 
-  const fetchCourses = async () => {
+  const fetchEnrolledCourses = async () => {
     try {
-      const response = await axios.get(`${API}/courses`);
-      setCourses(response.data);
+      const token = localStorage.getItem('remy_session_token');
+      if (token) {
+        // Fetch enrolled courses
+        const response = await axios.get(`${API}/enrollments`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setCourses(response.data);
+        setHasEnrolledCourses(response.data.length > 0);
+      } else {
+        // Fallback to all courses if not logged in
+        const response = await axios.get(`${API}/courses`);
+        setCourses(response.data);
+      }
     } catch (error) {
       console.error('Error fetching courses:', error);
+      // Fallback to all courses
+      try {
+        const response = await axios.get(`${API}/courses`);
+        setCourses(response.data);
+      } catch (e) {
+        console.error('Error fetching all courses:', e);
+      }
     }
   };
 
@@ -296,28 +315,59 @@ const CreateQuizDialog = ({ open, onOpenChange, onQuizCreated }) => {
         </DialogHeader>
 
         <div className="space-y-6 mt-4">
+          {/* No enrolled courses message */}
+          {!hasEnrolledCourses && (
+            <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4 text-center">
+              <p className="text-amber-800 dark:text-amber-200 text-sm mb-3">
+                No tienes cursos inscritos. Inscríbete en un curso desde la Biblioteca para crear simulacros.
+              </p>
+              <Button 
+                variant="outline"
+                onClick={() => {
+                  onOpenChange(false);
+                  window.location.href = '/biblioteca';
+                }}
+              >
+                <BookOpen className="mr-2" size={16} />
+                Ir a Biblioteca
+              </Button>
+            </div>
+          )}
+          
           {/* Course Selection */}
-          <div>
-            <Label>Curso</Label>
-            <Select
-              value={selectedCourse?.id || ""}
-              onValueChange={(value) => {
-                const course = courses.find(c => c.id === value);
-                setSelectedCourse(course);
-              }}
-            >
-              <SelectTrigger data-testid="quiz-course-select">
-                <SelectValue placeholder="Selecciona un curso" />
-              </SelectTrigger>
-              <SelectContent>
-                {courses.map(course => (
-                  <SelectItem key={course.id} value={course.id}>
-                    {course.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {hasEnrolledCourses && (
+            <div>
+              <Label>Curso</Label>
+              <Select
+                value={selectedCourse?.id || ""}
+                onValueChange={(value) => {
+                  const course = courses.find(c => c.id === value);
+                  setSelectedCourse(course);
+                }}
+              >
+                <SelectTrigger data-testid="quiz-course-select">
+                  <SelectValue placeholder="Selecciona un curso inscrito" />
+                </SelectTrigger>
+                <SelectContent>
+                  {courses.map(course => (
+                    <SelectItem key={course.id} value={course.id}>
+                      <span className="flex items-center gap-2">
+                        {course.title}
+                        {course.university?.short_name && course.university.short_name !== 'GEN' && (
+                          <Badge variant="outline" className="text-xs ml-2">
+                            {course.university.short_name}
+                          </Badge>
+                        )}
+                      </span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground mt-1">
+                Solo se muestran cursos en los que estás inscrito
+              </p>
+            </div>
+          )}
 
           {/* Chapters and Lessons Selection */}
           {selectedCourse && (

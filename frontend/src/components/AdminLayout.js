@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, BookOpen, ClipboardList, Users, LogOut, DollarSign, Building2, Moon, Sun } from 'lucide-react';
+import { LayoutDashboard, BookOpen, ClipboardList, Users, LogOut, DollarSign, Building2, Moon, Sun, Settings, School } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useTheme } from '../contexts/ThemeContext';
@@ -13,9 +13,11 @@ const AdminLayout = () => {
     { icon: LayoutDashboard, label: 'Dashboard', path: '/admin/dashboard' },
     { icon: BookOpen, label: 'Cursos', path: '/admin/courses' },
     { icon: ClipboardList, label: 'Preguntas', path: '/admin/questions' },
-    { icon: Building2, label: 'Universidades', path: '/admin/universities' },
+    { icon: Building2, label: 'Universidades', path: '/admin/library-universities' },
+    { icon: School, label: 'Tu Universidad', path: '/admin/universities', secondary: true },
     { icon: Users, label: 'Usuarios', path: '/admin/users' },
     { icon: DollarSign, label: 'Precios', path: '/admin/pricing' },
+    { icon: Settings, label: 'Configuración', path: '/admin/settings' },
   ];
 
   const handleLogout = () => {
@@ -42,7 +44,7 @@ const AdminLayout = () => {
         <nav className="flex-1 space-y-2">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = location.pathname === item.path;
+            const isActive = location.pathname === item.path || location.pathname.startsWith(item.path + '/');
             return (
               <button
                 key={item.path}
@@ -51,9 +53,9 @@ const AdminLayout = () => {
                   isActive
                     ? 'bg-primary text-white'
                     : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                }`}
+                } ${item.secondary ? 'text-sm py-2 pl-8' : ''}`}
               >
-                <Icon size={20} />
+                <Icon size={item.secondary ? 16 : 20} />
                 <span className="font-medium">{item.label}</span>
               </button>
             );

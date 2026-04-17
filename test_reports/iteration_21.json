@@ -1,0 +1,82 @@
+{
+  "summary": "Tested course restructure features for multi-university system. Fixed critical bug in enrollments.py where JWT auth was used instead of session-based auth. All 21 backend API tests pass. Admin frontend pages verified working (Universidades, Courses with filters, Settings with Tu Universidad toggle).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_course_restructure.py",
+    "/app/test_reports/pytest/course_restructure_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "FIXED: enrollments.py was using JWT token decoding but frontend sends session tokens - changed to session-based auth matching auth.py pattern"
+  ],
+  "updated_files": [
+    "/app/backend/routes/enrollments.py",
+    "/app/backend/tests/test_course_restructure.py"
+  ],
+  "success_rate": {
+    "backend": "100% (21/21 tests passed)",
+    "frontend": "100% for admin pages tested"
+  },
+  "test_credentials": {
+    "admin_username": "admin",
+    "admin_password": "remy2026admin"
+  },
+  "seed_data_creation": "Created test user with session token for enrollment testing",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Course restructure APIs are fully functional. The enrollments endpoint now uses session-based auth (same as auth routes). Student-facing pages (Biblioteca, MisCursos, Simulacros) require Google OAuth authentication to test - admin pages can be tested with username/password login.",
+  "features_tested": {
+    "library_universities_api": {
+      "GET /api/library-universities": "PASS - Returns active universities",
+      "GET /api/admin/library-universities": "PASS - Returns all universities (admin)",
+      "POST /api/admin/library-universities": "PASS - Creates university with name, short_name",
+      "PUT /api/admin/library-universities/{id}": "PASS - Updates university",
+      "DELETE /api/admin/library-universities/{id}": "PASS - Deletes university without courses"
+    },
+    "enrollments_api": {
+      "GET /api/enrollments": "PASS - Returns enrolled courses (requires auth)",
+      "POST /api/enrollments": "PASS - Enrolls in course (with trial limit)",
+      "DELETE /api/enrollments/{course_id}": "PASS - Unenrolls from course",
+      "GET /api/enrollments/stats": "PASS - Returns enrollment statistics"
+    },
+    "settings_api": {
+      "GET /api/settings": "PASS - Returns public settings (tu_universidad_enabled)",
+      "GET /api/admin/settings": "PASS - Returns admin settings",
+      "PUT /api/admin/settings": "PASS - Updates settings (toggle tu_universidad)"
+    },
+    "courses_with_filters": {
+      "GET /api/courses?university_id=...&search=...": "PASS - Filters by university and search",
+      "GET /api/admin/courses?university_id=...&search=...": "PASS - Admin filters working"
+    },
+    "import_chapters_api": {
+      "POST /api/admin/courses/{id}/import-chapters": "PASS - Imports chapters with lessons and questions"
+    },
+    "admin_frontend": {
+      "Admin Library Universities page": "PASS - Nueva Universidad button, CRUD working",
+      "Admin Courses page": "PASS - Search and university filter present",
+      "Admin Settings page": "PASS - Tu Universidad toggle present"
+    }
+  },
+  "bugs_fixed": [
+    {
+      "file": "/app/backend/routes/enrollments.py",
+      "issue": "CRITICAL: Enrollments API returning 401 for valid session tokens",
+      "root_cause": "get_current_user() was using JWT decoding (jwt.decode) but frontend sends session tokens stored in database",
+      "fix": "Changed to session-based auth: lookup session_token in user_sessions collection, validate expiry, get user by user_id from session"
+    },
+    {
+      "file": "/app/backend/routes/enrollments.py",
+      "issue": "TypeError comparing offset-naive and offset-aware datetimes",
+      "root_cause": "expires_at from MongoDB could be naive datetime",
+      "fix": "Added timezone awareness check: if expires_at.tzinfo is None, replace with UTC"
+    }
+  ]
+}

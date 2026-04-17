@@ -15,6 +15,7 @@ import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import Simulacros from './pages/Simulacros';
 import Biblioteca from './pages/Biblioteca';
+import MisCursos from './pages/MisCursos';
 import Progreso from './pages/Progreso';
 import TuUniversidad from './pages/TuUniversidad';
 import CourseViewer from './pages/student/CourseViewer';
@@ -27,6 +28,8 @@ import AdminQuestions from './pages/admin/AdminQuestions';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminPricing from './pages/admin/AdminPricing';
 import AdminUniversities from './pages/admin/AdminUniversities';
+import AdminLibraryUniversities from './pages/admin/AdminLibraryUniversities';
+import AdminSettings from './pages/admin/AdminSettings';
 import UniversityDetail from './pages/admin/UniversityDetail';
 import CourseContentEditor from './pages/admin/CourseContentEditor';
 import '@/App.css';
@@ -99,6 +102,7 @@ function AppRouter() {
       <Route element={<StudentProtectedRoute><Layout /></StudentProtectedRoute>}>
         <Route path="/inicio" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/mis-cursos" element={<MisCursos />} />
         <Route path="/simulacros" element={<Simulacros />} />
         <Route path="/biblioteca" element={<Biblioteca />} />
         <Route path="/tu-universidad" element={<TuUniversidad />} />
@@ -118,8 +122,10 @@ function AppRouter() {
         <Route path="/admin/questions" element={<AdminQuestions />} />
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/pricing" element={<AdminPricing />} />
+        <Route path="/admin/library-universities" element={<AdminLibraryUniversities />} />
         <Route path="/admin/universities" element={<AdminUniversities />} />
         <Route path="/admin/universities/:universityId" element={<UniversityDetail />} />
+        <Route path="/admin/settings" element={<AdminSettings />} />
       </Route>
     </Routes>
   );

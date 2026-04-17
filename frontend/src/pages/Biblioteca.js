@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import { BookOpen, Loader2, Layers, GraduationCap, Crown, Lock, CheckCircle } from 'lucide-react';
+import { BookOpen, Loader2, Layers, GraduationCap, Crown, Lock, CheckCircle, Search, Building2, Filter, Plus } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '../contexts/AuthContext';
 import { usePricing } from '../hooks/usePricing';
 import TrialBanner from '../components/TrialBanner';
@@ -20,14 +22,22 @@ const Biblioteca = () => {
   const { user, hasActiveSubscription, canAccessContent } = useAuth();
   const { monthly, formatPrice, getLowestPrice, loading: pricingLoading } = usePricing();
   const [courses, setCourses] = useState([]);
+  const [filteredCourses, setFilteredCourses] = useState([]);
   const [coursesStats, setCoursesStats] = useState({});
+  const [universities, setUniversities] = useState([]);
+  const [enrolledCourseIds, setEnrolledCourseIds] = useState([]);
+  const [enrollmentStats, setEnrollmentStats] = useState({ can_enroll_more: true });
   const [loading, setLoading] = useState(true);
+  const [enrolling, setEnrolling] = useState(null);
+  
+  // Filters
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterUniversity, setFilterUniversity] = useState('all');
 
   // Check for subscription success message
   useEffect(() => {
     if (searchParams.get('subscription') === 'success') {
       toast.success('¡Bienvenido! Tu suscripción está activa.');
-      // Clean URL
       window.history.replaceState({}, '', '/biblioteca');
     }
   }, [searchParams]);
@@ -44,43 +54,82 @@ const Biblioteca = () => {
   };
 
   useEffect(() => {
-    fetchCourses();
+    fetchData();
   }, []);
 
-  const fetchCourses = async () => {
+  useEffect(() => {
+    // Apply filters
+    let filtered = [...courses];
+    
+    if (searchTerm) {
+      filtered = filtered.filter(c => 
+        c.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.description?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    if (filterUniversity && filterUniversity !== 'all') {
+      if (filterUniversity === 'general') {
+        filtered = filtered.filter(c => !c.university_id);
+      } else {
+        filtered = filtered.filter(c => c.university_id === filterUniversity);
+      }
+    }
+    
+    setFilteredCourses(filtered);
+  }, [courses, searchTerm, filterUniversity]);
+
+  const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${API}/courses`);
-      setCourses(response.data);
+      // Fetch courses
+      const coursesRes = await axios.get(`${API}/courses`);
+      setCourses(coursesRes.data);
       
+      // Fetch universities for filter
+      const unisRes = await axios.get(`${API}/library-universities`);
+      setUniversities(unisRes.data);
+      
+      // Fetch enrolled courses
+      const token = localStorage.getItem('remy_session_token');
+      if (token) {
+        try {
+          const enrolledRes = await axios.get(`${API}/enrollments`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          setEnrolledCourseIds(enrolledRes.data.map(c => c.id));
+          
+          const statsRes = await axios.get(`${API}/enrollments/stats`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          setEnrollmentStats(statsRes.data);
+        } catch (e) {
+          // Not logged in or error
+        }
+      }
+      
+      // Fetch course stats
       const studentId = getStudentId();
       const stats = {};
       
-      for (const course of response.data) {
+      for (const course of coursesRes.data) {
         try {
           const chaptersRes = await axios.get(`${API}/courses/${course.id}/chapters`);
           const chapters = chaptersRes.data;
           let totalLessons = 0;
-          const allLessonIds = [];
           
           for (const chapter of chapters) {
             try {
               const lessonsRes = await axios.get(`${API}/chapters/${chapter.id}/lessons`);
               totalLessons += lessonsRes.data.length;
-              lessonsRes.data.forEach(l => allLessonIds.push(l.id));
-            } catch (e) {
-              console.error('Error fetching lessons:', e);
-            }
+            } catch (e) {}
           }
           
-          // Fetch progress for this course
           let completedLessons = 0;
           try {
             const progressRes = await axios.get(`${API}/progress/${studentId}/${course.id}`);
             completedLessons = progressRes.data.completed_lessons?.length || 0;
-          } catch (e) {
-            // No progress yet
-          }
+          } catch (e) {}
           
           stats[course.id] = {
             chapters: chapters.length,
@@ -94,9 +143,47 @@ const Biblioteca = () => {
       }
       setCoursesStats(stats);
     } catch (error) {
-      console.error('Error fetching courses:', error);
+      console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleEnroll = async (e, course) => {
+    e.stopPropagation();
+    
+    const token = localStorage.getItem('remy_session_token');
+    if (!token) {
+      navigate('/auth');
+      return;
+    }
+    
+    if (!enrollmentStats.can_enroll_more && !enrollmentStats.has_subscription) {
+      toast.error('Límite de inscripción alcanzado. Suscríbete para acceso ilimitado.');
+      navigate('/subscribe');
+      return;
+    }
+    
+    setEnrolling(course.id);
+    try {
+      await axios.post(
+        `${API}/enrollments`,
+        { course_id: course.id },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success(`Inscrito en "${course.title}"`);
+      setEnrolledCourseIds(prev => [...prev, course.id]);
+      
+      // Refresh stats
+      const statsRes = await axios.get(`${API}/enrollments/stats`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setEnrollmentStats(statsRes.data);
+    } catch (error) {
+      console.error('Error enrolling:', error);
+      toast.error(error.response?.data?.detail || 'Error al inscribirse');
+    } finally {
+      setEnrolling(null);
     }
   };
 
@@ -113,8 +200,9 @@ const Biblioteca = () => {
     return colors[level] || 'bg-muted text-muted-foreground';
   };
 
-  const isSubscribed = hasActiveSubscription;
-  const hasAccess = canAccessContent(); // Subscription OR active trial
+  const isEnrolled = (courseId) => enrolledCourseIds.includes(courseId);
+  const hasAccess = canAccessContent();
+  const lowestPrice = pricingLoading ? '...' : formatPrice(getLowestPrice());
 
   if (loading) {
     return (
@@ -124,15 +212,10 @@ const Biblioteca = () => {
     );
   }
 
-  // Get the lowest price for the banner
-  const lowestPrice = pricingLoading ? '...' : formatPrice(getLowestPrice());
-
   return (
     <div className="space-y-6 pb-24 lg:pb-8" data-testid="biblioteca-page">
-      {/* Trial Banner - Shows trial status */}
       <TrialBanner />
       
-      {/* Subscription Banner - Only show if no trial and no subscription */}
       {!hasAccess && (
         <Card className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white border-0 shadow-lg">
           <CardContent className="flex flex-col sm:flex-row items-center justify-between py-6 gap-4">
@@ -158,27 +241,86 @@ const Biblioteca = () => {
         </Card>
       )}
 
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Biblioteca de Cursos</h1>
-        <p className="text-muted-foreground mt-1">
-          {hasAccess 
-            ? 'Explora todos los cursos disponibles' 
-            : 'Crea una cuenta gratis para comenzar'}
-        </p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Biblioteca de Cursos</h1>
+          <p className="text-muted-foreground mt-1">
+            Explora y encuentra cursos para tu universidad
+          </p>
+        </div>
+        {enrolledCourseIds.length > 0 && (
+          <Button variant="outline" onClick={() => navigate('/mis-cursos')}>
+            <BookOpen className="mr-2" size={18} />
+            Mis Cursos ({enrolledCourseIds.length})
+          </Button>
+        )}
       </div>
 
-      {courses.length === 0 ? (
+      {/* Filters */}
+      <div className="flex flex-wrap gap-4 items-center">
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+          <Input
+            placeholder="Buscar cursos..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+            data-testid="course-search"
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <Filter size={18} className="text-slate-500" />
+          <Select value={filterUniversity} onValueChange={setFilterUniversity}>
+            <SelectTrigger className="w-[200px]" data-testid="university-filter">
+              <SelectValue placeholder="Universidad" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas las universidades</SelectItem>
+              <SelectItem value="general">
+                <span className="flex items-center gap-2">
+                  <Building2 size={14} />
+                  General
+                </span>
+              </SelectItem>
+              {universities.map((uni) => (
+                <SelectItem key={uni.id} value={uni.id}>
+                  <span className="flex items-center gap-2">
+                    {uni.logo_url && (
+                      <img src={uni.logo_url} alt="" className="w-4 h-4 rounded object-cover" />
+                    )}
+                    {uni.short_name}
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="text-sm text-muted-foreground">
+          {filteredCourses.length} curso(s)
+        </div>
+      </div>
+
+      {filteredCourses.length === 0 ? (
         <Card className="text-center py-12">
           <CardContent>
             <GraduationCap className="mx-auto mb-4 text-muted-foreground" size={48} />
-            <h3 className="text-xl font-semibold mb-2 text-foreground">No hay cursos disponibles</h3>
-            <p className="text-muted-foreground">Los cursos aparecerán aquí cuando estén disponibles</p>
+            <h3 className="text-xl font-semibold mb-2 text-foreground">
+              {courses.length === 0 ? 'No hay cursos disponibles' : 'No se encontraron cursos'}
+            </h3>
+            <p className="text-muted-foreground">
+              {courses.length === 0 
+                ? 'Los cursos aparecerán aquí cuando estén disponibles'
+                : 'Prueba con otros filtros de búsqueda'
+              }
+            </p>
           </CardContent>
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {courses.map((course, index) => {
+          {filteredCourses.map((course, index) => {
             const stats = coursesStats[course.id] || { chapters: 0, lessons: 0, completedLessons: 0, progress: 0 };
+            const enrolled = isEnrolled(course.id);
+            
             return (
               <Card
                 key={course.id}
@@ -196,13 +338,29 @@ const Biblioteca = () => {
                       </div>
                     </div>
                   )}
-                  <div className="aspect-video bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-lg mb-4 flex items-center justify-center text-white text-3xl font-bold">
-                    {course.title.charAt(0)}
+                  <div className="aspect-video bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-lg mb-4 flex items-center justify-center relative overflow-hidden">
+                    {course.university?.logo_url ? (
+                      <img 
+                        src={course.university.logo_url} 
+                        alt="" 
+                        className="absolute inset-0 w-full h-full object-cover opacity-20"
+                      />
+                    ) : null}
+                    <span className="text-white text-3xl font-bold relative z-10">
+                      {course.title.charAt(0)}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between mb-2">
-                    <Badge className={getLevelColor(course.level)}>
-                      {course.level}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge className={getLevelColor(course.level)}>
+                        {course.level}
+                      </Badge>
+                      {course.university && course.university.short_name !== 'GEN' && (
+                        <Badge variant="outline" className="text-xs">
+                          {course.university.short_name}
+                        </Badge>
+                      )}
+                    </div>
                     <div className="flex items-center gap-3 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Layers size={14} />
@@ -221,36 +379,63 @@ const Biblioteca = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center justify-between text-sm mb-3">
-                    <span className="text-muted-foreground">{course.instructor || 'Se Remonta'}</span>
-                    <span className="text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded">{course.category}</span>
+                    <span className="text-muted-foreground">
+                      {course.university?.name || 'General'}
+                    </span>
+                    <span className="text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded">
+                      {course.category}
+                    </span>
                   </div>
                   
-                  {/* Progress bar */}
-                  <div className="mb-3">
-                    <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
-                      <span>Progreso</span>
-                      <span>{stats.completedLessons}/{stats.lessons} lecciones</span>
+                  {enrolled && (
+                    <div className="mb-3">
+                      <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+                        <span>Progreso</span>
+                        <span>{stats.completedLessons}/{stats.lessons} lecciones</span>
+                      </div>
+                      <Progress value={stats.progress} className="h-2" />
                     </div>
-                    <Progress value={stats.progress} className="h-2" />
-                  </div>
+                  )}
                   
-                  <Button
-                    className="w-full"
-                    variant={hasAccess ? "default" : "secondary"}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (hasAccess) {
-                        navigate(`/course/${course.id}`);
-                      } else {
+                  {hasAccess ? (
+                    enrolled ? (
+                      <Button
+                        className="w-full"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/course/${course.id}`);
+                        }}
+                      >
+                        <CheckCircle className="mr-2" size={16} />
+                        {stats.progress === 0 ? 'Comenzar' : stats.progress === 100 ? 'Repasar' : 'Continuar'}
+                      </Button>
+                    ) : (
+                      <Button
+                        className="w-full"
+                        variant="outline"
+                        onClick={(e) => handleEnroll(e, course)}
+                        disabled={enrolling === course.id}
+                      >
+                        {enrolling === course.id ? (
+                          <Loader2 className="animate-spin mr-2" size={16} />
+                        ) : (
+                          <Plus className="mr-2" size={16} />
+                        )}
+                        Inscribirse
+                      </Button>
+                    )
+                  ) : (
+                    <Button
+                      className="w-full"
+                      variant="secondary"
+                      onClick={(e) => {
+                        e.stopPropagation();
                         navigate('/auth');
-                      }
-                    }}
-                  >
-                    {hasAccess 
-                      ? (stats.progress === 0 ? 'Comenzar' : stats.progress === 100 ? 'Repasar' : 'Continuar')
-                      : 'Crear cuenta gratis'
-                    }
-                  </Button>
+                      }}
+                    >
+                      Crear cuenta gratis
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             );
