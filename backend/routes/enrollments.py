@@ -86,22 +86,30 @@ async def get_current_user(
     
     return user
 
-async def check_trial_enrollment_limit(user_id: str) -> bool:
-    """Check if user in trial can enroll in more courses (limit: 1)"""
+async def check_trial_enrollment_limit(user_id: str) -> tuple[bool, str]:
+    """
+    Check if user can enroll in more courses.
+    Returns (can_enroll, reason)
+    """
     # Try both id and user_id fields
     user = await db.users.find_one({"id": user_id}, {"_id": 0})
     if not user:
         user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
     if not user:
-        return False
+        return False, "Usuario no encontrado"
     
     # Check subscription status
     subscription = user.get("subscription", {})
     status = subscription.get("status")
+    manual_access = subscription.get("manual_access", False)
     
-    # If active subscription, no limit
-    if status == "authorized" or subscription.get("manual_access"):
-        return True
+    # DEBUG logging
+    import logging
+    logging.info(f"Enrollment check - user_id: {user_id}, status: {status}, manual_access: {manual_access}")
+    
+    # If active subscription OR manual access, no limit
+    if status == "authorized" or manual_access == True:
+        return True, "subscription_active"
     
     # Check if in trial
     trial_start = user.get("trial_start")
@@ -109,6 +117,9 @@ async def check_trial_enrollment_limit(user_id: str) -> bool:
         from datetime import timedelta
         if isinstance(trial_start, str):
             trial_start = datetime.fromisoformat(trial_start.replace('Z', '+00:00'))
+        # Ensure trial_start is timezone-aware
+        if trial_start.tzinfo is None:
+            trial_start = trial_start.replace(tzinfo=timezone.utc)
         
         trial_end = trial_start + timedelta(days=7)
         now = datetime.now(timezone.utc)
@@ -116,10 +127,13 @@ async def check_trial_enrollment_limit(user_id: str) -> bool:
         if now < trial_end:
             # In trial - check enrollment count
             enrollment_count = await db.student_enrollments.count_documents({"student_id": user_id})
-            return enrollment_count < 1  # Limit: 1 course during trial
+            if enrollment_count < 1:
+                return True, "trial_active"
+            else:
+                return False, "trial_limit_reached"
     
     # No trial, no subscription - can't enroll
-    return False
+    return False, "no_subscription"
 
 # ==================== ENDPOINTS ====================
 
@@ -153,13 +167,19 @@ async def enroll_in_course(
     )
     
     if not has_active_subscription:
-        # Check trial
-        can_enroll = await check_trial_enrollment_limit(user_id)
+        # Check trial using the helper function
+        can_enroll, reason = await check_trial_enrollment_limit(user_id)
         if not can_enroll:
-            raise HTTPException(
-                status_code=403, 
-                detail="Límite de inscripción alcanzado. Durante el periodo de prueba solo puedes inscribirte en 1 curso. Suscríbete para acceso ilimitado."
-            )
+            if reason == "trial_limit_reached":
+                raise HTTPException(
+                    status_code=403, 
+                    detail="Límite de inscripción alcanzado. Durante el periodo de prueba solo puedes inscribirte en 1 curso. Suscríbete para acceso ilimitado."
+                )
+            else:
+                raise HTTPException(
+                    status_code=403,
+                    detail="Necesitas una suscripción activa para inscribirte en cursos."
+                )
     
     # Create enrollment
     enrollment = Enrollment(

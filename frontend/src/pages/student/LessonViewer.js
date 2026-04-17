@@ -3,10 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Clock, BookOpen, CheckCircle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Clock, BookOpen, CheckCircle, Lock, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import MarkdownRenderer from '@/components/course/MarkdownRenderer';
-import SubscriptionRequired from '@/components/SubscriptionRequired';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -21,6 +20,8 @@ const LessonViewer = () => {
   const [currentIndex, setCurrentIndex] = useState(-1);
   const [loading, setLoading] = useState(true);
   const [markingComplete, setMarkingComplete] = useState(false);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [checkingEnrollment, setCheckingEnrollment] = useState(true);
 
   // Get student ID from localStorage
   const getStudentId = () => {
@@ -38,6 +39,7 @@ const LessonViewer = () => {
 
   const fetchLessonData = async () => {
     setLoading(true);
+    setCheckingEnrollment(true);
     try {
       // Fetch the lesson
       const lessonRes = await axios.get(`${API}/lessons/${lessonId}`);
@@ -57,6 +59,21 @@ const LessonViewer = () => {
           if (foundChapter) {
             setChapter(foundChapter);
             setCourse(c);
+            
+            // Check enrollment for this course
+            const token = localStorage.getItem('remy_session_token');
+            if (token) {
+              try {
+                const enrollmentRes = await axios.get(`${API}/enrollments/check/${c.id}`, {
+                  headers: { Authorization: `Bearer ${token}` }
+                });
+                setIsEnrolled(enrollmentRes.data.enrolled);
+              } catch (e) {
+                setIsEnrolled(false);
+              }
+            } else {
+              setIsEnrolled(false);
+            }
             
             // Build ordered list of all lessons in this course
             const orderedLessons = [];
@@ -83,6 +100,7 @@ const LessonViewer = () => {
       toast.error('Error al cargar la lección');
     } finally {
       setLoading(false);
+      setCheckingEnrollment(false);
     }
   };
 
@@ -131,8 +149,32 @@ const LessonViewer = () => {
     }
   };
 
-  if (loading) return <div className="text-center py-12 text-foreground">Cargando...</div>;
+  if (loading || checkingEnrollment) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="animate-spin text-primary" size={32} />
+      </div>
+    );
+  }
   if (!lesson) return <div className="text-center py-12 text-foreground">Lección no encontrada</div>;
+  
+  // If not enrolled, redirect to course page
+  if (!isEnrolled && course) {
+    return (
+      <div className="max-w-2xl mx-auto text-center py-12">
+        <Card className="p-8">
+          <Lock className="mx-auto mb-4 text-primary" size={48} />
+          <h2 className="text-2xl font-bold mb-2 text-foreground">Acceso restringido</h2>
+          <p className="text-muted-foreground mb-6">
+            Debes estar inscrito en el curso para acceder a esta lección.
+          </p>
+          <Button onClick={() => navigate(`/course/${course.id}`)}>
+            Ver curso e inscribirme
+          </Button>
+        </Card>
+      </div>
+    );
+  }
 
   const isLastLesson = currentIndex === allLessons.length - 1;
   const isFirstLesson = currentIndex === 0;
@@ -228,10 +270,4 @@ const LessonViewer = () => {
   );
 };
 
-export default function LessonViewerPage() {
-  return (
-    <SubscriptionRequired feature="las lecciones del curso">
-      <LessonViewer />
-    </SubscriptionRequired>
-  );
-}
+export default LessonViewer;

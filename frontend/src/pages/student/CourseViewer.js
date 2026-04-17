@@ -4,9 +4,9 @@ import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, BookOpen, Play, Clock, CheckCircle } from 'lucide-react';
+import { ArrowLeft, BookOpen, Play, Clock, CheckCircle, Lock, Plus, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import SubscriptionRequired from '@/components/SubscriptionRequired';
+import { useAuth } from '@/contexts/AuthContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -14,10 +14,14 @@ const API = `${BACKEND_URL}/api`;
 const CourseViewer = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
+  const { canAccessContent } = useAuth();
   const [course, setCourse] = useState(null);
   const [chapters, setChapters] = useState([]);
   const [completedLessons, setCompletedLessons] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [checkingEnrollment, setCheckingEnrollment] = useState(true);
+  const [enrolling, setEnrolling] = useState(false);
 
   // Get student ID from localStorage
   const getStudentId = () => {
@@ -30,8 +34,59 @@ const CourseViewer = () => {
   };
 
   useEffect(() => {
+    checkEnrollment();
     fetchCourseData();
   }, [courseId]);
+
+  const checkEnrollment = async () => {
+    try {
+      const token = localStorage.getItem('remy_session_token');
+      if (!token) {
+        setIsEnrolled(false);
+        setCheckingEnrollment(false);
+        return;
+      }
+      
+      const response = await axios.get(`${API}/enrollments/check/${courseId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setIsEnrolled(response.data.enrolled);
+    } catch (error) {
+      console.error('Error checking enrollment:', error);
+      setIsEnrolled(false);
+    } finally {
+      setCheckingEnrollment(false);
+    }
+  };
+
+  const handleEnroll = async () => {
+    const token = localStorage.getItem('remy_session_token');
+    if (!token) {
+      navigate('/auth');
+      return;
+    }
+    
+    setEnrolling(true);
+    try {
+      await axios.post(
+        `${API}/enrollments`,
+        { course_id: courseId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success('¡Inscrito exitosamente!');
+      setIsEnrolled(true);
+    } catch (error) {
+      console.error('Error enrolling:', error);
+      const msg = error.response?.data?.detail || 'Error al inscribirse';
+      toast.error(msg);
+      
+      if (error.response?.status === 403) {
+        navigate('/subscribe');
+      }
+    } finally {
+      setEnrolling(false);
+    }
+  };
 
   const fetchCourseData = async () => {
     try {
@@ -84,16 +139,124 @@ const CourseViewer = () => {
     return chapters[0]?.lessons?.[0];
   };
 
-  if (loading) return <div className="text-center py-12 text-foreground">Cargando...</div>;
+  if (loading || checkingEnrollment) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="animate-spin text-primary" size={32} />
+      </div>
+    );
+  }
+  
   if (!course) return <div className="text-center py-12 text-foreground">Curso no encontrado</div>;
 
   const nextLesson = findNextLesson();
+  const hasAccess = canAccessContent();
 
+  // If not enrolled, show enrollment prompt
+  if (!isEnrolled) {
+    return (
+      <div className="space-y-6 pb-24 lg:pb-8">
+        <Button variant="ghost" onClick={() => navigate('/biblioteca')}>
+          <ArrowLeft size={20} className="mr-2" />
+          Volver a biblioteca
+        </Button>
+
+        {/* Course header - Preview mode */}
+        <div className="bg-gradient-to-r from-slate-600 to-slate-700 rounded-xl p-8 text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+            <Lock size={64} className="text-white/30" />
+          </div>
+          <div className="relative z-10">
+            <h1 className="text-4xl font-bold mb-2">{course.title}</h1>
+            <p className="text-xl text-white/80 mb-4">{course.description}</p>
+            <div className="flex items-center gap-4 text-sm mb-6">
+              <span className="bg-white/20 px-3 py-1 rounded-full">{course.level}</span>
+              <span className="bg-white/20 px-3 py-1 rounded-full">
+                {chapters.length} capítulos
+              </span>
+              <span className="bg-white/20 px-3 py-1 rounded-full">
+                {totalLessons} lecciones
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Enrollment CTA */}
+        <Card className="border-primary bg-primary/5">
+          <CardContent className="text-center py-8">
+            <Lock className="mx-auto mb-4 text-primary" size={48} />
+            <h2 className="text-2xl font-bold mb-2 text-foreground">
+              Inscríbete para acceder al contenido
+            </h2>
+            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+              Para ver las lecciones, realizar ejercicios y hacer un seguimiento de tu progreso, 
+              primero debes inscribirte en este curso.
+            </p>
+            
+            {hasAccess ? (
+              <Button 
+                size="lg" 
+                onClick={handleEnroll}
+                disabled={enrolling}
+                className="px-8"
+              >
+                {enrolling ? (
+                  <>
+                    <Loader2 className="animate-spin mr-2" size={20} />
+                    Inscribiendo...
+                  </>
+                ) : (
+                  <>
+                    <Plus className="mr-2" size={20} />
+                    Inscribirme en este curso
+                  </>
+                )}
+              </Button>
+            ) : (
+              <div className="space-y-3">
+                <p className="text-sm text-amber-600 dark:text-amber-400">
+                  Necesitas una cuenta para inscribirte
+                </p>
+                <Button size="lg" onClick={() => navigate('/auth')}>
+                  Crear cuenta gratis
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Course preview - locked chapters */}
+        <div className="space-y-4">
+          <h2 className="text-2xl font-bold text-foreground">Vista previa del contenido</h2>
+          {chapters.map((chapter, index) => (
+            <Card key={chapter.id} className="opacity-75">
+              <CardHeader className="bg-secondary/50">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-3">
+                    <span className="flex items-center justify-center w-10 h-10 rounded-full font-bold bg-slate-400 text-white">
+                      <Lock size={16} />
+                    </span>
+                    <span className="text-foreground">{chapter.title}</span>
+                  </CardTitle>
+                  <span className="text-sm text-muted-foreground">
+                    {chapter.lessons?.length || 0} lecciones
+                  </span>
+                </div>
+                <p className="text-sm text-muted-foreground ml-13">{chapter.description}</p>
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // User is enrolled - show full content
   return (
     <div className="space-y-6 pb-24 lg:pb-8">
-      <Button variant="ghost" onClick={() => navigate('/biblioteca')}>
+      <Button variant="ghost" onClick={() => navigate('/mis-cursos')}>
         <ArrowLeft size={20} className="mr-2" />
-        Volver a biblioteca
+        Volver a Mis Cursos
       </Button>
 
       {/* Course header */}
@@ -226,10 +389,4 @@ const CourseViewer = () => {
   );
 };
 
-export default function CourseViewerPage() {
-  return (
-    <SubscriptionRequired feature="el contenido de los cursos">
-      <CourseViewer />
-    </SubscriptionRequired>
-  );
-}
+export default CourseViewer;

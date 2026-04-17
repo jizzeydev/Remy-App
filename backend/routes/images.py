@@ -89,24 +89,31 @@ async def serve_image(image_id: str):
 
 @router.post("/upload")
 async def upload_image(
-    file: UploadFile = File(...),
+    image: UploadFile = File(None),
+    file: UploadFile = File(None),
     folder: str = Query("remy/questions"),
     _: str = Depends(verify_admin_token)
 ):
     """
     Upload an image directly to Cloudinary (admin only)
     Returns permanent CDN URL
+    Accepts either 'image' or 'file' field name for compatibility
     """
+    # Use whichever file was provided
+    upload_file = image or file
+    if not upload_file:
+        raise HTTPException(status_code=400, detail="No se proporcionó archivo de imagen")
+    
     # Validate file type
     allowed_types = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
-    if file.content_type not in allowed_types:
+    if upload_file.content_type not in allowed_types:
         raise HTTPException(
             status_code=400, 
             detail="Tipo de archivo no permitido. Use JPG, PNG, WebP o GIF."
         )
     
     # Read file content
-    content = await file.read()
+    content = await upload_file.read()
     
     # Validate file size (max 10MB for Cloudinary)
     if len(content) > 10 * 1024 * 1024:
@@ -116,8 +123,8 @@ async def upload_image(
         # Upload to Cloudinary
         public_id = await save_image(
             content,
-            file.filename,
-            file.content_type,
+            upload_file.filename,
+            upload_file.content_type,
             folder=folder
         )
         
