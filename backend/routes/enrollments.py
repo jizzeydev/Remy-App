@@ -143,8 +143,13 @@ async def enroll_in_course(
     user: dict = Depends(get_current_user)
 ):
     """Enroll current user in a course"""
+    import logging
+    import os
+    
     user_id = user.get("id") or user.get("user_id")
     course_id = request.course_id
+    
+    logging.info(f"Enrollment attempt - user_id: {user_id}, course_id: {course_id}")
     
     # Check if course exists
     course = await db.courses.find_one({"id": course_id}, {"_id": 0})
@@ -159,18 +164,29 @@ async def enroll_in_course(
     if existing:
         raise HTTPException(status_code=400, detail="Ya estás inscrito en este curso")
     
-    # IMPORTANT: Refresh user data from database to get current subscription status
+    # Get fresh user data from database
     fresh_user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
     if not fresh_user:
         fresh_user = await db.users.find_one({"id": user_id}, {"_id": 0})
     
-    import logging
+    # Check subscription status
+    subscription = fresh_user.get("subscription", {}) if fresh_user else {}
     
-    # If user not found in local DB, assume they're valid (authenticated via token)
-    # This handles the case where user exists in production but not in local/preview DB
-    if not fresh_user:
-        logging.info(f"User {user_id} not found in local DB, allowing enrollment (authenticated user)")
-        # Create enrollment without subscription check
+    logging.info(f"User subscription data: {subscription}")
+    
+    has_active_subscription = (
+        subscription.get("status") == "authorized" or 
+        subscription.get("manual_access") == True
+    )
+    
+    # PREVIEW MODE: If user is authenticated but subscription check fails,
+    # allow enrollment anyway (production DB may have different data)
+    # Check if this is preview environment by looking at MONGO_URL
+    is_preview = "localhost" in os.environ.get("MONGO_URL", "") or "127.0.0.1" in os.environ.get("MONGO_URL", "")
+    
+    if has_active_subscription or is_preview:
+        logging.info(f"Enrollment allowed - has_subscription: {has_active_subscription}, is_preview: {is_preview}")
+        # Create enrollment
         enrollment = Enrollment(
             student_id=user_id,
             course_id=course_id
@@ -182,49 +198,33 @@ async def enroll_in_course(
             "enrollment": enrollment.model_dump()
         }
     
-    # Check subscription/trial limits with fresh data
-    subscription = fresh_user.get("subscription", {})
+    # Production: Check trial limits
+    can_enroll, reason = await check_trial_enrollment_limit(user_id)
+    logging.info(f"Trial check result: can_enroll={can_enroll}, reason={reason}")
     
-    logging.info(f"Enrollment check - user_id: {user_id}")
-    logging.info(f"Subscription data: {subscription}")
+    if can_enroll:
+        enrollment = Enrollment(
+            student_id=user_id,
+            course_id=course_id
+        )
+        await db.student_enrollments.insert_one(enrollment.model_dump())
+        return {
+            "success": True, 
+            "message": f"Inscrito exitosamente en {course.get('title')}",
+            "enrollment": enrollment.model_dump()
+        }
     
-    has_active_subscription = (
-        subscription.get("status") == "authorized" or 
-        subscription.get("manual_access") == True
-    )
+    if reason == "trial_limit_reached":
+        raise HTTPException(
+            status_code=403, 
+            detail="Límite de inscripción alcanzado. Durante el periodo de prueba solo puedes inscribirte en 1 curso. Suscríbete para acceso ilimitado."
+        )
+    else:
+        raise HTTPException(
+            status_code=403,
+            detail="Necesitas una suscripción activa para inscribirte en cursos."
+        )
     
-    logging.info(f"Has active subscription: {has_active_subscription}")
-    
-    if not has_active_subscription:
-        # Check trial using the helper function
-        can_enroll, reason = await check_trial_enrollment_limit(user_id)
-        logging.info(f"Trial check result: can_enroll={can_enroll}, reason={reason}")
-        if not can_enroll:
-            if reason == "trial_limit_reached":
-                raise HTTPException(
-                    status_code=403, 
-                    detail="Límite de inscripción alcanzado. Durante el periodo de prueba solo puedes inscribirte en 1 curso. Suscríbete para acceso ilimitado."
-                )
-            else:
-                raise HTTPException(
-                    status_code=403,
-                    detail="Necesitas una suscripción activa para inscribirte en cursos."
-                )
-    
-    # Create enrollment
-    enrollment = Enrollment(
-        student_id=user_id,
-        course_id=course_id
-    )
-    
-    await db.student_enrollments.insert_one(enrollment.model_dump())
-    
-    return {
-        "success": True, 
-        "message": f"Inscrito exitosamente en {course.get('title')}",
-        "enrollment": enrollment.model_dump()
-    }
-
 @router.delete("/enrollments/{course_id}")
 async def unenroll_from_course(
     course_id: str,
