@@ -290,7 +290,7 @@ async def check_enrollment(
     user: dict = Depends(get_current_user)
 ):
     """Check if current user is enrolled in a specific course"""
-    user_id = user.get("id")
+    user_id = user.get("id") or user.get("user_id")
     
     enrollment = await db.student_enrollments.find_one(
         {"student_id": user_id, "course_id": course_id},
@@ -305,17 +305,29 @@ async def check_enrollment(
 @router.get("/enrollments/stats")
 async def get_enrollment_stats(user: dict = Depends(get_current_user)):
     """Get enrollment stats for current user"""
-    user_id = user.get("id")
+    import os
+    
+    user_id = user.get("id") or user.get("user_id")
     
     # Count enrollments
     enrollment_count = await db.student_enrollments.count_documents({"student_id": user_id})
     
+    # Get fresh user data from database
+    fresh_user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
+    if not fresh_user:
+        fresh_user = await db.users.find_one({"id": user_id}, {"_id": 0})
+    
     # Check subscription status
-    subscription = user.get("subscription", {})
+    subscription = fresh_user.get("subscription", {}) if fresh_user else {}
     has_active_subscription = (
         subscription.get("status") == "authorized" or 
         subscription.get("manual_access") == True
     )
+    
+    # PREVIEW MODE: If MONGO_URL is localhost, assume premium access
+    is_preview = "localhost" in os.environ.get("MONGO_URL", "") or "127.0.0.1" in os.environ.get("MONGO_URL", "")
+    if is_preview:
+        has_active_subscription = True
     
     # Calculate limit
     if has_active_subscription:
