@@ -98,17 +98,20 @@ async def check_trial_enrollment_limit(user_id: str) -> tuple[bool, str]:
     if not user:
         return False, "Usuario no encontrado"
     
-    # Check subscription status
+    # Check subscription status in multiple ways
     subscription = user.get("subscription", {})
-    status = subscription.get("status")
+    subscription_status = user.get("subscription_status")
+    subscription_type = user.get("subscription_type")
     manual_access = subscription.get("manual_access", False)
     
-    # DEBUG logging
     import logging
-    logging.info(f"Enrollment check - user_id: {user_id}, status: {status}, manual_access: {manual_access}")
+    logging.info(f"Trial check - subscription: {subscription}, status: {subscription_status}, type: {subscription_type}")
     
     # If active subscription OR manual access, no limit
-    if status == "authorized" or manual_access == True:
+    if (subscription.get("status") == "authorized" or 
+        manual_access == True or
+        subscription_status == "active" or
+        subscription_type == "manual"):
         return True, "subscription_active"
     
     # Check if in trial
@@ -144,7 +147,6 @@ async def enroll_in_course(
 ):
     """Enroll current user in a course"""
     import logging
-    import os
     
     user_id = user.get("id") or user.get("user_id")
     course_id = request.course_id
@@ -171,22 +173,29 @@ async def enroll_in_course(
     
     # Check subscription status
     subscription = fresh_user.get("subscription", {}) if fresh_user else {}
+    subscription_status = fresh_user.get("subscription_status") if fresh_user else None
+    subscription_type = fresh_user.get("subscription_type") if fresh_user else None
     
     logging.info(f"User subscription data: {subscription}")
+    logging.info(f"User subscription_status: {subscription_status}, subscription_type: {subscription_type}")
     
+    # Check for active subscription in multiple ways:
+    # 1. subscription.status == "authorized" (Mercado Pago)
+    # 2. subscription.manual_access == True (old style)
+    # 3. subscription_status == "active" (manual grant)
+    # 4. subscription_type == "manual" (manual grant)
     has_active_subscription = (
         subscription.get("status") == "authorized" or 
-        subscription.get("manual_access") == True
+        subscription.get("manual_access") == True or
+        subscription_status == "active" or
+        subscription_type == "manual"
     )
     
-    # PREVIEW MODE: If user is authenticated but subscription check fails,
-    # allow enrollment anyway (production DB may have different data)
-    # Check if this is preview environment by looking at MONGO_URL
-    is_preview = "localhost" in os.environ.get("MONGO_URL", "") or "127.0.0.1" in os.environ.get("MONGO_URL", "")
+    logging.info(f"Has active subscription: {has_active_subscription}")
     
-    if has_active_subscription or is_preview:
-        logging.info(f"Enrollment allowed - has_subscription: {has_active_subscription}, is_preview: {is_preview}")
-        # Create enrollment
+    if has_active_subscription:
+        # Premium user - allow unlimited enrollments
+        logging.info(f"Enrollment allowed - Premium user")
         enrollment = Enrollment(
             student_id=user_id,
             course_id=course_id
@@ -198,7 +207,7 @@ async def enroll_in_course(
             "enrollment": enrollment.model_dump()
         }
     
-    # Production: Check trial limits
+    # Not premium - check trial limits
     can_enroll, reason = await check_trial_enrollment_limit(user_id)
     logging.info(f"Trial check result: can_enroll={can_enroll}, reason={reason}")
     
@@ -305,8 +314,6 @@ async def check_enrollment(
 @router.get("/enrollments/stats")
 async def get_enrollment_stats(user: dict = Depends(get_current_user)):
     """Get enrollment stats for current user"""
-    import os
-    
     user_id = user.get("id") or user.get("user_id")
     
     # Count enrollments
@@ -317,17 +324,18 @@ async def get_enrollment_stats(user: dict = Depends(get_current_user)):
     if not fresh_user:
         fresh_user = await db.users.find_one({"id": user_id}, {"_id": 0})
     
-    # Check subscription status
+    # Check subscription status from fresh user data
     subscription = fresh_user.get("subscription", {}) if fresh_user else {}
+    subscription_status = fresh_user.get("subscription_status") if fresh_user else None
+    subscription_type = fresh_user.get("subscription_type") if fresh_user else None
+    
+    # Check for active subscription in multiple ways
     has_active_subscription = (
         subscription.get("status") == "authorized" or 
-        subscription.get("manual_access") == True
+        subscription.get("manual_access") == True or
+        subscription_status == "active" or
+        subscription_type == "manual"
     )
-    
-    # PREVIEW MODE: If MONGO_URL is localhost, assume premium access
-    is_preview = "localhost" in os.environ.get("MONGO_URL", "") or "127.0.0.1" in os.environ.get("MONGO_URL", "")
-    if is_preview:
-        has_active_subscription = True
     
     # Calculate limit
     if has_active_subscription:
