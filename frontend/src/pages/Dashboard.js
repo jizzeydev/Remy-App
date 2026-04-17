@@ -37,9 +37,22 @@ const Dashboard = () => {
     const studentId = getStudentId();
     
     try {
-      // Fetch courses
-      const coursesRes = await axios.get(`${API}/courses`);
-      const coursesData = coursesRes.data.slice(0, 3);
+      // Fetch ENROLLED courses only
+      const token = localStorage.getItem('remy_session_token');
+      let coursesData = [];
+      
+      if (token) {
+        try {
+          const enrolledRes = await axios.get(`${API}/enrollments`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          coursesData = enrolledRes.data.slice(0, 3);
+        } catch (e) {
+          // Fallback to empty if not logged in
+          coursesData = [];
+        }
+      }
+      
       setCourses(coursesData);
 
       // Calculate progress for each course
@@ -195,9 +208,10 @@ const Dashboard = () => {
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <p className="text-muted-foreground mb-4">No hay cursos disponibles aún</p>
+                  <BookOpen className="mx-auto mb-4 text-muted-foreground" size={48} />
+                  <p className="text-muted-foreground mb-4">No tienes cursos inscritos</p>
                   <Button onClick={() => navigate('/biblioteca')} data-testid="browse-courses-button">
-                    Explorar cursos
+                    Explorar Biblioteca
                   </Button>
                 </div>
               )}

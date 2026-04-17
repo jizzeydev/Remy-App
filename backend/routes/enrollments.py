@@ -143,7 +143,7 @@ async def enroll_in_course(
     user: dict = Depends(get_current_user)
 ):
     """Enroll current user in a course"""
-    user_id = user.get("id")
+    user_id = user.get("id") or user.get("user_id")
     course_id = request.course_id
     
     # Check if course exists
@@ -159,16 +159,32 @@ async def enroll_in_course(
     if existing:
         raise HTTPException(status_code=400, detail="Ya estás inscrito en este curso")
     
-    # Check subscription/trial limits
-    subscription = user.get("subscription", {})
+    # IMPORTANT: Refresh user data from database to get current subscription status
+    fresh_user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
+    if not fresh_user:
+        fresh_user = await db.users.find_one({"id": user_id}, {"_id": 0})
+    
+    if not fresh_user:
+        raise HTTPException(status_code=401, detail="Usuario no encontrado")
+    
+    # Check subscription/trial limits with fresh data
+    subscription = fresh_user.get("subscription", {})
+    
+    import logging
+    logging.info(f"Enrollment check - user_id: {user_id}")
+    logging.info(f"Subscription data: {subscription}")
+    
     has_active_subscription = (
         subscription.get("status") == "authorized" or 
         subscription.get("manual_access") == True
     )
     
+    logging.info(f"Has active subscription: {has_active_subscription}")
+    
     if not has_active_subscription:
         # Check trial using the helper function
         can_enroll, reason = await check_trial_enrollment_limit(user_id)
+        logging.info(f"Trial check result: can_enroll={can_enroll}, reason={reason}")
         if not can_enroll:
             if reason == "trial_limit_reached":
                 raise HTTPException(

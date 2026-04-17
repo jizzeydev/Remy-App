@@ -276,21 +276,51 @@ const FeaturesSection = () => {
 // ==================== COURSES SECTION (DYNAMIC) ====================
 const CoursesSection = () => {
   const [courses, setCourses] = useState([]);
+  const [filteredCourses, setFilteredCourses] = useState([]);
+  const [universities, setUniversities] = useState([]);
   const [expandedCourse, setExpandedCourse] = useState(null);
   const [chapters, setChapters] = useState({});
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterUniversity, setFilterUniversity] = useState('general'); // Default to General
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchCourses();
+    fetchData();
   }, []);
 
-  const fetchCourses = async () => {
+  useEffect(() => {
+    // Apply filters
+    let filtered = [...courses];
+    
+    // Search filter
+    if (searchTerm) {
+      filtered = filtered.filter(c => 
+        c.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.description?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    // University filter
+    if (filterUniversity === 'general') {
+      filtered = filtered.filter(c => !c.university_id);
+    } else if (filterUniversity !== 'all') {
+      filtered = filtered.filter(c => c.university_id === filterUniversity);
+    }
+    
+    setFilteredCourses(filtered);
+  }, [courses, searchTerm, filterUniversity]);
+
+  const fetchData = async () => {
     try {
-      const response = await axios.get(`${API}/courses`);
-      setCourses(response.data);
+      const [coursesRes, unisRes] = await Promise.all([
+        axios.get(`${API}/courses`),
+        axios.get(`${API}/library-universities`)
+      ]);
+      setCourses(coursesRes.data);
+      setUniversities(unisRes.data);
     } catch (error) {
-      console.error('Error fetching courses:', error);
+      console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
@@ -340,21 +370,56 @@ const CoursesSection = () => {
             Los simulacros pueden adaptarse según el tipo de evaluación de distintas universidades.
           </p>
         </div>
+        
+        {/* Filters */}
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mb-8">
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <input
+              type="text"
+              placeholder="Buscar cursos..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+            />
+          </div>
+          <select
+            value={filterUniversity}
+            onChange={(e) => setFilterUniversity(e.target.value)}
+            className="w-full sm:w-48 px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent bg-white"
+          >
+            <option value="general">General</option>
+            <option value="all">Todas las universidades</option>
+            {universities.map((uni) => (
+              <option key={uni.id} value={uni.id}>
+                {uni.short_name} - {uni.name}
+              </option>
+            ))}
+          </select>
+          <span className="text-sm text-slate-500">
+            {filteredCourses.length} curso(s)
+          </span>
+        </div>
 
         {loading ? (
           <div className="text-center py-12">
             <div className="animate-spin w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full mx-auto" />
           </div>
-        ) : courses.length === 0 ? (
+        ) : filteredCourses.length === 0 ? (
           <Card className="text-center py-12 bg-white border-slate-200">
             <CardContent>
               <GraduationCap className="mx-auto mb-4 text-slate-400" size={48} />
-              <p className="text-slate-500">Próximamente más cursos disponibles</p>
+              <p className="text-slate-500">
+                {courses.length === 0 
+                  ? 'Próximamente más cursos disponibles'
+                  : 'No se encontraron cursos con esos filtros'
+                }
+              </p>
             </CardContent>
           </Card>
         ) : (
           <div className="space-y-6">
-            {courses.map((course) => (
+            {filteredCourses.map((course) => (
               <Card key={course.id} className="overflow-hidden bg-white border-slate-200" data-testid={`course-card-${course.id}`}>
                 <CardHeader 
                   className="cursor-pointer hover:bg-slate-50 transition-colors bg-white"
@@ -373,6 +438,13 @@ const CoursesSection = () => {
                         <div className="flex gap-2 mt-2 flex-wrap">
                           <Badge variant="outline" className="border-slate-300 text-slate-700 bg-white">{course.level}</Badge>
                           <Badge variant="outline" className="border-slate-300 text-slate-700 bg-white">{course.category}</Badge>
+                          {course.university ? (
+                            <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">
+                              {course.university.short_name === 'GEN' ? 'General' : course.university.short_name}
+                            </Badge>
+                          ) : (
+                            <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">General</Badge>
+                          )}
                         </div>
                       </div>
                     </div>
