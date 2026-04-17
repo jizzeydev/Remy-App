@@ -14,7 +14,8 @@ import { toast } from 'sonner';
 import { 
   Plus, Edit, Trash2, Sparkles, FileText, Image, Upload, 
   MessageSquare, ArrowLeft, BookOpen, Layers, HelpCircle,
-  CheckCircle, Wand2, FileUp, ChevronDown, ChevronRight, Loader2
+  CheckCircle, Wand2, FileUp, ChevronDown, ChevronRight, Loader2,
+  Search, Filter, Building2
 } from 'lucide-react';
 import { QuestionContent, QuestionOption, ExplanationBlock } from '@/components/course/QuestionRenderer';
 import RemyChat from '@/components/RemyChat';
@@ -24,25 +25,85 @@ const API = `${BACKEND_URL}/api`;
 const ADMIN_API = `${BACKEND_URL}/api/admin`;
 
 // ==================== COURSE SELECTOR VIEW ====================
-const CourseSelector = ({ courses, onSelectCourse }) => {
+const CourseSelector = ({ courses, universities, onSelectCourse, searchTerm, setSearchTerm, filterUniversity, setFilterUniversity }) => {
+  // Apply filters
+  let filteredCourses = [...courses];
+  
+  if (searchTerm) {
+    filteredCourses = filteredCourses.filter(c => 
+      c.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }
+  
+  if (filterUniversity && filterUniversity !== 'all') {
+    if (filterUniversity === 'general') {
+      filteredCourses = filteredCourses.filter(c => !c.university_id);
+    } else {
+      filteredCourses = filteredCourses.filter(c => c.university_id === filterUniversity);
+    }
+  }
+  
   return (
     <div className="space-y-6" data-testid="questions-course-selector">
       <div>
         <h1 className="text-3xl font-bold">Banco de Preguntas</h1>
-        <p className="text-slate-600 mt-1">Selecciona un curso para gestionar sus preguntas</p>
+        <p className="text-slate-600 dark:text-slate-400 mt-1">Selecciona un curso para gestionar sus preguntas</p>
+      </div>
+      
+      {/* Filters */}
+      <div className="flex flex-wrap gap-4 items-center">
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+          <Input
+            placeholder="Buscar cursos..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+            data-testid="question-course-search"
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <Filter size={18} className="text-slate-500" />
+          <Select value={filterUniversity} onValueChange={setFilterUniversity}>
+            <SelectTrigger className="w-[200px]" data-testid="question-filter-university">
+              <SelectValue placeholder="Filtrar por universidad" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas las universidades</SelectItem>
+              <SelectItem value="general">
+                <span className="flex items-center gap-2">
+                  <Building2 size={14} />
+                  General
+                </span>
+              </SelectItem>
+              {universities.map((uni) => (
+                <SelectItem key={uni.id} value={uni.id}>
+                  {uni.short_name} - {uni.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="text-sm text-slate-500">
+          {filteredCourses.length} de {courses.length} cursos
+        </div>
       </div>
 
-      {courses.length === 0 ? (
+      {filteredCourses.length === 0 ? (
         <Card className="text-center py-12">
           <CardContent>
             <BookOpen className="mx-auto mb-4 text-slate-400" size={48} />
-            <h3 className="text-xl font-semibold mb-2">No hay cursos disponibles</h3>
-            <p className="text-slate-500">Primero crea un curso en la sección de Cursos</p>
+            <h3 className="text-xl font-semibold mb-2">
+              {courses.length === 0 ? 'No hay cursos disponibles' : 'No se encontraron cursos'}
+            </h3>
+            <p className="text-slate-500">
+              {courses.length === 0 ? 'Primero crea un curso en la sección de Cursos' : 'Prueba con otros filtros'}
+            </p>
           </CardContent>
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {courses.map((course) => (
+          {filteredCourses.map((course) => (
             <Card
               key={course.id}
               className="cursor-pointer hover:shadow-lg hover:border-primary transition-all"
@@ -51,10 +112,19 @@ const CourseSelector = ({ courses, onSelectCourse }) => {
             >
               <CardHeader>
                 <div className="flex items-center justify-between mb-2">
-                  <Badge variant="outline">{course.level}</Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline">{course.level}</Badge>
+                    {course.university ? (
+                      <Badge variant="secondary" className="text-xs">
+                        {course.university.short_name === 'GEN' ? 'General' : course.university.short_name}
+                      </Badge>
+                    ) : (
+                      <Badge variant="secondary" className="text-xs">General</Badge>
+                    )}
+                  </div>
                   <span className="text-sm text-slate-500 flex items-center gap-1">
                     <HelpCircle size={14} />
-                    {course.questionCount || 0} preguntas
+                    {course.questionCount || 0}
                   </span>
                 </div>
                 <CardTitle>{course.title}</CardTitle>
@@ -1392,17 +1462,31 @@ const QuestionManager = ({ course, onBack }) => {
 // ==================== MAIN COMPONENT ====================
 const AdminQuestions = () => {
   const [courses, setCourses] = useState([]);
+  const [universities, setUniversities] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterUniversity, setFilterUniversity] = useState('all');
 
   useEffect(() => {
-    fetchCourses();
+    fetchData();
   }, []);
 
-  const fetchCourses = async () => {
+  const fetchData = async () => {
     try {
       const token = localStorage.getItem('admin_token');
-      const coursesRes = await axios.get(`${API}/courses`);
+      
+      // Fetch courses and universities in parallel
+      const [coursesRes, unisRes] = await Promise.all([
+        axios.get(`${ADMIN_API}/courses`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        axios.get(`${API}/admin/library-universities`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+      ]);
+      
+      setUniversities(unisRes.data);
       
       // Get question count for each course
       const coursesWithCounts = await Promise.all(
@@ -1420,8 +1504,8 @@ const AdminQuestions = () => {
       
       setCourses(coursesWithCounts);
     } catch (error) {
-      console.error('Error fetching courses:', error);
-      toast.error('Error al cargar cursos');
+      console.error('Error fetching data:', error);
+      toast.error('Error al cargar datos');
     } finally {
       setLoading(false);
     }
@@ -1437,7 +1521,7 @@ const AdminQuestions = () => {
         course={selectedCourse} 
         onBack={() => {
           setSelectedCourse(null);
-          fetchCourses(); // Refresh counts
+          fetchData(); // Refresh counts
         }} 
       />
     );
@@ -1445,8 +1529,13 @@ const AdminQuestions = () => {
 
   return (
     <CourseSelector 
-      courses={courses} 
-      onSelectCourse={setSelectedCourse} 
+      courses={courses}
+      universities={universities}
+      onSelectCourse={setSelectedCourse}
+      searchTerm={searchTerm}
+      setSearchTerm={setSearchTerm}
+      filterUniversity={filterUniversity}
+      setFilterUniversity={setFilterUniversity}
     />
   );
 };
