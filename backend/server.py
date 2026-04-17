@@ -1020,16 +1020,18 @@ async def import_questions_csv(
     """
     Import questions from CSV file for a specific course.
     
-    CSV format:
-    chapter_id,lesson_id,question_text,options,correct_answer,explanation,difficulty
+    CSV format (columnas separadas - más fácil de usar):
+    capitulo,leccion,dificultad,enunciado,opcion_a,opcion_b,opcion_c,opcion_d,respuesta_correcta,explicacion
     
-    - chapter_id: Optional - chapter UUID
-    - lesson_id: Optional - lesson UUID  
-    - question_text: Required - question content (supports LaTeX with $)
-    - options: Required - pipe-separated options (A|B|C|D)
-    - correct_answer: Required - correct option letter (A, B, C, D)
-    - explanation: Optional - solution explanation
-    - difficulty: Optional - fácil, medio, difícil (default: medio)
+    - capitulo: Nombre del capítulo (buscará por título, si no existe se ignora)
+    - leccion: Nombre de la lección (buscará por título, si no existe se ignora)
+    - dificultad: fácil, medio o difícil
+    - enunciado: Pregunta (soporta Markdown + LaTeX con $)
+    - opcion_a, opcion_b, opcion_c, opcion_d: Las 4 alternativas
+    - respuesta_correcta: A, B, C o D
+    - explicacion: Explicación de la solución
+    
+    También acepta formato legacy con pipe-separated options.
     """
     import csv as csv_module
     
@@ -1041,6 +1043,20 @@ async def import_questions_csv(
     course = await db.courses.find_one({"id": course_id}, {"_id": 0})
     if not course:
         raise HTTPException(status_code=404, detail="Curso no encontrado")
+    
+    # Get chapters and lessons for this course (for name lookup)
+    chapters = await db.chapters.find({"course_id": course_id}, {"_id": 0}).to_list(100)
+    chapter_map = {ch.get('title', '').lower().strip(): ch.get('id') for ch in chapters}
+    
+    # Build lesson map (lesson name -> lesson id, grouped by chapter)
+    lesson_map = {}
+    for ch in chapters:
+        lessons = await db.lessons.find({"chapter_id": ch.get('id')}, {"_id": 0}).to_list(100)
+        for lesson in lessons:
+            lesson_key = f"{ch.get('title', '').lower().strip()}|{lesson.get('title', '').lower().strip()}"
+            lesson_map[lesson_key] = lesson.get('id')
+            # Also map just lesson name (in case chapter not provided)
+            lesson_map[lesson.get('title', '').lower().strip()] = lesson.get('id')
     
     # Read CSV content
     content = await csv_file.read()
@@ -1067,37 +1083,80 @@ async def import_questions_csv(
     for row in csv_reader:
         row_num += 1
         try:
-            # Required field
-            question_text = row.get('question_text', '').strip()
-            if not question_text:
-                errors.append(f"Fila {row_num}: question_text es requerido")
-                continue
+            # Check if using new format (with capitulo, enunciado, opcion_a) or legacy format
+            is_new_format = 'enunciado' in row or 'opcion_a' in row
             
-            # Parse options (pipe-separated)
-            options_str = row.get('options', '').strip()
-            if not options_str:
-                errors.append(f"Fila {row_num}: options es requerido")
-                continue
+            if is_new_format:
+                # NEW FORMAT: capitulo, leccion, dificultad, enunciado, opcion_a-d, respuesta_correcta, explicacion
+                question_text = row.get('enunciado', '').strip()
+                if not question_text:
+                    errors.append(f"Fila {row_num}: enunciado es requerido")
+                    continue
+                
+                # Get options from separate columns
+                opcion_a = row.get('opcion_a', '').strip()
+                opcion_b = row.get('opcion_b', '').strip()
+                opcion_c = row.get('opcion_c', '').strip()
+                opcion_d = row.get('opcion_d', '').strip()
+                
+                if not opcion_a or not opcion_b:
+                    errors.append(f"Fila {row_num}: Se necesitan al menos opciones A y B")
+                    continue
+                
+                options = [f"A) {opcion_a}", f"B) {opcion_b}"]
+                if opcion_c:
+                    options.append(f"C) {opcion_c}")
+                if opcion_d:
+                    options.append(f"D) {opcion_d}")
+                
+                correct_answer = row.get('respuesta_correcta', '').strip().upper()
+                explanation = row.get('explicacion', '').strip() or None
+                
+                # Lookup chapter by name
+                capitulo = row.get('capitulo', '').strip().lower()
+                chapter_id = chapter_map.get(capitulo) if capitulo else None
+                
+                # Lookup lesson by name (with chapter context if available)
+                leccion = row.get('leccion', '').strip().lower()
+                lesson_id = None
+                if leccion:
+                    if capitulo:
+                        lesson_key = f"{capitulo}|{leccion}"
+                        lesson_id = lesson_map.get(lesson_key) or lesson_map.get(leccion)
+                    else:
+                        lesson_id = lesson_map.get(leccion)
+                
+                difficulty = row.get('dificultad', '').strip().lower() or 'medio'
+            else:
+                # LEGACY FORMAT: chapter_id, lesson_id, question_text, options (pipe-separated), correct_answer, explanation, difficulty
+                question_text = row.get('question_text', '').strip()
+                if not question_text:
+                    errors.append(f"Fila {row_num}: question_text es requerido")
+                    continue
+                
+                # Parse options (pipe-separated)
+                options_str = row.get('options', '').strip()
+                if not options_str:
+                    errors.append(f"Fila {row_num}: options es requerido")
+                    continue
+                
+                options = [opt.strip() for opt in options_str.split('|') if opt.strip()]
+                if len(options) < 2:
+                    errors.append(f"Fila {row_num}: Se necesitan al menos 2 opciones separadas por |")
+                    continue
+                
+                correct_answer = row.get('correct_answer', '').strip().upper()
+                chapter_id = row.get('chapter_id', '').strip() or None
+                lesson_id = row.get('lesson_id', '').strip() or None
+                explanation = row.get('explanation', '').strip() or None
+                difficulty = row.get('difficulty', '').strip().lower() or 'medio'
             
-            options = [opt.strip() for opt in options_str.split('|') if opt.strip()]
-            if len(options) < 2:
-                errors.append(f"Fila {row_num}: Se necesitan al menos 2 opciones separadas por |")
-                continue
-            
-            # Get correct answer
-            correct_answer = row.get('correct_answer', '').strip().upper()
             if not correct_answer:
-                errors.append(f"Fila {row_num}: correct_answer es requerido")
+                errors.append(f"Fila {row_num}: respuesta_correcta es requerido")
                 continue
-            
-            # Get other fields
-            chapter_id = row.get('chapter_id', '').strip() or None
-            lesson_id = row.get('lesson_id', '').strip() or None
-            explanation = row.get('explanation', '').strip() or None
-            difficulty = row.get('difficulty', '').strip().lower() or 'medio'
             
             # Normalize difficulty
-            difficulty_map = {'fácil': 'fácil', 'facil': 'fácil', 'medio': 'medio', 'difícil': 'difícil', 'dificil': 'difícil'}
+            difficulty_map = {'fácil': 'fácil', 'facil': 'fácil', 'medio': 'medio', 'difícil': 'difícil', 'dificil': 'difícil', 'easy': 'fácil', 'medium': 'medio', 'hard': 'difícil'}
             difficulty = difficulty_map.get(difficulty, 'medio')
             
             # Create question
@@ -1137,20 +1196,21 @@ async def import_questions_csv(
 
 @admin_router.get("/questions/csv-template")
 async def get_questions_csv_template(_: str = Depends(verify_admin_token)):
-    """Get CSV template for importing questions"""
+    """Get CSV template for importing questions - NEW FORMAT with separate columns"""
     from fastapi.responses import Response
     
-    csv_content = """chapter_id,lesson_id,question_text,options,correct_answer,explanation,difficulty
-,"","Calcule la derivada de $f(x) = x^3 + 2x$","$3x^2 + 2$|$3x^2$|$x^2 + 2$|$3x + 2$",A,"La derivada de $x^3$ es $3x^2$ y la derivada de $2x$ es $2$. Por lo tanto: $f'(x) = 3x^2 + 2$",medio
-,"","Resuelva la integral $\\int x^2 dx$","$\\frac{x^3}{3} + C$|$x^3 + C$|$2x + C$|$\\frac{x^2}{2} + C$",A,"Usando la regla de potencias: $\\int x^n dx = \\frac{x^{n+1}}{n+1} + C$",fácil
-,"","Si $\\lim_{x \\to 0} \\frac{\\sin(x)}{x} = L$, ¿cuál es el valor de $L$?","$0$|$1$|$\\infty$|No existe",B,"Este es un límite notable. $\\lim_{x \\to 0} \\frac{\\sin(x)}{x} = 1$",medio
+    csv_content = """capitulo,leccion,dificultad,enunciado,opcion_a,opcion_b,opcion_c,opcion_d,respuesta_correcta,explicacion
+Derivadas,Regla de la Cadena,medio,"Calcule la derivada de $f(x) = (3x^2 + 1)^4$",$24x(3x^2 + 1)^3$,$12x(3x^2 + 1)^3$,$4(3x^2 + 1)^3$,$24x(3x^2 + 1)^4$,A,"Usando la regla de la cadena: $f'(x) = 4(3x^2 + 1)^3 \\cdot 6x = 24x(3x^2 + 1)^3$"
+Derivadas,Derivadas Básicas,fácil,"Calcule la derivada de $f(x) = x^3 + 2x$",$3x^2 + 2$,$3x^2$,$x^2 + 2$,$3x + 2$,A,"La derivada de $x^3$ es $3x^2$ y la derivada de $2x$ es $2$"
+Integrales,Integrales Indefinidas,fácil,"Resuelva la integral $\\int x^2 dx$","$\\frac{x^3}{3} + C$","$x^3 + C$","$2x + C$","$\\frac{x^2}{2} + C$",A,"Usando la regla de potencias: $\\int x^n dx = \\frac{x^{n+1}}{n+1} + C$"
+Límites,Límites Notables,medio,"Si $\\lim_{x \\to 0} \\frac{\\sin(x)}{x} = L$, ¿cuál es el valor de $L$?",$0$,$1$,$\\infty$,No existe,B,"Este es un límite notable. $\\lim_{x \\to 0} \\frac{\\sin(x)}{x} = 1$"
 """
     
     return Response(
         content=csv_content,
         media_type="text/csv",
         headers={
-            "Content-Disposition": "attachment; filename=plantilla_preguntas.csv"
+            "Content-Disposition": "attachment; filename=plantilla_preguntas_remy.csv"
         }
     )
 

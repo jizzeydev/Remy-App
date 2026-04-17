@@ -1323,9 +1323,9 @@ const QuestionManager = ({ course, onBack }) => {
           <div className="space-y-4">
             {/* Download Template Button */}
             <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4">
-              <h4 className="font-medium text-sm mb-2">Formato requerido:</h4>
-              <p className="text-xs text-slate-600 mb-3">
-                El CSV debe tener las columnas: chapter_id, lesson_id, question_text, options, correct_answer, explanation, difficulty
+              <h4 className="font-medium text-sm mb-2">Formato CSV (columnas separadas):</h4>
+              <p className="text-xs text-slate-600 mb-2 font-mono bg-white p-2 rounded border">
+                capitulo, leccion, dificultad, enunciado, opcion_a, opcion_b, opcion_c, opcion_d, respuesta_correcta, explicacion
               </p>
               <Button 
                 variant="outline" 
@@ -1357,10 +1357,11 @@ const QuestionManager = ({ course, onBack }) => {
             
             {/* Tips */}
             <div className="text-xs text-slate-500 space-y-1">
-              <p>• Las opciones se separan con | (pipe)</p>
-              <p>• Las fórmulas LaTeX usan $ como delimitador</p>
-              <p>• Dificultad: fácil, medio, difícil</p>
-              <p>• chapter_id y lesson_id son opcionales</p>
+              <p>• <strong>capitulo</strong> y <strong>leccion</strong>: Nombres tal como aparecen en el curso</p>
+              <p>• <strong>dificultad</strong>: fácil, medio o difícil</p>
+              <p>• <strong>opcion_a-d</strong>: Cada alternativa en su columna</p>
+              <p>• <strong>respuesta_correcta</strong>: A, B, C o D</p>
+              <p>• LaTeX: usa $ como delimitador (ej: $\frac{'{x}'}{'{2}'}$)</p>
             </div>
           </div>
           
