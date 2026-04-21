@@ -95,6 +95,8 @@ class Chapter(BaseModel):
     title: str
     description: str
     order: int
+    # Template linking: if set, this chapter inherits content from the template chapter
+    template_chapter_id: Optional[str] = None  # ID of the source chapter (from General courses)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class Lesson(BaseModel):
@@ -1045,14 +1047,28 @@ async def get_all_questions(
     query = {}
     if course_id:
         query["course_id"] = course_id
+    
+    # Handle chapter_id - check if it's a linked chapter
+    actual_chapter_id = chapter_id
     if chapter_id:
-        query["chapter_id"] = chapter_id
+        chapter = await db.chapters.find_one({"id": chapter_id}, {"_id": 0})
+        if chapter and chapter.get("template_chapter_id"):
+            actual_chapter_id = chapter["template_chapter_id"]
+        query["chapter_id"] = actual_chapter_id
+    
     if lesson_id:
         query["lesson_id"] = lesson_id
     if topic:
         query["topic"] = topic
     
     questions = await db.questions.find(query, {"_id": 0}).to_list(1000)
+    
+    # Mark questions as inherited if from template
+    if chapter_id and actual_chapter_id != chapter_id:
+        for q in questions:
+            q['inherited_from_template'] = True
+            q['read_only'] = True
+    
     return questions
 
 @admin_router.put("/questions/{question_id}", response_model=Question)
@@ -1471,9 +1487,27 @@ Responde SOLO con el JSON válido."""
 @admin_router.get("/courses/{course_id}/chapters")
 async def get_course_chapters(course_id: str, _: str = Depends(verify_admin_token)):
     chapters = await db.chapters.find({"course_id": course_id}, {"_id": 0}).sort("order", 1).to_list(100)
+    
     for chapter in chapters:
         if isinstance(chapter.get('created_at'), str):
             chapter['created_at'] = datetime.fromisoformat(chapter['created_at'])
+        
+        # If linked to a template, get template info
+        template_id = chapter.get('template_chapter_id')
+        if template_id:
+            template = await db.chapters.find_one({"id": template_id}, {"_id": 0})
+            if template:
+                # Get template's course info
+                template_course = await db.courses.find_one({"id": template.get('course_id')}, {"_id": 0, "title": 1, "university_id": 1})
+                chapter['template_info'] = {
+                    "chapter_title": template.get('title'),
+                    "course_title": template_course.get('title') if template_course else None,
+                    "is_general": template_course.get('university_id') is None if template_course else True
+                }
+                chapter['is_linked'] = True
+        else:
+            chapter['is_linked'] = False
+    
     return chapters
 
 @admin_router.post("/chapters", response_model=Chapter)
@@ -1494,11 +1528,187 @@ async def update_chapter(chapter_id: str, chapter: Chapter, _: str = Depends(ver
 
 @admin_router.delete("/chapters/{chapter_id}")
 async def delete_chapter(chapter_id: str, _: str = Depends(verify_admin_token)):
+    # Check if this is a template chapter being used by other courses
+    linked_chapters = await db.chapters.count_documents({"template_chapter_id": chapter_id})
+    if linked_chapters > 0:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"No se puede eliminar: {linked_chapters} capítulo(s) en otros cursos están vinculados a esta plantilla."
+        )
+    
     await db.lessons.delete_many({"chapter_id": chapter_id})
     result = await db.chapters.delete_one({"id": chapter_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Capítulo no encontrado")
     return {"message": "Capítulo y sus lecciones eliminadas exitosamente"}
+
+# Link chapters from template courses (General courses)
+class LinkChaptersRequest(BaseModel):
+    template_chapter_ids: List[str]  # IDs of chapters to link from General courses
+
+@admin_router.post("/courses/{course_id}/link-chapters")
+async def link_chapters(
+    course_id: str,
+    request: LinkChaptersRequest,
+    _: str = Depends(verify_admin_token)
+):
+    """
+    Link chapters from General courses to this course.
+    Creates reference chapters that inherit content from templates.
+    """
+    # Verify target course exists
+    target_course = await db.courses.find_one({"id": course_id}, {"_id": 0})
+    if not target_course:
+        raise HTTPException(status_code=404, detail="Curso destino no encontrado")
+    
+    # Get max order in target course
+    max_order_result = await db.chapters.find_one(
+        {"course_id": course_id},
+        {"order": 1},
+        sort=[("order", -1)]
+    )
+    current_max_order = max_order_result.get("order", 0) if max_order_result else 0
+    
+    linked_chapters = []
+    errors = []
+    
+    for template_id in request.template_chapter_ids:
+        # Get template chapter
+        template_chapter = await db.chapters.find_one({"id": template_id}, {"_id": 0})
+        if not template_chapter:
+            errors.append(f"Capítulo plantilla {template_id} no encontrado")
+            continue
+        
+        # Check if already linked
+        existing = await db.chapters.find_one({
+            "course_id": course_id,
+            "template_chapter_id": template_id
+        }, {"_id": 0})
+        if existing:
+            errors.append(f"Capítulo '{template_chapter.get('title')}' ya está vinculado")
+            continue
+        
+        # Create linked chapter
+        current_max_order += 1
+        new_chapter = {
+            "id": str(uuid.uuid4()),
+            "course_id": course_id,
+            "title": template_chapter.get("title"),  # Use same title
+            "description": template_chapter.get("description", ""),
+            "order": current_max_order,
+            "template_chapter_id": template_id,  # Link to template
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+        await db.chapters.insert_one(new_chapter)
+        linked_chapters.append({
+            "id": new_chapter["id"],
+            "title": new_chapter["title"],
+            "template_id": template_id
+        })
+    
+    return {
+        "success": True,
+        "message": f"Vinculados {len(linked_chapters)} capítulo(s)",
+        "linked_chapters": linked_chapters,
+        "errors": errors if errors else None
+    }
+
+@admin_router.post("/chapters/{chapter_id}/unlink")
+async def unlink_chapter(
+    chapter_id: str,
+    _: str = Depends(verify_admin_token)
+):
+    """
+    Convert a linked chapter to an independent chapter by copying the template content.
+    """
+    chapter = await db.chapters.find_one({"id": chapter_id}, {"_id": 0})
+    if not chapter:
+        raise HTTPException(status_code=404, detail="Capítulo no encontrado")
+    
+    template_id = chapter.get("template_chapter_id")
+    if not template_id:
+        raise HTTPException(status_code=400, detail="Este capítulo no está vinculado a una plantilla")
+    
+    # Copy lessons from template
+    template_lessons = await db.lessons.find({"chapter_id": template_id}, {"_id": 0}).to_list(100)
+    
+    for lesson in template_lessons:
+        old_lesson_id = lesson.get("id")
+        new_lesson_id = str(uuid.uuid4())
+        lesson["id"] = new_lesson_id
+        lesson["chapter_id"] = chapter_id
+        lesson["created_at"] = datetime.now(timezone.utc).isoformat()
+        await db.lessons.insert_one(lesson)
+        
+        # Copy questions linked to this lesson
+        lesson_questions = await db.questions.find({"lesson_id": old_lesson_id}, {"_id": 0}).to_list(500)
+        for q in lesson_questions:
+            q["id"] = str(uuid.uuid4())
+            q["lesson_id"] = new_lesson_id
+            q["chapter_id"] = chapter_id
+            q["course_id"] = chapter.get("course_id")
+            q["created_at"] = datetime.now(timezone.utc).isoformat()
+            await db.questions.insert_one(q)
+    
+    # Copy questions linked to chapter (not specific lesson)
+    chapter_questions = await db.questions.find({
+        "chapter_id": template_id,
+        "$or": [{"lesson_id": None}, {"lesson_id": {"$exists": False}}]
+    }, {"_id": 0}).to_list(500)
+    
+    for q in chapter_questions:
+        q["id"] = str(uuid.uuid4())
+        q["chapter_id"] = chapter_id
+        q["course_id"] = chapter.get("course_id")
+        q["created_at"] = datetime.now(timezone.utc).isoformat()
+        await db.questions.insert_one(q)
+    
+    # Remove template link
+    await db.chapters.update_one(
+        {"id": chapter_id},
+        {"$unset": {"template_chapter_id": ""}}
+    )
+    
+    return {
+        "success": True,
+        "message": "Capítulo desvinculado. El contenido ha sido copiado y ahora es independiente."
+    }
+
+# Get available template chapters (from General courses)
+@admin_router.get("/template-chapters")
+async def get_template_chapters(_: str = Depends(verify_admin_token)):
+    """Get all chapters from General courses (available as templates)"""
+    # Get General courses (no university_id)
+    general_courses = await db.courses.find(
+        {"$or": [{"university_id": None}, {"university_id": {"$exists": False}}]},
+        {"_id": 0}
+    ).to_list(100)
+    
+    result = []
+    for course in general_courses:
+        chapters = await db.chapters.find(
+            {"course_id": course["id"]},
+            {"_id": 0}
+        ).sort("order", 1).to_list(100)
+        
+        # Get lesson count for each chapter
+        for chapter in chapters:
+            lesson_count = await db.lessons.count_documents({"chapter_id": chapter["id"]})
+            question_count = await db.questions.count_documents({"chapter_id": chapter["id"]})
+            chapter["lesson_count"] = lesson_count
+            chapter["question_count"] = question_count
+        
+        result.append({
+            "course": {
+                "id": course["id"],
+                "title": course["title"],
+                "category": course.get("category")
+            },
+            "chapters": chapters
+        })
+    
+    return result
 
 # Import chapters from another course (for content splitting/reuse)
 class ImportChaptersRequest(BaseModel):
@@ -1660,10 +1870,23 @@ async def import_chapters(
 # Lessons endpoints
 @admin_router.get("/chapters/{chapter_id}/lessons")
 async def get_chapter_lessons(chapter_id: str, _: str = Depends(verify_admin_token)):
-    lessons = await db.lessons.find({"chapter_id": chapter_id}, {"_id": 0}).sort("order", 1).to_list(100)
+    # Check if this chapter has a template (is linked)
+    chapter = await db.chapters.find_one({"id": chapter_id}, {"_id": 0})
+    
+    # Determine source chapter for lessons
+    source_chapter_id = chapter_id
+    is_linked = False
+    if chapter and chapter.get("template_chapter_id"):
+        source_chapter_id = chapter["template_chapter_id"]
+        is_linked = True
+    
+    lessons = await db.lessons.find({"chapter_id": source_chapter_id}, {"_id": 0}).sort("order", 1).to_list(100)
     for lesson in lessons:
         if isinstance(lesson.get('created_at'), str):
             lesson['created_at'] = datetime.fromisoformat(lesson['created_at'])
+        if is_linked:
+            lesson['inherited_from_template'] = True
+            lesson['read_only'] = True  # Can't edit inherited lessons
     return lessons
 
 @admin_router.post("/lessons", response_model=Lesson)
@@ -2425,10 +2648,21 @@ async def get_public_course_chapters(course_id: str):
 
 @api_router.get("/chapters/{chapter_id}/lessons")
 async def get_public_chapter_lessons(chapter_id: str):
-    lessons = await db.lessons.find({"chapter_id": chapter_id}, {"_id": 0}).sort("order", 1).to_list(100)
+    # First, check if this chapter has a template (is linked)
+    chapter = await db.chapters.find_one({"id": chapter_id}, {"_id": 0})
+    
+    # Use template chapter's lessons if linked
+    source_chapter_id = chapter_id
+    if chapter and chapter.get("template_chapter_id"):
+        source_chapter_id = chapter["template_chapter_id"]
+    
+    lessons = await db.lessons.find({"chapter_id": source_chapter_id}, {"_id": 0}).sort("order", 1).to_list(100)
     for lesson in lessons:
         if isinstance(lesson.get('created_at'), str):
             lesson['created_at'] = datetime.fromisoformat(lesson['created_at'])
+        # Mark lessons as inherited if from template
+        if source_chapter_id != chapter_id:
+            lesson['inherited_from_template'] = True
     return lessons
 
 @api_router.get("/lessons/{lesson_id}")
