@@ -1,7 +1,7 @@
 {
   "brand_identity": {
     "name": "Remy",
-    "tagline": "Tu tutor inteligente 24/7",
+    "tagline": "Tu plataforma de estudio para la universidad",
     "style": "Modern, Educational, Friendly, Gen-Z Tech",
     "theme_mode": "light"
   },
@@ -114,7 +114,6 @@
     "Buttons must have the 'pill' shape (rounded-full) or 'soft rect' (rounded-xl).",
     "Use plenty of negative space (p-6 or p-8) inside cards.",
     "Never use pure black (#000000). Use Slate-900 (#0F172A) instead.",
-    "For the 'AI Tutor' chat interface, use a distinct bubble style: Cyan for AI, Gray for User.",
     "Mobile responsiveness is critical. Ensure touch targets are 44px+.",
     "Use data-testid attributes for all interactive elements."
   ],

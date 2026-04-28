@@ -12,6 +12,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { usePricing } from '../hooks/usePricing';
 import TrialBanner from '../components/TrialBanner';
 import { toast } from 'sonner';
+import InlineMd from '@/components/course/InlineMd';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -374,7 +375,7 @@ const Biblioteca = () => {
                   </div>
                   <CardTitle className="text-lg">{course.title}</CardTitle>
                   <CardDescription className="line-clamp-2">
-                    {course.description}
+                    <InlineMd>{course.description}</InlineMd>
                   </CardDescription>
                 </CardHeader>
                 <CardContent>

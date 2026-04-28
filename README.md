@@ -1,224 +1,122 @@
-# Remy - Tutor Inteligente 24/7
+# Remy — Plataforma de Estudio Universitario
 
-![Remy](https://img.shields.io/badge/Remy-Tutor%20IA-00BCD4?style=for-the-badge)
-![Status](https://img.shields.io/badge/Status-MVP%20Complete-success?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-MVP-success?style=for-the-badge)
 
-**Remy** es una plataforma educativa impulsada por IA para ayudar a estudiantes universitarios y preuniversitarios con matemáticas, cálculo, álgebra y física.
+**Remy** es la webapp de estudio de **Se Remonta** para alumnos universitarios chilenos en ramos STEM duros (Cálculo I/II, Álgebra Lineal, Física, EDOs). Los alumnos repasan con lecciones, practican con simulacros y siguen su progreso. El contenido (preguntas, lecciones) se carga en el back-office vía CRUD manual o importación CSV.
 
-## 🎯 Funcionalidades Principales
+## Funcionalidades
 
-### ✅ Implementadas
+### Estudiante
+- **Biblioteca de cursos**: capítulos y lecciones con LaTeX/KaTeX y gráficos Desmos.
+- **Simulacros**: por curso o por universidad/evaluación, generados a partir del banco de preguntas.
+- **"Tu Universidad"**: flujo Universidad → Curso → Evaluación → Quiz.
+- **Progreso**: dashboard con KPIs, racha, lecciones completadas, promedio.
+- **Formulario**: catálogo de fórmulas matemáticas buscable.
+- **Suscripción**: trial 7 días, planes mensual y semestral vía Mercado Pago.
 
-1. **🤖 Tutor IA 24/7**
-   - Chat inteligente con GPT 5.2
-   - Resuelve dudas al instante
-   - Explicaciones paso a paso
-   - Contexto por curso
+### Admin
+- CRUD de Cursos, Capítulos, Lecciones, Universidades, Evaluaciones, Preguntas.
+- **Importación CSV** de preguntas con plantilla descargable.
+- Subida de imágenes a Cloudinary.
+- Gestión de usuarios y accesos manuales (1–12 meses).
+- Panel de métricas (ingresos, MRR, suscripciones).
+- Precios dinámicos editables.
 
-2. **📝 Generador de Simulacros**
-   - Crea exámenes personalizados con IA
-   - Preguntas de opción múltiple
-   - Explicaciones detalladas de respuestas
-   - Feedback inmediato
+> El contenido educativo se genera offline (con tus propias herramientas) y se carga en Remy vía CRUD manual o CSV. Remy en sí no usa IA.
 
-3. **📚 Biblioteca de Cursos**
-   - 6 cursos disponibles (Cálculo I, II, Álgebra Lineal, Física, etc.)
-   - Organización por nivel y categoría
-   - Tracking de progreso por curso
+## Stack
 
-4. **🔢 Formulario Inteligente**
-   - 10+ fórmulas matemáticas
-   - Búsqueda por nombre o tema
-   - Ejemplos prácticos
-   - Filtrado por curso
+### Backend (`/backend`)
+- **FastAPI** + **MongoDB** (motor async)
+- **JWT** + **bcrypt** para auth
+- **Mercado Pago Chile** para suscripciones
+- **Cloudinary** para imágenes
+- **Resend** para emails transaccionales
+- Punto de entrada: `server.py`
 
-5. **📊 Dashboard de Progreso**
-   - Estadísticas de aprendizaje
-   - Racha de estudio
-   - Lecciones completadas
-   - Promedio general
+### Frontend (`/frontend`)
+- **React 19** + **React Router v7**
+- **Tailwind CSS** + **Shadcn/UI**
+- **KaTeX** (LaTeX matemático), **Desmos** (gráficas interactivas)
+- **Framer Motion**, **Sonner**, **Recharts**, **lucide-react**
+- Build: **CRACO** sobre Create React App
+- Package manager: **yarn**
+- Fuentes: **Outfit** (headings), **Manrope** (body)
 
-6. **📱 Diseño Responsive**
-   - Desktop: Sidebar navigation
-   - Mobile: Bottom navigation
-   - Diseño moderno educativo
-   - Paleta cyan/turquesa/azul
+## Instalación local
 
-## 🛠️ Stack Tecnológico
-
-### Backend
-- **Framework**: FastAPI
-- **Base de datos**: MongoDB
-- **IA**: OpenAI GPT 5.2 (via emergentintegrations)
-- **Autenticación**: JWT (preparado para SSO con seremonta.store)
-
-### Frontend
-- **Framework**: React 19
-- **Styling**: Tailwind CSS + Shadcn/UI
-- **Routing**: React Router v7
-- **Animaciones**: Framer Motion
-- **Notificaciones**: Sonner
-- **HTTP Client**: Axios
-- **Fuentes**: Outfit (headings), Manrope (body)
-
-## 🚀 Instalación y Uso
+### Requisitos
+- Python 3.10+
+- Node 18+
+- MongoDB (local o Atlas)
+- Yarn (`corepack enable` con Node 18+ lo habilita)
 
 ### Backend
 ```bash
-cd /app/backend
+cd backend
+python -m venv venv
+source venv/bin/activate    # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-python seed_data.py  # Poblar base de datos
+python seed_data.py         # poblar DB con cursos/fórmulas iniciales
+uvicorn server:app --host 0.0.0.0 --port 8001 --reload
 ```
 
 ### Frontend
 ```bash
-cd /app/frontend
+cd frontend
 yarn install
+yarn start
 ```
 
-### Variables de Entorno
+### Variables de entorno
+Las plantillas y credenciales locales están en [`docs/CREDENCIALES_LOCAL.md`](docs/CREDENCIALES_LOCAL.md).
 
-**Backend (.env)**
-```env
-MONGO_URL=mongodb://localhost:27017
-DB_NAME=test_database
-CORS_ORIGINS=*
-EMERGENT_LLM_KEY=sk-emergent-39a5b126c034486Bc7
-```
-
-**Frontend (.env)**
-```env
-REACT_APP_BACKEND_URL=https://remy-exam-prep.preview.emergentagent.com
-```
-
-## 📡 API Endpoints
-
-### Chat
-- `POST /api/chat` - Chatear con Remy
-- `GET /api/chat/history/{user_id}` - Historial de chat
-
-### Simulacros
-- `POST /api/quiz/generate` - Generar nuevo simulacro
-- `GET /api/quizzes/{user_id}` - Obtener simulacros del usuario
-
-### Cursos
-- `GET /api/courses` - Listar todos los cursos
-- `GET /api/courses/{course_id}` - Obtener curso específico
-- `GET /api/materials/{course_id}` - Materiales de un curso
-
-### Fórmulas
-- `POST /api/formulas/search` - Buscar fórmulas
-
-### Progreso
-- `GET /api/progress/{user_id}` - Progreso del usuario
-
-### Resúmenes
-- `POST /api/summary/generate` - Generar resumen de material
-- `GET /api/summaries/{user_id}` - Resúmenes del usuario
-
-## 🎨 Paleta de Colores
-
-- **Primary (Cyan)**: `#00BCD4` - Botones principales, elementos activos
-- **Secondary**: `#E0F7FA` - Fondos de cards, highlights
-- **Accent (Amarillo)**: `#FFC107` - Gamificación, logros
-- **Background**: `#FFFFFF` - Fondo principal
-- **Text Primary**: `#0F172A` - Texto principal
-- **Text Secondary**: `#64748B` - Texto secundario
-
-## 📊 Estructura del Proyecto
+## Estructura
 
 ```
-/app
+/
 ├── backend/
-│   ├── server.py           # FastAPI application
-│   ├── seed_data.py        # Script para poblar DB
-│   ├── requirements.txt    # Python dependencies
-│   └── .env               # Backend environment variables
-│
+│   ├── server.py              # FastAPI app
+│   ├── routes/                # auth, payments, admin_universities, etc.
+│   ├── services/              # image_storage, etc.
+│   ├── seed_data.py           # script de seeding
+│   └── requirements.txt
 ├── frontend/
 │   ├── src/
-│   │   ├── App.js         # Main app component
-│   │   ├── index.css      # Global styles with design tokens
-│   │   ├── components/
-│   │   │   ├── Layout.js  # Main layout with navigation
-│   │   │   └── ui/        # Shadcn UI components
-│   │   └── pages/
-│   │       ├── Home.js           # Landing page
-│   │       ├── Dashboard.js      # Main dashboard
-│   │       ├── Chat.js           # Chat with Remy
-│   │       ├── Simulacros.js     # Quiz generator
-│   │       ├── Biblioteca.js     # Course library
-│   │       ├── Formulas.js       # Formula finder
-│   │       └── Progreso.js       # Progress tracker
-│   │
-│   ├── package.json       # Node dependencies
-│   └── .env              # Frontend environment variables
-│
-└── README.md             # This file
+│   │   ├── App.js
+│   │   ├── pages/             # Landing, Auth, Biblioteca, Simulacros, etc.
+│   │   ├── pages/admin/       # AdminQuestions, UniversityDetail, CourseContentEditor, etc.
+│   │   └── components/        # Layout, AdminLayout, ui/, course/
+│   └── package.json
+├── context/                   # docs de referencia del proyecto
+├── memory/                    # PRD vivo + CHANGELOG histórico
+└── docs/                      # credenciales locales
 ```
 
-## 🧪 Testing
+## Endpoints principales
 
-El proyecto incluye testing completo con:
-- Backend API testing
-- Frontend UI testing
-- Integration testing con GPT 5.2
-- Responsive design validation
+### Estudiante (público / autenticado)
+- `GET /api/courses`, `/api/courses/{id}`, `/api/materials/{course_id}`
+- `POST /api/quiz/start`, `POST /api/quiz/submit`, `GET /api/quiz/history/{user_id}`
+- `GET /api/progress/{user_id}`
+- `POST /api/formulas/search`
+- `POST /api/auth/google/session`, `GET /api/auth/me`, `POST /api/auth/logout`
+- `GET /api/payments/plans`, `POST /api/payments/subscribe`, etc.
 
-Test report: `/app/test_reports/iteration_1.json`
+### Admin
+- CRUD: `/api/admin/courses`, `/api/admin/chapters`, `/api/admin/lessons`, `/api/admin/questions`
+- CSV: `POST /api/admin/questions/import-csv/{course_id}`, `GET /api/admin/questions/csv-template`
+- Universidades: `/api/admin/universities/...` (CRUD + CSV import por evaluación)
+- Imágenes: `POST /api/admin/upload-image`, `POST /api/admin/upload-course-image`
+- Usuarios: `/api/admin/users/...`
+- Métricas: `/api/admin/analytics/...`
 
-**Resultados:**
-- Backend: ✅ 100% passed
-- Frontend: ✅ 95% passed
-- GPT 5.2 Integration: ✅ Working
+## Despliegue
 
-## 🌐 Despliegue
+- **Producción**: `https://remy.seremonta.store`
+- **Webhook MP**: `https://remy.seremonta.store/api/payments/webhook/mercadopago`
+- HTTPS configurado.
 
-La aplicación está desplegada en:
-- **URL**: https://remy-exam-prep.preview.emergentagent.com
-- **Backend API**: https://remy-exam-prep.preview.emergentagent.com/api
+## Versión
 
-## 📈 Próximos Pasos
-
-### Fase 2 (Pendiente)
-- [ ] SSO con seremonta.store
-- [ ] Procesamiento de PDFs para generar resúmenes automáticos
-- [ ] Integración con videos de clases
-- [ ] Sistema de gamificación completo
-- [ ] Modo oscuro
-- [ ] Notificaciones push
-- [ ] Exportar simulacros a PDF
-
-### Fase 3 (Futuro)
-- [ ] App móvil nativa
-- [ ] Modo offline
-- [ ] Compartir progreso con instructores
-- [ ] Foros de discusión
-- [ ] Sesiones de estudio en grupo
-
-## 👥 Créditos
-
-- **Desarrollado para**: Se Remonta (seremonta.store)
-- **IA Integration**: OpenAI GPT 5.2
-- **Built by**: Emergent AI
-
-## 📝 Notas de Desarrollo
-
-### Usuario Demo
-- **User ID**: `demo-user-001`
-- Usado para testing y desarrollo inicial
-
-### Base de Datos
-- 6 cursos pre-cargados
-- 10 fórmulas matemáticas
-- Esquema flexible para expansión
-
-### Integración GPT 5.2
-- Usa `emergentintegrations` library
-- Key universal de Emergent
-- Contexto educativo optimizado
-
----
-
-**Versión**: 1.0.0 (MVP)
-**Última actualización**: Enero 2026
+MVP — abril 2026.

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, UploadFile, File, Depends, status, BackgroundTasks
+from fastapi import FastAPI, APIRouter, HTTPException, UploadFile, File, Depends, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -11,26 +11,17 @@ from typing import List, Optional, Dict, Any
 import uuid
 import base64
 import aiofiles
-import asyncio
 from datetime import datetime, timezone, timedelta
-from emergentintegrations.llm.chat import LlmChat, UserMessage
-from emergentintegrations.llm.openai.image_generation import OpenAIImageGeneration
-import PyPDF2
 import io
 import json
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
-# In-memory storage for background tasks (for production, use Redis)
-generation_tasks: Dict[str, Dict[str, Any]] = {}
-
 # Import new routers
 from routes import auth as auth_routes
 from routes import payments as payments_routes
 from routes import admin_users as admin_users_routes
-from routes import admin_universities as admin_universities_routes
 from routes import admin_analytics as admin_analytics_routes
-from routes import student_universities as student_universities_routes
 from routes import images as images_routes
 from services.image_storage import init_image_storage
 
@@ -48,9 +39,7 @@ db = client[os.environ['DB_NAME']]
 auth_routes.set_db(db)
 payments_routes.set_db(db)
 admin_users_routes.set_db(db)
-admin_universities_routes.set_db(db)
 admin_analytics_routes.set_db(db)
-student_universities_routes.set_db(db)
 
 # Initialize image storage with GridFS
 init_image_storage(db)
@@ -100,11 +89,21 @@ class Chapter(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class Lesson(BaseModel):
+    """A lesson is composed of an ordered list of typed content blocks.
+
+    Block types (see frontend/src/lib/blockTypes.js for the full schema):
+      texto, definicion, teorema, intuicion, ejemplo_resuelto,
+      grafico_desmos, figura, verificacion, errores_comunes, resumen
+
+    Each block is a dict with at minimum {id: str, type: str, ...type-specific fields}.
+    The admin editor constructs blocks via typed forms; loose validation here is fine.
+    """
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     chapter_id: str
     title: str
-    content: str
+    description: Optional[str] = None
+    blocks: List[Dict[str, Any]] = Field(default_factory=list)
     order: int
     duration_minutes: int = 30
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -222,53 +221,9 @@ def calculate_chilean_grade(percentage: float) -> float:
     
     return round(grade, 1)
 
-class GenerateSummaryRequest(BaseModel):
-    pdf_content: str
-    course_title: str
-
-class GenerateQuestionsRequest(BaseModel):
-    course_id: str
-    chapter_id: str
-    lesson_id: Optional[str] = None
-    difficulty: str = "medio"
-    num_questions: int = 5
-    generation_type: str = "prompt"  # "prompt" or "pdf"
-    topic: Optional[str] = None  # For prompt-based generation
-    pdf_content: Optional[str] = None  # For PDF-based generation
-
-class GenerateLessonContentRequest(BaseModel):
-    pdf_content: Optional[str] = None
-    topic_prompt: Optional[str] = None  # New: generate from topic
-    lesson_title: str
-    chapter_title: str
-    course_title: str = ""
-
 class FormulaSearchRequest(BaseModel):
     query: str
     course_id: Optional[str] = None
-
-# Helper functions
-def get_gpt_chat(system_message: str):
-    """Get GPT 5.2 chat instance for high-quality educational content generation"""
-    api_key = os.environ.get('EMERGENT_LLM_KEY')
-    session_id = str(uuid.uuid4())
-    chat = LlmChat(
-        api_key=api_key,
-        session_id=session_id,
-        system_message=system_message
-    ).with_model("openai", "gpt-5.2")
-    return chat
-
-def get_gemini_chat(system_message: str):
-    """Legacy Gemini chat - kept for backwards compatibility"""
-    api_key = os.environ.get('GEMINI_API_KEY')
-    session_id = str(uuid.uuid4())
-    chat = LlmChat(
-        api_key=api_key,
-        session_id=session_id,
-        system_message=system_message
-    ).with_model("gemini", "gemini-2.5-flash")
-    return chat
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
@@ -315,74 +270,6 @@ async def verify_admin_token(credentials: HTTPAuthorizationCredentials = Depends
             detail="Invalid authentication credentials"
         )
 
-def extract_text_from_pdf(pdf_file: bytes) -> str:
-    """Extract text from PDF with improved handling for Spanish accents and LaTeX-generated PDFs"""
-    pdf_reader = PyPDF2.PdfReader(io.BytesIO(pdf_file))
-    text = ""
-    for page in pdf_reader.pages:
-        page_text = page.extract_text() or ""
-        text += page_text + "\n"
-    
-    import re
-    
-    # Fix common LaTeX accent encoding issues in Spanish PDFs
-    # LaTeX uses special notation for accents that can get mangled in PDF extraction
-    
-    # Order matters! Process more specific patterns first
-    latex_accent_fixes = [
-        # Common Spanish word patterns where accent appears between letters
-        # Pattern: consonant + ´ + space + vowel (the accent belongs to the vowel)
-        (r"([bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ])´\s*([aeiouAEIOU])", r"\1\2́"),
-        
-        # Pattern: vowel + ´ + space + vowel (accent belongs to second vowel)
-        (r"([aeiouAEIOU])´\s+([aeiouAEIOU])", r"\1\2́"),
-        
-        # Pattern: ´ + space + vowel (standard pattern)
-        (r"´\s*a", "á"), (r"´\s*e", "é"), (r"´\s*i", "í"), 
-        (r"´\s*o", "ó"), (r"´\s*u", "ú"),
-        (r"´\s*A", "Á"), (r"´\s*E", "É"), (r"´\s*I", "Í"), 
-        (r"´\s*O", "Ó"), (r"´\s*U", "Ú"),
-        
-        # Pattern: vowel + space + ´ (accent after space)
-        (r"a\s*´", "á"), (r"e\s*´", "é"), (r"i\s*´", "í"),
-        (r"o\s*´", "ó"), (r"u\s*´", "ú"),
-        (r"A\s*´", "Á"), (r"E\s*´", "É"), (r"I\s*´", "Í"),
-        (r"O\s*´", "Ó"), (r"U\s*´", "Ú"),
-        
-        # Ñ (tilde)
-        (r"[˜~]\s*n", "ñ"), (r"n\s*[˜~]", "ñ"),
-        (r"[˜~]\s*N", "Ñ"), (r"N\s*[˜~]", "Ñ"),
-        
-        # Dieresis (ü)
-        (r"¨\s*u", "ü"), (r"¨\s*U", "Ü"),
-        
-        # Dotless i with accent (common in LaTeX)
-        (r"´\s*ı", "í"), (r"ı\s*´", "í"),
-    ]
-    
-    for pattern, replacement in latex_accent_fixes:
-        text = re.sub(pattern, replacement, text)
-    
-    # Clean up any remaining combining accents
-    # Replace combining acute accent (́) with the proper accented character
-    combining_fixes = [
-        ("á́", "á"), ("é́", "é"), ("í́", "í"), ("ó́", "ó"), ("ú́", "ú"),
-        ("a\u0301", "á"), ("e\u0301", "é"), ("i\u0301", "í"), 
-        ("o\u0301", "ó"), ("u\u0301", "ú"),
-        ("A\u0301", "Á"), ("E\u0301", "É"), ("I\u0301", "Í"),
-        ("O\u0301", "Ó"), ("U\u0301", "Ú"),
-    ]
-    
-    for pattern, replacement in combining_fixes:
-        text = text.replace(pattern, replacement)
-    
-    # Fix hyphenated line breaks (word- \nrest -> wordrest)
-    text = re.sub(r'(\w)-\s*\n\s*(\w)', r'\1\2', text)
-    
-    # Fix multiple spaces
-    text = re.sub(r' {2,}', ' ', text)
-    
-    return text.strip()
 
 # Public endpoints
 @api_router.get("/")
@@ -1003,11 +890,21 @@ async def toggle_course_visibility(course_id: str, visible: bool, _: str = Depen
     return {"message": f"Curso {'visible' if visible else 'oculto'} para estudiantes", "visible_to_students": visible}
 
 @admin_router.delete("/courses/{course_id}")
-async def delete_course(course_id: str, _: str = Depends(verify_admin_token)):
-    result = await db.courses.delete_one({"id": course_id})
-    if result.deleted_count == 0:
+async def delete_course(course_id: str, admin: str = Depends(verify_admin_token)):
+    course = await db.courses.find_one({"id": course_id}, {"_id": 0})
+    if not course:
         raise HTTPException(status_code=404, detail="Curso no encontrado")
-    return {"message": "Curso eliminado exitosamente"}
+    chapters = await db.chapters.find({"course_id": course_id}, {"_id": 0}).to_list(1000)
+    chapter_ids = [c["id"] for c in chapters]
+    lessons = await db.lessons.find({"chapter_id": {"$in": chapter_ids}}, {"_id": 0}).to_list(5000) if chapter_ids else []
+    await _trash_put("course", course["id"], course.get("title", "(sin título)"),
+                     payload=course, children={"chapters": chapters, "lessons": lessons},
+                     deleted_by=admin, course_id=course_id)
+    if chapter_ids:
+        await db.lessons.delete_many({"chapter_id": {"$in": chapter_ids}})
+        await db.chapters.delete_many({"course_id": course_id})
+    await db.courses.delete_one({"id": course_id})
+    return {"message": "Curso movido a la papelera"}
 
 @admin_router.post("/formulas", response_model=Formula)
 async def create_formula(formula: Formula, _: str = Depends(verify_admin_token)):
@@ -1081,11 +978,18 @@ async def update_question(question_id: str, question: Question, _: str = Depends
     return question
 
 @admin_router.delete("/questions/{question_id}")
-async def delete_question(question_id: str, _: str = Depends(verify_admin_token)):
-    result = await db.questions.delete_one({"id": question_id})
-    if result.deleted_count == 0:
+async def delete_question(question_id: str, admin: str = Depends(verify_admin_token)):
+    question = await db.questions.find_one({"id": question_id}, {"_id": 0})
+    if not question:
         raise HTTPException(status_code=404, detail="Pregunta no encontrada")
-    return {"message": "Pregunta eliminada exitosamente"}
+    title = (question.get("text") or question.get("question") or "")[:80] or "(sin enunciado)"
+    await _trash_put("question", question["id"], title, payload=question,
+                     deleted_by=admin,
+                     course_id=question.get("course_id"),
+                     chapter_id=question.get("chapter_id"),
+                     lesson_id=question.get("lesson_id"))
+    await db.questions.delete_one({"id": question_id})
+    return {"message": "Pregunta movida a la papelera"}
 
 
 # ==================== CSV IMPORT FOR QUESTIONS ====================
@@ -1293,196 +1197,6 @@ Límites,Límites Notables,medio,"Si $\\lim_{x \\to 0} \\frac{\\sin(x)}{x} = L$,
     )
 
 
-@admin_router.post("/upload-pdf")
-async def upload_pdf(
-    file: UploadFile = File(...),
-    _: str = Depends(verify_admin_token)
-):
-    if not file.filename.endswith('.pdf'):
-        raise HTTPException(status_code=400, detail="Solo se permiten archivos PDF")
-    
-    pdf_content = await file.read()
-    text = extract_text_from_pdf(pdf_content)
-    
-    return {
-        "filename": file.filename,
-        "text_length": len(text),
-        "text": text,  # Full text for generation
-        "text_preview": text[:500] + "..." if len(text) > 500 else text
-    }
-
-@admin_router.post("/generate-summary")
-async def generate_summary(request: GenerateSummaryRequest, _: str = Depends(verify_admin_token)):
-    try:
-        system_message = f"""Eres un profesor experto de Se Remonta creando resúmenes educativos para el curso: {request.course_title}.
-
-Crea un resumen ESTRUCTURADO y COMPLETO que incluya:
-
-1. **Visión General** - Contexto y relevancia del tema
-2. **Conceptos Fundamentales** - Ideas principales explicadas claramente
-3. **Fórmulas Clave** - En formato LaTeX ($$formula$$)
-4. **Relaciones Importantes** - Cómo se conectan los conceptos
-5. **Aplicaciones Prácticas** - Ejemplos del mundo real
-6. **Puntos para Recordar** - Lista de lo más importante
-
-FORMATO:
-- Usa Markdown con ## para secciones
-- Fórmulas en bloque: $$formula$$
-- Fórmulas en línea: $formula$
-- Listas con viñetas para puntos clave
-"""
-        
-        chat = get_gpt_chat(system_message)
-        user_message = UserMessage(text=f"Resume el siguiente material educativo de forma completa y estructurada:\n\n{request.pdf_content[:12000]}")
-        response = await chat.send_message(user_message)
-        
-        return {"summary": response}
-    except Exception as e:
-        logging.error(f"Error generating summary: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-@admin_router.post("/generate-questions")
-async def generate_questions(request: GenerateQuestionsRequest, _: str = Depends(verify_admin_token)):
-    try:
-        import random
-        
-        # Get chapter and course info for context
-        chapter = await db.chapters.find_one({"id": request.chapter_id}, {"_id": 0})
-        course = await db.courses.find_one({"id": request.course_id}, {"_id": 0})
-        chapter_title = chapter.get("title", "") if chapter else ""
-        course_title = course.get("title", "") if course else ""
-        
-        system_message = """Eres un experto en evaluación educativa de Se Remonta, especializado en crear preguntas de examen de opción múltiple para estudiantes universitarios de matemáticas y ciencias.
-
-REGLAS ESTRICTAS PARA LAS FÓRMULAS:
-- USA LaTeX en línea con $...$ para fórmulas cortas: $f(x) = x^2$
-- USA LaTeX en bloque con $$...$$ para fórmulas largas
-- NUNCA uses \\( \\) ni \\[ \\] - solo $ y $$
-- Para fracciones: $\\frac{a}{b}$
-- Para derivadas: $\\frac{d}{dx}$, $f'(x)$
-- Para raíces: $\\sqrt{x}$
-- Para integrales: $\\int f(x)dx$
-
-IMPORTANTE - VARIACIÓN DE RESPUESTA CORRECTA:
-- La respuesta correcta DEBE variar entre A, B, C, D de forma ALEATORIA
-- NO todas las respuestas deben ser A
-- Distribuye las respuestas correctas: algunas A, algunas B, algunas C, algunas D
-- Ejemplo para 5 preguntas: B, D, A, C, B
-
-FORMATO DE CADA OPCIÓN:
-- Formato: "A) contenido con $fórmulas$ si aplica"
-- Los distractores deben ser errores comunes que cometen los estudiantes
-
-FORMATO DE SALIDA - JSON ESTRICTO:
-```json
-{
-  "questions": [
-    {
-      "question_text": "Enunciado claro con $fórmulas$ matemáticas.",
-      "options": [
-        "A) Primera opción",
-        "B) Segunda opción", 
-        "C) Tercera opción",
-        "D) Cuarta opción"
-      ],
-      "correct_answer": "B",
-      "explanation": "Explicación paso a paso de la solución."
-    }
-  ]
-}
-```
-
-IMPORTANTE: Responde SOLO con el JSON, sin texto adicional."""
-
-        # Determine random distribution of correct answers for variety
-        letters = ['A', 'B', 'C', 'D']
-        answer_distribution = [random.choice(letters) for _ in range(request.num_questions)]
-        
-        # Build user prompt based on generation type
-        if request.generation_type == "prompt":
-            # Generation from topic/prompt
-            user_prompt = f"""Genera exactamente {request.num_questions} preguntas de opción múltiple.
-
-CONTEXTO:
-- Curso: {course_title}
-- Capítulo: {chapter_title}
-- Dificultad solicitada: {request.difficulty}
-
-TEMA/INSTRUCCIONES DEL USUARIO:
-{request.topic}
-
-DISTRIBUCIÓN DE RESPUESTAS CORRECTAS (SIGUE ESTO):
-{', '.join([f"Pregunta {i+1}: {l}" for i, l in enumerate(answer_distribution)])}
-
-INSTRUCCIONES:
-1. Crea preguntas relevantes al tema especificado
-2. Usa fórmulas con $ para inline y $$ para bloques  
-3. Cada pregunta debe tener 4 opciones (A, B, C, D)
-4. Los distractores deben ser errores comunes
-5. La explicación debe ser didáctica y paso a paso
-6. Dificultad: {request.difficulty}
-
-Responde SOLO con el JSON válido."""
-        else:
-            # Generation from PDF content
-            user_prompt = f"""Genera exactamente {request.num_questions} preguntas de opción múltiple basadas en el siguiente material.
-
-CONTEXTO:
-- Curso: {course_title}
-- Capítulo: {chapter_title}
-- Dificultad solicitada: {request.difficulty}
-
-DISTRIBUCIÓN DE RESPUESTAS CORRECTAS (SIGUE ESTO):
-{', '.join([f"Pregunta {i+1}: {l}" for i, l in enumerate(answer_distribution)])}
-
-MATERIAL DE REFERENCIA:
----
-{request.pdf_content[:15000] if request.pdf_content else ""}
----
-
-INSTRUCCIONES:
-1. EXTRAE ejercicios del documento y conviértelos en preguntas
-2. CREA variantes cambiando números o funciones
-3. Las fórmulas DEBEN usar $ para inline y $$ para bloques
-4. Cada pregunta debe tener 4 opciones con distractores plausibles
-5. La explicación debe mostrar el proceso paso a paso
-
-Responde SOLO con el JSON válido."""
-        
-        chat = get_gpt_chat(system_message)
-        user_message = UserMessage(text=user_prompt)
-        response = await chat.send_message(user_message)
-        
-        # Clean and parse JSON response
-        try:
-            clean_response = response.strip()
-            if clean_response.startswith("```json"):
-                clean_response = clean_response[7:]
-            if clean_response.startswith("```"):
-                clean_response = clean_response[3:]
-            if clean_response.endswith("```"):
-                clean_response = clean_response[:-3]
-            clean_response = clean_response.strip()
-            
-            questions_data = json.loads(clean_response)
-            questions = questions_data.get("questions", [])
-            
-            # Validate and enhance questions
-            for q in questions:
-                if q.get('correct_answer') not in ['A', 'B', 'C', 'D']:
-                    q['correct_answer'] = random.choice(letters)
-                if 'difficulty' not in q:
-                    q['difficulty'] = request.difficulty
-                    
-        except json.JSONDecodeError as je:
-            logging.error(f"JSON parse error: {je}, response: {response[:500]}")
-            questions = []
-        
-        return {"questions": questions}
-    except Exception as e:
-        logging.error(f"Error generating questions: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
 # Chapters endpoints
 @admin_router.get("/courses/{course_id}/chapters")
 async def get_course_chapters(course_id: str, _: str = Depends(verify_admin_token)):
@@ -1527,20 +1241,25 @@ async def update_chapter(chapter_id: str, chapter: Chapter, _: str = Depends(ver
     return chapter
 
 @admin_router.delete("/chapters/{chapter_id}")
-async def delete_chapter(chapter_id: str, _: str = Depends(verify_admin_token)):
+async def delete_chapter(chapter_id: str, admin: str = Depends(verify_admin_token)):
     # Check if this is a template chapter being used by other courses
     linked_chapters = await db.chapters.count_documents({"template_chapter_id": chapter_id})
     if linked_chapters > 0:
         raise HTTPException(
-            status_code=400, 
+            status_code=400,
             detail=f"No se puede eliminar: {linked_chapters} capítulo(s) en otros cursos están vinculados a esta plantilla."
         )
-    
-    await db.lessons.delete_many({"chapter_id": chapter_id})
-    result = await db.chapters.delete_one({"id": chapter_id})
-    if result.deleted_count == 0:
+
+    chapter = await db.chapters.find_one({"id": chapter_id}, {"_id": 0})
+    if not chapter:
         raise HTTPException(status_code=404, detail="Capítulo no encontrado")
-    return {"message": "Capítulo y sus lecciones eliminadas exitosamente"}
+    lessons = await db.lessons.find({"chapter_id": chapter_id}, {"_id": 0}).to_list(1000)
+    await _trash_put("chapter", chapter["id"], chapter.get("title", "(sin título)"),
+                     payload=chapter, children={"lessons": lessons},
+                     deleted_by=admin, course_id=chapter.get("course_id"))
+    await db.lessons.delete_many({"chapter_id": chapter_id})
+    await db.chapters.delete_one({"id": chapter_id})
+    return {"message": "Capítulo movido a la papelera"}
 
 # Link chapters from template courses (General courses)
 class LinkChaptersRequest(BaseModel):
@@ -1906,672 +1625,16 @@ async def update_lesson(lesson_id: str, lesson: Lesson, _: str = Depends(verify_
     return lesson
 
 @admin_router.delete("/lessons/{lesson_id}")
-async def delete_lesson(lesson_id: str, _: str = Depends(verify_admin_token)):
-    result = await db.lessons.delete_one({"id": lesson_id})
-    if result.deleted_count == 0:
+async def delete_lesson(lesson_id: str, admin: str = Depends(verify_admin_token)):
+    lesson = await db.lessons.find_one({"id": lesson_id}, {"_id": 0})
+    if not lesson:
         raise HTTPException(status_code=404, detail="Lección no encontrada")
-    return {"message": "Lección eliminada exitosamente"}
+    await _trash_put("lesson", lesson["id"], lesson.get("title", "(sin título)"),
+                     payload=lesson, deleted_by=admin,
+                     chapter_id=lesson.get("chapter_id"))
+    await db.lessons.delete_one({"id": lesson_id})
+    return {"message": "Lección movida a la papelera"}
 
-
-# ============ ASYNC CONTENT GENERATION (Background Tasks) ============
-# This solves the 504 Gateway Timeout issue by processing in the background
-
-async def _generate_lesson_content_task(task_id: str, request_data: dict):
-    """Background task to generate lesson content"""
-    try:
-        generation_tasks[task_id]["status"] = "processing"
-        generation_tasks[task_id]["progress"] = "Conectando con GPT-5.2..."
-        
-        system_message = """Eres REMY, el profesor virtual de Se Remonta. Tu misión es que cada estudiante ENTIENDA, APRENDA y APRUEBE.
-
-🎯 TU FILOSOFÍA DE ENSEÑANZA:
-- Explica como si fueras un amigo que domina el tema
-- Usa ejemplos de la VIDA COTIDIANA (Netflix, deportes, cocina, videojuegos, redes sociales)
-- Haz que los conceptos abstractos sean TANGIBLES y VISUALES
-- Si algo puede verse, MUÉSTRALO con un gráfico interactivo
-- Celebra los pequeños logros del estudiante
-- Anticipa las dudas comunes y respóndelas proactivamente
-
-📝 FORMATO MARKDOWN:
-- Títulos: # para H1, ## para H2, ### para H3
-- Listas: * o - para viñetas
-- Negrita: **concepto importante**
-- Cursiva: *énfasis suave*
-
-📐 FÓRMULAS LATEX (KaTeX):
-- En línea: $formula$ 
-- En bloque: $$formula$$
-- Ejemplos: $f(x) = x^2$, $$\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$$
-
-📊 VISUALIZACIONES:
-**DESMOS (Interactivo)** - Formato: [DESMOS:ecuaciones separadas por punto y coma]
-**INSERTAR IMAGEN** - Formato: **[INSERTAR IMAGEN: descripción breve]**
-
-🏗️ ESTRUCTURA OBLIGATORIA:
-## 🎯 ¿Qué vas a aprender?
-## 🤔 ¿Por qué es importante?
-## 📚 Desarrollo del Tema
-## 🔢 Fórmulas Clave
-## 👀 Visualízalo
-## ✍️ Ejemplos Resueltos
-## 🎮 Ahora Practícalo Tú
-## 📌 Resumen Express
-## 💡 Tips para el Examen
-
-IMPORTANTE: El estudiante debe sentir que PUEDE aprender esto. Sé motivador pero honesto."""
-
-        pdf_content = request_data.get("pdf_content")
-        topic_prompt = request_data.get("topic_prompt")
-        lesson_title = request_data.get("lesson_title", "")
-        chapter_title = request_data.get("chapter_title", "")
-        course_title = request_data.get("course_title", "")
-
-        if pdf_content and pdf_content.strip():
-            generation_tasks[task_id]["progress"] = "Analizando documento PDF..."
-            user_prompt = f"""## TU MISIÓN: Transformar Material Académico en Aprendizaje Efectivo
-
-📖 **Título de la Lección:** "{lesson_title}"
-📂 **Capítulo:** "{chapter_title}"
-📚 **Curso:** "{course_title}"
-
----
-### DOCUMENTO DE REFERENCIA:
----
-{pdf_content[:15000]}
----
-
-Transforma este material en una lección completa y didáctica siguiendo la estructura obligatoria."""
-
-        elif topic_prompt and topic_prompt.strip():
-            generation_tasks[task_id]["progress"] = "Generando contenido desde tema..."
-            user_prompt = f"""Crea una lección COMPLETA para:
-
-📖 Título de la Lección: "{lesson_title}"
-📂 Capítulo: "{chapter_title}"
-📚 Curso: "{course_title}"
-
-🎯 TEMA/INSTRUCCIONES:
-{topic_prompt}
-
-Genera contenido completo siguiendo la estructura obligatoria con ejemplos, visualizaciones y ejercicios."""
-
-        else:
-            generation_tasks[task_id]["status"] = "error"
-            generation_tasks[task_id]["error"] = "No se proporcionó contenido para generar"
-            return
-
-        generation_tasks[task_id]["progress"] = "Generando lección con GPT-5.2... (esto puede tomar 30-60 segundos)"
-        
-        chat = get_gpt_chat(system_message)
-        user_message = UserMessage(text=user_prompt)
-        response = await chat.send_message(user_message)
-        
-        generation_tasks[task_id]["status"] = "completed"
-        generation_tasks[task_id]["content"] = response
-        generation_tasks[task_id]["progress"] = "¡Lección generada exitosamente!"
-        logging.info(f"Task {task_id} completed successfully")
-        
-    except Exception as e:
-        logging.error(f"Error in background task {task_id}: {str(e)}")
-        generation_tasks[task_id]["status"] = "error"
-        generation_tasks[task_id]["error"] = str(e)
-
-
-@admin_router.post("/generate-lesson-content/start")
-async def start_generate_lesson_content(request: GenerateLessonContentRequest, _: str = Depends(verify_admin_token)):
-    """
-    Start async content generation. Returns task_id immediately.
-    Client should poll /generate-lesson-content/status/{task_id}
-    """
-    # Validate input
-    if not request.pdf_content and not request.topic_prompt:
-        raise HTTPException(status_code=400, detail="Debes proporcionar un documento PDF o un tema para generar contenido")
-    
-    if not request.lesson_title:
-        raise HTTPException(status_code=400, detail="El título de la lección es requerido")
-    
-    # Create task
-    task_id = str(uuid.uuid4())
-    generation_tasks[task_id] = {
-        "status": "pending",
-        "progress": "Iniciando generación...",
-        "content": None,
-        "error": None,
-        "created_at": datetime.now(timezone.utc).isoformat()
-    }
-    
-    # Start background task
-    request_data = {
-        "pdf_content": request.pdf_content,
-        "topic_prompt": request.topic_prompt,
-        "lesson_title": request.lesson_title,
-        "chapter_title": request.chapter_title,
-        "course_title": request.course_title
-    }
-    
-    # Run as asyncio task (doesn't block the response)
-    asyncio.create_task(_generate_lesson_content_task(task_id, request_data))
-    
-    logging.info(f"Started content generation task: {task_id}")
-    return {"task_id": task_id, "status": "pending"}
-
-
-@admin_router.get("/generate-lesson-content/status/{task_id}")
-async def get_generation_status(task_id: str, _: str = Depends(verify_admin_token)):
-    """
-    Get the status of a content generation task.
-    Returns: status (pending|processing|completed|error), progress, content (if completed), error (if failed)
-    """
-    if task_id not in generation_tasks:
-        raise HTTPException(status_code=404, detail="Tarea no encontrada")
-    
-    task = generation_tasks[task_id]
-    
-    response = {
-        "task_id": task_id,
-        "status": task["status"],
-        "progress": task["progress"]
-    }
-    
-    if task["status"] == "completed":
-        response["content"] = task["content"]
-        # Clean up completed task after retrieval (keep memory clean)
-        # In production, you'd use Redis with TTL
-        del generation_tasks[task_id]
-    elif task["status"] == "error":
-        response["error"] = task["error"]
-        # Clean up failed task
-        del generation_tasks[task_id]
-    
-    return response
-
-
-# Legacy endpoint - now redirects to async version
-@admin_router.post("/generate-lesson-content")
-async def generate_lesson_content(request: GenerateLessonContentRequest, _: str = Depends(verify_admin_token)):
-    try:
-        system_message = """Eres REMY, el profesor virtual de Se Remonta. Tu misión es que cada estudiante ENTIENDA, APRENDA y APRUEBE.
-
-🎯 TU FILOSOFÍA DE ENSEÑANZA:
-- Explica como si fueras un amigo que domina el tema
-- Usa ejemplos de la VIDA COTIDIANA (Netflix, deportes, cocina, videojuegos, redes sociales)
-- Haz que los conceptos abstractos sean TANGIBLES y VISUALES
-- Si algo puede verse, MUÉSTRALO con un gráfico interactivo
-- Celebra los pequeños logros del estudiante
-- Anticipa las dudas comunes y respóndelas proactivamente
-
-📝 FORMATO MARKDOWN:
-- Títulos: # para H1, ## para H2, ### para H3
-- Listas: * o - para viñetas
-- Negrita: **concepto importante**
-- Cursiva: *énfasis suave*
-
-📐 FÓRMULAS LATEX (KaTeX):
-- En línea: $formula$ 
-- En bloque: $$formula$$
-- Ejemplos: $f(x) = x^2$, $$\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$$
-
-📊 VISUALIZACIONES - CUÁNDO USAR CADA TIPO:
-
-**DESMOS (Interactivo)** - Usa cuando el estudiante DEBE explorar:
-✅ USAR Desmos cuando:
-- El estudiante necesita mover un slider para entender
-- Comparar múltiples funciones superpuestas
-- Ver animaciones (secante → tangente, parámetros cambiando)
-- Explorar comportamiento dinámico
-
-Formato: [DESMOS:ecuaciones separadas por punto y coma]
-Ejemplo: [DESMOS:y=x^2; a=1; h=0.5; m=((a+h)^2-a^2)/h; y=m*(x-a)+a^2]
-
-**INSERTAR IMAGEN** - Usa para ilustraciones estáticas que requieren precisión:
-❌ NO usar Desmos cuando necesites:
-- Círculos abiertos (○) o cerrados (●) en puntos específicos
-- Discontinuidades de salto con visual del "hueco"
-- Anotaciones, flechas, etiquetas específicas
-- Líneas punteadas auxiliares
-
-Formato: Inserta directamente en el flujo del texto así:
-**[INSERTAR IMAGEN: descripción breve pero clara de qué debe mostrar la imagen]**
-
-EJEMPLOS de cómo insertar imágenes en el texto:
-
-"Al graficar la función, observamos el comportamiento cerca de x=1:
-
-**[INSERTAR IMAGEN: Gráfica de f(x) = (x²-1)/(x-1) mostrando una línea recta y=x+1 con un círculo abierto ○ en el punto (1,2)]**
-
-Como vemos en la imagen, aunque f(1) no existe, la función se acerca a 2."
-
-⚠️ IMPORTANTE SOBRE VISUALIZACIONES:
-- Puedes combinar Desmos + imágenes en la misma lección
-- Usa Desmos para lo interactivo (explorar con sliders)
-- Usa **[INSERTAR IMAGEN:]** para lo estático (discontinuidades, huecos, anotaciones)
-- Las descripciones de imagen deben ser claras pero breves (1-2 líneas)
-
-📋 TABLAS - Para comparaciones y resúmenes:
-| Concepto | Fórmula | Ejemplo |
-|----------|---------|---------|
-| dato     | dato    | dato    |
-
-🏗️ ESTRUCTURA OBLIGATORIA DE LA LECCIÓN:
-
-## 🎯 ¿Qué vas a aprender?
-(Objetivos claros y motivadores)
-
-## 🤔 ¿Por qué es importante?
-(Conexión con la vida real, por qué debería importarle al estudiante)
-
-## 📚 Desarrollo del Tema
-(Explicación paso a paso, de lo simple a lo complejo)
-
-## 🔢 Fórmulas Clave
-(Con explicación de cada símbolo y cuándo usarlas)
-
-## 👀 Visualízalo
-(Usa Desmos para exploración interactiva O **[INSERTAR IMAGEN:]** para ilustraciones estáticas detalladas)
-- Si el concepto requiere EXPLORAR con sliders → Desmos
-- Si el concepto requiere ver puntos específicos, discontinuidades, anotaciones → INSERTAR IMAGEN
-
-## ✍️ Ejemplos Resueltos
-(Mínimo 3 ejemplos, del más fácil al más difícil, paso a paso)
-
-## 🎮 Ahora Practícalo Tú
-(Ejercicios con pistas, no solo enunciados)
-
-## 📌 Resumen Express
-(Los puntos clave en bullets, como "cheat sheet")
-
-## 💡 Tips para el Examen
-(Errores comunes, trucos, qué suele preguntarse)
-
-IMPORTANTE: El estudiante debe sentir que PUEDE aprender esto. Sé motivador pero honesto."""
-
-        # Determine if generating from document or from topic prompt
-        if request.pdf_content and request.pdf_content.strip():
-            # Generate from PDF document - SPECIALIZED PROMPT
-            user_prompt = f"""## TU MISIÓN: Transformar Material Académico en Aprendizaje Efectivo
-
-Tienes un documento de referencia de una universidad/instituto. Tu trabajo es:
-1. **EXTRAER** todos los conceptos clave, definiciones, teoremas y fórmulas
-2. **TRANSFORMAR** ese contenido en una lección que un estudiante novato pueda entender
-3. **MEJORAR** la presentación: más ejemplos, más visual, más conectado con la vida real
-
-📖 **Título de la Lección:** "{request.lesson_title}"
-📂 **Capítulo:** "{request.chapter_title}"
-📚 **Curso:** "{request.course_title}"
-
----
-### DOCUMENTO DE REFERENCIA (extraer conceptos de aquí):
----
-{request.pdf_content[:15000]}
----
-
-## INSTRUCCIONES ESPECÍFICAS:
-
-### 1️⃣ ANÁLISIS DEL DOCUMENTO:
-- Identifica TODOS los conceptos, definiciones y teoremas mencionados
-- Lista las fórmulas matemáticas clave
-- Detecta la secuencia lógica del contenido
-
-### 2️⃣ TRANSFORMACIÓN DIDÁCTICA:
-- **NO copies el texto tal cual** - reformula todo para que sea más claro
-- **SÍ mantén** todos los conceptos, teoremas y fórmulas importantes
-- Explica cada concepto como si el estudiante lo viera por primera vez
-- Usa analogías de la vida real (streaming, redes sociales, videojuegos, deportes)
-
-### 3️⃣ ENRIQUECIMIENTO:
-- Añade ejemplos que NO estén en el documento (mínimo 3, de fácil a difícil)
-- Incluye "errores típicos" que los estudiantes cometen
-- Agrega conexiones con otros temas del curso
-- Crea ejercicios de práctica con pistas
-
-### 4️⃣ VISUALIZACIÓN INTELIGENTE:
-Para cada concepto visual del documento, decide:
-- **DESMOS** → Si el estudiante debe explorar/mover algo (gráficas de funciones, parámetros)
-  Formato: [DESMOS:ecuacion1; ecuacion2; parametro=valor]
-- **INSERTAR IMAGEN** → Si necesitas mostrar algo estático específico (discontinuidades con círculos abiertos/cerrados, diagramas anotados)
-  Formato: **[INSERTAR IMAGEN: descripción detallada para generar con IA]**
-
-### 5️⃣ ESTRUCTURA DE SALIDA:
-Sigue EXACTAMENTE esta estructura con los emojis indicados:
-
-## 🎯 ¿Qué vas a aprender?
-(Lista los objetivos basados en el contenido del documento)
-
-## 🤔 ¿Por qué es importante?
-(Conexión con aplicaciones reales - NO copiar del documento, crear nuevas)
-
-## 📚 Desarrollo del Tema
-(Todos los conceptos del documento, pero explicados de forma más clara y accesible)
-
-## 🔢 Fórmulas Clave
-(TODAS las fórmulas del documento en LaTeX, con explicación de cada símbolo)
-
-## 👀 Visualízalo
-(Desmos para explorar o **[INSERTAR IMAGEN:]** para diagramas estáticos)
-
-## ✍️ Ejemplos Resueltos
-(Mínimo 3 ejemplos paso a paso - pueden incluir los del documento MÁS nuevos)
-
-## 🎮 Ahora Practícalo Tú
-(Ejercicios con pistas, incluyendo algunos basados en el documento)
-
-## 📌 Resumen Express
-(Los puntos clave del documento en bullets concisos)
-
-## 💡 Tips para el Examen
-(Qué suele preguntarse sobre estos temas + errores comunes)
-
----
-⚠️ RECORDATORIO FINAL:
-- El documento es tu FUENTE de conceptos, no tu plantilla de texto
-- Un estudiante novato debe poder entender TODO sin haber visto el documento original
-- Sé más completo y didáctico que el material original
-
-¡Transforma este material en la mejor lección posible!"""
-
-        elif request.topic_prompt and request.topic_prompt.strip():
-            # Generate from topic/prompt (NEW)
-            user_prompt = f"""Crea una lección COMPLETA, INTERACTIVA y MOTIVADORA desde cero para:
-
-📖 Título de la Lección: "{request.lesson_title}"
-📂 Capítulo: "{request.chapter_title}"
-📚 Curso: "{request.course_title}"
-
-🎯 TEMA/INSTRUCCIONES DEL USUARIO:
-{request.topic_prompt}
-
-REQUISITOS OBLIGATORIOS:
-✅ Genera contenido original y completo sobre el tema especificado
-✅ Adapta el nivel al curso ({request.course_title})
-✅ En la sección "Visualízalo": decide inteligentemente entre Desmos (interactivo) o **[INSERTAR IMAGEN:]** (descripción para imagen estática)
-✅ Mínimo 3 ejemplos resueltos paso a paso con diferentes niveles de dificultad
-✅ Ejemplos de la vida cotidiana que conecten con el estudiante
-✅ Una tabla comparativa o de resumen de los conceptos clave
-✅ Tips específicos para aprobar el examen
-✅ Tono amigable pero profesional
-
-RECUERDA:
-- Si el tema requiere gráficas que el estudiante pueda explorar → usa Desmos con sliders
-- Si el tema requiere diagramas estáticos con detalles precisos → usa **[INSERTAR IMAGEN: descripción]**
-- El contenido debe ser tan completo como si fuera de un documento de referencia
-
-¡Crea el mejor material didáctico posible para este tema!"""
-
-        else:
-            raise HTTPException(status_code=400, detail="Debes proporcionar un documento PDF o un tema para generar contenido")
-        
-        chat = get_gpt_chat(system_message)
-        user_message = UserMessage(text=user_prompt)
-        response = await chat.send_message(user_message)
-        
-        return {"content": response}
-    except HTTPException:
-        raise
-    except Exception as e:
-        logging.error(f"Error generating lesson content: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-# New: Edit lesson content with AI chat
-class EditLessonContentRequest(BaseModel):
-    current_content: str
-    user_instruction: str
-    lesson_title: str = ""
-    chapter_title: str = ""
-    course_title: str = ""
-
-@admin_router.post("/edit-lesson-content")
-async def edit_lesson_content(request: EditLessonContentRequest, _: str = Depends(verify_admin_token)):
-    try:
-        system_message = """Eres REMY, el asistente educativo de Se Remonta. Tu trabajo es MEJORAR el contenido de lecciones para que los estudiantes ENTIENDAN y APRUEBEN.
-
-🎯 TU MISIÓN AL EDITAR:
-- Cada cambio debe hacer el contenido MÁS CLARO y MÁS ÚTIL para el estudiante
-- Si el usuario pide agregar algo, hazlo COMPLETO y DIDÁCTICO (no una línea genérica)
-- Si pide quitar algo, elimínalo limpiamente sin dejar huecos
-- Si pide cambiar algo, mejóralo significativamente
-
-📐 REGLAS DE FORMATO (MANTENER SIEMPRE):
-
-1. FÓRMULAS LATEX:
-   - En línea: $formula$ (ej: $f(x) = x^2$)
-   - En bloque: $$formula$$ (ej: $$\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$$)
-
-2. DESMOS - GRÁFICOS INTERACTIVOS (MUY IMPORTANTE):
-   - SIEMPRE en UN SOLO tag con punto y coma entre ecuaciones
-   - SIEMPRE incluir sliders cuando el concepto lo permita
-   - El estudiante debe poder EXPLORAR moviendo valores
-   
-   EJEMPLOS CORRECTOS:
-   [DESMOS:y = x^2]
-   [DESMOS:a=2; y = a*x^2]  <- Con slider para explorar
-   [DESMOS:y=x^2; a=1; h=0.5; y=((a+h)^2-a^2)/h*(x-a)+a^2]  <- Secante interactiva
-   [DESMOS:f(x)=x^3-3x; f'(x)=3x^2-3]  <- Función y derivada juntas
-   
-   NUNCA hagas esto:
-   [DESMOS:y=x^2]
-   [DESMOS:a=1]  <- MAL: separados no funcionan juntos
-
-3. **INSERTAR IMAGEN** - Para diagramas estáticos:
-   Usa cuando necesites mostrar algo que Desmos no puede hacer bien:
-   - Círculos abiertos/cerrados en discontinuidades
-   - Diagramas con anotaciones específicas
-   - Flechas o marcas especiales
-   
-   Formato: **[INSERTAR IMAGEN: descripción detallada para generar con IA]**
-
-4. TABLAS MARKDOWN:
-   | Columna 1 | Columna 2 |
-   |-----------|-----------|
-   | dato      | dato      |
-
-5. ESTRUCTURA - Usa emojis para secciones:
-   ## 🎯 Objetivo
-   ## 📚 Explicación  
-   ## 👀 Visualízalo (aquí va Desmos o INSERTAR IMAGEN)
-   ## ✍️ Ejemplo Resuelto
-   ## 💡 Tip
-
-🧠 FILOSOFÍA EDUCATIVA:
-- Explica el POR QUÉ, no solo el QUÉ
-- Usa analogías de la vida real (Netflix, deportes, cocina, videojuegos)
-- Si agregas un ejemplo, hazlo PASO A PASO con explicación de cada paso
-- Si agregas un gráfico Desmos, explica QUÉ debe observar el estudiante al moverlo
-- Anticipa errores comunes y advierte sobre ellos
-
-⚠️ IMPORTANTE:
-- Responde SOLO con el contenido modificado
-- NO incluyas explicaciones de qué cambiaste
-- Mantén TODO lo que no se pidió cambiar
-- El resultado debe ser contenido listo para mostrar al estudiante"""
-
-        user_prompt = f"""📚 CURSO: "{request.course_title}"
-📂 CAPÍTULO: "{request.chapter_title}"
-📄 LECCIÓN: "{request.lesson_title}"
-
-═══════════════════════════════════════
-CONTENIDO ACTUAL:
-═══════════════════════════════════════
-{request.current_content}
-═══════════════════════════════════════
-
-📝 INSTRUCCIÓN DEL ADMINISTRADOR:
-"{request.user_instruction}"
-
-═══════════════════════════════════════
-
-Genera el contenido COMPLETO de la lección con la modificación solicitada.
-Recuerda: Si agregas visualizaciones, usa Desmos para interactivo o **[INSERTAR IMAGEN:]** para estático."""
-        
-        chat = get_gpt_chat(system_message)
-        user_message = UserMessage(text=user_prompt)
-        response = await chat.send_message(user_message)
-        
-        return {"content": response}
-    except Exception as e:
-        logging.error(f"Error editing lesson content: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-# Edit question content with AI
-class EditQuestionContentRequest(BaseModel):
-    current_content: str  # JSON stringified question data or main content
-    user_instruction: str
-    question_data: Dict[str, Any] = {}  # Full question object for context
-    topic: str = ""
-    course_title: str = ""
-
-@admin_router.post("/edit-question-content")
-async def edit_question_content(request: EditQuestionContentRequest, _: str = Depends(verify_admin_token)):
-    try:
-        system_message = """Eres REMY, el asistente educativo de Se Remonta. Tu trabajo es MEJORAR preguntas de examen para que evalúen correctamente y ayuden a los estudiantes a aprender.
-
-🎯 TU MISIÓN AL EDITAR PREGUNTAS:
-- Mejorar la claridad del enunciado
-- Crear distractores (opciones incorrectas) que sean PLAUSIBLES pero claramente distinguibles
-- Hacer explicaciones paso a paso que enseñen
-- Mantener el nivel de dificultad apropiado
-
-📐 FORMATO DE RESPUESTA - JSON ESTRICTO:
-Responde SIEMPRE con un JSON válido con esta estructura exacta:
-
-```json
-{
-  "question_text": "Enunciado claro. Usa $fórmulas$ para matemáticas.",
-  "options": [
-    "A) Primera opción con $fórmula$ si aplica",
-    "B) Segunda opción",
-    "C) Tercera opción",
-    "D) Cuarta opción"
-  ],
-  "correct_answer": "A",
-  "explanation": "Explicación paso a paso...",
-  "difficulty": "fácil|medio|difícil"
-}
-```
-
-📝 REGLAS PARA FÓRMULAS:
-- En línea: $formula$ (ej: $f(x) = x^2$)
-- En bloque: $$formula$$ (para ecuaciones importantes)
-- Usa \\frac{a}{b} para fracciones
-- Usa \\sqrt{x} para raíces
-
-🎓 REGLAS PARA OPCIONES:
-- Cada opción debe empezar con letra y paréntesis: "A) ", "B) ", etc.
-- Los distractores deben ser errores COMUNES que estudiantes realmente cometen
-- Evita opciones obviamente incorrectas
-- La respuesta correcta puede ser A, B, C o D (varía)
-
-💡 REGLAS PARA EXPLICACIONES:
-- Muestra el proceso paso a paso
-- Explica POR QUÉ cada distractor es incorrecto
-- Usa fórmulas LaTeX donde corresponda
-- Sé didáctico pero conciso
-
-⚠️ IMPORTANTE:
-- Responde SOLO con el JSON
-- NO incluyas texto adicional antes o después
-- Si cambias la respuesta correcta, actualiza "correct_answer"
-- Mantén coherencia entre pregunta, opciones y explicación"""
-
-        # Build context from question data
-        q_data = request.question_data
-        current_question = f"""Tema: {request.topic}
-Curso: {request.course_title}
-
-Pregunta actual:
-- Enunciado: {q_data.get('question_text', request.current_content)}
-- Opciones: {json.dumps(q_data.get('options', []), ensure_ascii=False)}
-- Respuesta correcta: {q_data.get('correct_answer', 'A')}
-- Dificultad: {q_data.get('difficulty', 'medio')}
-- Explicación: {q_data.get('explanation', '')}"""
-
-        user_prompt = f"""📝 PREGUNTA A MODIFICAR:
-═══════════════════════════════════════
-{current_question}
-═══════════════════════════════════════
-
-✏️ INSTRUCCIÓN DEL ADMINISTRADOR:
-"{request.user_instruction}"
-
-═══════════════════════════════════════
-
-Genera la pregunta COMPLETA modificada en formato JSON.
-Recuerda: Los distractores deben ser errores plausibles, y la explicación debe enseñar."""
-        
-        chat = get_gpt_chat(system_message)
-        user_message = UserMessage(text=user_prompt)
-        response = await chat.send_message(user_message)
-        
-        # Parse JSON response
-        try:
-            clean_response = response.strip()
-            if clean_response.startswith("```json"):
-                clean_response = clean_response[7:]
-            if clean_response.startswith("```"):
-                clean_response = clean_response[3:]
-            if clean_response.endswith("```"):
-                clean_response = clean_response[:-3]
-            clean_response = clean_response.strip()
-            
-            question_data = json.loads(clean_response)
-            
-            return {
-                "content": json.dumps(question_data, ensure_ascii=False),
-                "question_data": question_data,
-                "message": "✅ ¡Pregunta actualizada! Revisa los cambios."
-            }
-        except json.JSONDecodeError as je:
-            logging.error(f"JSON parse error in edit question: {je}")
-            return {
-                "content": response,
-                "message": "⚠️ Respuesta generada pero puede necesitar ajustes manuales."
-            }
-            
-    except Exception as e:
-        logging.error(f"Error editing question content: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-# Image generation with AI
-class GenerateImageRequest(BaseModel):
-    prompt: str
-    style: str = "educativo"  # educativo, diagrama, ilustracion
-
-@admin_router.post("/generate-image")
-async def generate_image(request: GenerateImageRequest, _: str = Depends(verify_admin_token)):
-    try:
-        api_key = os.environ.get('EMERGENT_LLM_KEY')
-        if not api_key:
-            raise HTTPException(status_code=500, detail="API key no configurada")
-        
-        # Enhance prompt for educational context
-        enhanced_prompt = f"""Create an educational illustration for a math/science course.
-Style: {request.style}, clean, professional, suitable for university students.
-Content: {request.prompt}
-Requirements: Clear labels if needed, high contrast, easy to understand, no text unless necessary."""
-        
-        image_gen = OpenAIImageGeneration(api_key=api_key)
-        images = await image_gen.generate_images(
-            prompt=enhanced_prompt,
-            model="gpt-image-1",
-            number_of_images=1
-        )
-        
-        if images and len(images) > 0:
-            # Save image to file with unique name
-            image_id = str(uuid.uuid4())
-            image_filename = f"{image_id}.png"
-            image_path = UPLOADS_DIR / image_filename
-            
-            async with aiofiles.open(image_path, 'wb') as f:
-                await f.write(images[0])
-            
-            # Return URL path
-            image_url = f"/api/uploads/{image_filename}"
-            return {"image_url": image_url}
-        else:
-            raise HTTPException(status_code=500, detail="No se pudo generar la imagen")
-    except Exception as e:
-        logging.error(f"Error generating image: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
 
 # Upload image from file - now uses GridFS for persistent storage
 @admin_router.post("/upload-image")
@@ -2683,7 +1746,6 @@ async def get_app_settings():
     if not settings:
         settings = {
             "id": "main",
-            "tu_universidad_enabled": False,  # Default disabled
             "updated_at": datetime.now(timezone.utc).isoformat()
         }
     return settings
@@ -2695,14 +1757,13 @@ async def get_admin_settings(_: str = Depends(verify_admin_token)):
     if not settings:
         settings = {
             "id": "main",
-            "tu_universidad_enabled": False,
             "updated_at": datetime.now(timezone.utc).isoformat()
         }
         await db.app_settings.insert_one(settings)
     return settings
 
 class UpdateSettingsRequest(BaseModel):
-    tu_universidad_enabled: Optional[bool] = None
+    pass
 
 @admin_router.put("/settings")
 async def update_admin_settings(
@@ -2712,15 +1773,130 @@ async def update_admin_settings(
     """Update app settings"""
     update_data = {k: v for k, v in request.model_dump().items() if v is not None}
     update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
-    
+
     await db.app_settings.update_one(
         {"id": "main"},
         {"$set": update_data},
         upsert=True
     )
-    
+
     settings = await db.app_settings.find_one({"id": "main"}, {"_id": 0})
     return {"success": True, "settings": settings}
+
+# =====================================================================
+# PAPELERA (TRASH) — soft-delete con restauración
+# =====================================================================
+TRASH_TYPES = {"course", "chapter", "lesson", "question"}
+
+
+async def _trash_put(type_: str, original_id: str, title: str, payload: Dict[str, Any],
+                     deleted_by: str, children: Optional[Dict[str, List[Dict[str, Any]]]] = None,
+                     course_id: Optional[str] = None, chapter_id: Optional[str] = None,
+                     lesson_id: Optional[str] = None):
+    children = children or {}
+    children_summary = {k: len(v) for k, v in children.items()}
+    doc = {
+        "id": str(uuid.uuid4()),
+        "type": type_,
+        "original_id": original_id,
+        "title": title,
+        "course_id": course_id,
+        "chapter_id": chapter_id,
+        "lesson_id": lesson_id,
+        "payload": payload,
+        "children": children,
+        "children_summary": children_summary,
+        "deleted_at": datetime.now(timezone.utc).isoformat(),
+        "deleted_by": deleted_by,
+    }
+    await db.trash.insert_one(doc)
+    return doc
+
+
+@admin_router.get("/trash")
+async def list_trash(type: Optional[str] = None, _: str = Depends(verify_admin_token)):
+    query: Dict[str, Any] = {}
+    if type:
+        if type not in TRASH_TYPES:
+            raise HTTPException(status_code=400, detail=f"Tipo inválido. Permitidos: {sorted(TRASH_TYPES)}")
+        query["type"] = type
+    items = await db.trash.find(query, {"_id": 0, "payload": 0, "children": 0}).sort("deleted_at", -1).to_list(2000)
+    return items
+
+
+@admin_router.get("/trash/{trash_id}")
+async def get_trash_item(trash_id: str, _: str = Depends(verify_admin_token)):
+    item = await db.trash.find_one({"id": trash_id}, {"_id": 0})
+    if not item:
+        raise HTTPException(status_code=404, detail="Elemento no encontrado en la papelera")
+    return item
+
+
+@admin_router.post("/trash/{trash_id}/restore")
+async def restore_trash_item(trash_id: str, _: str = Depends(verify_admin_token)):
+    item = await db.trash.find_one({"id": trash_id}, {"_id": 0})
+    if not item:
+        raise HTTPException(status_code=404, detail="Elemento no encontrado en la papelera")
+
+    type_ = item["type"]
+    payload = item["payload"]
+    children = item.get("children", {}) or {}
+
+    if type_ == "course":
+        if await db.courses.find_one({"id": payload["id"]}):
+            raise HTTPException(status_code=409, detail="Ya existe un curso con ese id. Renombra o elimina el actual primero.")
+        await db.courses.insert_one(payload)
+        for ch in children.get("chapters", []):
+            await db.chapters.delete_one({"id": ch["id"]})
+            await db.chapters.insert_one(ch)
+        for ls in children.get("lessons", []):
+            await db.lessons.delete_one({"id": ls["id"]})
+            await db.lessons.insert_one(ls)
+
+    elif type_ == "chapter":
+        course_id = payload.get("course_id")
+        if course_id and not await db.courses.find_one({"id": course_id}):
+            raise HTTPException(status_code=409, detail="El curso de este capítulo ya no existe. Restaura el curso primero.")
+        if await db.chapters.find_one({"id": payload["id"]}):
+            raise HTTPException(status_code=409, detail="Ya existe un capítulo con ese id.")
+        await db.chapters.insert_one(payload)
+        for ls in children.get("lessons", []):
+            await db.lessons.delete_one({"id": ls["id"]})
+            await db.lessons.insert_one(ls)
+
+    elif type_ == "lesson":
+        chapter_id = payload.get("chapter_id")
+        if chapter_id and not await db.chapters.find_one({"id": chapter_id}):
+            raise HTTPException(status_code=409, detail="El capítulo de esta lección ya no existe. Restaúralo primero.")
+        if await db.lessons.find_one({"id": payload["id"]}):
+            raise HTTPException(status_code=409, detail="Ya existe una lección con ese id.")
+        await db.lessons.insert_one(payload)
+
+    elif type_ == "question":
+        if await db.questions.find_one({"id": payload["id"]}):
+            raise HTTPException(status_code=409, detail="Ya existe una pregunta con ese id.")
+        await db.questions.insert_one(payload)
+
+    else:
+        raise HTTPException(status_code=400, detail=f"Tipo desconocido: {type_}")
+
+    await db.trash.delete_one({"id": trash_id})
+    return {"message": f"{type_} restaurado exitosamente", "type": type_, "id": payload.get("id")}
+
+
+@admin_router.delete("/trash/{trash_id}")
+async def delete_trash_item(trash_id: str, _: str = Depends(verify_admin_token)):
+    result = await db.trash.delete_one({"id": trash_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Elemento no encontrado en la papelera")
+    return {"message": "Elemento eliminado definitivamente"}
+
+
+@admin_router.delete("/trash")
+async def empty_trash(_: str = Depends(verify_admin_token)):
+    result = await db.trash.delete_many({})
+    return {"message": f"Papelera vaciada", "deleted": result.deleted_count}
+
 
 app.include_router(api_router)
 app.include_router(admin_router)
@@ -2729,9 +1905,7 @@ app.include_router(admin_router)
 app.include_router(auth_routes.router)
 app.include_router(payments_routes.router)
 app.include_router(admin_users_routes.router)
-app.include_router(admin_universities_routes.router)
 app.include_router(admin_analytics_routes.router)
-app.include_router(student_universities_routes.router)
 app.include_router(images_routes.router)
 
 # Import and include new routers

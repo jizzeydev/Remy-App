@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -8,17 +8,16 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { 
-  Plus, Edit, Trash2, Sparkles, FileText, Image, Upload, 
-  MessageSquare, ArrowLeft, BookOpen, Layers, HelpCircle,
-  CheckCircle, Wand2, FileUp, ChevronDown, ChevronRight, Loader2,
+import InlineMd from '@/components/course/InlineMd';
+import {
+  Plus, Edit, Trash2, FileText, Upload,
+  ArrowLeft, BookOpen, Layers, HelpCircle,
+  ChevronDown, ChevronRight, Loader2,
   Search, Filter, Building2
 } from 'lucide-react';
 import { QuestionContent, QuestionOption, ExplanationBlock } from '@/components/course/QuestionRenderer';
-import RemyChat from '@/components/RemyChat';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -129,7 +128,7 @@ const CourseSelector = ({ courses, universities, onSelectCourse, searchTerm, set
                 </div>
                 <CardTitle>{course.title}</CardTitle>
                 <CardDescription className="line-clamp-2">
-                  {course.description}
+                  <InlineMd>{course.description}</InlineMd>
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -156,10 +155,13 @@ const QuestionManager = ({ course, onBack }) => {
   
   // Dialog states
   const [editorOpen, setEditorOpen] = useState(false);
-  const [generatorOpen, setGeneratorOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState(null);
-  const [chatOpen, setChatOpen] = useState(false);
-  
+
+  // CSV import state
+  const [csvImportOpen, setCsvImportOpen] = useState(false);
+  const [csvFile, setCsvFile] = useState(null);
+  const [importingCsv, setImportingCsv] = useState(false);
+
   // Form data for manual question creation/editing
   const [formData, setFormData] = useState({
     chapter_id: '',
@@ -171,48 +173,9 @@ const QuestionManager = ({ course, onBack }) => {
     explanation: ''
   });
 
-  // Generator state
-  const [generatorTab, setGeneratorTab] = useState('prompt');
-  const [generatorData, setGeneratorData] = useState({
-    chapter_id: '',
-    lesson_id: '',
-    difficulty: 'medio',
-    topic: '',
-    num_questions: 3
-  });
-  const [pdfFile, setPdfFile] = useState(null);
-  const [pdfText, setPdfText] = useState('');
-  const [generatingQuestions, setGeneratingQuestions] = useState(false);
-  const [generatedQuestions, setGeneratedQuestions] = useState([]);
-  const [generatorChapters, setGeneratorChapters] = useState([]);
-  const [generatorLessons, setGeneratorLessons] = useState([]);
-
-  // Refs for cursor position
-  const questionTextareaRef = useRef(null);
-  const explanationTextareaRef = useRef(null);
-  const [cursorPosition, setCursorPosition] = useState(null);
-  const [imageTarget, setImageTarget] = useState('question');
-  const [imageDialogOpen, setImageDialogOpen] = useState(false);
-  const [imagePrompt, setImagePrompt] = useState('');
-  const [generatingImage, setGeneratingImage] = useState(false);
-  const fileInputRef = useRef(null);
-  
-  // CSV Import state
-  const [csvImportOpen, setCsvImportOpen] = useState(false);
-  const [csvFile, setCsvFile] = useState(null);
-  const [importingCsv, setImportingCsv] = useState(false);
-
   useEffect(() => {
     fetchData();
   }, [course.id]);
-
-  useEffect(() => {
-    if (generatorData.chapter_id) {
-      fetchLessonsForGenerator(generatorData.chapter_id);
-    } else {
-      setGeneratorLessons([]);
-    }
-  }, [generatorData.chapter_id]);
 
   useEffect(() => {
     if (formData.chapter_id) {
@@ -230,8 +193,7 @@ const QuestionManager = ({ course, onBack }) => {
       // Fetch chapters for this course
       const chaptersRes = await axios.get(`${API}/courses/${course.id}/chapters`);
       setChapters(chaptersRes.data);
-      setGeneratorChapters(chaptersRes.data);
-      
+
       // Initialize expanded state
       const expanded = {};
       chaptersRes.data.forEach(ch => { expanded[ch.id] = true; });
@@ -247,15 +209,6 @@ const QuestionManager = ({ course, onBack }) => {
       toast.error('Error al cargar datos');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchLessonsForGenerator = async (chapterId) => {
-    try {
-      const res = await axios.get(`${API}/chapters/${chapterId}/lessons`);
-      setGeneratorLessons(res.data);
-    } catch (error) {
-      console.error('Error fetching lessons:', error);
     }
   };
 
@@ -304,7 +257,6 @@ const QuestionManager = ({ course, onBack }) => {
       correct_answer: 'A',
       explanation: ''
     });
-    setChatOpen(false);
     setEditorOpen(true);
   };
 
@@ -319,7 +271,6 @@ const QuestionManager = ({ course, onBack }) => {
       correct_answer: question.correct_answer || 'A',
       explanation: question.explanation || ''
     });
-    setChatOpen(false);
     setEditorOpen(true);
   };
 
@@ -381,217 +332,6 @@ const QuestionManager = ({ course, onBack }) => {
       toast.error('Error al eliminar pregunta');
     }
   };
-
-  // ==================== QUESTION GENERATION ====================
-  const handleUploadPdf = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    
-    setPdfFile(file);
-    
-    try {
-      const token = localStorage.getItem('admin_token');
-      const formData = new FormData();
-      formData.append('file', file);
-      
-      const response = await axios.post(`${ADMIN_API}/upload-pdf`, formData, {
-        headers: { 
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      
-      setPdfText(response.data.text);
-      toast.success('PDF procesado correctamente');
-    } catch (error) {
-      console.error('Error uploading PDF:', error);
-      toast.error('Error al procesar el PDF');
-      setPdfFile(null);
-    }
-  };
-
-  const handleGenerateQuestions = async () => {
-    if (!generatorData.chapter_id) {
-      toast.error('Selecciona un capítulo');
-      return;
-    }
-
-    if (generatorTab === 'prompt' && !generatorData.topic.trim()) {
-      toast.error('Escribe un tema o instrucción para generar preguntas');
-      return;
-    }
-
-    if (generatorTab === 'pdf' && !pdfText) {
-      toast.error('Primero sube un documento PDF');
-      return;
-    }
-
-    setGeneratingQuestions(true);
-    setGeneratedQuestions([]);
-
-    try {
-      const token = localStorage.getItem('admin_token');
-      
-      const payload = {
-        course_id: course.id,
-        chapter_id: generatorData.chapter_id,
-        lesson_id: generatorData.lesson_id || null,
-        difficulty: generatorData.difficulty,
-        num_questions: generatorData.num_questions,
-        generation_type: generatorTab,
-        topic: generatorTab === 'prompt' ? generatorData.topic : null,
-        pdf_content: generatorTab === 'pdf' ? pdfText : null
-      };
-
-      const response = await axios.post(`${ADMIN_API}/generate-questions`, payload, {
-        headers: { Authorization: `Bearer ${token}` },
-        timeout: 120000
-      });
-
-      setGeneratedQuestions(response.data.questions || []);
-      toast.success(`${response.data.questions?.length || 0} preguntas generadas`);
-    } catch (error) {
-      console.error('Error generating questions:', error);
-      toast.error('Error al generar preguntas');
-    } finally {
-      setGeneratingQuestions(false);
-    }
-  };
-
-  const handleAddGeneratedQuestion = async (question, index) => {
-    try {
-      const token = localStorage.getItem('admin_token');
-      
-      const payload = {
-        course_id: course.id,
-        chapter_id: generatorData.chapter_id,
-        lesson_id: generatorData.lesson_id || null,
-        difficulty: generatorData.difficulty,
-        question_text: question.question_text,
-        options: question.options,
-        correct_answer: question.correct_answer,
-        explanation: question.explanation
-      };
-
-      await axios.post(`${ADMIN_API}/questions`, payload, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      // Remove from generated list
-      setGeneratedQuestions(prev => prev.filter((_, i) => i !== index));
-      toast.success('Pregunta añadida al banco');
-      fetchData();
-    } catch (error) {
-      console.error('Error adding question:', error);
-      toast.error('Error al añadir pregunta');
-    }
-  };
-
-  const handleEditGeneratedQuestion = (question, index) => {
-    // Open the editor with this question's data for modifications
-    setEditingQuestion(null);
-    setFormData({
-      chapter_id: generatorData.chapter_id,
-      lesson_id: generatorData.lesson_id || '',
-      difficulty: generatorData.difficulty,
-      question_text: question.question_text,
-      options: question.options,
-      correct_answer: question.correct_answer,
-      explanation: question.explanation
-    });
-    // Remove from generated list
-    setGeneratedQuestions(prev => prev.filter((_, i) => i !== index));
-    setGeneratorOpen(false);
-    setEditorOpen(true);
-  };
-
-  // ==================== IMAGE HANDLING ====================
-  const insertAtCursor = (textToInsert, field) => {
-    const content = field === 'question' ? formData.question_text : formData.explanation;
-    if (cursorPosition !== null) {
-      const before = content.substring(0, cursorPosition);
-      const after = content.substring(cursorPosition);
-      return before + textToInsert + after;
-    }
-    return content + textToInsert;
-  };
-
-  const openImageDialog = (target) => {
-    if (target === 'question' && questionTextareaRef.current) {
-      setCursorPosition(questionTextareaRef.current.selectionStart);
-    } else if (target === 'explanation' && explanationTextareaRef.current) {
-      setCursorPosition(explanationTextareaRef.current.selectionStart);
-    }
-    setImageTarget(target);
-    setImageDialogOpen(true);
-  };
-
-  const handleGenerateImage = async () => {
-    if (!imagePrompt.trim()) {
-      toast.error('Escribe una descripción para la imagen');
-      return;
-    }
-    
-    setGeneratingImage(true);
-    try {
-      const token = localStorage.getItem('admin_token');
-      const response = await axios.post(
-        `${ADMIN_API}/generate-image`,
-        { prompt: imagePrompt, style: 'educativo' },
-        { headers: { Authorization: `Bearer ${token}` }, timeout: 120000 }
-      );
-      
-      const imageUrl = response.data.image_url;
-      const fullUrl = imageUrl.startsWith('/api') 
-        ? `${BACKEND_URL}${imageUrl}`
-        : imageUrl;
-      
-      const imageMarkdown = `\n\n![${imagePrompt}](${fullUrl})\n\n`;
-      const newContent = insertAtCursor(imageMarkdown, imageTarget);
-      
-      if (imageTarget === 'question') {
-        setFormData(prev => ({ ...prev, question_text: newContent }));
-      } else {
-        setFormData(prev => ({ ...prev, explanation: newContent }));
-      }
-      
-      toast.success('Imagen generada e insertada');
-      setImageDialogOpen(false);
-      setImagePrompt('');
-    } catch (error) {
-      console.error('Error generating image:', error);
-      toast.error('Error al generar imagen');
-    } finally {
-      setGeneratingImage(false);
-    }
-  };
-
-  // ==================== REMY CHAT INTEGRATION ====================
-  const handleQuestionContentUpdate = useCallback((newContent) => {
-    try {
-      const updatedData = JSON.parse(newContent);
-      setFormData(prev => ({
-        ...prev,
-        question_text: updatedData.question_text || prev.question_text,
-        options: updatedData.options || prev.options,
-        explanation: updatedData.explanation || prev.explanation,
-        correct_answer: updatedData.correct_answer || prev.correct_answer
-      }));
-      toast.success('Contenido actualizado por Remy');
-    } catch {
-      // If not JSON, might be partial update
-      toast.info('Revisa los cambios sugeridos');
-    }
-  }, []);
-
-  const getQuestionContentForChat = useCallback(() => {
-    return JSON.stringify({
-      question_text: formData.question_text,
-      options: formData.options,
-      correct_answer: formData.correct_answer,
-      explanation: formData.explanation
-    }, null, 2);
-  }, [formData.question_text, formData.options, formData.correct_answer, formData.explanation]);
 
   // ==================== CSV IMPORT ====================
   const handleCsvImport = async () => {
@@ -684,10 +424,6 @@ const QuestionManager = ({ course, onBack }) => {
           <Button variant="outline" onClick={() => setCsvImportOpen(true)}>
             <Upload size={18} className="mr-2" />
             Importar CSV
-          </Button>
-          <Button variant="outline" onClick={() => setGeneratorOpen(true)}>
-            <Sparkles size={18} className="mr-2" />
-            Generar con IA
           </Button>
           <Button onClick={() => openNewQuestion()}>
             <Plus size={18} className="mr-2" />
@@ -904,7 +640,7 @@ const QuestionManager = ({ course, onBack }) => {
 
       {/* ==================== QUESTION EDITOR DIALOG ==================== */}
       <Dialog open={editorOpen} onOpenChange={setEditorOpen}>
-        <DialogContent className={`max-h-[90vh] overflow-y-auto ${chatOpen ? 'max-w-7xl' : 'max-w-5xl'}`}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto max-w-5xl">
           <DialogHeader>
             <DialogTitle>
               {editingQuestion ? 'Editar Pregunta' : 'Nueva Pregunta'}
@@ -966,33 +702,12 @@ const QuestionManager = ({ course, onBack }) => {
           </div>
 
           {/* Editor Grid */}
-          <div className={`grid gap-4 ${chatOpen ? 'grid-cols-3' : 'grid-cols-2'}`}>
+          <div className="grid gap-4 grid-cols-2">
             {/* Left: Editor */}
             <div className="space-y-4">
               <div>
-                <div className="flex items-center justify-between mb-1">
-                  <Label>Enunciado (Markdown + LaTeX)</Label>
-                  <div className="flex gap-1">
-                    <Button type="button" variant="ghost" size="sm" onClick={() => openImageDialog('question')}>
-                      <Image size={14} className="mr-1" />
-                      Imagen
-                    </Button>
-                    {formData.question_text && (
-                      <Button 
-                        type="button" 
-                        size="sm" 
-                        variant={chatOpen ? "default" : "outline"}
-                        onClick={() => setChatOpen(!chatOpen)}
-                        data-testid="toggle-remy-chat"
-                      >
-                        <MessageSquare size={14} className="mr-1" />
-                        {chatOpen ? 'Cerrar' : 'Remy'}
-                      </Button>
-                    )}
-                  </div>
-                </div>
+                <Label>Enunciado (Markdown + LaTeX)</Label>
                 <Textarea
-                  ref={questionTextareaRef}
                   value={formData.question_text}
                   onChange={(e) => setFormData(prev => ({ ...prev, question_text: e.target.value }))}
                   placeholder="Usa $fórmula$ para LaTeX..."
@@ -1039,15 +754,8 @@ const QuestionManager = ({ course, onBack }) => {
               </div>
               
               <div>
-                <div className="flex items-center justify-between mb-1">
-                  <Label>Explicación</Label>
-                  <Button type="button" variant="ghost" size="sm" onClick={() => openImageDialog('explanation')}>
-                    <Image size={14} className="mr-1" />
-                    Imagen
-                  </Button>
-                </div>
+                <Label>Explicación</Label>
                 <Textarea
-                  ref={explanationTextareaRef}
                   value={formData.explanation}
                   onChange={(e) => setFormData(prev => ({ ...prev, explanation: e.target.value }))}
                   placeholder="Explica la solución..."
@@ -1083,28 +791,6 @@ const QuestionManager = ({ course, onBack }) => {
                 )}
               </div>
             </div>
-
-            {/* Right: Chat with Remy */}
-            {chatOpen && (
-              <div className="h-[450px]">
-                <RemyChat
-                  isOpen={chatOpen}
-                  onClose={() => setChatOpen(false)}
-                  currentContent={getQuestionContentForChat()}
-                  onContentUpdate={handleQuestionContentUpdate}
-                  context={{
-                    type: 'question',
-                    courseTitle: course.title,
-                    questionData: {
-                      question_text: formData.question_text,
-                      options: formData.options,
-                      correct_answer: formData.correct_answer,
-                      explanation: formData.explanation
-                    }
-                  }}
-                />
-              </div>
-            )}
           </div>
 
           <div className="flex justify-end gap-2 mt-4">
@@ -1113,268 +799,6 @@ const QuestionManager = ({ course, onBack }) => {
             </Button>
             <Button onClick={handleSaveQuestion}>
               {editingQuestion ? 'Guardar Cambios' : 'Crear Pregunta'}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* ==================== GENERATOR DIALOG ==================== */}
-      <Dialog open={generatorOpen} onOpenChange={setGeneratorOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Sparkles className="text-primary" />
-              Generar Preguntas con IA
-            </DialogTitle>
-          </DialogHeader>
-
-          <Tabs value={generatorTab} onValueChange={setGeneratorTab}>
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="prompt" className="flex items-center gap-2">
-                <Wand2 size={16} />
-                Desde Tema/Prompt
-              </TabsTrigger>
-              <TabsTrigger value="pdf" className="flex items-center gap-2">
-                <FileUp size={16} />
-                Desde Documento PDF
-              </TabsTrigger>
-            </TabsList>
-
-            {/* Common Settings */}
-            <div className="grid grid-cols-3 gap-4 my-4">
-              <div>
-                <Label>Capítulo *</Label>
-                <Select
-                  value={generatorData.chapter_id}
-                  onValueChange={(v) => setGeneratorData(prev => ({ ...prev, chapter_id: v, lesson_id: '' }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona capítulo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {generatorChapters.map(ch => (
-                      <SelectItem key={ch.id} value={ch.id}>{ch.title}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Lección (opcional)</Label>
-                <Select
-                  value={generatorData.lesson_id || "none"}
-                  onValueChange={(v) => setGeneratorData(prev => ({ ...prev, lesson_id: v === "none" ? "" : v }))}
-                  disabled={!generatorData.chapter_id}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Todas" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">Ninguna</SelectItem>
-                    {generatorLessons.map(l => (
-                      <SelectItem key={l.id} value={l.id}>{l.title}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Dificultad</Label>
-                <Select
-                  value={generatorData.difficulty}
-                  onValueChange={(v) => setGeneratorData(prev => ({ ...prev, difficulty: v }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="fácil">Fácil</SelectItem>
-                    <SelectItem value="medio">Medio</SelectItem>
-                    <SelectItem value="difícil">Difícil</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <TabsContent value="prompt" className="space-y-4">
-              <div>
-                <Label>Tema o Instrucciones para generar preguntas</Label>
-                <Textarea
-                  value={generatorData.topic}
-                  onChange={(e) => setGeneratorData(prev => ({ ...prev, topic: e.target.value }))}
-                  placeholder="Ej: Genera 3 preguntas sobre derivadas de funciones trigonométricas, incluyendo una sobre la derivada de sin(x) y otra sobre la regla de la cadena."
-                  className="h-24"
-                />
-              </div>
-              <div>
-                <Label>Número de preguntas</Label>
-                <Select
-                  value={String(generatorData.num_questions)}
-                  onValueChange={(v) => setGeneratorData(prev => ({ ...prev, num_questions: parseInt(v) }))}
-                >
-                  <SelectTrigger className="w-32">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => (
-                      <SelectItem key={n} value={String(n)}>{n}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="pdf" className="space-y-4">
-              <div>
-                <Label>Documento PDF</Label>
-                <div className="mt-2">
-                  <input
-                    type="file"
-                    accept=".pdf"
-                    onChange={handleUploadPdf}
-                    className="hidden"
-                    id="pdf-upload"
-                  />
-                  <label
-                    htmlFor="pdf-upload"
-                    className="flex items-center justify-center gap-2 p-4 border-2 border-dashed rounded-lg cursor-pointer hover:border-primary hover:bg-slate-50"
-                  >
-                    <Upload size={20} />
-                    {pdfFile ? pdfFile.name : 'Arrastra o haz clic para subir PDF'}
-                  </label>
-                </div>
-                {pdfText && (
-                  <div className="mt-2 p-3 bg-green-50 text-green-700 rounded-lg text-sm">
-                    ✓ PDF procesado ({pdfText.length} caracteres extraídos)
-                  </div>
-                )}
-              </div>
-              <div>
-                <Label>Número de preguntas a generar</Label>
-                <Select
-                  value={String(generatorData.num_questions)}
-                  onValueChange={(v) => setGeneratorData(prev => ({ ...prev, num_questions: parseInt(v) }))}
-                >
-                  <SelectTrigger className="w-32">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => (
-                      <SelectItem key={n} value={String(n)}>{n}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </TabsContent>
-          </Tabs>
-
-          <Button 
-            onClick={handleGenerateQuestions} 
-            disabled={generatingQuestions}
-            className="w-full"
-          >
-            {generatingQuestions ? (
-              <>
-                <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2" />
-                Generando preguntas...
-              </>
-            ) : (
-              <>
-                <Sparkles className="mr-2" size={18} />
-                Generar Preguntas
-              </>
-            )}
-          </Button>
-
-          {/* Generated Questions Preview */}
-          {generatedQuestions.length > 0 && (
-            <div className="mt-6 space-y-4">
-              <h3 className="font-semibold flex items-center gap-2">
-                <CheckCircle className="text-green-500" size={20} />
-                Preguntas Generadas ({generatedQuestions.length})
-              </h3>
-              <p className="text-sm text-slate-600">
-                Revisa las preguntas y añádelas al banco o edítalas antes de guardar.
-              </p>
-              
-              {generatedQuestions.map((q, idx) => (
-                <Card key={idx} className="border-2 border-dashed">
-                  <CardContent className="pt-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <Badge className={getDifficultyBadge(generatorData.difficulty)}>
-                        {generatorData.difficulty}
-                      </Badge>
-                      <span className="text-sm text-slate-500">
-                        Respuesta correcta: {q.correct_answer}
-                      </span>
-                    </div>
-                    
-                    <div className="mb-3">
-                      <QuestionContent content={q.question_text} />
-                    </div>
-                    
-                    <div className="space-y-2 mb-3">
-                      {q.options?.map((opt, optIdx) => (
-                        <QuestionOption
-                          key={optIdx}
-                          option={opt}
-                          isSelected={false}
-                          isCorrect={q.correct_answer === String.fromCharCode(65 + optIdx)}
-                          showResult={true}
-                          disabled={true}
-                        />
-                      ))}
-                    </div>
-                    
-                    {q.explanation && (
-                      <ExplanationBlock explanation={q.explanation} />
-                    )}
-                    
-                    <div className="flex gap-2 mt-4 pt-4 border-t">
-                      <Button 
-                        onClick={() => handleAddGeneratedQuestion(q, idx)}
-                        className="flex-1"
-                      >
-                        <Plus size={16} className="mr-1" />
-                        Añadir al Banco
-                      </Button>
-                      <Button 
-                        variant="outline"
-                        onClick={() => handleEditGeneratedQuestion(q, idx)}
-                        className="flex-1"
-                      >
-                        <Edit size={16} className="mr-1" />
-                        Editar con Remy
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* ==================== IMAGE DIALOG ==================== */}
-      <Dialog open={imageDialogOpen} onOpenChange={setImageDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Insertar Imagen</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label>Descripción de la imagen a generar</Label>
-              <Textarea
-                value={imagePrompt}
-                onChange={(e) => setImagePrompt(e.target.value)}
-                placeholder="Ej: Gráfico de la función f(x) = x² con su derivada"
-                className="h-24"
-              />
-            </div>
-            <Button 
-              onClick={handleGenerateImage} 
-              disabled={generatingImage}
-              className="w-full"
-            >
-              {generatingImage ? 'Generando...' : 'Generar Imagen con IA'}
             </Button>
           </div>
         </DialogContent>

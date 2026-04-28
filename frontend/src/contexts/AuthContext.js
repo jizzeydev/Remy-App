@@ -200,14 +200,6 @@ export const AuthProvider = ({ children }) => {
     return Math.max(0, limit - used);
   };
 
-  // Get trial university simulations remaining
-  const getTrialUniSimulationsRemaining = () => {
-    if (!user) return 0;
-    const used = user.trial_university_simulations_used || 0;
-    const limit = user.trial_university_simulations_limit || 1;
-    return Math.max(0, limit - used);
-  };
-
   // Check if user can access content (subscription OR active trial)
   const canAccessContent = () => {
     return hasActiveSubscription() || hasActiveTrial();
@@ -222,11 +214,9 @@ export const AuthProvider = ({ children }) => {
     isInTrial: hasActiveTrial(),
     trialDaysRemaining: getTrialDaysRemaining(),
     trialSimulationsRemaining: getTrialSimulationsRemaining(),
-    trialUniSimulationsRemaining: getTrialUniSimulationsRemaining(),
     hasActiveTrial,
     getTrialDaysRemaining,
     getTrialSimulationsRemaining,
-    getTrialUniSimulationsRemaining,
     canAccessContent,
     loginWithGoogle,
     processGoogleCallback,

@@ -73,6 +73,10 @@ agenthub/agents/youtube/db
 *.deb
 *.dylib
 
+# Heavy course materials (videos and PDFs usados para construir cursos)
+**/*.mp4
+**/*.pdf
+
 # Build caches
 .cache/
 

@@ -5,7 +5,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, Clock, BookOpen, CheckCircle, Lock, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import MarkdownRenderer from '@/components/course/MarkdownRenderer';
+import BlockRenderer from '@/components/course/BlockRenderer';
+import InlineMd from '@/components/course/InlineMd';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -205,16 +206,16 @@ const LessonViewer = () => {
                 <span>{chapter.title}</span>
               </div>
             )}
-            <h1 className="text-3xl font-bold mb-3 text-foreground">{lesson.title}</h1>
+            <h1 className="text-3xl font-bold mb-3 text-foreground">
+              <InlineMd>{lesson.title}</InlineMd>
+            </h1>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Clock size={16} />
               <span>{lesson.duration_minutes} minutos</span>
             </div>
           </div>
 
-          <div className="prose prose-slate dark:prose-invert max-w-none">
-            <MarkdownRenderer content={lesson.content} />
-          </div>
+          <BlockRenderer blocks={lesson.blocks || []} />
         </CardContent>
       </Card>
 

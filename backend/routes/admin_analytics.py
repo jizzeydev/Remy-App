@@ -155,11 +155,7 @@ async def get_dashboard_metrics(_: str = Depends(verify_admin_token)):
     total_courses = await db.courses.count_documents({})
     total_lessons = await db.lessons.count_documents({})
     total_questions = await db.questions.count_documents({})
-    
-    # ===== UNIVERSITY CONTENT =====
-    total_universities = await db.universities.count_documents({})
-    total_uni_questions = await db.evaluation_questions.count_documents({})
-    
+
     return {
         "users": {
             "total": total_users,
@@ -188,9 +184,7 @@ async def get_dashboard_metrics(_: str = Depends(verify_admin_token)):
         "content": {
             "courses": total_courses,
             "lessons": total_lessons,
-            "questions": total_questions,
-            "universities": total_universities,
-            "university_questions": total_uni_questions
+            "questions": total_questions
         }
     }
 
@@ -507,10 +501,9 @@ async def get_trial_settings(_: str = Depends(verify_admin_token)):
         return {
             "enabled": True,
             "trial_days": 7,
-            "simulations_limit": 10,
-            "university_simulations_limit": 1
+            "simulations_limit": 10
         }
-    
+
     return settings.get("value", {})
 
 
@@ -519,7 +512,6 @@ async def update_trial_settings(
     enabled: bool,
     trial_days: int = 7,
     simulations_limit: int = 10,
-    university_simulations_limit: int = 1,
     _: str = Depends(verify_admin_token)
 ):
     """Update free trial settings"""
@@ -527,7 +519,6 @@ async def update_trial_settings(
         "enabled": enabled,
         "trial_days": trial_days,
         "simulations_limit": simulations_limit,
-        "university_simulations_limit": university_simulations_limit,
         "updated_at": datetime.now(timezone.utc).isoformat()
     }
     

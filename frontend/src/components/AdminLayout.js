@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, BookOpen, ClipboardList, Users, LogOut, DollarSign, Building2, Moon, Sun, Settings, School } from 'lucide-react';
+import { LayoutDashboard, BookOpen, ClipboardList, Users, LogOut, DollarSign, Building2, Moon, Sun, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useTheme } from '../contexts/ThemeContext';
@@ -14,10 +14,9 @@ const AdminLayout = () => {
     { icon: BookOpen, label: 'Cursos', path: '/admin/courses' },
     { icon: ClipboardList, label: 'Preguntas', path: '/admin/questions' },
     { icon: Building2, label: 'Universidades', path: '/admin/library-universities' },
-    { icon: School, label: 'Tu Universidad', path: '/admin/universities', secondary: true },
     { icon: Users, label: 'Usuarios', path: '/admin/users' },
     { icon: DollarSign, label: 'Precios', path: '/admin/pricing' },
-    { icon: Settings, label: 'Configuración', path: '/admin/settings' },
+    { icon: Trash2, label: 'Papelera', path: '/admin/papelera' },
   ];
 
   const handleLogout = () => {

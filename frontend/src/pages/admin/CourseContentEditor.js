@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -7,13 +7,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, ArrowLeft, GripVertical, BookOpen, FileText, Sparkles, MessageSquare, X, Image, Upload, Wand2, Check, Link2, Unlink, Layers, AlertTriangle } from 'lucide-react';
-import MarkdownRenderer from '@/components/course/MarkdownRenderer';
-import RemyChat from '@/components/RemyChat';
+import InlineMd from '@/components/course/InlineMd';
+import { Plus, Edit, Trash2, ArrowLeft, GripVertical, BookOpen, FileText, X, Link2, Unlink, Layers, AlertTriangle } from 'lucide-react';
+import BlockEditor from '@/components/admin/BlockEditor';
+import BlockRenderer from '@/components/course/BlockRenderer';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -30,30 +30,12 @@ const CourseContentEditor = () => {
   const [editingChapter, setEditingChapter] = useState(null);
   const [editingLesson, setEditingLesson] = useState(null);
   const [selectedChapter, setSelectedChapter] = useState(null);
-  const [pdfFile, setPdfFile] = useState(null);
-  const [pdfText, setPdfText] = useState('');
-  const [generatingContent, setGeneratingContent] = useState(false);
-  const [topicPrompt, setTopicPrompt] = useState('');
-  const [generationMode, setGenerationMode] = useState('prompt');
-  
+
   // Link chapters state
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
   const [templateChapters, setTemplateChapters] = useState([]);
   const [selectedTemplateChapters, setSelectedTemplateChapters] = useState([]);
   const [linking, setLinking] = useState(false);
-  
-  // AI Chat state
-  const [chatOpen, setChatOpen] = useState(false);
-  
-  // Image insertion state
-  const [imageDialogOpen, setImageDialogOpen] = useState(false);
-  const [imagePrompt, setImagePrompt] = useState('');
-  const [imageStyle, setImageStyle] = useState('educativo');
-  const [generatingImage, setGeneratingImage] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(false);
-  const fileInputRef = useRef(null);
-  const contentTextareaRef = useRef(null);
-  const [cursorPosition, setCursorPosition] = useState(null);
 
   const [chapterForm, setChapterForm] = useState({
     title: '',
@@ -63,7 +45,7 @@ const CourseContentEditor = () => {
 
   const [lessonForm, setLessonForm] = useState({
     title: '',
-    content: '',
+    blocks: [],
     order: 1,
     duration_minutes: 30
   });
@@ -209,250 +191,6 @@ const CourseContentEditor = () => {
     }
   };
 
-  const handlePdfUpload = async () => {
-    if (!pdfFile) {
-      toast.error('Selecciona un PDF');
-      return;
-    }
-
-    try {
-      const token = localStorage.getItem('admin_token');
-      const formData = new FormData();
-      formData.append('file', pdfFile);
-
-      const response = await axios.post(`${ADMIN_API}/upload-pdf`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-
-      // Use full text for generation, not just preview
-      setPdfText(response.data.text || response.data.text_preview);
-      toast.success(`PDF procesado: ${response.data.text_length} caracteres extraídos`);
-    } catch (error) {
-      console.error('Error uploading PDF:', error);
-      toast.error('Error al procesar PDF');
-    }
-  };
-
-  const handleGenerateContent = async () => {
-    if (!lessonForm.title) {
-      toast.error('Especifica el título de la lección');
-      return;
-    }
-
-    // Validate based on mode
-    if (generationMode === 'document' && !pdfText) {
-      toast.error('Procesa un PDF primero');
-      return;
-    }
-    if (generationMode === 'prompt' && !topicPrompt.trim()) {
-      toast.error('Escribe un tema o instrucciones para generar');
-      return;
-    }
-
-    setGeneratingContent(true);
-    try {
-      const token = localStorage.getItem('admin_token');
-      
-      // Step 1: Start the async generation task
-      const startResponse = await axios.post(
-        `${ADMIN_API}/generate-lesson-content/start`,
-        {
-          pdf_content: generationMode === 'document' ? pdfText : null,
-          topic_prompt: generationMode === 'prompt' ? topicPrompt : null,
-          lesson_title: lessonForm.title,
-          chapter_title: selectedChapter?.title || '',
-          course_title: course?.title || ''
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          timeout: 15000 // 15 sec should be enough to just start the task
-        }
-      );
-
-      const taskId = startResponse.data.task_id;
-      toast.info('Generando contenido con GPT-5.2... esto puede tomar hasta 60 segundos');
-
-      // Step 2: Poll for status until completion
-      let attempts = 0;
-      const maxAttempts = 60; // 60 attempts * 2 seconds = 2 minutes max
-      
-      const pollStatus = async () => {
-        try {
-          const statusResponse = await axios.get(
-            `${ADMIN_API}/generate-lesson-content/status/${taskId}`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-              timeout: 10000
-            }
-          );
-
-          const { status, progress, content, error } = statusResponse.data;
-          
-          if (status === 'completed' && content) {
-            setLessonForm({ ...lessonForm, content: content });
-            toast.success('¡Contenido generado con GPT-5.2!');
-            setGeneratingContent(false);
-            return;
-          } else if (status === 'error') {
-            toast.error(error || 'Error al generar contenido');
-            setGeneratingContent(false);
-            return;
-          } else if (status === 'pending' || status === 'processing') {
-            attempts++;
-            if (attempts < maxAttempts) {
-              // Continue polling
-              setTimeout(pollStatus, 2000); // Poll every 2 seconds
-            } else {
-              toast.error('La generación está tomando demasiado tiempo. Intenta de nuevo.');
-              setGeneratingContent(false);
-            }
-          }
-        } catch (pollError) {
-          console.error('Error polling status:', pollError);
-          attempts++;
-          if (attempts < maxAttempts) {
-            // Retry polling even on error
-            setTimeout(pollStatus, 3000);
-          } else {
-            toast.error('Error de conexión. Intenta de nuevo.');
-            setGeneratingContent(false);
-          }
-        }
-      };
-
-      // Start polling
-      setTimeout(pollStatus, 2000); // First poll after 2 seconds
-      
-    } catch (error) {
-      console.error('Error starting content generation:', error);
-      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-        toast.error('Error al iniciar la generación. Intenta de nuevo.');
-      } else if (error.message?.includes('Network Error')) {
-        toast.error('Error de conexión. Verifica tu internet e intenta de nuevo.');
-      } else {
-        toast.error(error.response?.data?.detail || 'Error al generar contenido');
-      }
-      setGeneratingContent(false);
-    }
-  };
-
-  // Callback for RemyChat to update content
-  const handleContentUpdate = useCallback((newContent) => {
-    setLessonForm(prev => ({ ...prev, content: newContent }));
-  }, []);
-
-  // Image functions
-  
-  // Helper to insert text at cursor position
-  const insertAtCursor = (textToInsert) => {
-    const content = lessonForm.content;
-    if (cursorPosition !== null) {
-      const before = content.substring(0, cursorPosition);
-      const after = content.substring(cursorPosition);
-      return before + textToInsert + after;
-    }
-    // Fallback: append at end
-    return content + textToInsert;
-  };
-
-  // Open image dialog and save cursor position
-  const openImageDialog = () => {
-    if (contentTextareaRef.current) {
-      setCursorPosition(contentTextareaRef.current.selectionStart);
-    }
-    setImageDialogOpen(true);
-  };
-
-  const handleGenerateImage = async () => {
-    if (!imagePrompt.trim()) {
-      toast.error('Escribe una descripción para la imagen');
-      return;
-    }
-    
-    setGeneratingImage(true);
-    try {
-      const token = localStorage.getItem('admin_token');
-      const response = await axios.post(
-        `${ADMIN_API}/generate-image`,
-        { prompt: imagePrompt, style: imageStyle },
-        { headers: { Authorization: `Bearer ${token}` }, timeout: 120000 }
-      );
-      
-      // The API returns a path like /api/uploads/xxx.png
-      // We need to prepend the base URL for the markdown
-      const imageUrl = response.data.image_url;
-      const fullUrl = imageUrl.startsWith('/api') 
-        ? `${process.env.REACT_APP_BACKEND_URL}${imageUrl}`
-        : imageUrl;
-      
-      const imageMarkdown = `\n\n![${imagePrompt}](${fullUrl})\n\n`;
-      const newContent = insertAtCursor(imageMarkdown);
-      setLessonForm({ ...lessonForm, content: newContent });
-      
-      toast.success('¡Imagen generada e insertada!');
-      setImageDialogOpen(false);
-      setImagePrompt('');
-      setCursorPosition(null);
-    } catch (error) {
-      console.error('Error generating image:', error);
-      toast.error('Error al generar imagen. Intenta con otra descripción.');
-    } finally {
-      setGeneratingImage(false);
-    }
-  };
-
-  const handleUploadImage = async (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    
-    if (!file.type.startsWith('image/')) {
-      toast.error('Solo se permiten archivos de imagen');
-      return;
-    }
-    
-    setUploadingImage(true);
-    try {
-      const token = localStorage.getItem('admin_token');
-      const formData = new FormData();
-      formData.append('file', file);
-      
-      const response = await axios.post(
-        `${ADMIN_API}/upload-image`,
-        formData,
-        { 
-          headers: { 
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data'
-          }
-        }
-      );
-      
-      // The API returns a path like /api/uploads/xxx.png
-      const imageUrl = response.data.image_url;
-      const fullUrl = imageUrl.startsWith('/api') 
-        ? `${process.env.REACT_APP_BACKEND_URL}${imageUrl}`
-        : imageUrl;
-      
-      const imageName = file.name.replace(/\.[^/.]+$/, '');
-      const imageMarkdown = `\n\n![${imageName}](${fullUrl})\n\n`;
-      const newContent = insertAtCursor(imageMarkdown);
-      setLessonForm({ ...lessonForm, content: newContent });
-      
-      toast.success('¡Imagen subida e insertada!');
-      setImageDialogOpen(false);
-      setCursorPosition(null);
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      toast.error('Error al subir imagen');
-    } finally {
-      setUploadingImage(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-    }
-  };
-
   const openAddChapter = () => {
     resetChapterForm();
     setChapterDialogOpen(true);
@@ -479,7 +217,7 @@ const CourseContentEditor = () => {
     setEditingLesson(lesson);
     setLessonForm({
       title: lesson.title,
-      content: lesson.content,
+      blocks: Array.isArray(lesson.blocks) ? lesson.blocks : [],
       order: lesson.order,
       duration_minutes: lesson.duration_minutes
     });
@@ -493,12 +231,7 @@ const CourseContentEditor = () => {
 
   const resetLessonForm = () => {
     setEditingLesson(null);
-    setPdfFile(null);
-    setPdfText('');
-    setTopicPrompt('');
-    setGenerationMode('prompt');
-    setLessonForm({ title: '', content: '', order: 1, duration_minutes: 30 });
-    setChatOpen(false);
+    setLessonForm({ title: '', blocks: [], order: 1, duration_minutes: 30 });
   };
 
   if (!course) return <div>Cargando...</div>;
@@ -666,7 +399,7 @@ const CourseContentEditor = () => {
                           </Badge>
                         )}
                       </div>
-                      <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">{chapter.description}</p>
+                      <p className="text-sm text-slate-600 dark:text-slate-400 mt-1"><InlineMd>{chapter.description}</InlineMd></p>
                       {chapter.template_info && (
                         <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
                           Plantilla: {chapter.template_info.course_title}
@@ -784,7 +517,7 @@ const CourseContentEditor = () => {
 
       {/* Lesson Dialog */}
       <Dialog open={lessonDialogOpen} onOpenChange={setLessonDialogOpen}>
-        <DialogContent className={`max-h-[90vh] overflow-y-auto ${chatOpen ? 'max-w-7xl' : 'max-w-5xl'}`}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto max-w-5xl">
           <DialogHeader>
             <DialogTitle>
               {editingLesson ? 'Editar Lección' : 'Nueva Lección'} - {selectedChapter?.title}
@@ -812,301 +545,32 @@ const CourseContentEditor = () => {
               </div>
             </div>
 
-            <div className="border-t pt-4">
-              <Label className="flex items-center gap-2 mb-3">
-                <Sparkles size={16} className="text-primary" />
-                Generar contenido con IA (GPT-5.2)
-              </Label>
-              
-              {/* Generation Mode Tabs */}
-              <div className="bg-slate-50 rounded-lg p-4">
-                <div className="flex gap-2 mb-4">
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant={generationMode === 'prompt' ? 'default' : 'outline'}
-                    onClick={() => setGenerationMode('prompt')}
-                    className="flex-1"
-                  >
-                    <MessageSquare size={14} className="mr-1" />
-                    Desde Tema
-                  </Button>
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant={generationMode === 'document' ? 'default' : 'outline'}
-                    onClick={() => setGenerationMode('document')}
-                    className="flex-1"
-                  >
-                    <FileText size={14} className="mr-1" />
-                    Desde Documento
-                  </Button>
-                </div>
-
-                {generationMode === 'prompt' ? (
-                  <div className="space-y-3">
-                    <p className="text-xs text-slate-500">
-                      Describe el tema y qué quieres que contenga la lección. Remy generará contenido completo con ejemplos, gráficos y ejercicios.
-                    </p>
-                    <Textarea
-                      value={topicPrompt}
-                      onChange={(e) => setTopicPrompt(e.target.value)}
-                      placeholder="Ej: Explica la regla de la cadena para derivadas, incluye ejemplos con funciones trigonométricas compuestas y aplicaciones en física."
-                      className="h-24 text-sm"
-                    />
-                    <Button
-                      type="button"
-                      onClick={handleGenerateContent}
-                      disabled={!topicPrompt.trim() || !lessonForm.title || generatingContent}
-                      className="w-full"
-                    >
-                      {generatingContent ? (
-                        <>
-                          <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
-                          Generando con GPT-5.2...
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles size={16} className="mr-2" />
-                          Generar Lección
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <p className="text-xs text-slate-500">
-                      Sube un PDF con el material de referencia. Remy extraerá y adaptará el contenido de forma didáctica.
-                    </p>
-                    <Input
-                      type="file"
-                      accept=".pdf"
-                      onChange={(e) => setPdfFile(e.target.files[0])}
-                      className="text-sm"
-                    />
-                    <div className="flex gap-2">
-                      <Button 
-                        type="button" 
-                        onClick={handlePdfUpload} 
-                        size="sm" 
-                        variant="outline" 
-                        disabled={!pdfFile}
-                        className="flex-1"
-                      >
-                        <FileText size={14} className="mr-1" />
-                        Procesar PDF
-                      </Button>
-                      <Button
-                        type="button"
-                        onClick={handleGenerateContent}
-                        size="sm"
-                        disabled={!pdfText || !lessonForm.title || generatingContent}
-                        className="flex-1"
-                      >
-                        {generatingContent ? 'Generando...' : 'Generar desde PDF'}
-                      </Button>
-                    </div>
-                    {pdfText && (
-                      <div className="space-y-2">
-                        <p className="text-xs text-green-600 flex items-center gap-1">
-                          <Check size={12} />
-                          PDF procesado: {pdfText.length.toLocaleString()} caracteres extraídos
-                        </p>
-                        <div className="bg-slate-100 rounded p-2 max-h-24 overflow-y-auto">
-                          <p className="text-xs text-slate-600 font-mono whitespace-pre-wrap">
-                            {pdfText.substring(0, 500)}...
-                          </p>
-                        </div>
-                        {!lessonForm.title && (
-                          <p className="text-xs text-amber-600 flex items-center gap-1">
-                            ⚠️ Escribe un título arriba para habilitar "Generar desde PDF"
-                          </p>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Editor Layout - 2 cols normally, 3 cols when chat is open */}
-            <div className={`grid gap-4 ${chatOpen ? 'grid-cols-3' : 'grid-cols-2'}`}>
-              {/* Markdown Editor Column */}
+            {/* Editor Layout - 2 cols (block editor + preview) */}
+            <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+              {/* Block editor */}
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <Label>Contenido (Markdown + LaTeX)</Label>
-                  <div className="flex gap-2">
-                    <Button 
-                      type="button" 
-                      size="sm" 
-                      variant="outline"
-                      onClick={openImageDialog}
-                      className="gap-1"
-                    >
-                      <Image size={14} />
-                      Imagen
-                    </Button>
-                    {lessonForm.content && (
-                      <Button 
-                        type="button" 
-                        size="sm" 
-                        variant={chatOpen ? "default" : "outline"}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setChatOpen(!chatOpen);
-                        }}
-                        className="gap-1"
-                        data-testid="toggle-remy-chat"
-                      >
-                        <MessageSquare size={14} />
-                        {chatOpen ? 'Cerrar' : 'Remy'}
-                      </Button>
-                    )}
-                  </div>
-                </div>
-                <Textarea
-                  ref={contentTextareaRef}
-                  value={lessonForm.content}
-                  onChange={(e) => setLessonForm({ ...lessonForm, content: e.target.value })}
-                  placeholder="# Título\n\n## Sección\n\nTexto con fórmulas $$x^2$$\n\n[DESMOS:y=x^2]"
-                  className="font-mono text-sm"
-                  rows={20}
-                  required
-                />
-              </div>
-              
-              {/* Preview Column */}
-              <div>
-                <Label className="mb-2 block">Vista Previa</Label>
-                <div className="border rounded-lg p-4 h-[500px] overflow-y-auto bg-white">
-                  <MarkdownRenderer content={lessonForm.content} />
-                </div>
-              </div>
-
-              {/* AI Chat Column - Only visible when chat is open */}
-              {chatOpen && (
-                <div className="h-[530px]">
-                  <RemyChat
-                    isOpen={chatOpen}
-                    onClose={() => setChatOpen(false)}
-                    currentContent={lessonForm.content}
-                    onContentUpdate={handleContentUpdate}
-                    context={{
-                      type: 'lesson',
-                      title: lessonForm.title,
-                      chapterTitle: selectedChapter?.title || '',
-                      courseTitle: course?.title || ''
-                    }}
+                <Label className="mb-2 block">Bloques de la lección</Label>
+                <div className="border rounded-lg p-3 max-h-[600px] overflow-y-auto bg-secondary/20">
+                  <BlockEditor
+                    blocks={lessonForm.blocks}
+                    onChange={(blocks) => setLessonForm({ ...lessonForm, blocks })}
                   />
                 </div>
-              )}
+              </div>
+
+              {/* Preview */}
+              <div>
+                <Label className="mb-2 block">Vista previa (alumno)</Label>
+                <div className="border rounded-lg p-4 max-h-[600px] overflow-y-auto bg-background">
+                  <BlockRenderer blocks={lessonForm.blocks} />
+                </div>
+              </div>
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Guardando...' : editingLesson ? 'Actualizar Lección' : 'Crear Lección'}
             </Button>
           </form>
-        </DialogContent>
-      </Dialog>
-
-      {/* Image Insertion Dialog */}
-      <Dialog open={imageDialogOpen} onOpenChange={setImageDialogOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Image size={20} />
-              Insertar Imagen
-            </DialogTitle>
-          </DialogHeader>
-          
-          <Tabs defaultValue="generate" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="generate" className="gap-2">
-                <Wand2 size={14} />
-                Generar con IA
-              </TabsTrigger>
-              <TabsTrigger value="upload" className="gap-2">
-                <Upload size={14} />
-                Subir Archivo
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="generate" className="space-y-4 mt-4">
-              <div className="space-y-2">
-                <Label>Describe la imagen que necesitas</Label>
-                <Textarea
-                  value={imagePrompt}
-                  onChange={(e) => setImagePrompt(e.target.value)}
-                  placeholder="Ej: Diagrama que muestre la relación entre una función y su derivada, con flechas indicando la pendiente en diferentes puntos"
-                  rows={3}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label>Estilo</Label>
-                <select
-                  value={imageStyle}
-                  onChange={(e) => setImageStyle(e.target.value)}
-                  className="w-full border rounded-md p-2 text-sm"
-                >
-                  <option value="educativo">Educativo (limpio, profesional)</option>
-                  <option value="diagrama">Diagrama técnico</option>
-                  <option value="ilustracion">Ilustración colorida</option>
-                  <option value="minimalista">Minimalista</option>
-                </select>
-              </div>
-              
-              <Button 
-                onClick={handleGenerateImage} 
-                disabled={generatingImage || !imagePrompt.trim()}
-                className="w-full gap-2"
-              >
-                {generatingImage ? (
-                  <>
-                    <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
-                    Generando imagen... (puede tomar ~30s)
-                  </>
-                ) : (
-                  <>
-                    <Wand2 size={16} />
-                    Generar Imagen con IA
-                  </>
-                )}
-              </Button>
-              
-              <p className="text-xs text-slate-500 text-center">
-                La imagen se generará con GPT Image y se insertará al final del contenido
-              </p>
-            </TabsContent>
-            
-            <TabsContent value="upload" className="space-y-4 mt-4">
-              <div className="border-2 border-dashed border-slate-200 rounded-lg p-8 text-center hover:border-cyan-400 transition-colors">
-                <Upload className="mx-auto mb-4 text-slate-400" size={40} />
-                <p className="text-slate-600 mb-2">Arrastra una imagen o haz clic para seleccionar</p>
-                <p className="text-xs text-slate-400 mb-4">PNG, JPG, GIF hasta 10MB</p>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleUploadImage}
-                  className="hidden"
-                  id="image-upload"
-                />
-                <Button 
-                  type="button" 
-                  variant="outline"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={uploadingImage}
-                >
-                  {uploadingImage ? 'Subiendo...' : 'Seleccionar Archivo'}
-                </Button>
-              </div>
-              
-              <p className="text-xs text-slate-500 text-center">
-                La imagen se convertirá a base64 y se insertará al final del contenido
-              </p>
-            </TabsContent>
-          </Tabs>
         </DialogContent>
       </Dialog>
 

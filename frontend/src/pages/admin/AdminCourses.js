@@ -12,6 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { Plus, Edit, Trash2, BookOpen, GraduationCap, Layers, Search, Building2, Copy, Filter } from 'lucide-react';
+import InlineMd from '@/components/course/InlineMd';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -468,7 +469,7 @@ const AdminCourses = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 line-clamp-2">
-                    {course.description}
+                    <InlineMd>{course.description}</InlineMd>
                   </p>
                   
                   {/* Stats */}
@@ -579,7 +580,7 @@ const AdminCourses = () => {
                       <label htmlFor={chapter.id} className="flex-1 cursor-pointer">
                         <div className="font-medium">{chapter.title}</div>
                         {chapter.description && (
-                          <div className="text-xs text-slate-500 line-clamp-1">{chapter.description}</div>
+                          <div className="text-xs text-slate-500 line-clamp-1"><InlineMd>{chapter.description}</InlineMd></div>
                         )}
                       </label>
                     </div>

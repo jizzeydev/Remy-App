@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { BookOpen, GraduationCap, Loader2, Clock, ArrowRight, X, Building2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import InlineMd from '@/components/course/InlineMd';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -161,7 +162,7 @@ const MisCursos = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 line-clamp-2">
-                  {course.description}
+                  <InlineMd>{course.description}</InlineMd>
                 </p>
                 
                 {course.enrolled_at && (

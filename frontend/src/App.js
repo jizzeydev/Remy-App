@@ -17,7 +17,6 @@ import Simulacros from './pages/Simulacros';
 import Biblioteca from './pages/Biblioteca';
 import MisCursos from './pages/MisCursos';
 import Progreso from './pages/Progreso';
-import TuUniversidad from './pages/TuUniversidad';
 import CourseViewer from './pages/student/CourseViewer';
 import LessonViewer from './pages/student/LessonViewer';
 import AdminLogin from './pages/admin/AdminLogin';
@@ -27,11 +26,9 @@ import AdminCourses from './pages/admin/AdminCourses';
 import AdminQuestions from './pages/admin/AdminQuestions';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminPricing from './pages/admin/AdminPricing';
-import AdminUniversities from './pages/admin/AdminUniversities';
 import AdminLibraryUniversities from './pages/admin/AdminLibraryUniversities';
-import AdminSettings from './pages/admin/AdminSettings';
-import UniversityDetail from './pages/admin/UniversityDetail';
 import CourseContentEditor from './pages/admin/CourseContentEditor';
+import AdminTrash from './pages/admin/AdminTrash';
 import '@/App.css';
 
 // Protected Route for Admin
@@ -105,7 +102,6 @@ function AppRouter() {
         <Route path="/mis-cursos" element={<MisCursos />} />
         <Route path="/simulacros" element={<Simulacros />} />
         <Route path="/biblioteca" element={<Biblioteca />} />
-        <Route path="/tu-universidad" element={<TuUniversidad />} />
         <Route path="/course/:courseId" element={<CourseViewer />} />
         <Route path="/lesson/:lessonId" element={<LessonViewer />} />
         <Route path="/progreso" element={<Progreso />} />
@@ -123,9 +119,7 @@ function AppRouter() {
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/pricing" element={<AdminPricing />} />
         <Route path="/admin/library-universities" element={<AdminLibraryUniversities />} />
-        <Route path="/admin/universities" element={<AdminUniversities />} />
-        <Route path="/admin/universities/:universityId" element={<UniversityDetail />} />
-        <Route path="/admin/settings" element={<AdminSettings />} />
+        <Route path="/admin/papelera" element={<AdminTrash />} />
       </Route>
     </Routes>
   );

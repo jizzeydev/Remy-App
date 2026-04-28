@@ -149,9 +149,7 @@ def user_to_response(user: dict) -> dict:
         "trial_active": user.get("trial_active", False),
         "trial_end_date": trial_end,
         "trial_simulations_used": user.get("trial_simulations_used", 0),
-        "trial_simulations_limit": user.get("trial_simulations_limit", 10),
-        "trial_university_simulations_used": user.get("trial_university_simulations_used", 0),
-        "trial_university_simulations_limit": user.get("trial_university_simulations_limit", 1)
+        "trial_simulations_limit": user.get("trial_simulations_limit", 10)
     }
 
 
@@ -250,13 +248,11 @@ async def process_google_session(request: Request, response: Response):
         trial_enabled = True
         trial_days = 7
         simulations_limit = 10
-        uni_simulations_limit = 1
-        
+
         if trial_settings and trial_settings.get("value"):
             trial_enabled = trial_settings["value"].get("enabled", True)
             trial_days = trial_settings["value"].get("trial_days", 7)
             simulations_limit = trial_settings["value"].get("simulations_limit", 10)
-            uni_simulations_limit = trial_settings["value"].get("university_simulations_limit", 1)
         
         user = {
             "user_id": user_id,
@@ -277,9 +273,7 @@ async def process_google_session(request: Request, response: Response):
             "trial_start_date": now.isoformat() if trial_enabled else None,
             "trial_end_date": (now + timedelta(days=trial_days)).isoformat() if trial_enabled else None,
             "trial_simulations_used": 0,
-            "trial_simulations_limit": simulations_limit,
-            "trial_university_simulations_used": 0,
-            "trial_university_simulations_limit": uni_simulations_limit
+            "trial_simulations_limit": simulations_limit
         }
         await db.users.insert_one(user)
         

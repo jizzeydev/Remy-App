@@ -7,6 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { ArrowLeft, BookOpen, Play, Clock, CheckCircle, Lock, Plus, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
+import InlineMd from '@/components/course/InlineMd';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -168,7 +169,7 @@ const CourseViewer = () => {
           </div>
           <div className="relative z-10">
             <h1 className="text-4xl font-bold mb-2">{course.title}</h1>
-            <p className="text-xl text-white/80 mb-4">{course.description}</p>
+            <p className="text-xl text-white/80 mb-4"><InlineMd>{course.description}</InlineMd></p>
             <div className="flex items-center gap-4 text-sm mb-6">
               <span className="bg-white/20 px-3 py-1 rounded-full">{course.level}</span>
               <span className="bg-white/20 px-3 py-1 rounded-full">
@@ -242,7 +243,7 @@ const CourseViewer = () => {
                     {chapter.lessons?.length || 0} lecciones
                   </span>
                 </div>
-                <p className="text-sm text-muted-foreground ml-13">{chapter.description}</p>
+                <p className="text-sm text-muted-foreground ml-13"><InlineMd>{chapter.description}</InlineMd></p>
               </CardHeader>
             </Card>
           ))}
@@ -262,7 +263,7 @@ const CourseViewer = () => {
       {/* Course header */}
       <div className="bg-gradient-to-r from-primary to-blue-600 rounded-xl p-8 text-white">
         <h1 className="text-4xl font-bold mb-2">{course.title}</h1>
-        <p className="text-xl text-primary-foreground/80 mb-4">{course.description}</p>
+        <p className="text-xl text-primary-foreground/80 mb-4"><InlineMd>{course.description}</InlineMd></p>
         <div className="flex items-center gap-4 text-sm mb-6">
           <span className="bg-white/20 px-3 py-1 rounded-full">{course.level}</span>
           <span className="bg-white/20 px-3 py-1 rounded-full">
@@ -329,7 +330,7 @@ const CourseViewer = () => {
                       {chapterCompleted}/{chapterLessons.length} completadas
                     </span>
                   </div>
-                  <p className="text-sm text-muted-foreground ml-13">{chapter.description}</p>
+                  <p className="text-sm text-muted-foreground ml-13"><InlineMd>{chapter.description}</InlineMd></p>
                 </CardHeader>
                 <CardContent className="pt-4">
                   {chapterLessons.length === 0 ? (

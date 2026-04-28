@@ -1,0 +1,2051 @@
+
+================================================================================
+ARCHIVO 1: 2 PAGINAS
+================================================================================
+
+--- PAGE 1 ---
+Nu´meros reales
+Gu´ıa 1
+Prec´alculo desde cero
+Introduccio´n
+En el mundo real usamos los nu´meros para contar y comparar cantidades, para esto usare-
+mos los nu´meros reales que pueden modelar cantidades enteras, racionales e irracionales.
+Objetivos: En esta gu´ıa aprender´as sobre los nu´meros reales, sus propiedades y trucos
+operacionales.
+1 Conjuntos num´ericos
+1.1 Naturales
+Empezamos con los nu´meros naturales que son los nu´meros que usamos para contar en el
+d´ıa a d´ıa
+1,2,3,4,...
+1.2 Enteros 2
+Los nu´meros enteros consisten en los naturales en conjunto con su negativo y el cero
+..., 3, 2, 1,0,1,2,3,...
+→ → →
+1.3 Racionales Q
+Este conjunto contiene todos los nu´meros que pueden representarse de la forma
+r = m
+n
+Donde m es un entero y n = 0. Por ejemplo
+↑
+3 = 1,5 16,5 2 = 0,666...
+2 3
+Dar m´as ejemplos en clase...
+IR HE
+52 7.5
+2
+E
+r
+E
+a
+o.at
+1
+
+--- PAGE 2 ---
+1.4 Irracionales 10H
+Nu´meros que no pueden representarse de la forma anteriormente mencionada ya que im-
+plicar´ıaunacontradicci´onmatema´ticaynu´meroscon unpatro´n irregularensusdecimales
+como por ejemplo:
+↓3 ω 2 1
+3
+Dar m´as ejemplos y demostrar que ↓2 es irracional...
+Ereduide
+EjjEitide
+EEzpaaiviirlepor2
+ioespsr
+i iiii.mn
+n
+2 Propiedades de los nu´meros reales
+Propiedades Conmutativas
+Suma: a+b = b+a
+Multiplicaci´on: ab = ba
+Cuando sumamos o multiplicamos dos nu´meros, el orden no afecta el resultado.
+Propiedades Asociativas
+Suma: (a+b)+c = a+(b+c)
+Multiplicaci´on: (ab)c = a(bc)
+Cuando sumamos o multiplicamos tres nu´meros, no importa cua´les agrupemos primero.
+Propiedad Distributiva
+a(b+c) = ab+ac
+FEE
+gtay
+(b+c)a = ab+ac
+Multiplicar un nu´mero por una suma es igual a multiplicarlo por cada sumando y luego
+sumar los productos.
+actuetadtby
+
+================================================================================
+ARCHIVO 2: 4 PAGINAS
+================================================================================
+
+--- PAGE 1 ---
+Conjuntos e intervalos
+Gu´ıa 2
+Prec´alculo desde cero
+Introduccio´n
+En esta gu´ıa exploraremos los conceptos fundamentales de conjuntos e intervalos, ele-
+mentos esenciales en el estudio de la matem´atica. Los conjuntos nos permiten agrupar y
+organizar elementos, mientras que los intervalos nos ayudan a representar subconjuntos
+de nu´meros reales de manera precisa. A trav´es de esta gu´ıa, aprenderemos a definir, re-
+presentar y operar con conjuntos e intervalos de forma clara y estructurada.
+Objetivos: Al finalizar esta clase, los estudiantes sera´n capaces de:
+Comprender la definici´on y notaci´on de conjuntos.
+Identificar los diferentes tipos de conjuntos y sus propiedades.
+Representar conjuntos mediante diagramas de Venn.
+Definir e interpretar intervalos en la recta num´erica.
+Aplicar operaciones entre conjuntos e intervalos en la resoluci´on de problemas.
+1 Conjuntos
+Unconjuntoesunacolecci´onbiendefinidadeelementosquecompartenunacaracter´ıstica
+comu´n. Los conjuntos se representan generalmente con letras mayu´sculas y sus elementos
+se escriben entre llaves .
+{}
+Dar ejemplos de conjuntos:
+deVern
+Disgrsuss
+A 41,2134 U
+B 4314,54 A
+B
+3
+2
+ARB434
+Los conjuntos pueden clasificarse en diferentes tipos:
+Conjunto finito: Tiene un nu´mero determinado de elementos.
+Conjunto infinito: Tiene un nu´mero infinito de elementos.
+Conjunto vac´ıo: No contiene elementos y se denota como .
+→
+Conjunto universal: Contiene todos los elementos bajo consideraci´on en un con-
+texto determinado y se denota usualmente como U.
+1
+
+--- PAGE 2 ---
+2 Intervalos
+Los intervalos son subconjuntos de nu´meros reales que representan un rango de valores
+comprendidos entre dos extremos. Se utilizan comu´nmente para describir conjuntos de
+nu´meros en la recta num´erica de manera ma´s compacta que la enumeraci´on de elementos
+individuales.
+2.1 Tipos de intervalos J AbiertonoseIncluyen I cerradoIncluyen
+Intervalo abierto: No incluye sus extremos. Se representa como (a,b) e indica que
+el conjunto contiene todos los valores entre a y b, pero no incluye a ni b.
+Intervalo cerrado: Incluye ambos extremos. Se denota como [a,b], lo que significa
+que el conjunto contiene todos los valores entre a y b, incluyendo a y b.
+Intervalo semiabierto o semicerrado: Incluye solo uno de sus extremos.
+• [a,b): Incluye a pero no b.
+• (a,b]: Incluye b pero no a.
+Intervalo infinito: Se extiende indefinidamente en una direccio´n.
+• (a,+ ): Incluye todos los valores mayores que a, sin incluir a.
+↑
+• [a,+ ): Incluye todos los valores mayores o iguales que a.
+↑
+• ( ,b): Incluye todos los valores menores que b, sin incluir b.
+↓↑
+• ( ,b]: Incluye todos los valores menores o iguales que b.
+↓↑
+Losintervalossonesencialesenelan´alisismatema´ticoyseutilizanenfunciones,ecuaciones
+e inecuaciones para describir dominios y rangos de valores.
+Dar ejemplos de intervalos de cada tipo y graficarlos:
+10,3
+9o
+1,81
+go
+13,4
+EEEE
+
+--- PAGE 3 ---
+3 Operaciones con conjuntos e intervalos
+Lasoperacionesentreconjuntosnospermitencombinaromodificarconjuntosparaobtener
+nuevos conjuntos. Las principales operaciones son:
+3.1 Unio´n
+La uni´on de dos conjuntos A y B es el conjunto de todos los elementos que pertenecen
+a A, a B o a ambos. Se denota como:
+A B = x x A o x B
+↔ { | ↗ ↗ }
+3.2 Interseccio´n
+La interseccio´n de dos conjuntos A y B es el conjunto de elementos que pertenecen
+tanto a A como a B. Se denota como:
+A B = x x A y x B
+↘ { | ↗ ↗ }
+3.3 Diferencia
+La diferencia entre dos conjuntos A y B es el conjunto de elementos que pertenecen a
+A pero no a B. Se denota como:
+A B = x x A y x / B
+↓ { | ↗ ↗ }
+ARBC
+3.4 Complemento
+El complemento de un conjunto con respecto al conjunto universal es el conjunto de
+todos los elementos que no pertenecen a A. Se denota como:
+A↭ = x x / A
+{ | ↗ }
+Estas operaciones son fundamentales en la teor´ıa de conjuntos y se utilizan en diversas
+ramas de la matema´tica y la l´ogica.
+Dar ejemplos de las operaciones para intervalos:
+Ven aranceles iris Laurence usisith
+Conjuntos
+A42,34,54
+B 44,56,74
+c 44,618,94
+a
+que
+as i
+a
+g
+i
+
+--- PAGE 4 ---
+Intervalos
+10131151 22,311
+Eiji
+E3
+JULIS 10,5
+ETH
+
+================================================================================
+ARCHIVO 3: 18 PAGINAS
+================================================================================
+
+--- PAGE 1 ---
+Potencias y Ra´ıces
+Gu´ıa 3
+Nu´meros
+Introduccio´n
+En esta gu´ıa exploraremos uno de los conceptos fundamentales del a´lgebra: las potencias y
+lasra´ıces.Estudiaremosc´omooperarconpotenciasdedistintostipos(positivas,negativas,
+racionales), sus propiedades y usos, y co´mo estos conocimientos se aplican en notaci´on
+cient´ıfica y fen´omenos de crecimiento y decrecimiento exponencial. Tambi´en abordaremos
+el concepto de ra´ız en´esima y su relacio´n con las potencias.
+Estos contenidos son esenciales en la resolucio´n de ejercicios algebraicos en la PAES y
+permiten una mejor comprensi´on del comportamiento de los nu´meros en contextos reales
+y cient´ıficos.
+Contenidos:
+Lectura y representaci´on de potencias.
+Potencias con exponente entero (positivo y negativo).
+Potencias con base negativa o fraccionaria.
+Propiedades y simplificaci´on de potencias.
+Notacio´n cient´ıfica.
+Introduccio´n a las ra´ıces y su operatoria.
+Propiedades de las ra´ıces y racionalizacio´n.
+Aplicaciones en contextos reales (PAES).
+1 Potencias
+1.1 ¿Qu´e son las potencias?
+Una potencia es una multiplicaci´on de factores iguales. Se representa como:
+an = a a a ... a (n veces)
+· · · ·
+Donde:
+a: base de la potencia.
+n: exponente o´ındice.
+Esto significa que se multiplica la base por s´ı misma tantas veces como lo indique el
+exponente.
+
+--- PAGE 2 ---
+Ejemplos resueltos:
+24 = 2 2 2 2 = 16
+· · ·
+53 = 5 5 5 = 125
+· ·
+Tip PAES: Una potencia no es lo mismo que una multiplicaci´on comu´n.
+34 = 81 NO es 3 4 = 12
+·
+Ejercicios para desarrollar en clase:
+Escribe como potencia: 7 7 7 7 74
+· · ·
+Escribe como multiplicaci´on: 43 4.4.4 16.4 64
+Calcula: 32, 25, 61
+1.1.1 ¿C´omo se lee una potencia?
+Una potencia an se lee como:
+”a elevado a n”.
+Si n = 2, tambi´en se dice ”a al cuadrado”.
+Si n = 3, tambi´en se dice ”a al cubo”.
+Ejemplos:
+52: “cinco al cuadrado”
+43: “cuatro al cubo”
+25: “dos elevado a cinco”
+Tip PAES: En preguntas de lectura o contexto, la forma de leer una potencia puede
+ayudarte a identificar su operacio´n equivalente.
+Para practicar en clase:
+¿Co´mo se lee 62?
+¿Co´mo se lee 93?
+¿Co´mo se lee 74?
+1.1.2 ¿Qu´e significa calcular una potencia?
+Calcular una potencia significa efectuar la multiplicacio´n reiterada indicada por el expo-
+nente.
+
+--- PAGE 3 ---
+Ejemplos:
+43 = 4 4 4 = 64 y 25 = 2 2 2 2 2 = 32
+· · · · · ·
+Tip u´til: Cuando el exponente es 1, el nu´mero no cambia:
+a1 = a
+Cuando el exponente es 0, el resultado es 1 (salvo que la base sea 0):
+a0 = 1 para a = 0
+→
+Ejercicios para desarrollar en clase:
+Calcula: 33 =27
+Calcula: 100 =1
+Calcula: 51 = 5
+1.1.3 Potencias de base negativa
+Cuando la base de una potencia es negativa, el resultado puede ser positivo o negativo
+dependiendo del exponente:
+Si el exponente es par, el resultado es positivo.
+Si el exponente es impar, el resultado es negativo.
+Ejemplos:
+ER
+( 2)4 = ( 2) ( 2) ( 2) ( 2) = 16
+↑ ↑ · ↑ · ↑ · ↑
+(
+2)3IM
+=
+PA
+(
+R
+2) ( 2) ( 2) = 8
+↑ ↑ · ↑ · ↑ ↑
+¡Ojo! No es lo mismo ( 3)2 que 32:
+↑ ↑
+( 3)2 = 9 pero 32 = 9
+↑ ↑ ↑
+Tip PAES: Siempre f´ıjate si la base negativa est´a entre par´entesis. Eso cambia comple-
+tamente el resultado.
+Ejercicios para desarrollar en clase:
+Calcula: ( 5)2 = 52 =
+25 25
+↑ ↑
+Determina el signo de: ( 3)3, ( 4)6, 24
+↑ ↑ ↑
+
+--- PAGE 4 ---
+1.1.4 Potencias de base racional
+Tambi´en podemos aplicar potencias a fracciones. Para elevar una fraccio´n, se eleva tanto
+el numerador como el denominador:
+a n an
+= (con b = 0)
+b bn →
+! "
+Ejemplos:
+2 2 22 4 5 3 125
+= = y =
+3 3 32 9 2 8
+a
+# $ # $
+Tip u´til: Si una fracci´on negativa est´a entre par´entesis, se aplican las reglas de signo
+como con bases negativas.
+2 2
+1 1 1 1
+= (positivo) pero =
+↑2 4 ↑ 2 ↑4
+# $ # $
+Ejercicios para desarrollar en clase:
+Calcula: 3 2
+4
+Calcula: %2& 3 EsEs
+5
+Determin%a &el signo: 1 3 , 1 2
+↑3 ↑ 3
+% & % &
+Y
+1.1.5 Potencias de exponente negativo
+Una potencia con exponente negativo indica el inverso multiplicativo de la potencia
+con exponente positivo:
+LEI
+IF
+1
+a n = (con a = 0)
+→
+an →
+á É
+Ejemplos:
+2 2
+1 1 3 → 4 16
+2 3 = = y = =
+→
+23 8 4 3 9
+# $ # $
+Tip u´til: Cambiar el signo del exponente invierte la fracci´on:
+n
+a n b
+→ =
+b a
+# $
+! "
+Ejercicios para desarrollar en clase:
+Calcula: 5 2 =Ust Ets
+→
+Calcula: 2 → 2 = 125
+3
+% &
+
+--- PAGE 5 ---
+¿Cua´l es el inverso de 3 2 ?
+5
+E% &s
+1.1.6 Signo de una potencia
+Para determinar el signo del resultado de una potencia, se deben considerar dos cosas:
+Si la base es negativa.
+Si el exponente es par o impar.
+Reglas generales:
+Si la base es positiva, el resultado es siempre positivo.
+Si la base es negativa:
+• Exponente par → resultado positivo.
+• Exponente impar → resultado negativo.
+Ejemplos:
+( 4)2 = 16 ( 3)3 = 27 24 = 16
+↑ ↑ ↑ ↑ ↑
+Tip PAES: Cuidado con los signos cuando el negativo no est´a entre par´entesis.
+52 = (5 5) = 25
+↑ ↑ · ↑
+Ejercicios para desarrollar en clase:
+Determina el signo de: ( 2)5, ( 6)4, 32
+↑ ↑ ↑
+¿Qu´e potencia da un resultado negativo? ( 7)2 o 72?
+↑ ↑
+1.2 Propiedades de las potencias
+Las potencias cumplen ciertas propiedades que permiten resolver ejercicios ma´s ra´pido y
+simplificar expresiones.
+1.2.1 Potencia de exponente 0
+Toda potencia con exponente 0 es igual a 1, siempre que la base sea distinta de cero:
+a0 = 1 (con a = 0)
+→
+
+--- PAGE 6 ---
+Ejemplos:
+0
+5
+70 = 1 ; ( 3)0 = 1 ; = 1
+↑ 2
+# $
+Tip PAES: ¡No te confundas! Muchos errores en preguntas r´apidas vienen por pensar
+que el resultado es 0.
+Ejercicios para desarrollar en clase:
+Calcula: 100, ( 2)0, 3 0
+↑ 4
+¿Qu´e valor tiene x0 si x =% &5?
+↑
+1.2.2 Potencia de exponente 1
+Toda potencia con exponente 1 es igual a la base. En este caso, no se realiza ninguna
+operacio´n:
+a1 = a
+Ejemplos:
+1
+2 2
+61 = 6 ; ( 4)1 = 4 ; =
+↑ ↑ 3 3
+# $
+Tip PAES: Cuando aparece un exponente 1, puedes eliminarlo directamente. Es u´til al
+simplificar expresiones.
+Ejercicios para desarrollar en clase:
+Calcula: 151, 1 1 , x1 con x = 9
+↑2
+Simplifica: a1 a% 3 &
+·
+1.2.3 Potencia de una potencia
+Cuando tenemos una potencia elevada a otra potencia, los exponentes se multiplican:
+(am)n = amn
+·
+Ejemplos:
+(23)2 = 232 = 26 = 64 ; x4 3 = x12
+·
+2º % &
+1237 64
+82 64
+
+--- PAGE 7 ---
+Tip PAES: Multiplica los exponentes, ¡no los sumes! Esta es una confusio´n muy comu´n.
+Ejercicios para desarrollar en clase:
+Simplifica: (32)4 3º
+2
+Resuelve: (a2) 3 a
+! "
+3
+Calcula: 52 115T 11
+22
+! "
+1.2.4 Producto de potencias de igual base
+Cuando multiplicamos potencias con la misma base, se conserva la base y se suman los
+exponentes:
+am an = am+n
+·
+Ejemplos:
+32 34 = 32+4 = 36 = 729 ; x5 x3 = x8
+· ·
+Tip PAES: Esta propiedad no se puede usar si las bases son distintas, aunque los expo-
+nentes sean iguales.
+Ejercicios para desarrollar en clase:
+Simplifica: 23 25 2
+·
+Calcula: x7 x2
+·
+¿Puedes aplicar la propiedad en 52 62? ¿Por qu´e?
+·
+1.2.5 Cociente de potencias de igual base
+Cuando dividimos potencias con la misma base, se conserva la base y se restan los expo-
+nentes:
+am : an = am n (con a = 0)
+→
+→
+Ejemplos:
+56 : 52 = 56 2 = 54 = 625 ; x9 : x4 = x5
+→
+5.555 5
+54
+5
+3
+
+--- PAGE 8 ---
+Tip PAES: Si el exponente de abajo es mayor que el de arriba, el resultado sera´ una
+potencia con exponente negativo:
+1
+23 : 25 = 2 2 =
+→
+22
+Ejercicios para desarrollar en clase:
+Simplifica: 105 : 102 103
+Calcula: a4 : a6
+0
+¿Cua´nto vale 7 x para cualquier valor de x?
+7
+%Ñ&
+1
+1.2.6 Producto de potencias de igual exponente
+Cuando multiplicamos potencias que tienen el mismo exponente, pero bases distintas, se
+pueden multiplicar las bases y mantener el exponente:
+an bn = (a b)n
+· ·
+Ejemplos: 105100.000
+23 53 = (2 5)3 = 103 = 1000 ; x4 y4 = (x y)4
+· · · ·
+3
+10
+0,001
+Tip PAES: Esta propiedad solo se aplica si los exponentes son exactamente iguales.
+No te confundas si parecen parecidos.
+Ejercicios para desarrollar en clase:
+Calcula: 32 42 122
+·
+Simplifica: m5 n5
+mm
+·
+¿Es igual a2 b3 a (ab)5? ¿Por qu´e?
+·
+a63 0565
+1.2.7 Cociente de potencias de igual exponente
+Cuando dividimos potencias con el mismo exponente, pero bases distintas, se pueden
+dividir las bases y mantener el exponente:
+an a n
+= (con b = 0)
+bn b →
+! "
+
+--- PAGE 9 ---
+Ejemplos:
+0 462 6 2 x5 x 5
+= = 22 = 4 ; =
+32 3 y5 y
+# $ # $
+x̅
+Tip PAES: Revisa que el exponente sea el mismo antes de aplicar esta propiedad. No se
+puede usar si los exponentes son distintos.
+Ejercicios para desarrollar en clase:
+Simplifica: 103 1 13238
+53
+Resuelve:
+a4
+b4 171
+¿Qu´e ocurre con
+x2
+? ¿Se puede usar la propiedad?
+y3
+F
+F E gr g
+7
+1.3 Potencias y notacio´n cient´ıfica
+La notacio´n cient´ıfica es una forma abreviada de representar nu´meros que pueden ser muy
+grandes o pequen˜os y que dificultan su proceso de escritura usando todas las cifras. Para
+comprender como usar la notacio´n cient´ıfica, debemos abordar primero las potencias de
+base 10.
+1.3.1 Potencias de base 10
+Las potencias de base 10 son aquellas en las que el nu´mero 10 se eleva a un exponente
+entero. Se utilizan frecuentemente para escribir nu´meros muy grandes o muy pequen˜os.
+101 = 10 ; 102 = 100 ; 103 = 1000 ; 104 = 10000
+Tambi´en pueden tener exponentes negativos:
+1 1 1
+10 1 = = 0,1 ; 10 2 = = 0,01 ; 10 3 = = 0,001
+→ → →
+10 100 1000
+Tip PAES: Cada vez que el exponente aumenta en 1, se agrega un 0 a la derecha. Si el
+exponente es negativo, se mueven los decimales a la izquierda.
+Ejercicios para desarrollar en clase:
+Expresa como nu´mero: 105, 100, 10 2
+→ 10001
+¿Cua´ntas cifras tiene el nu´mero 106? ¿Y 10 4?
+→
+Es
+7 Fifess
+105100.000
+1.000.000
+10º 1
+2
+10
+0,01
+
+--- PAGE 10 ---
+1.3.2 Representando nu´meros en notaci´on cient´ıfica
+La notacio´n cient´ıfica es una forma de escribir nu´meros muy grandes o muy pequen˜os
+como el producto de un nu´mero decimal por una potencia de base 10.
+a 10n con 1 a < 10 y n Z
+· ↓ ↔ iii
+ii
+Ejemplos:
+no
+4,5 103 = 4500
+·
+3,2 10 → 2 = 0,032 a 10 9 i
+·
+1 106 = 1,000,000
+·
+Tip PAES:
+Si el exponente es positivo, se mueve la coma hacia la derecha.
+Si el exponente es negativo, se mueve la coma hacia la izquierda.
+El nu´mero decimal debe tener una sola cifra distinta de 0 antes de la coma.
+Ejercicios para desarrollar en clase:
+Escribe en notacio´n cient´ıfica: 53000, 0,00076, 1,2
+Convierte a nu´mero decimal: 6,3 104, 2,1 10 3
+→
+· ·
+63.000 0,0 21
+53000 53.113
+año
+1.4 Crecimiento y decrecimiento exponencial
+Elcrecimientoyeldecrecimientoexponencialdescribenfeno´menosenlosqueunacantidad
+aumenta o disminuye r´apidamente en funcio´n del tiempo o de otra variable.
+Crecimiento exponencial: Ocurre cuando una cantidad se multiplica por un valor
+constante mayor que 1 en cada etapa.
+f(x) = a bx con b > 1
+·
+Ejemplo: Una bacteria se duplica cada hora. Si partes con 1 bacteria:
+f(x) = 1 2x (despu´es de 4 horas: 24 = 16 bacterias)
+·
+Decrecimiento exponencial: Se produce cuando una cantidad se reduce multiplicati-
+vamente con una constante menor que 1.
+
+--- PAGE 11 ---
+f(x) = a bx con 0 < b < 1
+·
+Ejemplo: Un medicamento pierde la mitad de su concentracio´n cada hora. Si parte con
+100 mg:
+x 3
+1 1
+f(x) = 100 (despu´es de 3 horas: 100 = 12,5 mg)
+· 2 · 2
+# $ # $
+Tip PAES: Este tema aparece frecuentemente en problemas de contexto real. Recuerda
+identificar si la tasa de cambio es mayor o menor que 1.
+Ejercicios para desarrollar en clase:
+Un celular pierde el 30% de bater´ıa cada hora. ¿Cua´nta bater´ıa queda despu´es de
+2 horas si parte con 100%?
+Una poblaci´on de 1000 personas crece un 10% mensual. ¿Cu´antas habr´a despu´es de
+3 meses?
+BLA 100 10,71 PHI 1000.11.11
+a no
+Psi
+2 Ra´ıces
+A continuaci´on, estudiaremos las ra´ıces en´esimas y sus propiedades. Es importante que
+comprendas muy bien lo abordado anteriormente sobre potencias y nu´meros enteros antes
+de abordar este tema.
+2.1 Ra´ıces en´esimas
+Lara´ızen´esimadeunnu´meroeslaoperacio´ninversaaelevaraunapotencia.Serepresenta
+como:
+↗n a = b bn = a
+↘
+Ejemplos:
+↗2 16 = 4 porque 42 = 16 ; ↗3 27 = 3 porque 33 = 27
+Observaciones importantes:
+Si n es par, a debe ser positivo (no hay ra´ıces pares de nu´meros negativos en los
+reales).
+Si n es impar, la ra´ız de un nu´mero negativo existe en los reales.
+
+--- PAGE 12 ---
+Tip PAES: La ra´ız cuadrada se escribe con ´ındice 2, pero por convencio´n no se anota:
+↗a = ↗2 a
+Ejercicios para desarrollar en clase:
+Calcula: ↗4 81, ↗3 8, ↗144
+↑
+Justifica si existen en R: ↗2 9, ↗3 27
+↑ ↑
+Fi i
+48T
+3
+i
+sii
+2.1.1 Ra´ıces de´ındice par
+Cuando se trabaja con ra´ıces de ´ındice par (como la ra´ız cuadrada, cuarta, sexta, etc.),
+hay una restricci´on importante: el radicando debe ser mayor o igual que cero si queremos
+que el resultado est´e en los nu´meros reales.
+↗n a so´lo existe en R si a 0, con n par
+≃
+Ejemplos:
+↗9 = 3 ; ↗4 16 = 2 ; ↗2 0 = 0
+↗ 4 no existe en R
+↑
+Tip PAES: ¡Mucho ojo! ↗ x no esta´ definido en los reales si x > 0. No caigas en la
+↑
+trampa de operar como si s´ı.
+Ejercicios para desarrollar en clase:
+5 o
+¿Existe en R: ↗25, ↗4 81, ↗0?
+↑
+Evalu´a: ↗6 64, ↗2 1
+↑
+Ʃ
+2.1.2 Ra´ıces de´ındice impar
+Las ra´ıces de´ındice impar (como la ra´ız cu´bica, quinta, s´eptima, etc.) esta´n definidas para
+todo nu´mero real, incluso si el radicando es negativo.
+↗n a R para todo a R, con n impar
+↔ ↔
+Ejemplos:
+↗3 27 = 3 ; ↗3 8 = 2 ; ↗5 32 = 2
+↑ ↑ ↑ ↑
+
+--- PAGE 13 ---
+Tip PAES: No te confundas: si el´ındice es impar, ¡s´ı se puede sacar ra´ız de un nu´mero
+negativo!
+Ejercicios para desarrollar en clase:
+Calcula: ↗3 27, ↗5 243, ↗7 0
+↑ ↑
+Justifica por qu´e ↗3 125 s´ı existe pero ↗4 16 no
+↑ ↑
+723 3
+2.2 Propiedades de las ra´ıces
+2.2.1 Ra´ız como potencia
+Toda ra´ız puede escribirse como una potencia con exponente fraccionario:
+↗n a = an 1 ; ↗n am = a m n
+Esta propiedad es u´til para simplificar expresiones algebraicas y resolver ecuaciones con
+ra´ıces.
+Ejemplos:
+↗2 x = x 1 2 ; ↗3 x2 = x 2 3 ; ↗4 a3 = a 3 4
+Tip PAES: Si tienes que comparar ra´ıces con exponentes distintos, pa´salas todas a
+potencias con fraccio´n. As´ı puedes aplicar propiedades de potencias fa´cilmente.
+Ejercicios para desarrollar en clase:
+Escribe como potencia: ↗5 x3, ↗y, ↗4 z2
+Evalu´a: 161/2, 82/3
+No 4
+16
+SEP 4
+gris
+2
+y
+47 244 2112 E
+2.2.2 Potencia de una ra´ız
+Cuando una ra´ız se eleva a una potencia, se puede multiplicar el exponente de la ra´ız con
+el nuevo exponente:
+m
+m 1 m
+↗n a = an = an
+! "
+% &
+Ejemplos:
+4 4
+↗2 = 2 1 2 = 2 4 2 = 22 = 4 ; ↗3 x 2 = x 2 3
+! " ! "
+22 % &
+121121 2 4
+
+--- PAGE 14 ---
+Tip PAES:Estapropiedad esmuyu´tilparaevitarescribirra´ıcesy trabajardirectamente
+con potencias. ¡Recuerda simplificar la fracci´on del exponente si puedes!
+Ejercicios para desarrollar en clase:
+Escribe como potencia y evalu´a: (↗3)6, (↗4 x)2, (↗5 x)5
+¿Cua´l es el resultado de (↗9)2? ¿Y de (↗3 8)2?
+2.2.3 Multiplicaci´on de ra´ıces de igual´ındice
+Cuando multiplicamos ra´ıces con el mismo´ındice, podemos multiplicar los radicandos y
+dejar una sola ra´ız:
+E car
+↗n a ↗n b = ↗n a b
+· ·
+Ejemplos:
+↗2 ↗3 = ↗6 ; ↗3 5 ↗3 4 = ↗3 20
+· ·
+Tip PAES: Aprovecha esta propiedad para simplificar ra´ıces o para convertir productos
+en una sola ra´ız antes de operar.
+Ejercicios para desarrollar en clase:
+Simplifica: ↗5 ↗15, ↗4 2 ↗4 8
+· ·
+Evalu´a: ↗3 ↗12 E F TU 2
+·
+EEEE
+2.2.4 Divisi´on de ra´ıces de igual´ındice
+Al dividir ra´ıces que tienen el mismo´ındice, podemos escribir una sola ra´ız con el cociente
+de los radicandos:
+↗n a a
+= n siempre que b = 0
+↗n b b →
+’
+Ejemplos:
+↗8 ↗3 16
+= ↗4 = 2 ; = ↗3 8 = 2
+↗2 ↗3 2
+Tip PAES: Aprovecha esta propiedad para simplificar expresiones antes de usar la cal-
+
+--- PAGE 15 ---
+culadora. Funciona igual que la propiedad de multiplicacio´n.
+Ejercicios para desarrollar en clase:
+Simplifica: ↑50, ↑481 Era Es 5
+↑2 ↑43
+Evalu´a: ↑12
+↑3
+2.2.5 Ra´ız de la ra´ız
+Cuando aplicamos una ra´ız a otra ra´ız, se puede combinar en una sola ra´ız usando el
+producto de los´ındices:
+mF 11
+copimpm a etou
+m ↗n a = m↗n a
+·
+(
+Ejemplos:
+↗81 = 2 ↗2 81 = ↗4 81 = 3 ; 3 ↗2 x = ↗6 x
+( ( (
+Tip PAES: Esta propiedad es clave cuando te enfrentas a ra´ıces anidadas. Multiplica los
+´ındices y trabaja con una sola ra´ız.
+Ejercicios para desarrollar en clase:
+Simplifica: 3 ↗2 64, ↗3 x
+¿Qu´e´ındice)tiene la)ra´ız 5 ↗4 a?
+F
+)x̅
+EE
+2.2.6 Composici´on de una ra´ız
+La composicio´n de una ra´ız consiste en aplicar una ra´ız a una expresi´on que ya contiene
+una potencia. En estos casos, se puede usar la propiedad de potencias con exponente
+fraccionario:
+↗n am = a m n
+Ejemplos:
+↗52 = 5 2 2 = 5 ; ↗3 82 = 8 2 3 = (23) 2 3 = 22 = 4
+Tip PAES: Convierte ra´ıces con potencias a exponentes fraccionarios para simplificar
+ra´pidamente. Especialmente u´til en ejercicios con ´algebra.
+
+--- PAGE 16 ---
+Ejercicios para desarrollar en clase:
+Simplifica: ↗4 812, ↗3 x6, y4
+Convierte a potencia: ↗5)z3
+2.2.7 Descomposici´on de una ra´ız
+La descomposicio´n de una ra´ız consiste en separar el radicando en factores, para poder
+simplificar o extraer ra´ıces exactas. Esta estrategia es clave para trabajar con ra´ıces no
+exactas o cuando se requiere racionalizar.
+a ↗n a
+↗n a b = ↗n a ↗n b ; n = con b = 0
+· · b ↗n b →
+’
+Ejemplos:
+↗18 = ↗9 2 = ↗9 ↗2 = 3↗2 ; ↗3 54 = ↗3 27 2 = ↗3 27 ↗3 2 = 3↗3 2
+· · · ·
+Tip PAES: Antes de usar la calculadora, intenta descomponer el nu´mero y extraer ra´ıces
+exactas. Esto te ahorrara´ tiempo y te dara´ precisi´on.
+Ejercicios para desarrollar en clase:
+Simplifica: ↗50, ↗72, ↗3 250
+Descompo´n: ↗20 = ↗4 5 = 2↗5
+·
+Es E se
+II EE
+2.2.8 Adici´on y sustraccio´n de ra´ıces
+La suma y resta de ra´ıces s´olo es posible cuando las ra´ıces tienen el mismo ´ındice y el
+mismo radicando. En ese caso, se pueden sumar o restar los coeficientes como si fueran
+t´erminos semejantes.
+a↗n x+b↗n x = (a+b)↗n x ; a↗n x b↗n x = (a b)↗n x
+↑ ↑
+Ejemplos:
+3↗2+5↗2 = 8↗2 ; 7↗3 5 2↗3 5 = 5↗3 5
+↑
+Si los radicales no son iguales, no se pueden combinar:
+2↗3+↗5 no se puede simplificar
+
+--- PAGE 17 ---
+Tip PAES: Antes de sumar o restar, intenta simplificar los radicales. A veces parecen
+distintos pero pueden ser semejantes.
+Ejercicios para desarrollar en clase:
+Simplifica: 4↗3+2↗3, 5↗4 2 ↗4 2 452
+↑
+¿Puedes sumar?: 2↗8+↗18
+HE 25 653
+2.3 Racionalizacio´n
+Racionalizar consiste en eliminar ra´ıces del denominador de una fraccio´n. Esto facilita
+operaciones posteriores y evita expresiones con radicales en el denominador.
+Caso 1: Denominador con una sola ra´ız
+Multiplicamos numerador y denominador por la misma ra´ız para eliminarla:
+1 1 ↗a ↗a
+= =
+↗a ↗a · ↗a a
+Ejemplo:
+3 3↗2
+EEEE
+=
+↗2 2
+Caso 2: Denominador con suma o resta de ra´ıces (binomio)
+Se multiplica por el conjugado del binomio, aprovechando la identidad notable (a +
+b)(a b) = a2 b2:
+↑ ↑
+1 1 a ↗b a ↗b
+lat6la61 ar 62
+a+↗b
+=
+a+↗b · a
+↑
+↗b
+=
+a2
+↑
+b
+↑ ↑
+Ejemplo:
+2 2(3+↗5) 2(3+↗5) 12(3+↗5)
+SE
+= = =
+3 ↗5 (3 ↗5)(3+↗5) 9 5 4
+it
+↑ ↑ ↑
+Caso 3: Fracciones con ra´ıces de la forma a
+↑n bk
+Cuando el denominador tiene una ra´ız con exponente k, amplificamos la fracci´on por
+↗n bn k, logrando una potencia completa en el denominador:
+→
+
+--- PAGE 18 ---
+Es
+a ↗n bn k a ↗n bn k a ↗n bn k
+→ = · → = · →
+↗n bk · ↗n bn → k ↗n bn b 2 5 25s
+J
+Ejemplo:
+2 2 ↗3 53 2 2 ↗3 5
+= · → = ·
+↗3 52 5 5
+Tip PAES:
+Si ves una ra´ız con exponente parcial, piensa en cua´nto falta para completar la ra´ız.
+En binomios, aplica identidad notable: (a+b)(a b) = a2 b2.
+↑ ↑
+Ejercicios para desarrollar en clase:
+Racionaliza: ↑ 5 3 , ↑2 1 +1 , ↑4 3 23 TE En 7 3 3Er
+Aplica el conjugado: 4 J
+2 ↑5
+→
+EEs SE
+EI FE EI E i
+
+================================================================================
+ARCHIVO 4: 13 PAGINAS
+================================================================================
+
+--- PAGE 1 ---
+Expresiones Algebraicas
+Gu´ıa 4
+´
+Algebra y Funciones
+Introduccio´n
+La palabra ´algebra proviene del ´arabe algabur, que significa “reducci´on”. En esta gu´ıa
+revisaremos algunos conceptos fundamentales del ´algebra, comenzando por el significado
+de los t´erminos y expresiones algebraicas, sus clasificaciones, y c´omo realizar operaciones
+ba´sicas con ellas. Tambi´en aprender´as sobre productos notables y factorizacio´n, herra-
+mientas clave para la PAES.
+Contenidos:
+T´erminos y expresiones algebraicas.
+Lenguaje algebraico: co´mo representar frases en forma simb´olica.
+Reduccio´n de t´erminos semejantes.
+Multiplicacio´n de expresiones algebraicas.
+Productos notables (cuadrado de binomio, suma por diferencia, cubo de binomio,
+etc.).
+Factorizaci´on: factor comu´n, agrupacio´n, productos notables, trinomios y ma´s.
+1 T´ermino Algebraico
+Un t´ermino algebraico es una expresio´n matem´atica que consta de una parte num´erica
+y una parte literal (letras o variables), ambas unidas por multiplicaci´on.
+Ejemplos de t´erminos algebraicos:
+5
+3x, 2a2, y, x3y2
+→ 6 →
+Cada t´ermino puede tener:
+Coeficiente: el nu´mero que acompan˜a a la parte literal. Ej: en 2x3, el coeficiente
+→
+es 2.
+→
+Parte literal: las letras con sus respectivos exponentes. Ej: en 2x3, la parte literal
+→
+es x3.
+Grado: suma de los exponentes de las variables. Ej: el grado de x3y2 es 3+2 = 5.
+Ejercicio guiado:identificaelcoeficiente,parteliteralygradodelossiguientest´erminos:
+7x2y 53
+4a3 53
+→
+3z
+e
+2 g
+
+--- PAGE 2 ---
+Tip PAES: Aprender a identificar correctamente cada parte de un t´ermino es clave para
+operar, reducir, y factorizar expresiones m´as adelante.
+2 Expresio´n algebraica
+Una expresi´on algebraica es un conjunto de uno o ma´s t´erminos algebraicos unidos por
+operaciones como suma, resta, multiplicacio´n, divisio´n y potencias.
+Ejemplos:
+x2 1
+3x+2, 5a2 ab+3, → , 2x2 +3x+1
+→ x+1
+Partes de una expresio´n algebraica:
+T´erminos: los elementos separados por signos de suma o resta.
+Coeficientes: los nu´meros que multiplican a las letras.
+Grado: el mayor grado de sus t´erminos (en polinomios).
+Clasificaci´on de expresiones:
+Monomio: una sola parte. Ej: 5x2
+Binomio: dos t´erminos. Ej: 3x+1
+Trinomio: tres t´erminos. Ej: x2 +5x+6
+Polinomio: m´as de un t´ermino. Ej: 2x3 5x2 +x 4
+→ →
+Ejercicios para trabajar en clase:
+Indica cu´antos t´erminos tiene cada expresio´n: 4a 3, x2 +2x+1, 5x4 2x+3
+→ →
+¿Cua´l es el grado de cada expresi´on? ¿Cua´l es el t´ermino de mayor grado?
+Tip PAES: Siempre identifica el t´ermino dominante: ¡es clave para ordenar, simplificar
+o factorizar!
+
+--- PAGE 3 ---
+3 Lenguaje algebraico
+El lenguaje algebraico permite traducir expresiones del lenguaje comu´n a una expre-
+sio´n simb´olica, usando letras y operaciones matem´aticas. Es fundamental para modelar
+situaciones reales y resolver problemas algebraicos.
+Frases t´ıpicas y su traduccio´n algebraica:
+10
+El triple de un nu´mero: 3x 2 2 2
+Un nu´mero aumentado en 4 unidades: x+4 10
+4142
+La edad de Juan dentro de 5 an˜os: x+5
+41 8
+El doble de un nu´mero menos 7: 2x 7
+→ XP
+Un nu´mero dividido en 3: x
+3
+La suma de dos nu´meros consecutivos: x+(x+1)
+El cuadrado de la suma de dos nu´meros: (a+b)2
+Tip PAES: Busca siempre palabras clave como “m´as que”, “el doble de”, “disminuido
+en”, que indican operaciones espec´ıficas.
+Ejercicios para desarrollar en clase:
+Expresa algebraicamente:
+• La edad de una persona hace 10 an˜os. 10
+• El triple de la suma de dos nu´meros consecutivos.31 1 11 3 2 1 6 3
+• Un nu´mero que al multiplicarse por 5 y restarle 8 da como resultado 12.
+Traduce y resuelve: 5 8 12 5 20 4 4
+• La diferencia entre el doble de un nu´mero y su mitad es igual a 12.
+2 1 12
+8
+22 12 Ey
+4 Reducci´on de expresiones algebraicas
+Reducir una expresio´n algebraica significa simplificarla combinando t´erminos seme-
+jantes. Los t´erminos semejantes son aquellos que tienen la misma parte literal (mismas
+letras con los mismos exponentes).
+Ejemplos de t´erminos semejantes:
+3x2y y 5x2y (s´ı son semejantes) 4xy2 y 2x2y (no son semejantes)
+→
+4 22
+axy 42 y
+axylayt
+
+--- PAGE 4 ---
+¿C´omo se reducen?
+Se suman o restan los coeficientes.
+La parte literal se mantiene igual.
+Ejemplo:
+Etxty
+31x2 +5x 21x2 +7 4x = (3x2 2x2)+(5x 4x)+7 = x2 +x+7
+→ → → →
+Tip PAES: Agrupa con colores o subraya los t´erminos semejantes antes de operar. Te
+ahorra errores y tiempo.
+Ejercicios para desarrollar en clase:
+Reduce: 2x1+13x 51x+8 8
+→
+Reduce: 4x2 x+2x2 +5x 3 6 2 4 3
+→ →
+Reduce: 3a2 +2ab 5a2 +4ab 8026606
+→ →
+5 tt
+EE4xy2
+52yX
+5 Multiplicaci´on de expresiones algebraicas
+5.1 Monomio por monomio
+Para multiplicar dos monomios se multiplican los coeficientes entre s´ı y las partes literales
+se operan aplicando las leyes de los exponentes (suma de exponentes si la base es igual).
+Ejemplo 1:
+(3x2)(5x3) = 15x2+3 = 15x5
+Ejemplo 2:
+( 2a2b)(4ab3) = 8a2+1b1+3 = 8a3b4
+→ → →
+Tip PAES: Suma los exponentes de variables con misma base y multiplica coeficientes
+como nu´meros normales.
+Ejercicios para desarrollar en clase:
+(6x)(2x3)
+7isoio
+( 3a2)( 5a4b)
+→ →
+1xy2 (4x3y)
+2
+2493
+! "
+
+--- PAGE 5 ---
+5.2 Monomio por polinomio
+Para multiplicar un monomio por un polinomio, se aplica la propiedad distributiva: el
+monomio se multiplica por cada uno de los t´erminos del polinomio.
+Ejemplo 1:
+3x(2x+5) = 3x 2x+3x 5 = 6x2 +15x
+· ·
+Ejemplo 2:
+2a E2(4a ra 3+a3) = 8a3 +6a2 2a5
+→ → → →
+Tip PAES: Recuerda que cada t´ermino del polinomio se multiplica por el monomio. ¡Ojo
+con los signos!
+Ejercicios para desarrollar en clase:
+x(2x2 +3x 5)
+→
+a2(5a 2a2 +1)
+→ →
+1x(4x2 x+6) 2 3 Ex 3
+2 →
+5.3 Producto de un polinomio por otro polinomio
+Cuando multiplicamos dos polinomios, cada t´ermino del primer polinomio debe multi-
+plicarse por cada t´ermino del segundo, aplicando la propiedad distributiva mu´ltiples
+veces.
+LE Eins
+Axe
+Ejemplo 1:
+(x+2)(x+5) = x(x+5)+2(x+5) = x2 +5x+2x+10 = x2 +7x+10
+Ejemplo 2:
+(2a E3)(aE2 +I4a 1) = 2a(a2 +4a 1) 3(a2 +4a 1)
+→ → → → →
+= 2a3 +8a2 2a 3a2 12a+3 = 2a3 +5a2 14a+3
+→ → → →
+
+--- PAGE 6 ---
+Tip PAES: Multiplica en orden, y luego agrupa los t´erminos semejantes con calma. Usa
+columnas si es necesario.
+Ejercicios para desarrollar en clase:
+(x+3)(x 2) X 2 3 6 x̅ 6
+→
+(a 1)(Da2 +a+1) m X X x 1 0 3 1
+→
+(2x+1)(x2 4x+5)
+EEEE→ EE
+23 72 6 65
+6 Productos notables
+Existen ciertas expresiones algebraicas que se pueden multiplicar sin aplicar la propiedad
+distributiva, pues se ha encontrado una regularidad para obtener sus productos, estos son
+llamados productos notables.
+6.1 Cuadrado de un binomio
+El cuadrado de un binomio es una fo´rmula que permite multiplicar un binomio por s´ı
+mismo de forma directa:
+LEELE
+ar 06 6 62 artZab 62
+(a+b)2 = a2 +2ab+b2 o bien (a b)2 = a2 2ab+b2
+→ →
+at1611 ar 2a16 1612 a2 206 62
+¿Por qu´e funciona? Se basa en aplicar la propiedad distributiva dos veces:
+(a+b)2 = (a+b)(a+b) = a(a+b)+b(a+b) = a2 +ab+ab+b2 = a2 +2ab+b2
+Ejemplo 1:
+(x+5)2 = x2 +2 x 5+25 = x2 +10x+25
+· ·
+Ejemplo 2:
+(2a 3)2 = 4a2 12a+9
+→ →
+Tip PAES: ¡No expandas paso a paso si ya sabes la f´ormula! Memor´ızalas para ganar
+tiempo en la prueba.
+Ejercicios para clase:
+(x 7)2 x2 2x 7 C712 X 14 49
+→
+(3a+2)2
+90T 12K14
+
+--- PAGE 7 ---
+(2x 5)2 4 2 20 25
+→
+6.2 Suma por diferencia
+La multiplicacio´n de una suma por su diferencia genera una diferencia de cuadrados:
+(a+b)(a b) = a2 b2
+→ →
+¿Por qu´e funciona?
+(a+b)(a b) = a(a b)+b(a b) = a2 ab+ab b2 = a2 b2
+→ → → → → →
+Ejemplo 1:
+(x+4)(x 4) = x2 16
+→ →
+Ejemplo 2:
+(2a+3)(2a 3) = (2a)2 9 = 4a2 9
+→ → →
+Tip PAES:Sivesdosbinomiosigualesperoconsignosopuestos,aplicalafo´rmuladirecto.
+¡Es rapid´ısimo!
+Ejercicios para clase:
+(x+5)(x 5)
+→
+(3a+1)(3a 1)
+→
+(y +2z)(y 2z) 422
+→ y
+6.3 Cubo de un binomio
+Al elevar un binomio al cubo, usamos las siguientes f´ormulas:
+(a+b)3 = a3 +D3aO 2b+D3aDb2 +b3 (a b)3 = a3 3a2b+3ab2 b3
+→ → →
+La 16113 0 3a 6 30407 1613
+033076 301263
+
+--- PAGE 8 ---
+¿Por qu´e funciona? Se basa en desarrollar (a + b)(a + b)(a + b) o (a b)3 usando
+→
+propiedad distributiva y combinando t´erminos semejantes.
+Ejemplo 1:
+(x+2)3 = x3 +3x2 2+3x 4+8 = x3 +6x2 +12x+8
+· ·
+Ejemplo 2:
+(2a 1)3 = 8a3 12a2 +6a 1
+→ → →
+Tip PAES: Aprender la fo´rmula te evita errores de signos y ahorra tiempo. Apo´yate en
+esquemas visuales si te ayuda.
+Ejercicios para clase:
+(x 3)3 Pt 32131 3 137 1313 3 9 2 27 27
+→
+(2y +1)3 893 3 aye 31291 12 13 893 1292 72 y 1
+(a 2b)3 03 3.04261 301201712613
+→
+0 6076 12062863
+6.4 Producto de binomios con un t´ermino comu´n
+Este producto ocurre cuando dos binomios comparten un t´ermino. Se aplica la propiedad
+distributiva y se agrupan t´erminos semejantes:
+(a+0b)(a+
+s
+c) = a2 +a(c+b)+Obc
+Ejemplo 1:
+(x+2)(x+5) = x2 +x(5+2)+10 = x2 +7x+10 XIII XI
+Ejemplo 2:
+(2a 3)(2a+4) = (2a)2 +2a(4 3) 12 = 4a2 +2a 12
+→ → → →
+O tambi´en simplemente:
+(2a 3)(2a+4) = 4a2 +8a 6a 12 = 4a2 +2a 12
+→ → → →
+Tip PAES: Busca el t´ermino comu´n, multipl´ıcalo con cada parte del segundo binomio,
+y simplifica.
+Ejercicios para clase:
+
+--- PAGE 9 ---
+(x+3)(x+7) x̅ 10 21
+(2y 1)(2y +5)
+→ 412 8 y 5
+(3a+2)(3a 4)
+→ 90T 6a 8
+7 Factorizaci´on
+Factorizar una expresi´on algebraica consiste en expresarla como el producto entre facto-
+res entre s´ı, donde estos corresponden a expresiones algebraicas. Se distinguen algunas
+factorizaciones fundamentales:
+7.1 Factor comu´n o t´ermino comu´n
+Es la t´ecnica m´as b´asica de factorizacio´n. Consiste en identificar un t´ermino (nu´mero,
+variable o expresio´n) que se repite en todos los t´erminos de una expresio´n y sacarlo “fuera
+del par´entesis”.
+Paso a paso:
+1. Encuentra el ma´ximo factor comu´n (nu´mero y parte literal).
+2. Aplica propiedad distributiva en reversa.
+Ejemplo 1: 3 12 31
+6x2 +9x = 3x(2x+3)
+Ejemplo 2:
+4a3b 2a2b+6ab = 2ab(2a2 a+3)
+→ →
+Tip PAES: Primero revisa si puedes sacar nu´meros en comu´n. Luego busca letras con el
+menor exponente.
+Ejercicios para clase:
+Factoriza: 12x2 18 0 x 6 2 3
+→
+Factoriza: 15a2b 10ab+5ab2 50613a 2 61
+→
+Factoriza: 4xy +8x 6xy2
+→
+4 72 65
+
+--- PAGE 10 ---
+7.2 Factorizaci´on de desarrollos de productos notables
+Esta t´ecnica se basa en reconocer expresiones que corresponden a productos notables ya
+estudiados, y descomponerlas en sus factores.
+a) Trinomio cuadrado perfecto
+Es una expresio´n de la forma:
+a2 +2ab+b2 = (a+b)2 o a2 2ab+b2 = (a b)2
+→ →
+Ejemplo:
+x2 +6x+9 = (x+3)2
+b) Trinomio de la forma x2 +mx+n
+Buscamos dos nu´meros que:
+Pig m
+Se sumen m
+Se multipliquen n
+Ejemplo:
+x2 +5x+6 = (x+2)(x+3)
+Porque 2+3 = 5 y 2 3 = 6
+·
+c) Diferencia de cuadrados
+Toda expresio´n del tipo:
+a2 b2 = (a+b)(a b)
+→ →
+Ejemplo:
+4x2 25 = (2x+5)(2x 5)
+→ →
+Tip PAES:Revisasiempresiuntrinomioesfactorizableantesdeusarlafo´rmulageneral.
+Ahorrara´s mucho tiempo.
+Ejercicios para clase:
+6412
+x2 +8x+16 1
+x2 9
+1 311 3
+→
+x2 +11x+24
+1 811 3
+
+--- PAGE 11 ---
+25a2 36 5a6150 6
+→
+7.3 Sumas y diferencias de cubos
+Cuando una expresio´n es suma o diferencia de dos cubos perfectos, se puede aplicar una
+fo´rmula especial de factorizacio´n.
+ab 64
+_EtHP la 611m y
+Fo´rmulas:
+a3 +b3 = (a+b)(a2 a ab+b2)
+→
+i a3 b3 = (aab)(a2 r+ab+b2)
+→ →
+¿C´omo identificar cubos? Ambos t´erminos deben ser cubos perfectos (ra´ıces cu´bicas
+exactas), por ejemplo: x3, 8 = 23, 27y3 = (3y)3, etc.
+Ejemplo 1:
+x3 +27 = (x+3)(x2 3x+9)
+→
+Ejemplo 2:
+8a3 125 = (2a 5)(4a2 +10a+25)
+→ →
+Tip PAES: Memoriza bien las f´ormulas: una con signos + +, la otra con ++. ¡Eso
+→ →
+evita errores tontos!
+Ejercicios para clase:
+x3 64
+→
+27a3 +8
+125b3 1 15617113 561112502 56 1
+→
+
+--- PAGE 12 ---
+FINAL
+BOSS
+7.4 Trinomios de la forma ax2 + bx + c
+Cuando el coeficiente del t´ermino cuadra´tico es distinto de 1, se usa el m´etodo del
+trinomio o “m´etodo del aspa”.
+Paso a paso:
+1. Multiplica a c
+·
+2. Encuentra dos nu´meros que sumen b y se multipliquen a c
+·
+3. Separa el t´ermino central y factoriza por agrupacio´n
+Ejemplo 1:
+6x2 +11x+3
+6 3 = 18, 9+2 = 11, 9 2 = 18
+· ·
+6x2 +9x+2x+3 = 3x(2x+3)+1(2x+3)
+= (3x+1)(2x+3)
+Ejemplo 2:
+8x2 10x+3
+→
+8 3 = 24, 6 4 = 10, ( 6)( 4) = 24
+· → → → → →
+8x2 6x 4x+3 = 2x(4x 3) 1(4x 3)
+→ → → → →
+= (2x 1)(4x 3)
+→ →
+Tip PAES: No pierdas tiempo usando la fo´rmula general si puedes factorizar. Este tipo
+de trinomios aparece mucho en la PAES.
+Ejercicios para clase:
+3x2 +10x+8
+2a2 +5a+2
+5x2 x 6
+→ →
+FactorizaciónARTE C
+ÉI
+1 21541 3 74 0 8
+3710 8
+Muttpora el ayelc
+9710 24
+Divtodo porunleutrsación Facto e n l um
+9710 124 13 41
+y 63713
+3 d
+31 211341
+
+--- PAGE 13 ---
+CompletaciónDeCUADRADOS
+3 2 10 8
+Año por a
+3LELE
+12 1 11
+31107 1451 3
+EExt
+ift
+441
+í
+á
+isx ojsx.FI 5 611 1
+52 5 6 6
+5 2
+11
+
+================================================================================
+ARCHIVO 5: 5 PAGINAS
+================================================================================
+
+--- PAGE 1 ---
+Factorizaci´on
+Gu´ıa 3
+Prec´alculo desde cero
+Introduccio´n
+La factorizaci´on es una herramienta fundamental en el a´lgebra que nos permite descompo-
+ner expresiones algebraicas en productos de factores ma´s simples. Esta t´ecnica es esencial
+en la resoluci´on de ecuaciones, la simplificaci´on de fracciones algebraicas y el ana´lisis de
+funciones polin´omicas.
+Objetivos: Al finalizar esta clase, los estudiantes sera´n capaces de:
+Identificar cua´ndo una expresio´n algebraica puede factorizarse.
+Aplicar correctamente los distintos m´etodos de factorizaci´on en polinomios y expre-
+siones algebraicas.
+Resolver ecuaciones algebraicas mediante factorizaci´on.
+Simplificar fracciones algebraicas utilizando t´ecnicas de factorizaci´on.
+1 Factor comu´n
+Lafactorizacio´nporfactorcomu´neselm´etodoma´sba´sicoyfundamentaldefactorizacio´n.
+Consiste en identificar un t´ermino que sea comu´n en todos los t´erminos de una expresio´n
+algebraica y extraerlo como un factor comu´n.
+Matema´ticamente, se basa en la propiedad distributiva:
+ab+ac = a(b+c)
+Resolver los siguientes ejemplos:
+6x2 +9x
+3 2 3
+4x3 +8x2 12x
+→
+
+--- PAGE 2 ---
+2 Agrupaci´on
+La factorizacio´n por agrupacio´n es un m´etodo que se utiliza cuando un polinomio tiene
+cuatro o m´as t´erminos y no es posible extraer un solo factor comu´n en todos ellos. Se basa
+en agrupar los t´erminos en pares (o grupos ma´s grandes si es necesario) y luego factorizar
+cada grupo por separado.
+Pasos para factorizar por agrupacio´n
+1. Agrupar los t´erminos en pares o grupos estrat´egicos.
+2. Extraer el factor comu´n de cada grupo.
+3. Verificar si queda un mismo binomio como factor comu´n en los grupos.
+4. Factorizar el binomio comu´n para obtener la expresi´on factorizada final.
+Resolver los siguientes ejemplos:
+1
+x3 +2x2 +3x+6
+2a3 4a2 +3a 6
+→ →
+3 Trinomio cuadrado
+Un trinomio cuadr´atico es una expresio´n algebraica de la forma:
+ax2 +bx+c
+La factorizacio´n de estos trinomios nos permite reescribirlos como el producto de dos bi-
+nomios, facilitando la resoluci´on de ecuaciones cuadr´aticas y otros problemas algebraicos.
+3.1 Trinomio cuadr´atico con a = 1
+Si el coeficiente principal a es 1, buscamos dos nu´meros que:
+Su suma sea b (coeficiente de x)
+Su producto sea c (t´ermino independiente)
+
+--- PAGE 3 ---
+6 2 o ql x t P qx q tP x x
+cjjjjj.IE
+IIYxEn
+Resolver el siguiente ejemplo:
+x2 +5x+6
+1 21131
+3.2 Trinomio cuadr´atico con a = 1
+↑
+Cuando el coeficiente a no es 1, usamos el m´etodo de splitting. Los pasos para realizar
+este m´etodo son:
+1. Multiplicar a y c por el coeficiente a formando un nuevo trinomio.
+2. Encontrar dos nu´meros que sumen b y multipliquen a b. C
+·
+3. Armar una fraccio´n dividida en a con el polinomio factorizado del paso anterior.
+4. Simplificar.
+Resolver el siguiente ejemplo:
+i2x2 +7x+3 i
+2 1 21 1
+6112 712
+Sewing
+3112 1
+4 Diferencias y sumas de cuadrados
+La diferencia de cuadrados es un caso especial de factorizaci´on que se aplica cuando un
+binomio tiene la forma:
+a2 b2
+→
+Este tipo de expresi´on se puede factorizar utilizando la f´ormula:
+(a b)(a+b)
+→
+
+--- PAGE 4 ---
+Resolver el siguiente ejemplo:
+ti
+9a2 49b2
+→
+3076113076
+5 Trinomios cuadrados perfectos
+Un trinomio cuadrado perfecto es una expresio´n de la forma:
+a2 +2ab+b2 = (a+b)2
+a2 2ab+b2 = (a b)2
+→ →
+Para reconocerlos debemos fijarnos en:
+Los primeros y u´ltimos t´erminos son cuadrados perfectos.
+Elt´erminodelmedioeseldobledelproductodelasra´ıcescuadradasdelosextremos.
+Resolver el siguiente ejemplo:
+Y
+21.3.2
+4y2 12y +9
+→
+312
+12g
+6 Polinomios de mayor grado
+El m´etodo de Ru!ni es una forma ra´pida de dividir un polinomio entre un binomio de la
+forma x a. Se usa para factorizar polinomios de la forma:
+→
+P(x) = a xn +a xn 1 +...+a x+a
+n n 1 → 1 0
+→
+El m´etodo de Ru!ni es largo de explicar pero no complejo donde usaremos todos los
+mm
+divisores de a divididos en a positivos y negativos para evaluar el polinomio, por lo que
+0 n
+el profesor lo explicara´ en la siguiente p´agina con el polinomio de ejemplo.
+
+--- PAGE 5 ---
+Resolver el siguiente ejemplo:
+x3 4x2 +x+6
+→
+
+================================================================================
+ARCHIVO 6: 11 PAGINAS
+================================================================================
+
+--- PAGE 1 ---
+Expresiones Racionales
+Gu´ıa 6
+Prec´alculo desde cero
+Introduccio´n
+Lasexpresionesracionalessonunapartefundamentaldelpreca´lculoyaparecendemanera
+recurrente en funciones, ecuaciones, l´ımites y problemas aplicados. Comprender co´mo se
+construyen, se operan y cua´les son los valores para los cuales esta´n definidas es clave para
+evitar errores frecuentes y desarrollar un razonamiento algebraico so´lido.
+En esta gu´ıa estudiaremos las expresiones racionales desde cero, abordando su dominio,
+simplificacio´n, operaciones b´asicas y racionalizaci´on, con un enfoque paso a paso y ´enfasis
+en la interpretaci´on algebraica. El objetivo es que el estudiante adquiera seguridad en el
+manejo de fracciones algebraicas y establezca una base firme para cursos posteriores de
+ca´lculo.
+Objetivos: Al finalizar esta clase, los estudiantes ser´an capaces de:
+Reconocer y trabajar correctamente con expresiones racionales.
+Determinar el dominio de una expresi´on racional identificando valores prohibidos.
+Simplificar expresiones racionales mediante factorizaci´on y cancelaci´on de factores.
+Multiplicar y dividir expresiones racionales aplicando las propiedades de las fraccio-
+nes.
+Sumar y restar expresiones racionales utilizando el m´ınimo comu´n denominador.
+Racionalizar el denominador o el numerador usando radicales conjugados.
+Resolver ejercicios algebraicos justificando cada paso del procedimiento.
+1 Dominio de una expresio´n racional
+Una expresi´on racional es un cociente entre dos polinomios, es decir, tiene la forma:
+P(x)
+Q(x)
+donde P(x) y Q(x) son polinomios y Q(x) = 0.
+→
+¿Qu´e es el dominio?
+El dominio de una expresi´on algebraica es el conjunto de todos los valores reales que
+puede tomar la variable sin que la expresi´on pierda sentido.
+En el caso de las expresiones racionales, el dominio se determina teniendo en cuenta una
+regla fundamental:
+El denominador nunca puede ser igual a cero.
+
+--- PAGE 2 ---
+Regla fundamental
+Para encontrar el dominio de una expresi´on racional:
+1. Identifica el denominador.
+2. Iguala el denominador a cero.
+3. Excluye esos valores del conjunto de los nu´meros reales.
+Ejemplo 1
+Determine el dominio de la siguiente expresi´on:
+x
+x 3
+↑
+Paso 1: Identificamos el denominador.
+x 3
+↑
+Paso 2: Igualamos el denominador a cero.
+x 3 = 0 x = 3
+↑ ↓
+Conclusio´n: El valor x = 3 no pertenece al dominio.
+Dominio = x R x = 3
+{ ↔ | → }
+Ejemplo 2
+24 IR42,34
+Determine el dominio de la expresi´on: Dom
+IxeIR1 31
+EEE
+2
+a
+x2 5x+6
+↑
+Paso 1: Factorizamos el denominador.
+x2 5x+6 = (x 2)(x 3)
+↑ ↑ ↑
+Paso 2: Igualamos cada factor a cero.
+x = 2 o x = 3
+Conclusio´n:
+
+--- PAGE 3 ---
+Dominio = x R x = 2 y x = 3
+{ ↔ | → → }
+2 Simplificacio´n de expresiones racionales
+Simplificar una expresi´on racional consiste en escribirla de la forma m´as simple posi-
+ble, sin cambiar su valor. Para lograrlo, utilizamos la factorizaci´on del numerador y del
+denominador, junto con las propiedades de las fracciones algebraicas.
+Idea clave
+Si A, B y C son expresiones algebraicas y C = 0, se cumple que:
+→
+A C A
+· =
+B C B
+·
+Esto nos permite cancelar factores comunes en el numerador y el denominador.
+Importante: solo se pueden cancelar factores, no t´erminos.
+Pasos para simplificar una expresi´on racional
+1. Factorizar completamente el numerador.
+2. Factorizar completamente el denominador.
+3. Cancelar los factores comunes.
+4. Indicar las restricciones del dominio (valores prohibidos).
+Ejemplo 1: Simplificaci´on por cancelacio´n
+Iii
+Simplifique la siguiente expresi´on racional:
+x2 1
+↑
+x2 +x 2 EEE
+↑
+Paso 1: Factorizamos numerador y denominador.
+x2 1 = (x 1)(x+1)
+↑ ↑
+x2 +x 2 = (x 1)(x+2)
+↑ ↑
+Paso 2: Cancelamos los factores comunes.
+
+--- PAGE 4 ---
+(x 1)(x+1) x+1
+↑ =
+(x 1)(x+2) x+2
+↑
+Restriccio´n del dominio:
+x = 1 y x = 2
+→ → ↑
+Ejemplo 2: Cancelaci´on completa
+Simplifique la expresi´on:
+2
+3x(x 2)
+↑
+6(x 2)
+↑
+Paso 1: Identificamos los factores comunes.
+3x(x 2)
+↑
+6(x 2)
+↑
+Paso 2: Cancelamos el factor comu´n (x 2).
+↑
+3x
+6
+Paso 3: Simplificamos la fraccio´n.
+x
+2
+Restriccio´n del dominio:
+x = 2
+→
+
+--- PAGE 5 ---
+Error comu´n
+No es correcto cancelar t´erminos. Por ejemplo:
+x+1 1
+=
+x+2 → 2
+La cancelaci´on solo se puede realizar cuando hay factores multiplicando, no sumando.
+3 Multiplicaci´on y divisio´n de expresiones racionales
+Las expresiones racionales tambi´en pueden multiplicarse y dividirse utilizando las propie-
+dades de las fracciones. El procedimiento es directo, pero requiere especial cuidado en la
+factorizacio´n y en las restricciones del dominio.
+3.1 Multiplicaci´on de expresiones racionales
+Paramultiplicarexpresionesracionales,utilizamoslasiguientepropiedaddelasfracciones:
+A C A C
+= ·
+B · D B D
+·
+Esto significa que multiplicamos los numeradores entre s´ı y los denominadores entre s´ı, y
+luego simplificamos el resultado si es posible.
+Ejemplo 1: Multiplicaci´on y simplificacio´n
+IR1414
+Ejecute la siguiente multiplicaci´on y simplifique:
+x2 +2x 3 3x+12
+↑
+x2 +8x+16 · x 1
+↑
+Paso 1: Factorizamos todos los polinomios.
+x2 +2x 3 = (x 1)(x+3)
+↑ ↑
+x2 +8x+16 = (x+4)2
+3x+12 = 3(x+4)
+Paso 2: Escribimos la multiplicacio´n factorizada.
+(x 1)(x+3) 3(x+4)
+↑
+(x+4)2 · x 1
+↑
+Paso 3: Cancelamos los factores comunes.
+
+--- PAGE 6 ---
+3(x+3)
+x+4
+Restricciones del dominio:
+x = 4 y x = 1
+→ ↑ →
+3.2 Divisio´n de expresiones racionales
+Para dividir expresiones racionales, utilizamos la siguiente propiedad:
+A C A D
+=
+B ÷ D B · C
+Es decir, dividir por una fraccio´n es lo mismo que multiplicar por su inversa.
+3.2.1 Ejemplo 2: Divisi´on y simplificacio´n
+Efectu´e la siguiente divisio´n y simplifique:
+x2 9 x+3
+↑
+x2 x 6 ÷ x 3
+↑ ↑ ↑
+Paso 1: Invertimos la segunda fraccio´n. 3 3
+Eixo
+x2 9 x 3
+↑ 1↑
+x2 x 6 · x+3
+↑ ↑
+Paso 2: Factorizamos.
+x2 9 = (x 3)(x+3)
+↑ ↑
+x2 x 6 = (x 3)(x+2)
+↑ ↑ ↑
+Paso 3: Cancelamos los factores comunes.
+x 3 I
+↑
+x+2
+y
+
+--- PAGE 7 ---
+Restricciones del dominio:
+x = 3, x = 3, x = 2
+→ → ↑ → ↑
+Observaci´on importante
+Antes de simplificar, siempre es recomendable factorizar completamente. Adem´as, al di-
+vidir expresiones racionales, nunca se debe olvidar invertir la segunda fracci´on.
+4 Suma y resta de expresiones racionales
+Para sumar o restar expresiones racionales, primero debemos encontrar un denominador
+comu´n y luego aplicar las propiedades de las fracciones.
+Propiedad de fracciones
+Si A, B y C son expresiones algebraicas y C = 0, entonces:
+→
+A B A+B
++ =
+CesC C
+Esto significa que solo podemos sumar o restar fracciones cuando tienen el mismo deno-
+minador.
+M´ınimo comu´n denominador
+Aunque cualquier denominador comu´n funciona, es recomendable utilizar el m´ınimo
+comu´n denominador (MCD).
+El MCD se obtiene:
+MCMC
+Factorizando completamente cada denominador.
+Tomando todos los factores distintos.
+Usando la mayor potencia que aparezca de cada factor.
+Ejemplo 1: Suma de expresiones racionales
+Ejecute la siguiente operacio´n y simplifique:
+
+--- PAGE 8 ---
+Ei i
+3 x
++
+x 1 x+2
+↑
+Paso 1: Determinamos el MCD.
+MCD = (x 1)(x+2)
+↑
+Paso 2: Escribimos ambas fracciones usando el MCD.
+3(x+2) x(x 1)
++ ↑
+(x 1)(x+2) (x 1)(x+2)
+↑ ↑
+Paso 3: Sumamos los numeradores.
+3x+6+x2 x
+↑
+(x 1)(x+2)
+↑
+Paso 4: Simplificamos el numerador.
+x2 +2x+6
+(x 1)(x+2)
+↑
+Ejemplo 2: Resta de expresiones racionales
+Efectu´e la siguiente operaci´on y simplifique:
+1 2 Ei
+mío En
+x2 1 ↑ (x+1)2
+↑
+Paso 1: Factorizamos los denominadores. iii III
+x2 1 = (x 1)(x+1)
+↑ ↑
+Paso 2: Determinamos el MCD.
+MCD = (x 1)(x+1)2
+↑
+Paso 3: Escribimos ambas fracciones con el MCD.
+x+1 2(x 1)
+↑
+(x 1)(x+1)2 ↑ (x 1)(x+1)2
+↑ ↑
+
+--- PAGE 9 ---
+Paso 4: Restamos los numeradores.
+x+1 2x+2
+↑
+(x 1)(x+1)2
+↑
+Paso 5: Simplificamos el numerador.
+3 x
+↑
+(x 1)(x+1)2
+↑
+Observaci´on final
+Siempre es recomendable:
+Usar el MCD para evitar ca´lculos innecesarios.
+Simplificar el resultado final si es posible.
+Indicar las restricciones del dominio cuando corresponda.
+5 Racionalizacio´n del denominador o del numerador
+La racionalizacio´n es un procedimiento algebraico que permite eliminar ra´ıces del denomi-
+nadorodelnumeradordeunafracci´on.Esteprocesoserealizamultiplicandoelnumerador
+y el denominador por el radical conjugado.
+Radical conjugado
+Si una expresi´on tiene la forma:
+A+B↗C
+su radical conjugado es:
+A B↗C
+↑
+Al multiplicarlos, se obtiene:
+(A+B↗C)(A B↗C) = A2 B2C
+↑ ↑
+Esta identidad corresponde a la fo´rmula de productos notables.
+
+--- PAGE 10 ---
+Ejemplo 1: Racionalizaci´on del denominador
+Racionalice el denominador de la siguiente expresi´on:
+1 1 E
+Ey
+1+↗2 ir
+Paso 1: Identificamos el radical conjugado del denominador.
+1 ↗2
+↑
+Paso 2: Multiplicamos numerador y denominador por el conjugado.
+1 1 ↗2
+↑
+1+↗2 · 1 ↗2
+↑
+Paso 3: Aplicamos productos notables en el denominador.
+1 ↗2
+↑
+12 (↗2)2
+↑
+Paso 4: Simplificamos.
+1 ↗2
+↑ = ↗2 1
+1 2 ↑
+↑
+Ejemplo 2: Racionalizaci´on del numerador
+Racionalice el numerador de la siguiente expresi´on:
+↗4+h 2
+4th 2 te
+↑ Fatal ruina
+h
+4th a
+Paso 1: Identificamos el radical conjugado del numerador.
+↗4+h+2
+Paso 2: Multiplicamos numerador y denominador por el conjugado.
+↗4+h 2 ↗4+h+2
+↑
+h · ↗4+h+2
+
+--- PAGE 11 ---
+Paso 3: Aplicamos productos notables.
+(↗4+h)2 22
+↑
+h(↗4+h+2)
+Paso 4: Simplificamos.
+4+h 4 h
+↑ =
+h(↗4+h+2) h(↗4+h+2)
+1
+=
+↗4+h+2
+Observaci´on importante
+La racionalizaci´on se usa principalmente para eliminar ra´ıces del denominador.
+Siempre se multiplica por el radical conjugado.
+El valor de la expresio´n no cambia al racionalizar.
+
+================================================================================
+ARCHIVO 7: 3 PAGINAS
+================================================================================
+
+--- PAGE 1 ---
+Ecuaciones
+Gu´ıa 4
+Prec´alculo desde cero
+Introduccio´n
+Las ecuaciones son igualdades matem´aticas que contienen una o m´as variables. Resolver
+una ecuaci´on implica encontrar los valores de la(s) variable(s) que hacen que la igualdad
+sea verdadera. En esta gu´ıa, aprenderemos los diferentes tipos de ecuaciones y los m´etodos
+m´as comunes para resolverlas.
+Objetivos: Al finalizar esta clase, los estudiantes sera´n capaces de:
+Identificar y clasificar los diferentes tipos de ecuaciones.
+Aplicar m´etodos de resoluci´on adecuados para cada tipo de ecuacio´n.
+Utilizar la factorizaci´on y la fo´rmula general para resolver ecuaciones cuadra´ticas.
+Resolver ecuaciones polino´micas de grado superior mediante la regla de Ru!ni y
+factorizacio´n.
+Manipular ecuaciones racionales, irracionales, exponenciales y logar´ıtmicas.
+Aplicar ecuaciones matem´aticas en la resolucio´n de problemas del mundo real.
+1 Tipos de ecuaciones
+1.1 Ecuaciones lineales
+Las ecuaciones lineales tienen la forma general:
+ax+b = 0
+Resolver el siguiente ejemplo:
+3x 7 = 5
+→
+
+--- PAGE 2 ---
+1.2 Ecuaciones cuadr´aticas
+Las ecuaciones cuadr´aticas tienen la forma:
+ax2 +bx+c = 0
+Mediante la determinante o discriminante podemos saber la existencia y unicidad de
+la soluci´on
+”= b2 4ac
+→
+Si ” > 0, hay dos soluciones reales y distintas.
+Si ” = 0, hay u´nica soluci´on real (ra´ız doble).
+Si ” < 0, no hay soluciones reales, sino dos soluciones complejas conjugadas.
+Se pueden resolver mediante los m´etodos de:
+1.2.1 Factorizaci´on
+Podemos usar los m´etodos de la clase factorizacio´n para hallar las soluciones
+x2 7x+12 = 0
+→ o 1 311 41 0
+1 4941.12 1,0 2nd
+1.2.2 Fo´rmula general
+Podemos usar la siguiente fo´rmula para hallar ambas soluciones
+x = b ↑!
+i i siiii → ± 2a x.su
+2x2 3x 5 = 0
+3
+→ → 3449 xa 1
+caja
+E E
+EE
+xm as
+i i
+Atta E ir
+El c
+E
+
+--- PAGE 3 ---
+1.2.3 Completacio´n de cuadrados
+Este m´etodo consiste en transformar la ecuaci´on cuadra´tica en un trinomio cuadrado
+perfecto. Lo desarrollaremos en el siguiente ejemplo:
+x2 +6x+5 = 0
+1.3 Ecuaciones polin´omicas
+Las ecuaciones polino´micas son aquellas en las que el mayor exponente de la variable es
+mayor a 2. Para resolverlas, se pueden aplicar diversos m´etodos, tales como factorizacio´n,
+divisi´on sint´etica y el m´etodo de Ru!ni.
+1.3.1 Factorizaci´on por agrupacio´n
+Se agrupan t´erminos en pares y se factorizan en cada grupo.
+x3 +x2 x 1 = 0
+→ →
+Eii
+p
+1.3.2 Regla de Ru!ni
+M´etodo visto en anterior clase.
+x3 4x2 7x+10 = 0
+→ →
+
+================================================================================
+ARCHIVO 8: 3 PAGINAS
+================================================================================
+
+--- PAGE 1 ---
+Inecuaciones
+Gu´ıa 5
+Prec´alculo desde cero
+Introduccio´n
+Las inecuaciones son expresiones algebraicas que involucran desigualdades entre dos can-
+tidades. Son fundamentales para el estudio de funciones, optimizaci´on, y resoluci´on de
+problemas en matema´ticas aplicadas. Al comprender c´omo resolver inecuaciones, los es-
+tudiantes pueden abordar una amplia variedad de problemas en las ciencias e ingenier´ıas.
+Objetivos: Al finalizar esta clase, los estudiantes sera´n capaces de:
+Resolver inecuaciones lineales y cuadra´ticas.
+Resolver inecuaciones con fracciones y valor absoluto.
+Analizar y graficar las soluciones de una inecuacio´n en la recta num´erica.
+Aplicar las propiedades de las desigualdades en diferentes tipos de inecuaciones.
+1 ¿Qu´e es una inecuacion?
+Una inecuacio´n es una expresio´n matema´tica que involucra una desigualdad entre dos
+expresiones. A diferencia de las ecuaciones, que tienen igualdades, las inecuaciones se
+resuelven encontrando los valores que satisfacen la desigualdad.
+Tipos de desigualdades
+<: Menor que
+: Menor o igual que
+→
+>: Mayor que
+: Mayor o igual que
+↑
+=: Diferente de
+↓
+2 Inecuaciones lineales
+Las inecuaciones lineales son aquellas en las que la variable aparece con exponente 1. Para
+resolverlas, seguimos los siguientes pasos:
+1. Aisla la variable en uno de los lados de la inecuaci´on.
+2. Realiza las operaciones necesarias, teniendo en cuenta las reglas:
+Si multiplicas o divides por un nu´mero negativo, invierte el signo de la des-
+igualdad.
+Si multiplicas o divides por un nu´mero positivo, la desigualdad se mantiene.
+
+--- PAGE 2 ---
+Resolver el siguiente ejemplo: 2x 5 > 1
+↔
+b
+13yd
+3 Inecuaciones cuadr´aticas
+Las inecuaciones cuadra´ticas involucran expresiones del tipo ax2 +bx+c, donde a = 0.
+↓
+El proceso incluye la resolucio´n de la ecuaci´on cuadr´atica asociada y luego determinar en
+qu´e intervalos se satisface la inecuaci´on. Las resolveremos con los siguientes pasos:
+1. Asegurarse de dejar el trinomio a la izquierda y a la derecha el 0.
+2. Factoriza el trinomio.
+3. Usa la tabla de signos para determinar los intervalos de solucio´n.
+m m
+Resolver el siguiente ejemplo: x2 +6 > 5x
+www.w
+iii
+ni
+4 Inecuaciones racionales
+Las inecuaciones que involucran fracciones se resuelven casi igual que las cuadr´aticas
+mediante los siguientes pasos:
+1. Asegurarse de dejar todo a la izquierda y a la derecha el 0.
+2. Juntar todo en una sola expresio´n mediante operatoria de fracciones.
+3. Usar la tabla de signos para determinar los intervalos de solucio´n.
+Resolver el siguiente ejemplo: 1+x 1 1 1
+1 x ↑
+→
+x.co
+
+--- PAGE 3 ---
+5 Inecuaciones con valor absoluto
+Las inecuaciones con valor absoluto se resuelven considerando los dos casos posibles que
+definen el valor absoluto.
+x a implica a x a.
+| |→ ↔ → →
+x a implica x a o x a.
+| |↑ → ↑
+ÉI te
+Resolver el siguiente ejemplo: x 3 5
+| ↔ |→
+w.tk
+is
+i i
+i i

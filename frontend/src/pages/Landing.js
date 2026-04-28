@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import InlineMd from '@/components/course/InlineMd';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -433,7 +434,7 @@ const CoursesSection = () => {
                       <div>
                         <CardTitle className="text-xl md:text-2xl text-slate-900">{course.title}</CardTitle>
                         <CardDescription className="text-sm md:text-base text-slate-600">
-                          {course.description}
+                          <InlineMd>{course.description}</InlineMd>
                         </CardDescription>
                         <div className="flex gap-2 mt-2 flex-wrap">
                           <Badge variant="outline" className="border-slate-300 text-slate-700 bg-white">{course.level}</Badge>

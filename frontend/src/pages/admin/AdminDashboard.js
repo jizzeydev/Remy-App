@@ -97,8 +97,7 @@ const AdminDashboard = () => {
   const [trialSettings, setTrialSettings] = useState({
     enabled: true,
     trial_days: 7,
-    simulations_limit: 10,
-    university_simulations_limit: 1
+    simulations_limit: 10
   });
   const [savingTrial, setSavingTrial] = useState(false);
   
@@ -194,7 +193,7 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem('admin_token');
       await axios.put(
-        `${API}/admin/analytics/settings/trial?enabled=${enabled}&trial_days=${trialSettings.trial_days}&simulations_limit=${trialSettings.simulations_limit}&university_simulations_limit=${trialSettings.university_simulations_limit}`,
+        `${API}/admin/analytics/settings/trial?enabled=${enabled}&trial_days=${trialSettings.trial_days}&simulations_limit=${trialSettings.simulations_limit}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -212,7 +211,7 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem('admin_token');
       await axios.put(
-        `${API}/admin/analytics/settings/trial?enabled=${trialSettings.enabled}&trial_days=${trialSettings.trial_days}&simulations_limit=${trialSettings.simulations_limit}&university_simulations_limit=${trialSettings.university_simulations_limit}`,
+        `${API}/admin/analytics/settings/trial?enabled=${trialSettings.enabled}&trial_days=${trialSettings.trial_days}&simulations_limit=${trialSettings.simulations_limit}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -388,20 +387,6 @@ const AdminDashboard = () => {
               </div>
               <span className="font-bold text-foreground">{metrics.content.questions}</span>
             </div>
-            <div className="flex items-center justify-between p-3 bg-secondary rounded-lg">
-              <div className="flex items-center gap-3">
-                <Building2 size={20} className="text-orange-500" />
-                <span className="text-foreground">Universidades</span>
-              </div>
-              <span className="font-bold text-foreground">{metrics.content.universities}</span>
-            </div>
-            <div className="flex items-center justify-between p-3 bg-secondary rounded-lg">
-              <div className="flex items-center gap-3">
-                <Target size={20} className="text-red-500" />
-                <span className="text-foreground">Preguntas Uni.</span>
-              </div>
-              <span className="font-bold text-foreground">{metrics.content.university_questions}</span>
-            </div>
           </CardContent>
         </Card>
 
@@ -548,20 +533,6 @@ const AdminDashboard = () => {
                     onChange={(e) => setTrialSettings(prev => ({ 
                       ...prev, 
                       simulations_limit: parseInt(e.target.value) || 10 
-                    }))}
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <Label className="text-sm">Límite simulacros universitarios</Label>
-                  <Input
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={trialSettings.university_simulations_limit}
-                    onChange={(e) => setTrialSettings(prev => ({ 
-                      ...prev, 
-                      university_simulations_limit: parseInt(e.target.value) || 1 
                     }))}
                     className="mt-1"
                   />

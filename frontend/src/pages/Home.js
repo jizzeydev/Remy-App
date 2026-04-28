@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { MessageSquare, ClipboardCheck, BookOpen, Calculator, TrendingUp, Zap, Brain, Target } from 'lucide-react';
+import { ClipboardCheck, BookOpen, Calculator, TrendingUp, Zap, GraduationCap, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 
@@ -7,12 +7,6 @@ const Home = () => {
   const navigate = useNavigate();
 
   const features = [
-    {
-      icon: MessageSquare,
-      title: 'Tutor IA 24/7',
-      description: 'Pregúntale lo que sea, a la hora que sea. Como tener un ayudante particular que nunca se cansa de explicarte.',
-      color: 'from-cyan-400 to-cyan-600',
-    },
     {
       icon: ClipboardCheck,
       title: 'Simulacros de Prueba',
@@ -22,12 +16,18 @@ const Home = () => {
     {
       icon: BookOpen,
       title: 'Lecciones que se Entienden',
-      description: '6 cursos completos explicados de forma clara. Por fin vas a entender la materia, no solo memorizarla.',
+      description: 'Cursos completos explicados de forma clara. Por fin vas a entender la materia, no solo memorizarla.',
       color: 'from-purple-400 to-purple-600',
     },
     {
+      icon: GraduationCap,
+      title: 'Preguntas por Universidad',
+      description: 'Banco de preguntas tipo examen de tu universidad y curso. Practica con lo que de verdad te van a tomar.',
+      color: 'from-cyan-400 to-cyan-600',
+    },
+    {
       icon: Calculator,
-      title: 'Formulario Inteligente',
+      title: 'Formulario',
       description: 'Encuentra la fórmula exacta en segundos. Todas las fórmulas organizadas por curso y tema.',
       color: 'from-emerald-400 to-emerald-600',
     },
@@ -40,7 +40,7 @@ const Home = () => {
     {
       icon: Target,
       title: 'Tu Escritorio de Estudio',
-      description: 'Cursos, simulacros, tutor, fórmulas y progreso. Todo conectado para que no pierdas tiempo buscando material.',
+      description: 'Cursos, simulacros, fórmulas y progreso. Todo conectado para que no pierdas tiempo buscando material.',
       color: 'from-rose-400 to-rose-600',
     },
   ];
@@ -67,7 +67,7 @@ const Home = () => {
               <span className="block text-primary mt-2">matemáticas sin estrés</span>
             </h1>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto mb-8 leading-relaxed">
-              Remy es tu tutor inteligente 24/7. Resuelve tus dudas al instante, genera simulacros personalizados y crea resúmenes automáticos de tus materiales.
+              Remy es tu plataforma de estudio para ramos universitarios. Lecciones claras, simulacros con preguntas reales por universidad y seguimiento de progreso — todo en un solo lugar.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button
@@ -75,7 +75,7 @@ const Home = () => {
                 data-testid="get-started-button"
                 className="px-8 py-6 text-lg rounded-full bg-primary hover:bg-primary/90 shadow-[0_4px_14px_rgba(0,188,212,0.3)] transition-all hover:shadow-[0_6px_20px_rgba(0,188,212,0.4)]"
               >
-                <Brain className="mr-2" size={20} />
+                <GraduationCap className="mr-2" size={20} />
                 Comenzar ahora
               </Button>
               <Button

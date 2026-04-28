@@ -1,7 +1,6 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Home, ClipboardCheck, BookOpen, TrendingUp, Menu, LogOut, User, Crown, CreditCard, GraduationCap, Moon, Sun, FolderOpen } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { Home, ClipboardCheck, BookOpen, TrendingUp, Menu, LogOut, User, Crown, CreditCard, Moon, Sun, FolderOpen } from 'lucide-react';
+import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
@@ -16,41 +15,20 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-
 const Layout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout, hasActiveSubscription } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [settings, setSettings] = useState({ tu_universidad_enabled: false });
 
-  useEffect(() => {
-    // Fetch app settings to check if Tu Universidad is enabled
-    const fetchSettings = async () => {
-      try {
-        const response = await axios.get(`${BACKEND_URL}/api/settings`);
-        setSettings(response.data);
-      } catch (error) {
-        console.error('Error fetching settings:', error);
-      }
-    };
-    fetchSettings();
-  }, []);
-
-  const baseNavItems = [
+  const navItems = [
     { icon: Home, label: 'Inicio', path: '/dashboard' },
     { icon: FolderOpen, label: 'Mis Cursos', path: '/mis-cursos' },
     { icon: ClipboardCheck, label: 'Simulacros', path: '/simulacros' },
     { icon: BookOpen, label: 'Biblioteca', path: '/biblioteca' },
     { icon: TrendingUp, label: 'Progreso', path: '/progreso' },
   ];
-
-  // Conditionally add Tu Universidad if enabled
-  const navItems = settings.tu_universidad_enabled 
-    ? [...baseNavItems.slice(0, 3), { icon: GraduationCap, label: 'Tu Universidad', path: '/tu-universidad' }, ...baseNavItems.slice(3)]
-    : baseNavItems;
 
   const handleLogout = async () => {
     await logout();

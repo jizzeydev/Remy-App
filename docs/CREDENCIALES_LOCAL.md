@@ -26,9 +26,6 @@ ADMIN_USERNAME=admin
 ADMIN_PASSWORD_HASH=$2b$12$l8bLsw7ue3d4.pZq0.Ai/.XsUrSLg9QNPpO2q/l6.6mrv/JcaVasC
 # Password: remy2026admin
 
-# AI - Emergent LLM Key (para generación de contenido con IA)
-EMERGENT_LLM_KEY=sk-emergent-39a5b126c034486Bc7
-
 # Cloudinary (almacenamiento de imágenes)
 CLOUDINARY_CLOUD_NAME=de7loz0sr
 CLOUDINARY_API_KEY=288493885439125
@@ -105,10 +102,6 @@ ENABLE_HEALTH_CHECK=false
 ### Resend (ya configurado)
 - **URL**: [resend.com](https://resend.com)
 - Usado para enviar emails transaccionales
-
-### Emergent LLM Key (ya configurado)
-- Usado para generación de contenido con IA
-- Soporta: OpenAI GPT, Claude, Gemini
 
 ---
 
