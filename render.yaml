@@ -1,0 +1,51 @@
+services:
+  - type: web
+    name: remy-backend
+    runtime: python
+    plan: starter
+    region: oregon
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/payments/plans
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: MONGO_URL
+        sync: false
+      - key: DB_NAME
+        value: remy_database
+      - key: CORS_ORIGINS
+        value: https://remy.seremonta.store,https://www.seremonta.store
+      - key: FRONTEND_URL
+        value: https://remy.seremonta.store
+      - key: ADMIN_SECRET_KEY
+        sync: false
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD_HASH
+        sync: false
+      - key: GOOGLE_OAUTH_CLIENT_ID
+        value: 143856720230-a206jkpq5udbij1e4c8iistcqtpg2quk.apps.googleusercontent.com
+      - key: CLOUDINARY_CLOUD_NAME
+        value: de7loz0sr
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: MERCADOPAGO_ACCESS_TOKEN
+        sync: false
+      - key: MERCADOPAGO_PUBLIC_KEY
+        value: APP_USR-cdaa17ad-38aa-471a-afaf-e354a7b5007c
+      - key: MERCADOPAGO_CLIENT_ID
+        value: "1254600887824978"
+      - key: MERCADOPAGO_CLIENT_SECRET
+        sync: false
+      - key: MERCADOPAGO_WEBHOOK_SECRET
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: ADMIN_NOTIFICATION_EMAIL
+        value: seremonta.cl@gmail.com
+      - key: SENDER_EMAIL
+        value: onboarding@resend.dev
