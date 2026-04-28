@@ -181,7 +181,7 @@ class LoginRequest(BaseModel):
     password: str
 
 class GoogleLoginRequest(BaseModel):
-    session_id: str
+    credential: str  # Google ID token (JWT) from Google Identity Services
 
 class Token(BaseModel):
     access_token: str
@@ -748,45 +748,22 @@ async def admin_login(request: LoginRequest):
 @admin_router.post("/google-login", response_model=Token)
 async def admin_google_login(request: GoogleLoginRequest):
     """
-    Authenticate admin via Google OAuth (Emergent Auth)
-    Only allows specific admin emails
+    Authenticate admin via Google ID token (Google Identity Services).
+    Only allows emails listed in ALLOWED_ADMIN_EMAILS.
     """
-    import httpx
-    
-    if not request.session_id:
+    from routes.auth import verify_google_id_token
+
+    if not request.credential:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="session_id requerido"
+            detail="credential requerido"
         )
-    
-    # Exchange session_id for user data from Emergent Auth
-    try:
-        async with httpx.AsyncClient() as client:
-            auth_response = await client.get(
-                "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
-                headers={"X-Session-ID": request.session_id},
-                timeout=10.0
-            )
-            
-            if auth_response.status_code != 200:
-                logger.error(f"Emergent Auth error: {auth_response.text}")
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Error de autenticación con Google"
-                )
-            
-            auth_data = auth_response.json()
-    
-    except httpx.RequestError as e:
-        logger.error(f"Error connecting to Emergent Auth: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Servicio de autenticación no disponible"
-        )
-    
-    email = auth_data.get("email", "").lower()
-    name = auth_data.get("name", "Admin")
-    
+
+    auth_data = verify_google_id_token(request.credential)
+
+    email = (auth_data.get("email") or "").lower()
+    name = auth_data.get("name") or auth_data.get("given_name") or "Admin"
+
     if not email:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

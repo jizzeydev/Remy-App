@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Toaster } from '@/components/ui/sonner';
 import { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -8,7 +9,6 @@ import Layout from './components/Layout';
 import AdminLayout from './components/AdminLayout';
 import Landing from './pages/Landing';
 import AuthPage from './pages/AuthPage';
-import AuthCallback from './pages/AuthCallback';
 import SubscribePage from './pages/SubscribePage';
 import MiSuscripcion from './pages/MiSuscripcion';
 import Home from './pages/Home';
@@ -20,7 +20,6 @@ import Progreso from './pages/Progreso';
 import CourseViewer from './pages/student/CourseViewer';
 import LessonViewer from './pages/student/LessonViewer';
 import AdminLogin from './pages/admin/AdminLogin';
-import AdminAuthCallback from './pages/admin/AdminAuthCallback';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminCourses from './pages/admin/AdminCourses';
 import AdminQuestions from './pages/admin/AdminQuestions';
@@ -75,26 +74,16 @@ function StudentProtectedRoute({ children }) {
   return children;
 }
 
-// App Router with session_id detection
+// App Router
 function AppRouter() {
-  const location = useLocation();
-  
-  // Check URL fragment for session_id synchronously during render
-  // This prevents race conditions by processing new session_id FIRST
-  // BUT: Don't intercept admin routes - they have their own callback handler
-  if (location.hash?.includes('session_id=') && !location.pathname.startsWith('/admin')) {
-    return <AuthCallback />;
-  }
-  
   return (
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<Landing />} />
       <Route path="/auth" element={<AuthPage />} />
-      <Route path="/auth/callback" element={<AuthCallback />} />
       <Route path="/subscribe" element={<StudentProtectedRoute><SubscribePage /></StudentProtectedRoute>} />
       <Route path="/mi-suscripcion" element={<StudentProtectedRoute><MiSuscripcion /></StudentProtectedRoute>} />
-      
+
       {/* Student App - Protected */}
       <Route element={<StudentProtectedRoute><Layout /></StudentProtectedRoute>}>
         <Route path="/inicio" element={<Home />} />
@@ -106,10 +95,9 @@ function AppRouter() {
         <Route path="/lesson/:lessonId" element={<LessonViewer />} />
         <Route path="/progreso" element={<Progreso />} />
       </Route>
-      
+
       {/* Admin Routes */}
       <Route path="/admin/login" element={<AdminLogin />} />
-      <Route path="/admin/auth/callback" element={<AdminAuthCallback />} />
       <Route element={<AdminProtectedRoute><AdminLayout /></AdminProtectedRoute>}>
         <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
@@ -125,19 +113,23 @@ function AppRouter() {
   );
 }
 
+const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || '';
+
 function App() {
   return (
     <div className="App">
-      <ThemeProvider>
-        <AuthProvider>
-          <PricingProvider>
-            <BrowserRouter>
-              <AppRouter />
-            </BrowserRouter>
-            <Toaster richColors position="top-right" />
-          </PricingProvider>
-        </AuthProvider>
-      </ThemeProvider>
+      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+        <ThemeProvider>
+          <AuthProvider>
+            <PricingProvider>
+              <BrowserRouter>
+                <AppRouter />
+              </BrowserRouter>
+              <Toaster richColors position="top-right" />
+            </PricingProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </GoogleOAuthProvider>
     </div>
   );
 }

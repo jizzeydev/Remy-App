@@ -1,7 +1,7 @@
 /**
  * Authentication Context for Remy Platform
- * Handles Google OAuth + Email/Password authentication
- * Uses both cookies and localStorage for session persistence
+ * Handles Google Identity Services authentication.
+ * Uses both cookies and localStorage for session persistence.
  */
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
@@ -32,10 +32,8 @@ export const AuthProvider = ({ children }) => {
 
   // Check authentication status
   const checkAuth = useCallback(async () => {
-    // CRITICAL: If returning from OAuth callback, skip the /me check.
-    // AuthCallback will exchange the session_id and establish the session first.
-    // Also skip for admin routes - they handle their own auth
-    if (window.location.hash?.includes('session_id=') || window.location.pathname.startsWith('/admin')) {
+    // Admin routes handle their own auth via localStorage admin_token
+    if (window.location.pathname.startsWith('/admin')) {
       setLoading(false);
       return;
     }
@@ -62,53 +60,36 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, [checkAuth]);
 
-  // Google OAuth - Redirect to Emergent Auth
-  const loginWithGoogle = () => {
-    // REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
-    const redirectUrl = window.location.origin + '/auth/callback';
-    window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
-  };
-
-  // Process Google OAuth callback
-  const processGoogleCallback = async (sessionId) => {
+  // Process Google ID token credential from Google Identity Services
+  const loginWithGoogleCredential = async (credential) => {
     try {
       setError(null);
-      console.log('Sending session_id to backend...');
-      
-      const response = await axios.post(`${API}/auth/google/session`, {
-        session_id: sessionId
+
+      const response = await axios.post(`${API}/auth/google`, {
+        credential,
       }, {
-        timeout: 15000 // 15 second timeout for slow mobile connections
+        timeout: 15000,
       });
-      
-      console.log('Backend response received');
-      
-      // Store session token for persistence
+
       if (response.data.session_token) {
         storeToken(response.data.session_token);
-        console.log('Session token stored');
       }
-      
+
       setUser(response.data.user);
       return { success: true, user: response.data.user };
     } catch (err) {
-      console.error('Google callback error:', err);
-      
+      console.error('Google login error:', err);
+
       let message = 'Error de autenticación con Google';
-      
+
       if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
         message = 'Conexión lenta. Intenta de nuevo.';
       } else if (err.response?.data?.detail) {
-        const detail = err.response.data.detail;
-        if (detail.includes('expired') || detail.includes('not found')) {
-          message = 'La sesión expiró. Intenta de nuevo.';
-        } else {
-          message = detail;
-        }
+        message = err.response.data.detail;
       } else if (!navigator.onLine) {
         message = 'Sin conexión a internet';
       }
-      
+
       setError(message);
       return { success: false, error: message };
     }
@@ -218,8 +199,7 @@ export const AuthProvider = ({ children }) => {
     getTrialDaysRemaining,
     getTrialSimulationsRemaining,
     canAccessContent,
-    loginWithGoogle,
-    processGoogleCallback,
+    loginWithGoogleCredential,
     logout,
     refreshUser: checkAuth,
     setUser

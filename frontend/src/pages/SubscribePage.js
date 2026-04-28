@@ -299,11 +299,11 @@ const SubscribePage = () => {
             <h2 className="text-xl font-semibold text-white mb-4">Selecciona tu plan</h2>
             
             {plans.map((plan) => (
-              <Card 
+              <Card
                 key={plan.id}
-                className={`cursor-pointer transition-all ${
-                  selectedPlan?.id === plan.id 
-                    ? 'ring-2 ring-cyan-500 bg-white' 
+                className={`cursor-pointer transition-all text-slate-900 ${
+                  selectedPlan?.id === plan.id
+                    ? 'ring-2 ring-cyan-500 bg-white'
                     : 'bg-white/90 hover:bg-white'
                 }`}
                 onClick={() => setSelectedPlan(plan)}
@@ -313,7 +313,7 @@ const SubscribePage = () => {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-bold text-lg">{plan.name}</h3>
+                        <h3 className="font-bold text-lg text-slate-900">{plan.name}</h3>
                         {plan.discount && (
                           <Badge className="bg-green-100 text-green-700">{plan.discount} OFF</Badge>
                         )}
@@ -361,20 +361,20 @@ const SubscribePage = () => {
 
           {/* Payment Form */}
           <div>
-            <Card className="bg-white">
+            <Card className="bg-white text-slate-900">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-slate-900">
                   <CreditCard size={20} />
                   Información de pago
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-slate-600">
                   Pago seguro con Mercado Pago
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="cardNumber">Número de tarjeta</Label>
+                    <Label htmlFor="cardNumber" className="text-slate-700">Número de tarjeta</Label>
                     <Input
                       id="cardNumber"
                       placeholder="1234 5678 9012 3456"
@@ -382,12 +382,13 @@ const SubscribePage = () => {
                       onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
                       maxLength={19}
                       data-testid="card-number-input"
+                      className="bg-white text-slate-900 placeholder:text-slate-400 border-slate-300"
                     />
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="cardExpiry">Vencimiento</Label>
+                      <Label htmlFor="cardExpiry" className="text-slate-700">Vencimiento</Label>
                       <Input
                         id="cardExpiry"
                         placeholder="MM/AA"
@@ -395,10 +396,11 @@ const SubscribePage = () => {
                         onChange={(e) => setCardExpiry(formatExpiry(e.target.value))}
                         maxLength={5}
                         data-testid="card-expiry-input"
+                        className="bg-white text-slate-900 placeholder:text-slate-400 border-slate-300"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="cardCvv">CVV</Label>
+                      <Label htmlFor="cardCvv" className="text-slate-700">CVV</Label>
                       <Input
                         id="cardCvv"
                         placeholder="123"
@@ -407,29 +409,31 @@ const SubscribePage = () => {
                         onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
                         maxLength={4}
                         data-testid="card-cvv-input"
+                        className="bg-white text-slate-900 placeholder:text-slate-400 border-slate-300"
                       />
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
-                    <Label htmlFor="cardHolder">Nombre del titular</Label>
+                    <Label htmlFor="cardHolder" className="text-slate-700">Nombre del titular</Label>
                     <Input
                       id="cardHolder"
                       placeholder="Como aparece en la tarjeta"
                       value={cardHolder}
                       onChange={(e) => setCardHolder(e.target.value.toUpperCase())}
                       data-testid="card-holder-input"
+                      className="bg-white text-slate-900 placeholder:text-slate-400 border-slate-300"
                     />
                   </div>
-                  
+
                   <div className="grid grid-cols-3 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="docType">Tipo Doc.</Label>
+                      <Label htmlFor="docType" className="text-slate-700">Tipo Doc.</Label>
                       <select
                         id="docType"
                         value={docType}
                         onChange={(e) => setDocType(e.target.value)}
-                        className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
+                        className="w-full h-10 px-3 rounded-md border border-slate-300 bg-white text-slate-900 text-sm"
                         data-testid="doc-type-select"
                       >
                         <option value="RUT">RUT</option>
@@ -438,13 +442,14 @@ const SubscribePage = () => {
                       </select>
                     </div>
                     <div className="col-span-2 space-y-2">
-                      <Label htmlFor="docNumber">Número de documento</Label>
+                      <Label htmlFor="docNumber" className="text-slate-700">Número de documento</Label>
                       <Input
                         id="docNumber"
                         placeholder="123456789"
                         value={docNumber}
                         onChange={(e) => setDocNumber(e.target.value.replace(/[.-]/g, ''))}
                         data-testid="doc-number-input"
+                        className="bg-white text-slate-900 placeholder:text-slate-400 border-slate-300"
                       />
                       <p className="text-xs text-slate-500">Sin puntos ni guión (ej: 123456789)</p>
                     </div>

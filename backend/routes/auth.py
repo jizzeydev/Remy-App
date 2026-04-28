@@ -4,7 +4,8 @@ from pydantic import BaseModel, EmailStr
 from motor.motor_asyncio import AsyncIOMotorClient
 from datetime import datetime, timezone, timedelta
 from typing import Optional
-import httpx
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
 import uuid
 import os
 import logging
@@ -38,8 +39,8 @@ def set_db(database):
 
 
 # Request/Response models
-class GoogleSessionRequest(BaseModel):
-    session_id: str
+class GoogleCredentialRequest(BaseModel):
+    credential: str  # Google ID token (JWT) from Google Identity Services
 
 
 class UserResponse(BaseModel):
@@ -153,52 +154,73 @@ def user_to_response(user: dict) -> dict:
     }
 
 
-# ==================== GOOGLE OAUTH (Emergent Auth) ====================
+# ==================== GOOGLE OAUTH (Google Identity Services) ====================
 
-@router.post("/google/session")
-async def process_google_session(request: Request, response: Response):
+def verify_google_id_token(credential: str) -> dict:
+    """Verify a Google ID token (JWT) and return its claims.
+
+    Raises HTTPException on any failure. Validates signature, expiry, and
+    that the `aud` claim matches GOOGLE_OAUTH_CLIENT_ID. Email must be verified.
     """
-    Process Google OAuth session_id from Emergent Auth
-    Frontend sends session_id after redirect from auth.emergentagent.com
-    """
-    body = await request.json()
-    session_id = body.get("session_id")
-    
-    if not session_id:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="session_id requerido"
-        )
-    
-    # Exchange session_id for user data from Emergent Auth
-    try:
-        async with httpx.AsyncClient() as client:
-            auth_response = await client.get(
-                "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
-                headers={"X-Session-ID": session_id},
-                timeout=10.0
-            )
-            
-            if auth_response.status_code != 200:
-                logger.error(f"Emergent Auth error: {auth_response.text}")
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Error de autenticación con Google"
-                )
-            
-            auth_data = auth_response.json()
-    
-    except httpx.RequestError as e:
-        logger.error(f"Error connecting to Emergent Auth: {e}")
+    client_id = os.environ.get("GOOGLE_OAUTH_CLIENT_ID")
+    if not client_id:
+        logger.error("GOOGLE_OAUTH_CLIENT_ID not configured")
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Servicio de autenticación no disponible"
+            detail="Servicio de autenticación no configurado"
         )
-    
-    email = auth_data.get("email", "").lower()
-    name = auth_data.get("name", "Usuario")
+
+    try:
+        claims = id_token.verify_oauth2_token(
+            credential,
+            google_requests.Request(),
+            client_id,
+            clock_skew_in_seconds=10,
+        )
+    except ValueError as e:
+        logger.warning(f"Invalid Google ID token: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token de Google inválido o expirado"
+        )
+
+    if claims.get("iss") not in ("accounts.google.com", "https://accounts.google.com"):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Emisor de token no válido"
+        )
+
+    if not claims.get("email_verified"):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="El email de Google no está verificado"
+        )
+
+    return claims
+
+
+@router.post("/google")
+async def process_google_credential(request: Request, response: Response):
+    """
+    Process Google ID token from Google Identity Services.
+    Frontend obtains the credential via @react-oauth/google's GoogleLogin
+    and POSTs it here.
+    """
+    body = await request.json()
+    credential = body.get("credential")
+
+    if not credential:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="credential requerido"
+        )
+
+    auth_data = verify_google_id_token(credential)
+
+    email = (auth_data.get("email") or "").lower()
+    name = auth_data.get("name") or auth_data.get("given_name") or "Usuario"
     picture = auth_data.get("picture")
-    
+
     if not email:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
