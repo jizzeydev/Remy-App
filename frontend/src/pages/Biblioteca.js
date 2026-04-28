@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import axios from 'axios';
 import { BookOpen, Loader2, Layers, GraduationCap, Crown, Lock, CheckCircle, Search, Building2, Filter, Plus } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -207,44 +208,53 @@ const Biblioteca = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex items-center justify-center py-12" role="status" aria-live="polite">
         <Loader2 className="animate-spin text-primary" size={32} />
+        <span className="sr-only">Cargando cursos</span>
       </div>
     );
   }
+
+  const fadeUp = (i = 0) => ({
+    initial: { opacity: 0, y: 16 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.4, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] }
+  });
 
   return (
     <div className="space-y-6 pb-24 lg:pb-8" data-testid="biblioteca-page">
       <TrialBanner />
       
       {!hasAccess && (
-        <Card className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white border-0 shadow-lg">
-          <CardContent className="flex flex-col sm:flex-row items-center justify-between py-6 gap-4">
-            <div className="flex items-center gap-4">
-              <div className="bg-white/20 rounded-full p-3">
-                <Crown size={24} />
+        <motion.div {...fadeUp(0)}>
+          <Card className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white border-0 shadow-lg shadow-cyan-500/20">
+            <CardContent className="flex flex-col sm:flex-row items-center justify-between py-6 gap-4">
+              <div className="flex items-center gap-4">
+                <div className="bg-white/20 rounded-full p-3 backdrop-blur-sm" aria-hidden="true">
+                  <Crown size={24} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg">Desbloquea todo el contenido</h3>
+                  <p className="text-cyan-50 text-sm">
+                    Accede a todos los cursos, simulacros ilimitados y más desde {lowestPrice}/{monthly.period}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-bold text-lg">Desbloquea todo el contenido</h3>
-                <p className="text-cyan-100 text-sm">
-                  Accede a todos los cursos, simulacros ilimitados y más desde {lowestPrice}/{monthly.period}
-                </p>
-              </div>
-            </div>
-            <Button 
-              className="bg-white text-cyan-600 hover:bg-cyan-50 font-semibold px-6"
-              onClick={() => navigate('/subscribe')}
-              data-testid="subscribe-banner-btn"
-            >
-              Suscribirme ahora
-            </Button>
-          </CardContent>
-        </Card>
+              <Button
+                className="bg-white text-cyan-700 hover:bg-cyan-50 font-semibold px-6"
+                onClick={() => navigate('/subscribe')}
+                data-testid="subscribe-banner-btn"
+              >
+                Suscribirme ahora
+              </Button>
+            </CardContent>
+          </Card>
+        </motion.div>
       )}
 
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <motion.div {...fadeUp(1)} className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Biblioteca de Cursos</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">Biblioteca de Cursos</h1>
           <p className="text-muted-foreground mt-1">
             Explora y encuentra cursos para tu universidad
           </p>
@@ -255,24 +265,25 @@ const Biblioteca = () => {
             Mis Cursos ({enrolledCourseIds.length})
           </Button>
         )}
-      </div>
+      </motion.div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-4 items-center">
+      <motion.div {...fadeUp(2)} className="flex flex-wrap gap-3 md:gap-4 items-center">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} aria-hidden="true" />
           <Input
             placeholder="Buscar cursos..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
             data-testid="course-search"
+            aria-label="Buscar cursos"
           />
         </div>
         <div className="flex items-center gap-2">
-          <Filter size={18} className="text-slate-500" />
+          <Filter size={18} className="text-muted-foreground" aria-hidden="true" />
           <Select value={filterUniversity} onValueChange={setFilterUniversity}>
-            <SelectTrigger className="w-[200px]" data-testid="university-filter">
+            <SelectTrigger className="w-[200px]" data-testid="university-filter" aria-label="Filtrar por universidad">
               <SelectValue placeholder="Universidad" />
             </SelectTrigger>
             <SelectContent>
@@ -299,7 +310,7 @@ const Biblioteca = () => {
         <div className="text-sm text-muted-foreground">
           {filteredCourses.length} curso(s)
         </div>
-      </div>
+      </motion.div>
 
       {filteredCourses.length === 0 ? (
         <Card className="text-center py-12">
@@ -317,42 +328,44 @@ const Biblioteca = () => {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
           {filteredCourses.map((course, index) => {
             const stats = coursesStats[course.id] || { chapters: 0, lessons: 0, completedLessons: 0, progress: 0 };
             const enrolled = isEnrolled(course.id);
-            
+
             return (
-              <Card
-                key={course.id}
-                className={`cursor-pointer hover:shadow-lg transition-all course-card ${
-                  !hasAccess ? 'opacity-90' : ''
-                }`}
-                onClick={() => handleCourseClick(course)}
-                data-testid={`course-card-${index}`}
-              >
-                <CardHeader className="relative">
-                  {!hasAccess && (
-                    <div className="absolute top-4 right-4 z-10">
-                      <div className="bg-slate-900/80 text-white rounded-full p-2">
-                        <Lock size={16} />
+              <motion.div key={course.id} {...fadeUp(index + 3)}>
+                <Card
+                  className={`group cursor-pointer hover:shadow-xl hover:-translate-y-0.5 hover:border-primary/40 transition-all duration-200 border-border bg-card overflow-hidden h-full flex flex-col ${
+                    !hasAccess ? 'opacity-95' : ''
+                  }`}
+                  onClick={() => handleCourseClick(course)}
+                  data-testid={`course-card-${index}`}
+                >
+                  <CardHeader className="relative">
+                    {!hasAccess && (
+                      <div className="absolute top-4 right-4 z-10">
+                        <div className="bg-background/80 backdrop-blur-sm text-foreground rounded-full p-2 border border-border" aria-label="Contenido bloqueado">
+                          <Lock size={16} />
+                        </div>
                       </div>
+                    )}
+                    <div className="aspect-video bg-gradient-to-br from-cyan-400 via-cyan-500 to-blue-600 rounded-lg mb-4 flex items-center justify-center relative overflow-hidden">
+                      {course.university?.logo_url ? (
+                        <img
+                          src={course.university.logo_url}
+                          alt=""
+                          className="absolute inset-0 w-full h-full object-cover opacity-20"
+                        />
+                      ) : null}
+                      {/* Decorative gloss */}
+                      <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/20 pointer-events-none" aria-hidden="true" />
+                      <span className="text-white text-4xl font-bold relative z-10 tracking-tight group-hover:scale-105 transition-transform duration-300">
+                        {course.title.charAt(0)}
+                      </span>
                     </div>
-                  )}
-                  <div className="aspect-video bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-lg mb-4 flex items-center justify-center relative overflow-hidden">
-                    {course.university?.logo_url ? (
-                      <img 
-                        src={course.university.logo_url} 
-                        alt="" 
-                        className="absolute inset-0 w-full h-full object-cover opacity-20"
-                      />
-                    ) : null}
-                    <span className="text-white text-3xl font-bold relative z-10">
-                      {course.title.charAt(0)}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <Badge className={getLevelColor(course.level)}>
                         {course.level}
                       </Badge>
@@ -363,22 +376,22 @@ const Biblioteca = () => {
                       )}
                     </div>
                     <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <Layers size={14} />
-                        {stats.chapters}
+                      <span className="flex items-center gap-1" title={`${stats.chapters} capítulos`}>
+                        <Layers size={14} aria-hidden="true" />
+                        <span className="tabular-nums">{stats.chapters}</span>
                       </span>
-                      <span className="flex items-center gap-1">
-                        <BookOpen size={14} />
-                        {stats.lessons}
+                      <span className="flex items-center gap-1" title={`${stats.lessons} lecciones`}>
+                        <BookOpen size={14} aria-hidden="true" />
+                        <span className="tabular-nums">{stats.lessons}</span>
                       </span>
                     </div>
                   </div>
-                  <CardTitle className="text-lg">{course.title}</CardTitle>
+                  <CardTitle className="text-lg text-foreground">{course.title}</CardTitle>
                   <CardDescription className="line-clamp-2">
                     <InlineMd>{course.description}</InlineMd>
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="flex-1 flex flex-col">
                   <div className="flex items-center justify-between text-sm mb-3">
                     <span className="text-muted-foreground">
                       {course.university?.name || 'General'}
@@ -398,47 +411,50 @@ const Biblioteca = () => {
                     </div>
                   )}
                   
-                  {hasAccess ? (
-                    enrolled ? (
-                      <Button
-                        className="w-full"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/course/${course.id}`);
-                        }}
-                      >
-                        <CheckCircle className="mr-2" size={16} />
-                        {stats.progress === 0 ? 'Comenzar' : stats.progress === 100 ? 'Repasar' : 'Continuar'}
-                      </Button>
+                  <div className="mt-auto">
+                    {hasAccess ? (
+                      enrolled ? (
+                        <Button
+                          className="w-full bg-primary hover:bg-primary/90"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/course/${course.id}`);
+                          }}
+                        >
+                          <CheckCircle className="mr-2" size={16} />
+                          {stats.progress === 0 ? 'Comenzar' : stats.progress === 100 ? 'Repasar' : 'Continuar'}
+                        </Button>
+                      ) : (
+                        <Button
+                          className="w-full"
+                          variant="outline"
+                          onClick={(e) => handleEnroll(e, course)}
+                          disabled={enrolling === course.id}
+                        >
+                          {enrolling === course.id ? (
+                            <Loader2 className="animate-spin mr-2" size={16} />
+                          ) : (
+                            <Plus className="mr-2" size={16} />
+                          )}
+                          Inscribirse
+                        </Button>
+                      )
                     ) : (
                       <Button
                         className="w-full"
-                        variant="outline"
-                        onClick={(e) => handleEnroll(e, course)}
-                        disabled={enrolling === course.id}
+                        variant="secondary"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate('/auth');
+                        }}
                       >
-                        {enrolling === course.id ? (
-                          <Loader2 className="animate-spin mr-2" size={16} />
-                        ) : (
-                          <Plus className="mr-2" size={16} />
-                        )}
-                        Inscribirse
+                        Crear cuenta gratis
                       </Button>
-                    )
-                  ) : (
-                    <Button
-                      className="w-full"
-                      variant="secondary"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate('/auth');
-                      }}
-                    >
-                      Crear cuenta gratis
-                    </Button>
-                  )}
+                    )}
+                  </div>
                 </CardContent>
-              </Card>
+                </Card>
+              </motion.div>
             );
           })}
         </div>

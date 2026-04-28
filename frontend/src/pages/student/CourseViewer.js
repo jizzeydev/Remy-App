@@ -1,13 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, BookOpen, Play, Clock, CheckCircle, Lock, Plus, Loader2 } from 'lucide-react';
+import { ArrowLeft, ChevronRight, BookOpen, Play, Clock, CheckCircle, Lock, Plus, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import InlineMd from '@/components/course/InlineMd';
+
+const fadeUp = (i = 0) => ({
+  initial: { opacity: 0, y: 16 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.4, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }
+});
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -142,13 +149,14 @@ const CourseViewer = () => {
 
   if (loading || checkingEnrollment) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex items-center justify-center py-12" role="status" aria-live="polite">
         <Loader2 className="animate-spin text-primary" size={32} />
+        <span className="sr-only">Cargando curso</span>
       </div>
     );
   }
-  
-  if (!course) return <div className="text-center py-12 text-foreground">Curso no encontrado</div>;
+
+  if (!course) return <div className="text-center py-12 text-muted-foreground">Curso no encontrado</div>;
 
   const nextLesson = findNextLesson();
   const hasAccess = canAccessContent();
@@ -157,97 +165,113 @@ const CourseViewer = () => {
   if (!isEnrolled) {
     return (
       <div className="space-y-6 pb-24 lg:pb-8">
-        <Button variant="ghost" onClick={() => navigate('/biblioteca')}>
-          <ArrowLeft size={20} className="mr-2" />
-          Volver a biblioteca
-        </Button>
+        <motion.div {...fadeUp(0)}>
+          <Button variant="ghost" onClick={() => navigate('/biblioteca')} className="text-muted-foreground hover:text-foreground">
+            <ArrowLeft size={20} className="mr-2" />
+            Volver a biblioteca
+          </Button>
+        </motion.div>
 
-        {/* Course header - Preview mode */}
-        <div className="bg-gradient-to-r from-slate-600 to-slate-700 rounded-xl p-8 text-white relative overflow-hidden">
-          <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-            <Lock size={64} className="text-white/30" />
+        {/* Course header — preview (locked) */}
+        <motion.div
+          {...fadeUp(1)}
+          className="bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 dark:from-slate-800 dark:via-slate-900 dark:to-slate-950 rounded-xl p-6 md:p-8 text-white relative overflow-hidden"
+        >
+          <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+            <div className="absolute -top-20 -right-20 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl" />
+          </div>
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true">
+            <Lock size={96} className="text-white/[0.07]" />
           </div>
           <div className="relative z-10">
-            <h1 className="text-4xl font-bold mb-2">{course.title}</h1>
-            <p className="text-xl text-white/80 mb-4"><InlineMd>{course.description}</InlineMd></p>
-            <div className="flex items-center gap-4 text-sm mb-6">
-              <span className="bg-white/20 px-3 py-1 rounded-full">{course.level}</span>
-              <span className="bg-white/20 px-3 py-1 rounded-full">
+            <h1 className="text-3xl md:text-4xl font-bold mb-2 tracking-tight">{course.title}</h1>
+            <p className="text-base md:text-lg text-white/80 mb-4"><InlineMd>{course.description}</InlineMd></p>
+            <div className="flex items-center gap-2 text-sm flex-wrap">
+              <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full">{course.level}</span>
+              <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full tabular-nums">
                 {chapters.length} capítulos
               </span>
-              <span className="bg-white/20 px-3 py-1 rounded-full">
+              <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full tabular-nums">
                 {totalLessons} lecciones
               </span>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Enrollment CTA */}
-        <Card className="border-primary bg-primary/5">
-          <CardContent className="text-center py-8">
-            <Lock className="mx-auto mb-4 text-primary" size={48} />
-            <h2 className="text-2xl font-bold mb-2 text-foreground">
-              Inscríbete para acceder al contenido
-            </h2>
-            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-              Para ver las lecciones, realizar ejercicios y hacer un seguimiento de tu progreso, 
-              primero debes inscribirte en este curso.
-            </p>
-            
-            {hasAccess ? (
-              <Button 
-                size="lg" 
-                onClick={handleEnroll}
-                disabled={enrolling}
-                className="px-8"
-              >
-                {enrolling ? (
-                  <>
-                    <Loader2 className="animate-spin mr-2" size={20} />
-                    Inscribiendo...
-                  </>
-                ) : (
-                  <>
-                    <Plus className="mr-2" size={20} />
-                    Inscribirme en este curso
-                  </>
-                )}
-              </Button>
-            ) : (
-              <div className="space-y-3">
-                <p className="text-sm text-amber-600 dark:text-amber-400">
-                  Necesitas una cuenta para inscribirte
-                </p>
-                <Button size="lg" onClick={() => navigate('/auth')}>
-                  Crear cuenta gratis
-                </Button>
+        <motion.div {...fadeUp(2)}>
+          <Card className="border-primary/30 bg-primary/5">
+            <CardContent className="text-center py-8 md:py-10">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-primary/15 ring-1 ring-primary/30 flex items-center justify-center">
+                <Lock className="text-primary" size={28} aria-hidden="true" />
               </div>
-            )}
-          </CardContent>
-        </Card>
+              <h2 className="text-xl md:text-2xl font-bold mb-2 text-foreground tracking-tight">
+                Inscríbete para acceder al contenido
+              </h2>
+              <p className="text-muted-foreground mb-6 max-w-md mx-auto text-sm md:text-base">
+                Para ver las lecciones, realizar ejercicios y hacer seguimiento de tu progreso,
+                primero debes inscribirte en este curso.
+              </p>
 
-        {/* Course preview - locked chapters */}
-        <div className="space-y-4">
-          <h2 className="text-2xl font-bold text-foreground">Vista previa del contenido</h2>
-          {chapters.map((chapter, index) => (
-            <Card key={chapter.id} className="opacity-75">
-              <CardHeader className="bg-secondary/50">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-3">
-                    <span className="flex items-center justify-center w-10 h-10 rounded-full font-bold bg-slate-400 text-white">
-                      <Lock size={16} />
-                    </span>
-                    <span className="text-foreground">{chapter.title}</span>
-                  </CardTitle>
-                  <span className="text-sm text-muted-foreground">
-                    {chapter.lessons?.length || 0} lecciones
-                  </span>
+              {hasAccess ? (
+                <Button
+                  size="lg"
+                  onClick={handleEnroll}
+                  disabled={enrolling}
+                  className="px-8 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
+                >
+                  {enrolling ? (
+                    <>
+                      <Loader2 className="animate-spin mr-2" size={20} />
+                      Inscribiendo...
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="mr-2" size={20} />
+                      Inscribirme en este curso
+                    </>
+                  )}
+                </Button>
+              ) : (
+                <div className="space-y-3">
+                  <p className="text-sm text-amber-600 dark:text-amber-400">
+                    Necesitas una cuenta para inscribirte
+                  </p>
+                  <Button size="lg" onClick={() => navigate('/auth')}>
+                    Crear cuenta gratis
+                  </Button>
                 </div>
-                <p className="text-sm text-muted-foreground ml-13"><InlineMd>{chapter.description}</InlineMd></p>
-              </CardHeader>
-            </Card>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Course preview — locked chapters */}
+        <motion.div {...fadeUp(3)} className="space-y-3">
+          <h2 className="text-xl md:text-2xl font-bold text-foreground tracking-tight">Vista previa del contenido</h2>
+          {chapters.map((chapter, index) => (
+            <motion.div key={chapter.id} {...fadeUp(index + 4)}>
+              <Card className="opacity-80 border-border bg-card">
+                <CardHeader className="bg-secondary/40">
+                  <div className="flex items-center justify-between gap-3">
+                    <CardTitle className="flex items-center gap-3 min-w-0">
+                      <span className="flex items-center justify-center w-10 h-10 rounded-full bg-muted text-muted-foreground border border-border flex-shrink-0" aria-hidden="true">
+                        <Lock size={16} />
+                      </span>
+                      <span className="text-foreground truncate">{chapter.title}</span>
+                    </CardTitle>
+                    <span className="text-sm text-muted-foreground flex-shrink-0 tabular-nums">
+                      {chapter.lessons?.length || 0} lecciones
+                    </span>
+                  </div>
+                  {chapter.description && (
+                    <p className="text-sm text-muted-foreground pl-13 mt-1"><InlineMd>{chapter.description}</InlineMd></p>
+                  )}
+                </CardHeader>
+              </Card>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     );
   }
@@ -255,52 +279,68 @@ const CourseViewer = () => {
   // User is enrolled - show full content
   return (
     <div className="space-y-6 pb-24 lg:pb-8">
-      <Button variant="ghost" onClick={() => navigate('/mis-cursos')}>
-        <ArrowLeft size={20} className="mr-2" />
-        Volver a Mis Cursos
-      </Button>
+      <motion.div {...fadeUp(0)}>
+        <Button variant="ghost" onClick={() => navigate('/mis-cursos')} className="text-muted-foreground hover:text-foreground">
+          <ArrowLeft size={20} className="mr-2" />
+          Volver a Mis Cursos
+        </Button>
+      </motion.div>
 
       {/* Course header */}
-      <div className="bg-gradient-to-r from-primary to-blue-600 rounded-xl p-8 text-white">
-        <h1 className="text-4xl font-bold mb-2">{course.title}</h1>
-        <p className="text-xl text-primary-foreground/80 mb-4"><InlineMd>{course.description}</InlineMd></p>
-        <div className="flex items-center gap-4 text-sm mb-6">
-          <span className="bg-white/20 px-3 py-1 rounded-full">{course.level}</span>
-          <span className="bg-white/20 px-3 py-1 rounded-full">
-            {chapters.length} capítulos
-          </span>
-          <span className="bg-white/20 px-3 py-1 rounded-full">
-            {totalLessons} lecciones
-          </span>
+      <motion.div
+        {...fadeUp(1)}
+        className="bg-gradient-to-br from-cyan-500 via-cyan-600 to-blue-700 rounded-xl p-6 md:p-8 text-white relative overflow-hidden shadow-xl shadow-cyan-500/20"
+      >
+        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+          <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute -bottom-20 -left-20 w-48 h-48 bg-white/5 rounded-full blur-3xl" />
         </div>
-        
-        {/* Progress section */}
-        <div className="bg-white/10 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="font-medium">Tu progreso</span>
-            <span>{completedLessons.length}/{totalLessons} lecciones completadas</span>
+        <div className="relative z-10">
+          <h1 className="text-3xl md:text-4xl font-bold mb-2 tracking-tight">{course.title}</h1>
+          <p className="text-base md:text-lg text-white/85 mb-4"><InlineMd>{course.description}</InlineMd></p>
+          <div className="flex items-center gap-2 text-sm flex-wrap mb-6">
+            <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full">{course.level}</span>
+            <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full tabular-nums">
+              {chapters.length} capítulos
+            </span>
+            <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full tabular-nums">
+              {totalLessons} lecciones
+            </span>
           </div>
-          <Progress value={progressPercent} className="h-3 bg-white/20" />
-          
-          {nextLesson && (
-            <Button 
-              className="mt-4 bg-white text-primary hover:bg-white/90"
-              onClick={() => navigate(`/lesson/${nextLesson.id}`)}
-            >
-              {completedLessons.length === 0 ? 'Comenzar curso' : 
-               progressPercent === 100 ? 'Repasar curso' : 'Continuar'}
-            </Button>
-          )}
+
+          {/* Progress section */}
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/10">
+            <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
+              <span className="font-medium">Tu progreso</span>
+              <span className="text-sm text-white/85 tabular-nums">{completedLessons.length}/{totalLessons} lecciones completadas</span>
+            </div>
+            <Progress
+              value={progressPercent}
+              className="h-3 bg-white/20"
+              aria-label={`${progressPercent}% completado`}
+            />
+
+            {nextLesson && (
+              <Button
+                className="mt-4 bg-white text-cyan-700 hover:bg-cyan-50 font-semibold"
+                onClick={() => navigate(`/lesson/${nextLesson.id}`)}
+              >
+                {completedLessons.length === 0 ? 'Comenzar curso' :
+                 progressPercent === 100 ? 'Repasar curso' : 'Continuar'}
+                <ChevronRight size={18} className="ml-1" />
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Course content */}
-      <div className="space-y-4">
-        <h2 className="text-2xl font-bold text-foreground">Contenido del Curso</h2>
+      <motion.div {...fadeUp(2)} className="space-y-4">
+        <h2 className="text-xl md:text-2xl font-bold text-foreground tracking-tight">Contenido del Curso</h2>
         {chapters.length === 0 ? (
-          <Card>
+          <Card className="border-border bg-card">
             <CardContent className="text-center py-12">
-              <BookOpen className="mx-auto mb-4 text-muted-foreground" size={48} />
+              <BookOpen className="mx-auto mb-4 text-muted-foreground" size={48} aria-hidden="true" />
               <p className="text-muted-foreground">Este curso aún no tiene contenido disponible</p>
             </CardContent>
           </Card>
@@ -308,84 +348,91 @@ const CourseViewer = () => {
           chapters.map((chapter, index) => {
             const chapterLessons = chapter.lessons || [];
             const chapterCompleted = chapterLessons.filter(l => completedLessons.includes(l.id)).length;
-            const chapterProgress = chapterLessons.length > 0 
-              ? Math.round((chapterCompleted / chapterLessons.length) * 100) 
+            const chapterProgress = chapterLessons.length > 0
+              ? Math.round((chapterCompleted / chapterLessons.length) * 100)
               : 0;
 
             return (
-              <Card key={chapter.id}>
-                <CardHeader className="bg-secondary/50">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-3">
-                      <span className={`flex items-center justify-center w-10 h-10 rounded-full font-bold ${
-                        chapterProgress === 100 
-                          ? 'bg-green-500 text-white' 
-                          : 'bg-primary text-primary-foreground'
-                      }`}>
-                        {chapterProgress === 100 ? <CheckCircle size={20} /> : index + 1}
+              <motion.div key={chapter.id} {...fadeUp(index + 3)}>
+                <Card className="border-border bg-card overflow-hidden">
+                  <CardHeader className="bg-secondary/40">
+                    <div className="flex items-center justify-between gap-3">
+                      <CardTitle className="flex items-center gap-3 min-w-0">
+                        <span className={`flex items-center justify-center w-10 h-10 rounded-full font-bold flex-shrink-0 transition-colors ${
+                          chapterProgress === 100
+                            ? 'bg-emerald-500 text-white'
+                            : 'bg-primary text-primary-foreground'
+                        }`} aria-hidden="true">
+                          {chapterProgress === 100 ? <CheckCircle size={20} /> : index + 1}
+                        </span>
+                        <span className="text-foreground truncate">{chapter.title}</span>
+                      </CardTitle>
+                      <span className="text-sm text-muted-foreground flex-shrink-0 tabular-nums">
+                        {chapterCompleted}/{chapterLessons.length}
                       </span>
-                      <span className="text-foreground">{chapter.title}</span>
-                    </CardTitle>
-                    <span className="text-sm text-muted-foreground">
-                      {chapterCompleted}/{chapterLessons.length} completadas
-                    </span>
-                  </div>
-                  <p className="text-sm text-muted-foreground ml-13"><InlineMd>{chapter.description}</InlineMd></p>
-                </CardHeader>
-                <CardContent className="pt-4">
-                  {chapterLessons.length === 0 ? (
-                    <p className="text-sm text-muted-foreground italic">No hay lecciones disponibles</p>
-                  ) : (
-                    <div className="space-y-2">
-                      {chapterLessons.map((lesson, lessonIndex) => {
-                        const isCompleted = completedLessons.includes(lesson.id);
-                        return (
-                          <button
-                            key={lesson.id}
-                            onClick={() => navigate(`/lesson/${lesson.id}`)}
-                            className={`w-full flex items-center justify-between p-4 border rounded-lg transition-all group ${
-                              isCompleted 
-                                ? 'border-green-500/30 bg-green-500/10 hover:bg-green-500/20' 
-                                : 'border-border hover:bg-primary/10 hover:border-primary'
-                            }`}
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
-                                isCompleted 
-                                  ? 'bg-green-500 text-white' 
-                                  : 'bg-secondary group-hover:bg-primary group-hover:text-primary-foreground'
-                              }`}>
-                                {isCompleted ? <CheckCircle size={16} /> : <Play size={16} />}
-                              </div>
-                              <div className="text-left">
-                                <p className={`font-medium transition-colors ${
-                                  isCompleted ? 'text-green-600 dark:text-green-400' : 'text-foreground group-hover:text-primary'
-                                }`}>
-                                  {lessonIndex + 1}. {lesson.title}
-                                </p>
-                                <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                                  <Clock size={12} />
-                                  {lesson.duration_minutes} min
-                                  {isCompleted && (
-                                    <span className="text-green-600 dark:text-green-400 font-medium ml-2">✓ Completada</span>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                            <ArrowLeft size={20} className={`rotate-180 transition-colors ${
-                              isCompleted ? 'text-green-500' : 'text-muted-foreground group-hover:text-primary'
-                            }`} />
-                          </button>
-                        );
-                      })}
                     </div>
-                  )}
-                </CardContent>
-              </Card>
+                    {chapter.description && (
+                      <p className="text-sm text-muted-foreground pl-13 mt-1"><InlineMd>{chapter.description}</InlineMd></p>
+                    )}
+                  </CardHeader>
+                  <CardContent className="pt-4">
+                    {chapterLessons.length === 0 ? (
+                      <p className="text-sm text-muted-foreground italic">No hay lecciones disponibles</p>
+                    ) : (
+                      <ul className="space-y-2">
+                        {chapterLessons.map((lesson, lessonIndex) => {
+                          const isCompleted = completedLessons.includes(lesson.id);
+                          return (
+                            <li key={lesson.id}>
+                              <button
+                                type="button"
+                                onClick={() => navigate(`/lesson/${lesson.id}`)}
+                                className={`w-full flex items-center justify-between p-3 md:p-4 border rounded-lg transition-all group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                                  isCompleted
+                                    ? 'border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/15'
+                                    : 'border-border hover:bg-primary/5 hover:border-primary/40'
+                                }`}
+                                aria-label={`${isCompleted ? 'Revisar' : 'Comenzar'} lección ${lessonIndex + 1}: ${lesson.title}`}
+                              >
+                                <div className="flex items-center gap-3 min-w-0">
+                                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${
+                                    isCompleted
+                                      ? 'bg-emerald-500 text-white'
+                                      : 'bg-muted text-muted-foreground group-hover:bg-primary group-hover:text-primary-foreground'
+                                  }`} aria-hidden="true">
+                                    {isCompleted ? <CheckCircle size={16} /> : <Play size={16} />}
+                                  </div>
+                                  <div className="text-left min-w-0">
+                                    <p className={`font-medium truncate transition-colors ${
+                                      isCompleted ? 'text-emerald-600 dark:text-emerald-400' : 'text-foreground group-hover:text-primary'
+                                    }`}>
+                                      {lessonIndex + 1}. {lesson.title}
+                                    </p>
+                                    <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
+                                      <Clock size={12} aria-hidden="true" />
+                                      <span className="tabular-nums">{lesson.duration_minutes} min</span>
+                                      {isCompleted && (
+                                        <span className="text-emerald-600 dark:text-emerald-400 font-medium ml-1">· Completada</span>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                                <ChevronRight size={20} className={`flex-shrink-0 transition-all group-hover:translate-x-0.5 ${
+                                  isCompleted ? 'text-emerald-500' : 'text-muted-foreground group-hover:text-primary'
+                                }`} aria-hidden="true" />
+                              </button>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
             );
           })
         )}
-      </div>
+      </motion.div>
     </div>
   );
 };

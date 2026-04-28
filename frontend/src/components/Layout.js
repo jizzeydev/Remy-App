@@ -36,10 +36,11 @@ const Layout = () => {
   };
 
   const NavContent = () => (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-1">
       {navItems.map((item) => {
         const Icon = item.icon;
-        const isActive = location.pathname === item.path;
+        const isActive = location.pathname === item.path
+          || (item.path === '/dashboard' && location.pathname === '/inicio');
         return (
           <button
             key={item.path}
@@ -48,13 +49,21 @@ const Layout = () => {
               setIsMobileMenuOpen(false);
             }}
             data-testid={`nav-${item.label.toLowerCase().replace(' ', '-')}`}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+            aria-current={isActive ? 'page' : undefined}
+            className={`group relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
               isActive
-                ? 'bg-primary text-primary-foreground shadow-[0_4px_14px_rgba(0,188,212,0.3)]'
+                ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
                 : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
             }`}
           >
-            <Icon size={20} />
+            {/* Active indicator pill on the left */}
+            {isActive && (
+              <span
+                className="absolute -left-2 top-1/2 -translate-y-1/2 w-1 h-6 rounded-full bg-primary"
+                aria-hidden="true"
+              />
+            )}
+            <Icon size={20} className={isActive ? '' : 'group-hover:text-primary transition-colors'} aria-hidden="true" />
             <span className="font-medium">{item.label}</span>
           </button>
         );
@@ -193,20 +202,28 @@ const Layout = () => {
         </div>
       </main>
 
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border px-2 py-2 flex items-center justify-around z-50">
+      <nav
+        className="lg:hidden fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-md border-t border-border px-2 py-2 flex items-center justify-around z-50"
+        aria-label="Navegación inferior"
+      >
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = location.pathname === item.path;
+          const isActive = location.pathname === item.path
+            || (item.path === '/dashboard' && location.pathname === '/inicio');
           return (
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
               data-testid={`mobile-nav-${item.label.toLowerCase().replace(' ', '-')}`}
-              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors min-w-[44px] ${
-                isActive ? 'text-primary' : 'text-muted-foreground'
+              aria-current={isActive ? 'page' : undefined}
+              className={`relative flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors min-w-[44px] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              <Icon size={20} />
+              {isActive && (
+                <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full" aria-hidden="true" />
+              )}
+              <Icon size={20} aria-hidden="true" />
               <span className="text-xs font-medium">{item.label.split(' ')[0]}</span>
             </button>
           );

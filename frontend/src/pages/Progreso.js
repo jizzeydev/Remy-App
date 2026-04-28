@@ -4,6 +4,7 @@
  */
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import axios from 'axios';
 import { BookOpen, ClipboardCheck, TrendingUp, Award, Loader2, ChevronRight } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,6 +12,12 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '../contexts/AuthContext';
 import SubscriptionRequired from '../components/SubscriptionRequired';
+
+const fadeUp = (i = 0) => ({
+  initial: { opacity: 0, y: 16 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.4, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }
+});
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -124,23 +131,25 @@ const Progreso = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex items-center justify-center py-12" role="status" aria-live="polite">
         <Loader2 className="animate-spin text-primary" size={32} />
+        <span className="sr-only">Cargando progreso</span>
       </div>
     );
   }
 
   return (
     <div className="space-y-6 pb-24 lg:pb-8" data-testid="progreso-page">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Mi Progreso</h1>
+      <motion.div {...fadeUp(0)}>
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">Mi Progreso</h1>
         <p className="text-muted-foreground mt-1">Tu avance de aprendizaje en Remy</p>
-      </div>
+      </motion.div>
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <motion.div {...fadeUp(1)}>
         {/* Lessons Completed */}
-        <Card className="border-0 shadow-md bg-gradient-to-br from-primary/10 to-transparent">
+        <Card className="border-border bg-gradient-to-br from-primary/10 to-card h-full">
           <CardContent className="pt-6">
             <div className="flex items-start justify-between">
               <div>
@@ -148,7 +157,7 @@ const Progreso = () => {
                 <p className="text-4xl font-bold text-foreground">{completedLessons}</p>
                 <p className="text-sm text-muted-foreground mt-1">de {totalLessons} totales</p>
               </div>
-              <div className="bg-primary/20 p-3 rounded-xl">
+              <div className="bg-primary/20 p-3 rounded-xl" aria-hidden="true">
                 <BookOpen className="text-primary" size={24} />
               </div>
             </div>
@@ -156,9 +165,11 @@ const Progreso = () => {
             <p className="text-xs text-muted-foreground mt-2">{overallProgress}% completado</p>
           </CardContent>
         </Card>
+        </motion.div>
 
+        <motion.div {...fadeUp(2)}>
         {/* Quizzes Taken */}
-        <Card className="border-0 shadow-md bg-gradient-to-br from-purple-500/10 to-transparent">
+        <Card className="border-border bg-gradient-to-br from-violet-500/10 to-card h-full">
           <CardContent className="pt-6">
             <div className="flex items-start justify-between">
               <div>
@@ -166,14 +177,14 @@ const Progreso = () => {
                 <p className="text-4xl font-bold text-foreground">{quizStats.total}</p>
                 <p className="text-sm text-muted-foreground mt-1">simulacros de práctica</p>
               </div>
-              <div className="bg-purple-500/20 p-3 rounded-xl">
-                <ClipboardCheck className="text-purple-600 dark:text-purple-400" size={24} />
+              <div className="bg-violet-500/20 p-3 rounded-xl" aria-hidden="true">
+                <ClipboardCheck className="text-violet-600 dark:text-violet-400" size={24} />
               </div>
             </div>
             {quizStats.total > 0 && (
-              <Button 
-                variant="link" 
-                className="p-0 h-auto mt-4 text-purple-600 dark:text-purple-400"
+              <Button
+                variant="link"
+                className="p-0 h-auto mt-4 text-violet-600 dark:text-violet-400"
                 onClick={() => navigate('/simulacros')}
               >
                 Ver historial <ChevronRight size={16} />
@@ -181,9 +192,11 @@ const Progreso = () => {
             )}
           </CardContent>
         </Card>
+        </motion.div>
 
+        <motion.div {...fadeUp(3)}>
         {/* Average Grade */}
-        <Card className="border-0 shadow-md bg-gradient-to-br from-green-500/10 to-transparent">
+        <Card className="border-border bg-gradient-to-br from-emerald-500/10 to-card h-full">
           <CardContent className="pt-6">
             <div className="flex items-start justify-between">
               <div>
@@ -202,23 +215,25 @@ const Progreso = () => {
                   </>
                 )}
               </div>
-              <div className="bg-green-500/20 p-3 rounded-xl">
-                <Award className="text-green-600 dark:text-green-400" size={24} />
+              <div className="bg-emerald-500/20 p-3 rounded-xl" aria-hidden="true">
+                <Award className="text-emerald-600 dark:text-emerald-400" size={24} />
               </div>
             </div>
             {quizStats.average >= 4 && quizStats.total > 0 && (
-              <div className="mt-4 text-sm text-green-600 dark:text-green-400 flex items-center gap-1">
-                <TrendingUp size={14} />
-                {quizStats.average >= 6 ? '¡Excelente trabajo!' : 
+              <div className="mt-4 text-sm text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                <TrendingUp size={14} aria-hidden="true" />
+                {quizStats.average >= 6 ? '¡Excelente trabajo!' :
                  quizStats.average >= 5 ? '¡Vas muy bien!' : 'Sigue practicando'}
               </div>
             )}
           </CardContent>
         </Card>
+        </motion.div>
       </div>
 
       {/* Course Progress */}
-      <Card>
+      <motion.div {...fadeUp(4)}>
+      <Card className="border-border bg-card">
         <CardHeader>
           <CardTitle>Progreso por curso</CardTitle>
           <CardDescription>Tu avance en cada curso disponible</CardDescription>
@@ -233,10 +248,13 @@ const Progreso = () => {
               {courses.map((course) => {
                 const progress = courseProgress[course.id] || { total: 0, completed: 0, percentage: 0 };
                 return (
-                  <div 
-                    key={course.id} 
-                    className="p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors cursor-pointer"
+                  <div
+                    key={course.id}
+                    className="p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    role="button"
+                    tabIndex={0}
                     onClick={() => navigate(`/course/${course.id}`)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/course/${course.id}`); } }}
                   >
                     <div className="flex items-center justify-between mb-3">
                       <div>
@@ -258,10 +276,12 @@ const Progreso = () => {
           )}
         </CardContent>
       </Card>
+      </motion.div>
 
       {/* Recent Quizzes */}
       {quizStats.grades.length > 0 && (
-        <Card>
+        <motion.div {...fadeUp(5)}>
+        <Card className="border-border bg-card">
           <CardHeader>
             <CardTitle>Últimas notas en simulacros</CardTitle>
             <CardDescription>Tus {quizStats.grades.length} simulacros más recientes</CardDescription>
@@ -269,14 +289,15 @@ const Progreso = () => {
           <CardContent>
             <div className="flex gap-3 flex-wrap">
               {quizStats.grades.map((grade, idx) => (
-                <div 
+                <div
                   key={idx}
-                  className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg ${
-                    grade >= 6 ? 'bg-green-500/20 text-green-600 dark:text-green-400' :
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg tabular-nums ${
+                    grade >= 6 ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' :
                     grade >= 5 ? 'bg-primary/20 text-primary' :
-                    grade >= 4 ? 'bg-yellow-500/20 text-yellow-600 dark:text-yellow-400' :
+                    grade >= 4 ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400' :
                     'bg-red-500/20 text-red-600 dark:text-red-400'
                   }`}
+                  title={`Nota ${grade.toFixed(1)}`}
                 >
                   {grade.toFixed(1)}
                 </div>
@@ -284,11 +305,13 @@ const Progreso = () => {
             </div>
           </CardContent>
         </Card>
+        </motion.div>
       )}
 
       {/* Empty state for new users */}
       {completedLessons === 0 && quizStats.total === 0 && (
-        <Card className="border-dashed">
+        <motion.div {...fadeUp(5)}>
+        <Card className="border-dashed border-border bg-card">
           <CardContent className="py-12 text-center">
             <div className="w-16 h-16 bg-primary/20 rounded-full mx-auto mb-4 flex items-center justify-center">
               <TrendingUp className="text-primary" size={32} />
@@ -304,6 +327,7 @@ const Progreso = () => {
             </Button>
           </CardContent>
         </Card>
+        </motion.div>
       )}
     </div>
   );
