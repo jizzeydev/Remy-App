@@ -3,6 +3,7 @@
  */
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import axios from 'axios';
 import { ClipboardCheck, BookOpen, TrendingUp, Sparkles, Loader2, ChevronRight } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,6 +12,12 @@ import { Progress } from '@/components/ui/progress';
 import { useAuth } from '../contexts/AuthContext';
 import SubscriptionRequired from '../components/SubscriptionRequired';
 import TrialBanner from '../components/TrialBanner';
+
+const fadeUp = (i = 0) => ({
+  initial: { opacity: 0, y: 16 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.4, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }
+});
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -133,52 +140,54 @@ const Dashboard = () => {
       <TrialBanner />
       
       {/* Welcome Section */}
-      <div data-testid="welcome-section">
+      <motion.div data-testid="welcome-section" {...fadeUp(0)}>
         <div className="flex items-center gap-3 mb-2">
-          <Sparkles className="text-primary" size={28} />
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+          <Sparkles className="text-primary" size={28} aria-hidden="true" />
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
             Hola, {userName} 👋
           </h1>
         </div>
         <p className="text-muted-foreground text-lg">¿Listo para aprender hoy?</p>
-      </div>
+      </motion.div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-3 md:gap-4">
         {quickActions.map((action, index) => {
           const Icon = action.icon;
           return (
-            <Card
-              key={index}
-              className="cursor-pointer hover:shadow-lg transition-all hover:-translate-y-1 border-0 shadow-md"
-              onClick={() => navigate(action.path)}
-              data-testid={action.testId}
-            >
-              <CardContent className="p-6 flex flex-col items-center text-center gap-3">
-                <div className={`${action.color} p-4 rounded-xl`}>
-                  <Icon className="text-white" size={24} />
-                </div>
-                <span className="font-semibold text-sm">{action.label}</span>
-              </CardContent>
-            </Card>
+            <motion.div key={index} {...fadeUp(index + 1)}>
+              <Card
+                className="cursor-pointer hover:shadow-lg transition-all hover:-translate-y-0.5 border-border bg-card h-full"
+                onClick={() => navigate(action.path)}
+                data-testid={action.testId}
+              >
+                <CardContent className="p-4 md:p-6 flex flex-col items-center text-center gap-3">
+                  <div className={`${action.color} p-3 md:p-4 rounded-xl`} aria-hidden="true">
+                    <Icon className="text-white" size={24} />
+                  </div>
+                  <span className="font-semibold text-xs md:text-sm text-foreground">{action.label}</span>
+                </CardContent>
+              </Card>
+            </motion.div>
           );
         })}
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <motion.div {...fadeUp(4)} className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column - Courses */}
         <div className="lg:col-span-8 space-y-6">
           {/* Recent Courses */}
-          <Card className="border-0 shadow-md" data-testid="recent-courses-card">
+          <Card className="border-border bg-card shadow-sm" data-testid="recent-courses-card">
             <CardHeader>
               <CardTitle>Continúa estudiando</CardTitle>
               <CardDescription>Tus cursos disponibles</CardDescription>
             </CardHeader>
             <CardContent>
               {loading ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="animate-spin text-cyan-500" size={32} />
+                <div className="flex items-center justify-center py-8" role="status" aria-live="polite">
+                  <Loader2 className="animate-spin text-primary" size={32} />
+                  <span className="sr-only">Cargando cursos</span>
                 </div>
               ) : courses.length > 0 ? (
                 <div className="space-y-4">
@@ -222,7 +231,7 @@ const Dashboard = () => {
         {/* Right Column - Stats */}
         <div className="lg:col-span-4 space-y-6">
           {/* Progress Summary */}
-          <Card className="border-0 shadow-md" data-testid="progress-summary-card">
+          <Card className="border-border bg-card shadow-sm" data-testid="progress-summary-card">
             <CardHeader>
               <CardTitle className="text-lg">Tu progreso</CardTitle>
             </CardHeader>
@@ -282,7 +291,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

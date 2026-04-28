@@ -98,7 +98,7 @@ DEFAULT_PRICING_CONFIG = {
         "id": "monthly",
         "name": "Plan Mensual",
         "description": "Acceso completo por 1 mes",
-        "base_price": 9990,
+        "base_price": 4990,
         "currency": "CLP",
         "frequency": "mensual",
         "frequency_months": 1,
@@ -117,8 +117,8 @@ DEFAULT_PRICING_CONFIG = {
         "id": "semestral",
         "name": "Plan Semestral",
         "description": "El más popular - 6 meses de acceso",
-        "base_price": 59940,  # Original price (6 months)
-        "final_price": 29990,  # Discounted price
+        "base_price": 29940,  # 6 × 4990 (paying month by month)
+        "final_price": 19990,  # Discounted price for 6-month commitment
         "currency": "CLP",
         "frequency": "semestral",
         "frequency_months": 6,
@@ -130,7 +130,7 @@ DEFAULT_PRICING_CONFIG = {
             "Acceso anticipado a nuevos cursos"
         ],
         "discount_enabled": True,
-        "discount_percentage": 50,
+        "discount_percentage": 33,
         "promotion_start": None,
         "promotion_end": None,
         "is_popular": True

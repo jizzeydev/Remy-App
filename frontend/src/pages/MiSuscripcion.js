@@ -1,39 +1,66 @@
 /**
  * Mi Suscripción - User Subscription Management Page
- * Uses dynamic pricing from backend API
+ * Theme-token-driven so it adapts to dark / light mode automatically.
  */
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import axios from 'axios';
+import {
+  Crown, Calendar, CreditCard, AlertTriangle,
+  CheckCircle, Loader2, ArrowLeft, RefreshCw,
+  Shield, Zap, Sparkles, Star, Gift, ChevronRight,
+  ClipboardCheck, TrendingUp, MessageCircle
+} from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { usePricing } from '../hooks/usePricing';
-import axios from 'axios';
-import { 
-  Crown, Calendar, CreditCard, Clock, AlertTriangle,
-  CheckCircle, XCircle, Loader2, ArrowLeft, RefreshCw,
-  Shield, Zap, Sparkles, Star, Gift, ChevronRight
-} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+  Accordion, AccordionContent, AccordionItem, AccordionTrigger
+} from '@/components/ui/accordion';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel,
+  AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+  AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+const fadeUp = {
+  initial: { opacity: 0, y: 16 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] }
+};
+
+const stagger = (i = 0) => ({
+  initial: { opacity: 0, y: 16 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.4, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }
+});
+
+// Plan visual identity (gradients work on white text in any theme)
+const PLAN_VISUALS = {
+  monthly: {
+    gradient: 'from-cyan-500 via-cyan-600 to-blue-700',
+    glow: 'shadow-cyan-500/30'
+  },
+  semestral: {
+    gradient: 'from-violet-500 via-fuchsia-600 to-pink-600',
+    glow: 'shadow-fuchsia-500/30'
+  },
+  fallback: {
+    gradient: 'from-slate-600 to-slate-800',
+    glow: 'shadow-slate-500/20'
+  }
+};
+
 const MiSuscripcion = () => {
   const navigate = useNavigate();
-  const { user, refreshUser, hasActiveSubscription } = useAuth();
+  const { user, refreshUser } = useAuth();
   const { monthly, semestral, formatPrice, loading: pricingLoading } = usePricing();
   const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -41,6 +68,7 @@ const MiSuscripcion = () => {
 
   useEffect(() => {
     fetchSubscription();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchSubscription = async () => {
@@ -48,16 +76,11 @@ const MiSuscripcion = () => {
     try {
       const token = localStorage.getItem('remy_session_token');
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
-      
-      const response = await axios.get(`${API}/payments/subscription`, {
-        headers
-      });
+      const response = await axios.get(`${API}/payments/subscription`, { headers });
       setSubscription(response.data);
     } catch (error) {
       console.error('Error fetching subscription:', error);
-      if (error.response?.status === 401) {
-        navigate('/auth');
-      }
+      if (error.response?.status === 401) navigate('/auth');
     } finally {
       setLoading(false);
     }
@@ -68,11 +91,7 @@ const MiSuscripcion = () => {
     try {
       const token = localStorage.getItem('remy_session_token');
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
-      
-      const response = await axios.post(`${API}/payments/cancel`, {}, {
-        headers
-      });
-      
+      const response = await axios.post(`${API}/payments/cancel`, {}, { headers });
       toast.success(response.data.message || 'Suscripción cancelada');
       await refreshUser();
       await fetchSubscription();
@@ -87,8 +106,7 @@ const MiSuscripcion = () => {
     if (!subscription?.subscription_end) return 0;
     const endDate = new Date(subscription.subscription_end);
     const now = new Date();
-    const diffTime = endDate - now;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const diffDays = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
     return Math.max(0, diffDays);
   };
 
@@ -101,31 +119,17 @@ const MiSuscripcion = () => {
     });
   };
 
-  // Get plan details from dynamic pricing
   const getPlanDetails = (plan) => {
-    if (plan === 'monthly') {
-      return { 
-        name: monthly.name, 
-        price: formatPrice(monthly.amount), 
-        period: monthly.period, 
-        color: 'from-cyan-500 to-blue-600' 
-      };
-    }
-    if (plan === 'semestral') {
-      return { 
-        name: semestral.name, 
-        price: formatPrice(semestral.amount), 
-        period: semestral.period, 
-        color: 'from-purple-500 to-pink-600' 
-      };
-    }
-    return { name: 'Plan', price: '-', period: '', color: 'from-slate-500 to-slate-600' };
+    if (plan === 'monthly') return { name: monthly.name, price: formatPrice(monthly.amount), period: monthly.period, visuals: PLAN_VISUALS.monthly };
+    if (plan === 'semestral') return { name: semestral.name, price: formatPrice(semestral.amount), period: semestral.period, visuals: PLAN_VISUALS.semestral };
+    return { name: 'Plan', price: '-', period: '', visuals: PLAN_VISUALS.fallback };
   };
 
   if (loading || pricingLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="animate-spin text-cyan-500" size={32} />
+      <div className="min-h-screen bg-background flex items-center justify-center" role="status" aria-live="polite">
+        <Loader2 className="animate-spin text-primary" size={32} />
+        <span className="sr-only">Cargando tu suscripción</span>
       </div>
     );
   }
@@ -133,360 +137,430 @@ const MiSuscripcion = () => {
   const isActive = subscription?.subscription_status === 'active';
   const daysRemaining = calculateDaysRemaining();
   const planDetails = getPlanDetails(subscription?.subscription_plan);
+  const totalDays = subscription?.subscription_plan === 'monthly' ? 30 : 180;
+  const progressPct = Math.max(5, Math.min(100, (daysRemaining / totalDays) * 100));
+
+  // ==================== HEADER (shared) ====================
+  const Header = () => (
+    <motion.div {...fadeUp} className="flex items-center justify-between gap-4">
+      <div>
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">Mi Suscripción</h1>
+        <p className="text-sm md:text-base text-muted-foreground mt-1">Gestiona tu plan de Remy</p>
+      </div>
+      <Button
+        variant="ghost"
+        onClick={() => navigate('/dashboard')}
+        className="text-muted-foreground hover:text-foreground"
+      >
+        <ArrowLeft size={18} className="mr-2" />
+        Volver
+      </Button>
+    </motion.div>
+  );
 
   // ==================== NO SUBSCRIPTION VIEW ====================
   if (!isActive) {
+    const benefits = [
+      { icon: Sparkles, label: 'Cursos ilimitados', tone: 'text-cyan-500 dark:text-cyan-400' },
+      { icon: ClipboardCheck, label: 'Simulacros', tone: 'text-violet-500 dark:text-violet-400' },
+      { icon: TrendingUp, label: 'Progreso', tone: 'text-emerald-500 dark:text-emerald-400' },
+      { icon: Zap, label: 'Correcciones', tone: 'text-amber-500 dark:text-amber-400' }
+    ];
+
     return (
-      <div className="max-w-4xl mx-auto space-y-8 pb-24 lg:pb-8" data-testid="mi-suscripcion-page">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-slate-900">Mi Suscripción</h1>
-            <p className="text-slate-500 mt-1">Gestiona tu plan de Remy</p>
-          </div>
-          <Button variant="ghost" onClick={() => navigate('/biblioteca')}>
-            <ArrowLeft size={18} className="mr-2" />
-            Volver
-          </Button>
+      <div className="min-h-screen bg-background py-8 md:py-12 px-4 relative overflow-hidden" data-testid="mi-suscripcion-page">
+        {/* Ambient decoration (visible mainly in dark mode) */}
+        <div className="absolute inset-0 pointer-events-none opacity-50 dark:opacity-100" aria-hidden="true">
+          <div className="absolute top-0 -left-32 w-[500px] h-[500px] bg-primary/8 dark:bg-primary/12 rounded-full blur-[140px]" />
+          <div className="absolute bottom-0 -right-32 w-[400px] h-[400px] bg-blue-500/8 dark:bg-blue-500/12 rounded-full blur-[140px]" />
         </div>
 
-        {/* No Subscription Card */}
-        <Card className="overflow-hidden border-0 shadow-xl">
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-8 text-white text-center">
-            <div className="w-20 h-20 bg-white/10 rounded-full mx-auto mb-6 flex items-center justify-center">
-              <Crown size={40} className="text-cyan-400" />
-            </div>
-            <h2 className="text-2xl font-bold mb-2">Sin suscripción activa</h2>
-            <p className="text-slate-300 max-w-md mx-auto">
-              Desbloquea todo el potencial de Remy con una suscripción premium
-            </p>
-          </div>
-          
-          <CardContent className="p-8">
-            {/* Benefits Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              {[
-                { icon: Sparkles, label: 'Cursos ilimitados', color: 'text-cyan-500' },
-                { icon: ClipboardCheck, label: 'Simulacros', color: 'text-purple-500' },
-                { icon: TrendingUp, label: 'Progreso', color: 'text-green-500' },
-                { icon: Zap, label: 'Correcciones', color: 'text-yellow-500' }
-              ].map((item, idx) => (
-                <div key={idx} className="text-center p-4 rounded-xl bg-slate-50">
-                  <item.icon className={`mx-auto mb-2 ${item.color}`} size={24} />
-                  <p className="text-sm font-medium text-slate-700">{item.label}</p>
-                </div>
-              ))}
-            </div>
+        <div className="max-w-4xl mx-auto space-y-6 md:space-y-8 relative z-10">
+          <Header />
 
-            {/* Plans - Dynamic Pricing */}
-            <div className="grid md:grid-cols-2 gap-4 mb-8">
-              {/* Monthly */}
-              <div 
-                className="relative p-6 rounded-2xl border-2 border-slate-200 hover:border-cyan-300 cursor-pointer transition-all hover:shadow-lg"
-                onClick={() => navigate('/subscribe?plan=monthly')}
-              >
-                {monthly.discount_active && (
-                  <div className="absolute -top-3 right-4 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                    -{monthly.discount_percentage}%
-                  </div>
-                )}
-                <h3 className="font-bold text-lg mb-1">{monthly.name}</h3>
-                <div className="mb-2">
-                  {monthly.discount_active && monthly.original_amount && (
-                    <span className="text-sm text-slate-400 line-through mr-2">
-                      {formatPrice(monthly.original_amount)}
-                    </span>
-                  )}
-                  <span className="text-3xl font-bold text-slate-900">
-                    {formatPrice(monthly.amount)}
-                  </span>
-                  <span className="text-sm font-normal text-slate-500"> CLP/{monthly.period}</span>
-                </div>
-                <p className="text-sm text-slate-500">Flexibilidad total, cancela cuando quieras</p>
-                <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300" size={24} />
+          {/* Hero card — no subscription */}
+        <motion.div {...stagger(1)}>
+          <Card className="overflow-hidden border-border bg-card">
+            {/* Top accent strip */}
+            <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-8 md:p-10 text-white text-center overflow-hidden">
+              <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+                <div className="absolute -top-20 -right-20 w-64 h-64 bg-cyan-500/20 rounded-full blur-3xl" />
+                <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-blue-500/15 rounded-full blur-3xl" />
               </div>
-
-              {/* Semestral */}
-              <div 
-                className={`relative p-6 rounded-2xl border-2 ${semestral.is_popular ? 'border-cyan-500 bg-gradient-to-br from-cyan-50 to-blue-50' : 'border-slate-200'} cursor-pointer transition-all hover:shadow-lg`}
-                onClick={() => navigate('/subscribe?plan=semestral')}
-              >
-                {semestral.discount_active && (
-                  <div className="absolute -top-3 right-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">
-                    AHORRA {semestral.discount_percentage}%
-                  </div>
-                )}
-                <h3 className="font-bold text-lg mb-1">{semestral.name}</h3>
-                <div className="mb-2">
-                  {semestral.discount_active && semestral.original_amount && (
-                    <span className="text-sm text-slate-400 line-through mr-2">
-                      {formatPrice(semestral.original_amount)}
-                    </span>
-                  )}
-                  <span className="text-3xl font-bold text-slate-900">
-                    {formatPrice(semestral.amount)}
-                  </span>
-                  <span className="text-sm font-normal text-slate-500"> CLP/{semestral.period}</span>
+              <div className="relative">
+                <div className="w-20 h-20 bg-white/10 ring-1 ring-white/20 rounded-full mx-auto mb-5 flex items-center justify-center backdrop-blur-sm">
+                  <Crown size={40} className="text-cyan-300" aria-hidden="true" />
                 </div>
-                <p className="text-sm text-slate-500">El mejor valor para tu aprendizaje</p>
-                <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 text-cyan-500" size={24} />
+                <h2 className="text-2xl md:text-3xl font-bold mb-2 tracking-tight">Sin suscripción activa</h2>
+                <p className="text-slate-300 max-w-md mx-auto text-sm md:text-base">
+                  Desbloquea todo el potencial de Remy con una suscripción premium.
+                </p>
               </div>
             </div>
 
-            <Button 
-              size="lg"
-              className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white py-6 text-lg rounded-xl shadow-lg"
-              onClick={() => navigate('/subscribe')}
-            >
-              <Crown className="mr-2" size={20} />
-              Comenzar mi suscripción
-            </Button>
-          </CardContent>
-        </Card>
+            <CardContent className="p-6 md:p-8 space-y-8">
+              {/* Benefits */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                {benefits.map((b, idx) => {
+                  const Icon = b.icon;
+                  return (
+                    <motion.div
+                      key={idx}
+                      {...stagger(idx + 2)}
+                      className="text-center p-4 rounded-xl bg-muted border border-border"
+                    >
+                      <Icon className={`mx-auto mb-2 ${b.tone}`} size={24} aria-hidden="true" />
+                      <p className="text-sm font-medium text-foreground">{b.label}</p>
+                    </motion.div>
+                  );
+                })}
+              </div>
+
+              {/* Plans */}
+              <div className="grid md:grid-cols-2 gap-4">
+                {[monthly, semestral].filter(Boolean).map((plan, idx) => {
+                  const isPopular = plan.is_popular;
+                  const hasDiscount = plan.discount_active && plan.discount_percentage > 0;
+                  const monthlyEquivalent = plan.id === 'semestral' ? Math.round(plan.amount / 6) : null;
+
+                  return (
+                    <motion.button
+                      key={plan.id}
+                      type="button"
+                      {...stagger(idx + 6)}
+                      onClick={() => navigate(`/subscribe?plan=${plan.id}`)}
+                      data-testid={`plan-card-${plan.id}`}
+                      className={`group relative text-left p-5 md:p-6 rounded-2xl border-2 transition-all hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                        isPopular
+                          ? 'border-primary bg-primary/5 hover:bg-primary/10 hover:shadow-primary/20'
+                          : 'border-border bg-background hover:border-primary/50'
+                      }`}
+                    >
+                      {hasDiscount && (
+                        <div className="absolute -top-3 right-4">
+                          <Badge className={`${isPopular ? 'bg-primary text-primary-foreground' : 'bg-red-500 text-white hover:bg-red-500'} border-0 text-xs px-3 py-1 font-bold`}>
+                            {isPopular ? `AHORRA ${plan.discount_percentage}%` : `-${plan.discount_percentage}%`}
+                          </Badge>
+                        </div>
+                      )}
+
+                      <h3 className="font-bold text-lg text-foreground mb-2">{plan.name}</h3>
+
+                      <div className="flex items-baseline gap-2 flex-wrap mb-2">
+                        {hasDiscount && plan.original_amount && (
+                          <span className="text-sm text-muted-foreground line-through">
+                            {formatPrice(plan.original_amount)}
+                          </span>
+                        )}
+                        <span className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
+                          {formatPrice(plan.amount)}
+                        </span>
+                        <span className="text-sm text-muted-foreground">CLP/{plan.period}</span>
+                      </div>
+
+                      {monthlyEquivalent && (
+                        <p className="text-xs text-primary font-medium mb-2">
+                          Equivale a {formatPrice(monthlyEquivalent)} CLP/mes
+                        </p>
+                      )}
+
+                      <p className="text-sm text-muted-foreground pr-6">
+                        {plan.id === 'monthly'
+                          ? 'Flexibilidad total, cancela cuando quieras'
+                          : 'El mejor valor para tu aprendizaje'}
+                      </p>
+
+                      <ChevronRight
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all"
+                        size={22}
+                        aria-hidden="true"
+                      />
+                    </motion.button>
+                  );
+                })}
+              </div>
+
+              {/* Primary CTA */}
+              <Button
+                size="lg"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-base md:text-lg rounded-xl shadow-lg shadow-primary/20 font-semibold"
+                onClick={() => navigate('/subscribe')}
+                data-testid="subscribe-cta"
+              >
+                <Crown className="mr-2" size={20} />
+                Comenzar mi suscripción
+              </Button>
+            </CardContent>
+          </Card>
+        </motion.div>
+        </div>
       </div>
     );
   }
 
   // ==================== ACTIVE SUBSCRIPTION VIEW ====================
   return (
-    <div className="max-w-4xl mx-auto space-y-6 pb-24 lg:pb-8" data-testid="mi-suscripcion-page">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900">Mi Suscripción</h1>
-          <p className="text-slate-500 mt-1">Gestiona tu plan de Remy</p>
-        </div>
-        <Button variant="ghost" onClick={() => navigate('/biblioteca')}>
-          <ArrowLeft size={18} className="mr-2" />
-          Volver
-        </Button>
+    <div className="min-h-screen bg-background py-8 md:py-12 px-4 relative overflow-hidden" data-testid="mi-suscripcion-page">
+      {/* Ambient decoration */}
+      <div className="absolute inset-0 pointer-events-none opacity-50 dark:opacity-100" aria-hidden="true">
+        <div className="absolute top-0 -left-32 w-[500px] h-[500px] bg-primary/8 dark:bg-primary/12 rounded-full blur-[140px]" />
+        <div className="absolute bottom-0 -right-32 w-[400px] h-[400px] bg-blue-500/8 dark:bg-blue-500/12 rounded-full blur-[140px]" />
       </div>
 
-      {/* Main Subscription Card */}
-      <Card className="overflow-hidden border-0 shadow-xl">
-        <div className={`bg-gradient-to-r ${planDetails.color} p-8 text-white relative overflow-hidden`}>
-          {/* Background decoration */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
-          
-          <div className="relative z-10">
-            <div className="flex items-start justify-between mb-6">
-              <div>
-                <Badge className="bg-white/20 text-white mb-3 px-3 py-1">
-                  <Star size={12} className="mr-1" fill="currentColor" />
-                  PREMIUM ACTIVO
-                </Badge>
-                <h2 className="text-3xl font-bold mb-1">{planDetails.name}</h2>
-                <p className="text-white/80">{planDetails.price} CLP/{planDetails.period}</p>
-              </div>
-              <div className="text-right">
-                <div className="text-5xl font-bold">{daysRemaining}</div>
-                <div className="text-white/80 text-sm">días restantes</div>
-              </div>
+      <div className="max-w-4xl mx-auto space-y-6 relative z-10">
+        <Header />
+
+      {/* Status hero */}
+      <motion.div {...stagger(1)}>
+        <Card className={`overflow-hidden border-0 shadow-xl ${planDetails.visuals.glow}`}>
+          <div className={`bg-gradient-to-br ${planDetails.visuals.gradient} p-6 md:p-8 text-white relative overflow-hidden`}>
+            <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+              <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full blur-2xl" />
+              <div className="absolute -bottom-20 -left-20 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
             </div>
 
-            {/* Progress bar */}
-            <div className="bg-white/20 rounded-full h-2 overflow-hidden">
-              <div 
-                className="bg-white h-full rounded-full transition-all duration-500"
-                style={{ width: `${Math.max(5, (daysRemaining / (subscription?.subscription_plan === 'monthly' ? 30 : 180)) * 100)}%` }}
-              />
-            </div>
-            <p className="text-white/70 text-sm mt-2">
-              Se renueva el {formatDate(subscription?.subscription_end)}
-            </p>
-          </div>
-        </div>
-
-        <CardContent className="p-6 space-y-6">
-          {/* Info Grid */}
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-center p-4 bg-slate-50 rounded-xl">
-              <Calendar className="mx-auto mb-2 text-slate-400" size={20} />
-              <p className="text-xs text-slate-500 mb-1">Inicio</p>
-              <p className="font-semibold text-sm text-slate-900">
-                {formatDate(user?.subscription_start || subscription?.subscription_details?.start_date)}
-              </p>
-            </div>
-            <div className="text-center p-4 bg-slate-50 rounded-xl">
-              <RefreshCw className="mx-auto mb-2 text-slate-400" size={20} />
-              <p className="text-xs text-slate-500 mb-1">Próximo cobro</p>
-              <p className="font-semibold text-sm text-slate-900">
-                {formatDate(subscription?.subscription_end)}
-              </p>
-            </div>
-            <div className="text-center p-4 bg-slate-50 rounded-xl">
-              <CreditCard className="mx-auto mb-2 text-slate-400" size={20} />
-              <p className="text-xs text-slate-500 mb-1">Tipo</p>
-              <p className="font-semibold text-sm text-slate-900 capitalize">
-                {subscription?.subscription_type === 'mercadopago' ? 'Mercado Pago' : 'Manual'}
-              </p>
-            </div>
-          </div>
-
-          {/* Auto renewal notice */}
-          {subscription?.subscription_type === 'mercadopago' && (
-            <div className="flex items-start gap-4 p-4 bg-blue-50 rounded-xl border border-blue-100">
-              <div className="bg-blue-100 rounded-full p-2">
-                <Shield className="text-blue-600" size={20} />
-              </div>
-              <div>
-                <h4 className="font-semibold text-blue-900 mb-1">Renovación automática activa</h4>
-                <p className="text-sm text-blue-700">
-                  Tu suscripción se renovará automáticamente el {formatDate(subscription?.subscription_end)}. 
-                  Se cargará {planDetails.price} CLP a tu tarjeta.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Manual access notice */}
-          {subscription?.subscription_type === 'manual' && (
-            <div className="flex items-start gap-4 p-4 bg-purple-50 rounded-xl border border-purple-100">
-              <div className="bg-purple-100 rounded-full p-2">
-                <Gift className="text-purple-600" size={20} />
-              </div>
-              <div>
-                <h4 className="font-semibold text-purple-900 mb-1">Acceso cortesía</h4>
-                <p className="text-sm text-purple-700">
-                  Tu acceso fue otorgado por el administrador y expira el {formatDate(subscription?.subscription_end)}. 
-                  No se realizarán cobros automáticos.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Benefits - Use features from pricing */}
-          <div>
-            <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
-              <Zap className="text-cyan-500" size={18} />
-              Incluido en tu plan
-            </h3>
-            <div className="grid grid-cols-2 gap-3">
-              {(subscription?.subscription_plan === 'semestral' ? semestral.features : monthly.features).map((benefit, idx) => (
-                <div key={idx} className="flex items-center gap-2 text-sm text-slate-600">
-                  <CheckCircle size={16} className="text-green-500 flex-shrink-0" />
-                  {benefit}
+            <div className="relative z-10">
+              <div className="flex items-start justify-between gap-4 mb-6 flex-wrap">
+                <div className="min-w-0">
+                  <Badge className="bg-white/20 text-white hover:bg-white/20 mb-3 px-3 py-1 border-0 backdrop-blur-sm">
+                    <Star size={12} className="mr-1" fill="currentColor" aria-hidden="true" />
+                    PREMIUM ACTIVO
+                  </Badge>
+                  <h2 className="text-2xl md:text-3xl font-bold mb-1 tracking-tight">{planDetails.name}</h2>
+                  <p className="text-white/80 text-sm md:text-base">
+                    {planDetails.price} CLP / {planDetails.period}
+                  </p>
                 </div>
-              ))}
+                <div className="text-right">
+                  <div className="text-4xl md:text-5xl font-bold tabular-nums leading-none">{daysRemaining}</div>
+                  <div className="text-white/80 text-xs md:text-sm mt-1">días restantes</div>
+                </div>
+              </div>
+
+              <div
+                className="bg-white/20 rounded-full h-2 overflow-hidden"
+                role="progressbar"
+                aria-label="Tiempo restante de tu suscripción"
+                aria-valuenow={daysRemaining}
+                aria-valuemin={0}
+                aria-valuemax={totalDays}
+              >
+                <div
+                  className="bg-white h-full rounded-full transition-all duration-500"
+                  style={{ width: `${progressPct}%` }}
+                />
+              </div>
+              <p className="text-white/80 text-xs md:text-sm mt-3">
+                Se renueva el {formatDate(subscription?.subscription_end)}
+              </p>
             </div>
           </div>
-        </CardContent>
-      </Card>
 
-      {/* Cancel Section - Only for Mercado Pago */}
-      {subscription?.subscription_type === 'mercadopago' && (
-        <Card className="border-slate-200">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-semibold text-slate-900">¿Necesitas cancelar?</h3>
-                <p className="text-sm text-slate-500">
-                  Mantendrás acceso hasta el {formatDate(subscription?.subscription_end)}
-                </p>
-              </div>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="outline" className="text-red-600 border-red-200 hover:bg-red-50">
-                    Cancelar suscripción
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle className="flex items-center gap-2">
-                      <AlertTriangle className="text-yellow-500" size={24} />
-                      ¿Cancelar tu suscripción?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription className="space-y-3 text-left">
-                      <p>Si cancelas:</p>
-                      <ul className="list-disc list-inside space-y-1 text-sm">
-                        <li>No se realizarán más cobros</li>
-                        <li>Mantendrás acceso hasta el {formatDate(subscription?.subscription_end)}</li>
-                        <li>Después perderás acceso al contenido</li>
-                        <li>Puedes volver a suscribirte cuando quieras</li>
-                      </ul>
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Mantener suscripción</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={handleCancelSubscription}
-                      disabled={cancelling}
-                      className="bg-red-600 hover:bg-red-700"
-                    >
-                      {cancelling ? 'Cancelando...' : 'Sí, cancelar'}
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+          <CardContent className="p-6 space-y-6">
+            {/* Info grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {[
+                { icon: Calendar, label: 'Inicio', value: formatDate(user?.subscription_start || subscription?.subscription_details?.start_date) },
+                { icon: RefreshCw, label: 'Próximo cobro', value: formatDate(subscription?.subscription_end) },
+                { icon: CreditCard, label: 'Tipo', value: subscription?.subscription_type === 'mercadopago' ? 'Mercado Pago' : 'Manual' }
+              ].map((item, idx) => {
+                const Icon = item.icon;
+                return (
+                  <motion.div
+                    key={idx}
+                    {...stagger(idx + 2)}
+                    className="text-center p-4 bg-muted border border-border rounded-xl"
+                  >
+                    <Icon className="mx-auto mb-2 text-muted-foreground" size={20} aria-hidden="true" />
+                    <p className="text-xs text-muted-foreground mb-1">{item.label}</p>
+                    <p className="font-semibold text-sm text-foreground">{item.value}</p>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* Auto-renewal notice */}
+            {subscription?.subscription_type === 'mercadopago' && (
+              <motion.div
+                {...fadeUp}
+                className="flex items-start gap-4 p-4 bg-primary/10 rounded-xl border border-primary/20"
+              >
+                <div className="bg-primary/20 rounded-full p-2 flex-shrink-0">
+                  <Shield className="text-primary" size={20} aria-hidden="true" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="font-semibold text-foreground mb-1">Renovación automática activa</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Tu suscripción se renovará automáticamente el {formatDate(subscription?.subscription_end)}.
+                    Se cargará {planDetails.price} CLP a tu tarjeta.
+                  </p>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Manual access notice */}
+            {subscription?.subscription_type === 'manual' && (
+              <motion.div
+                {...fadeUp}
+                className="flex items-start gap-4 p-4 bg-violet-500/10 rounded-xl border border-violet-500/20"
+              >
+                <div className="bg-violet-500/20 rounded-full p-2 flex-shrink-0">
+                  <Gift className="text-violet-500 dark:text-violet-400" size={20} aria-hidden="true" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="font-semibold text-foreground mb-1">Acceso cortesía</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Tu acceso fue otorgado por el administrador y expira el {formatDate(subscription?.subscription_end)}.
+                    No se realizarán cobros automáticos.
+                  </p>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Features */}
+            <div>
+              <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+                <Zap className="text-primary" size={18} aria-hidden="true" />
+                Incluido en tu plan
+              </h3>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {(subscription?.subscription_plan === 'semestral' ? semestral.features : monthly.features).map((benefit, idx) => (
+                  <li key={idx} className="flex items-start gap-2 text-sm text-foreground">
+                    <CheckCircle size={16} className="text-emerald-500 dark:text-emerald-400 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                    <span>{benefit}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </CardContent>
         </Card>
+      </motion.div>
+
+      {/* Cancel section — only Mercado Pago */}
+      {subscription?.subscription_type === 'mercadopago' && (
+        <motion.div {...stagger(2)}>
+          <Card className="border-border bg-card">
+            <CardContent className="p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-foreground">¿Necesitas cancelar?</h3>
+                  <p className="text-sm text-muted-foreground mt-0.5">
+                    Mantendrás acceso hasta el {formatDate(subscription?.subscription_end)}
+                  </p>
+                </div>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive"
+                      data-testid="cancel-subscription-btn"
+                    >
+                      Cancelar suscripción
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle className="flex items-center gap-2">
+                        <AlertTriangle className="text-amber-500" size={24} aria-hidden="true" />
+                        ¿Cancelar tu suscripción?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription asChild>
+                        <div className="space-y-3 text-left">
+                          <p>Si cancelas:</p>
+                          <ul className="list-disc list-inside space-y-1 text-sm">
+                            <li>No se realizarán más cobros</li>
+                            <li>Mantendrás acceso hasta el {formatDate(subscription?.subscription_end)}</li>
+                            <li>Después perderás acceso al contenido</li>
+                            <li>Puedes volver a suscribirte cuando quieras</li>
+                          </ul>
+                        </div>
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Mantener suscripción</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={handleCancelSubscription}
+                        disabled={cancelling}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        {cancelling ? (
+                          <>
+                            <Loader2 size={16} className="mr-2 animate-spin" />
+                            Cancelando...
+                          </>
+                        ) : (
+                          'Sí, cancelar'
+                        )}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
       )}
 
       {/* FAQ */}
-      <Card>
-        <CardContent className="p-6">
-          <h3 className="font-semibold text-slate-900 mb-4">Preguntas frecuentes</h3>
-          <div className="space-y-4 text-sm">
-            <div>
-              <p className="font-medium text-slate-700">¿Cómo funciona la renovación?</p>
-              <p className="text-slate-500">Se cobra automáticamente al final de cada período.</p>
-            </div>
-            <div>
-              <p className="font-medium text-slate-700">¿Puedo cancelar?</p>
-              <p className="text-slate-500">Sí, mantendrás acceso hasta el final del período pagado.</p>
-            </div>
-            <div>
-              <p className="font-medium text-slate-700">¿Cómo cambio mi tarjeta?</p>
-              <p className="text-slate-500">Cancela y vuelve a suscribirte con la nueva tarjeta.</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <motion.div {...stagger(3)}>
+        <Card className="border-border bg-card">
+          <CardContent className="p-6">
+            <h3 className="font-semibold text-foreground mb-4">Preguntas frecuentes</h3>
+            <Accordion type="single" collapsible className="w-full">
+              {[
+                { q: '¿Cómo funciona la renovación?', a: 'Se cobra automáticamente al final de cada período usando la misma tarjeta con la que te suscribiste.' },
+                { q: '¿Puedo cancelar?', a: 'Sí. Cancelas con un click y mantendrás acceso hasta el final del período ya pagado. Sin letra chica.' },
+                { q: '¿Cómo cambio mi tarjeta?', a: 'Por ahora, cancela tu suscripción actual y vuelve a suscribirte con la nueva tarjeta. Próximamente podrás actualizarla directo desde la cuenta.' },
+                { q: '¿Tienen reembolsos?', a: 'Si tuviste un problema dentro de los primeros 7 días, contáctanos por WhatsApp y revisamos tu caso.' }
+              ].map((item, idx) => (
+                <AccordionItem
+                  key={idx}
+                  value={`faq-${idx}`}
+                  className="border-border last:border-b-0"
+                >
+                  <AccordionTrigger className="text-left text-sm md:text-base font-medium text-foreground hover:no-underline">
+                    {item.q}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-sm text-muted-foreground leading-relaxed">
+                    {item.a}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </CardContent>
+        </Card>
+      </motion.div>
 
-      {/* Support Section */}
-      <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
-        <CardContent className="p-6">
-          <div className="flex items-center gap-4">
-            <div className="bg-green-500 p-3 rounded-full">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-              </svg>
+      {/* Support card */}
+      <motion.div {...stagger(4)}>
+        <Card className="border-emerald-500/20 bg-emerald-500/5">
+          <CardContent className="p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+              <div className="bg-emerald-500 p-3 rounded-full flex-shrink-0">
+                <MessageCircle className="text-white" size={24} aria-hidden="true" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-foreground">¿Necesitas ayuda?</h3>
+                <p className="text-sm text-muted-foreground">
+                  Contacta a soporte por WhatsApp para reembolsos u otras consultas.
+                </p>
+              </div>
+              <a
+                href="https://wa.me/56953047119?text=Hola,%20necesito%20ayuda%20con%20mi%20suscripci%C3%B3n%20de%20Remy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-lg font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                data-testid="whatsapp-support-link"
+              >
+                Contactar
+              </a>
             </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-slate-900">¿Necesitas ayuda?</h3>
-              <p className="text-sm text-slate-600">Contacta a soporte por WhatsApp para reembolsos u otras consultas</p>
-            </div>
-            <a
-              href="https://wa.me/56953047119?text=Hola,%20necesito%20ayuda%20con%20mi%20suscripción%20de%20Remy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
-            >
-              Contactar
-            </a>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </motion.div>
+      </div>
     </div>
   );
 };
-
-// Missing icons
-const ClipboardCheck = (props) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
-    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
-    <path d="m9 14 2 2 4-4"/>
-  </svg>
-);
-
-const TrendingUp = (props) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
-    <polyline points="16 7 22 7 22 13"/>
-  </svg>
-);
 
 export default MiSuscripcion;

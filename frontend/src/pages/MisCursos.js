@@ -83,7 +83,7 @@ const MisCursos = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold mb-2">Mis Cursos</h1>
-          <p className="text-slate-600 dark:text-slate-400">
+          <p className="text-muted-foreground">
             Cursos en los que estás inscrito
           </p>
         </div>
@@ -112,9 +112,9 @@ const MisCursos = () => {
 
       {courses.length === 0 ? (
         <Card className="p-12 text-center">
-          <GraduationCap className="mx-auto mb-4 text-slate-400" size={64} />
-          <h3 className="text-xl font-semibold mb-2">No tienes cursos inscritos</h3>
-          <p className="text-slate-500 mb-6">
+          <GraduationCap className="mx-auto mb-4 text-muted-foreground" size={64} />
+          <h3 className="text-xl font-semibold mb-2 text-foreground">No tienes cursos inscritos</h3>
+          <p className="text-muted-foreground mb-6">
             Explora la biblioteca y encuentra cursos que te interesen
           </p>
           <Button size="lg" onClick={() => navigate('/biblioteca')}>
@@ -161,12 +161,12 @@ const MisCursos = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 line-clamp-2">
+                <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
                   <InlineMd>{course.description}</InlineMd>
                 </p>
                 
                 {course.enrolled_at && (
-                  <div className="flex items-center gap-2 text-xs text-slate-500 mb-4">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-4">
                     <Clock size={14} />
                     <span>
                       Inscrito el {new Date(course.enrolled_at).toLocaleDateString('es-CL')}
@@ -187,7 +187,7 @@ const MisCursos = () => {
                     variant="ghost"
                     size="icon"
                     onClick={() => handleUnenroll(course.id, course.title)}
-                    className="text-slate-400 hover:text-red-500"
+                    className="text-muted-foreground hover:text-destructive"
                     title="Desinscribirse"
                     data-testid={`unenroll-${course.id}`}
                   >

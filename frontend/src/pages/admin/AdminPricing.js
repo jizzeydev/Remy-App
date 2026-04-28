@@ -23,11 +23,11 @@ const AdminPricing = () => {
   const [saving, setSaving] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
   
-  // Pricing state
+  // Pricing state — defaults match launch pricing ($4.990 / $19.990)
   const [monthly, setMonthly] = useState({
     name: 'Plan Mensual',
     description: 'Acceso completo por 1 mes',
-    base_price: 9990,
+    base_price: 4990,
     features: ['Acceso a todos los cursos', 'Simulacros ilimitados', 'Seguimiento de progreso', 'Correcciones detalladas'],
     discount_enabled: false,
     discount_percentage: 0,
@@ -39,11 +39,11 @@ const AdminPricing = () => {
   const [semestral, setSemestral] = useState({
     name: 'Plan Semestral',
     description: 'El más popular - 6 meses de acceso',
-    base_price: 59940,
-    final_price: 29990,
+    base_price: 29940,
+    final_price: 19990,
     features: ['Acceso a todos los cursos', 'Simulacros ilimitados', 'Seguimiento de progreso', 'Correcciones detalladas', 'Acceso anticipado a nuevos cursos'],
     discount_enabled: true,
-    discount_percentage: 50,
+    discount_percentage: 33,
     promotion_start: '',
     promotion_end: '',
     is_popular: true
@@ -67,7 +67,7 @@ const AdminPricing = () => {
           setMonthly({
             name: plans.monthly.name || 'Plan Mensual',
             description: plans.monthly.description || '',
-            base_price: plans.monthly.base_price || 9990,
+            base_price: plans.monthly.base_price || 4990,
             features: plans.monthly.features || [],
             discount_enabled: plans.monthly.discount_enabled || false,
             discount_percentage: plans.monthly.discount_percentage || 0,
@@ -81,11 +81,11 @@ const AdminPricing = () => {
           setSemestral({
             name: plans.semestral.name || 'Plan Semestral',
             description: plans.semestral.description || '',
-            base_price: plans.semestral.base_price || 59940,
-            final_price: plans.semestral.final_price || 29990,
+            base_price: plans.semestral.base_price || 29940,
+            final_price: plans.semestral.final_price || 19990,
             features: plans.semestral.features || [],
             discount_enabled: plans.semestral.discount_enabled || true,
-            discount_percentage: plans.semestral.discount_percentage || 50,
+            discount_percentage: plans.semestral.discount_percentage || 33,
             promotion_start: plans.semestral.promotion_start || '',
             promotion_end: plans.semestral.promotion_end || '',
             is_popular: plans.semestral.is_popular || true

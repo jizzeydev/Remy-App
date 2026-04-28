@@ -18,14 +18,14 @@ logger = logging.getLogger(__name__)
 PLANS = {
     "monthly": {
         "name": "Plan Mensual Remy",
-        "amount": 9990.0,
+        "amount": 4990.0,
         "frequency": 1,
         "frequency_type": "months",
         "currency": "CLP"
     },
     "semestral": {
         "name": "Plan Semestral Remy",
-        "amount": 29990.0,
+        "amount": 19990.0,
         "frequency": 6,
         "frequency_type": "months",
         "currency": "CLP"

@@ -12,12 +12,13 @@ const API = `${BACKEND_URL}/api`;
 const PricingContext = createContext(null);
 
 // Default pricing (fallback only - should rarely be needed)
+// Launch prices: $4.990 mensual / $19.990 semestral (33% off vs paying month-by-month)
 const DEFAULT_PRICING = {
   monthly: {
     id: 'monthly',
     name: 'Plan Mensual',
     description: 'Acceso completo por 1 mes',
-    amount: 9990,
+    amount: 4990,
     original_amount: null,
     discount_percentage: 0,
     discount_active: false,
@@ -35,9 +36,9 @@ const DEFAULT_PRICING = {
     id: 'semestral',
     name: 'Plan Semestral',
     description: 'El más popular - 6 meses de acceso',
-    amount: 29990,
-    original_amount: 59940,
-    discount_percentage: 50,
+    amount: 19990,
+    original_amount: 29940,
+    discount_percentage: 33,
     discount_active: true,
     currency: 'CLP',
     frequency: 'semestral',
@@ -131,7 +132,7 @@ export const PricingProvider = ({ children }) => {
  * 
  * @example
  * const { monthly, semestral, formatPrice, loading } = usePricing();
- * console.log(monthly.amount); // 9990
+ * console.log(monthly.amount); // 4990
  * console.log(formatPrice(monthly.amount)); // "$9.990"
  */
 export const usePricing = () => {
