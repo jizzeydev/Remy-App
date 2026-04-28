@@ -14,6 +14,7 @@ import { usePricing } from '../hooks/usePricing';
 import TrialBanner from '../components/TrialBanner';
 import { toast } from 'sonner';
 import InlineMd from '@/components/course/InlineMd';
+import { showAchievementToasts } from '@/lib/achievementToast';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -168,12 +169,13 @@ const Biblioteca = () => {
     
     setEnrolling(course.id);
     try {
-      await axios.post(
+      const res = await axios.post(
         `${API}/enrollments`,
         { course_id: course.id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       toast.success(`Inscrito en "${course.title}"`);
+      showAchievementToasts(res.data?.newly_unlocked_achievements);
       setEnrolledCourseIds(prev => [...prev, course.id]);
       
       // Refresh stats

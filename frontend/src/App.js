@@ -17,6 +17,7 @@ import Simulacros from './pages/Simulacros';
 import Biblioteca from './pages/Biblioteca';
 import MisCursos from './pages/MisCursos';
 import Progreso from './pages/Progreso';
+import Logros from './pages/Logros';
 import CourseViewer from './pages/student/CourseViewer';
 import LessonViewer from './pages/student/LessonViewer';
 import AdminLogin from './pages/admin/AdminLogin';
@@ -94,6 +95,7 @@ function AppRouter() {
         <Route path="/course/:courseId" element={<CourseViewer />} />
         <Route path="/lesson/:lessonId" element={<LessonViewer />} />
         <Route path="/progreso" element={<Progreso />} />
+        <Route path="/logros" element={<Logros />} />
       </Route>
 
       {/* Admin Routes */}

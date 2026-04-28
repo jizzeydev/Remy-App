@@ -18,6 +18,17 @@ def set_db(database):
     global db
     db = database
 
+
+async def _check_achievements_safe(user_id: str):
+    """Best-effort achievement evaluation; never block the enrollment response."""
+    import logging as _logging
+    try:
+        from services import achievements as ach_service
+        return await ach_service.check_and_grant(user_id, db)
+    except Exception as e:  # pragma: no cover — defensive
+        _logging.warning(f"Achievement check failed during enrollment: {e}")
+        return []
+
 # Models
 class Enrollment(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -115,18 +126,22 @@ async def check_trial_enrollment_limit(user_id: str) -> tuple[bool, str]:
         return True, "subscription_active"
     
     # Check if in trial
-    trial_start = user.get("trial_start")
-    if trial_start:
+    # Canonical field is `trial_start_date` (set in auth.py at signup).
+    # `trial_active` is the authoritative boolean flag — auth.py /me flips it
+    # to False when the trial expires, so we can rely on it.
+    trial_active = user.get("trial_active", False)
+    trial_start = user.get("trial_start_date") or user.get("trial_start")
+    if trial_active and trial_start:
         from datetime import timedelta
         if isinstance(trial_start, str):
             trial_start = datetime.fromisoformat(trial_start.replace('Z', '+00:00'))
         # Ensure trial_start is timezone-aware
         if trial_start.tzinfo is None:
             trial_start = trial_start.replace(tzinfo=timezone.utc)
-        
+
         trial_end = trial_start + timedelta(days=7)
         now = datetime.now(timezone.utc)
-        
+
         if now < trial_end:
             # In trial - check enrollment count
             enrollment_count = await db.student_enrollments.count_documents({"student_id": user_id})
@@ -134,7 +149,7 @@ async def check_trial_enrollment_limit(user_id: str) -> tuple[bool, str]:
                 return True, "trial_active"
             else:
                 return False, "trial_limit_reached"
-    
+
     # No trial, no subscription - can't enroll
     return False, "no_subscription"
 
@@ -201,26 +216,30 @@ async def enroll_in_course(
             course_id=course_id
         )
         await db.student_enrollments.insert_one(enrollment.model_dump())
+        newly_unlocked = await _check_achievements_safe(user_id)
         return {
-            "success": True, 
+            "success": True,
             "message": f"Inscrito exitosamente en {course.get('title')}",
-            "enrollment": enrollment.model_dump()
+            "enrollment": enrollment.model_dump(),
+            "newly_unlocked_achievements": newly_unlocked,
         }
-    
+
     # Not premium - check trial limits
     can_enroll, reason = await check_trial_enrollment_limit(user_id)
     logging.info(f"Trial check result: can_enroll={can_enroll}, reason={reason}")
-    
+
     if can_enroll:
         enrollment = Enrollment(
             student_id=user_id,
             course_id=course_id
         )
         await db.student_enrollments.insert_one(enrollment.model_dump())
+        newly_unlocked = await _check_achievements_safe(user_id)
         return {
-            "success": True, 
+            "success": True,
             "message": f"Inscrito exitosamente en {course.get('title')}",
-            "enrollment": enrollment.model_dump()
+            "enrollment": enrollment.model_dump(),
+            "newly_unlocked_achievements": newly_unlocked,
         }
     
     if reason == "trial_limit_reached":

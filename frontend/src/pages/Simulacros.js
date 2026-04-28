@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
-import { 
+import {
   Plus, Loader2, Clock, Trash2, Play, CheckCircle, XCircle,
-  ChevronDown, ChevronRight, BookOpen, Layers, Timer, Award
+  ChevronDown, ChevronRight, BookOpen, Layers, Timer, Award, Eye, AlertCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,10 +11,12 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { toast } from 'sonner';
 import { QuestionContent, QuestionOption, ExplanationBlock } from '@/components/course/QuestionRenderer';
 import SubscriptionRequired from '@/components/SubscriptionRequired';
 import { useAuth } from '../contexts/AuthContext';
+import { showAchievementToasts } from '@/lib/achievementToast';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -45,32 +47,32 @@ const getGradeColor = (grade) => {
 };
 
 // ==================== QUIZ CARD COMPONENT ====================
-const QuizCard = ({ quiz, onStart, onDelete }) => {
+const QuizCard = ({ quiz, onStart, onView, onDelete }) => {
   const isCompleted = quiz.completed && quiz.grade !== null && quiz.grade !== undefined;
-  
+
   return (
-    <Card className="hover:shadow-lg transition-all" data-testid={`quiz-card-${quiz.id}`}>
+    <Card className="hover:shadow-lg transition-all border-border bg-card" data-testid={`quiz-card-${quiz.id}`}>
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <Badge variant="outline" className="text-xs">
             {quiz.difficulty || 'medio'}
           </Badge>
           {isCompleted && (
-            <div className={`px-3 py-1 rounded-full font-bold ${getGradeColor(quiz.grade)}`}>
-              Nota: {quiz.grade}
+            <div className={`px-3 py-1 rounded-full font-bold text-sm tabular-nums ${getGradeColor(quiz.grade)}`}>
+              {quiz.grade}
             </div>
           )}
         </div>
-        <CardTitle className="text-lg mt-2">{quiz.topic || 'Simulacro'}</CardTitle>
+        <CardTitle className="text-lg mt-2 text-foreground">{quiz.topic || 'Simulacro'}</CardTitle>
         <CardDescription className="space-y-1">
           <span className="block">{quiz.course_title || 'Curso'}</span>
           <span className="block text-xs flex items-center gap-2">
             <BookOpen size={12} />
-            {quiz.questions?.length || 0} preguntas
+            <span className="tabular-nums">{quiz.questions?.length || 0} preguntas</span>
             {quiz.time_limit_minutes && (
               <>
                 <Clock size={12} className="ml-2" />
-                {quiz.time_limit_minutes} min
+                <span className="tabular-nums">{quiz.time_limit_minutes} min</span>
               </>
             )}
           </span>
@@ -85,10 +87,21 @@ const QuizCard = ({ quiz, onStart, onDelete }) => {
       </CardHeader>
       <CardContent className="pt-0">
         <div className="flex gap-2">
+          {isCompleted && onView && (
+            <Button
+              onClick={() => onView(quiz)}
+              variant="outline"
+              className="flex-1 rounded-full"
+              data-testid={`view-result-btn-${quiz.id}`}
+            >
+              <Eye size={16} className="mr-2" />
+              Ver resultado
+            </Button>
+          )}
           <Button
             onClick={() => onStart(quiz)}
             className="flex-1 rounded-full"
-            variant={isCompleted ? "outline" : "default"}
+            variant={isCompleted ? 'ghost' : 'default'}
           >
             <Play size={16} className="mr-2" />
             {isCompleted ? 'Reintentar' : 'Comenzar'}
@@ -96,11 +109,83 @@ const QuizCard = ({ quiz, onStart, onDelete }) => {
           <Button
             variant="ghost"
             size="icon"
-            className="text-red-500 hover:text-red-700 hover:bg-red-50"
+            className="text-muted-foreground hover:text-destructive"
             onClick={() => onDelete(quiz.id)}
+            aria-label="Eliminar simulacro"
           >
             <Trash2 size={18} />
           </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+// Reconstruct the quiz/submit response shape from a stored attempt so the
+// review screen can render exactly the same way as a freshly-submitted quiz.
+const buildResultsFromAttempt = (quiz) => {
+  const questions = quiz.questions || [];
+  const answers = quiz.answers || {};
+  let correct = 0;
+  const results = questions.map((q, idx) => {
+    const userAnswer = answers[String(idx)] ?? answers[idx];
+    const isCorrect = userAnswer === q.correct_answer;
+    if (isCorrect) correct += 1;
+    return {
+      question_index: idx,
+      question_text: q.question_text || q.question || '',
+      user_answer: userAnswer,
+      correct_answer: q.correct_answer,
+      is_correct: isCorrect,
+      explanation: q.explanation || ''
+    };
+  });
+  return {
+    score: quiz.score ?? (questions.length ? (correct / questions.length) * 100 : 0),
+    grade: quiz.grade ?? 0,
+    correct_count: correct,
+    total_questions: questions.length,
+    results
+  };
+};
+
+// ==================== LAST ATTEMPT BANNER ====================
+const LastAttemptBanner = ({ quiz, onView, onRetry }) => {
+  if (!quiz) return null;
+  const grade = quiz.grade;
+  const date = quiz.created_at ? new Date(quiz.created_at) : null;
+  return (
+    <Card
+      className="border-border bg-gradient-to-r from-primary/10 via-primary/5 to-transparent"
+      data-testid="last-attempt-banner"
+    >
+      <CardContent className="py-5">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className={`flex-shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-2xl font-bold tabular-nums ${getGradeColor(grade)}`}>
+            {Number(grade).toFixed(1)}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
+              Tu último simulacro
+            </p>
+            <p className="text-base md:text-lg font-semibold text-foreground truncate">
+              {quiz.topic || 'Simulacro'} · {quiz.course_title || ''}
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {date && date.toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' })}
+              {quiz.questions?.length ? ` · ${quiz.questions.length} preguntas` : ''}
+            </p>
+          </div>
+          <div className="flex gap-2 flex-shrink-0">
+            <Button variant="outline" onClick={() => onView(quiz)} className="rounded-full" data-testid="last-attempt-view">
+              <Eye size={16} className="mr-2" />
+              Ver resultado
+            </Button>
+            <Button onClick={() => onRetry(quiz)} className="rounded-full" data-testid="last-attempt-retry">
+              <Play size={16} className="mr-2" />
+              Reintentar
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
@@ -497,22 +582,165 @@ const CreateQuizDialog = ({ open, onOpenChange, onQuizCreated }) => {
   );
 };
 
+// ==================== WRONG-ANSWERS BY CHAPTER CHART ====================
+// Surfaces where the student lost points so they can target practice next time.
+const WrongAnswersChart = ({ quiz, results }) => {
+  const [chapterTitles, setChapterTitles] = useState({});
+
+  // Fetch all chapters for the quiz course so we can show titles instead of UUIDs.
+  useEffect(() => {
+    if (!quiz?.course_id) return;
+    let cancelled = false;
+    axios.get(`${API}/courses/${quiz.course_id}/chapters`)
+      .then((r) => {
+        if (cancelled) return;
+        const map = {};
+        (r.data || []).forEach((ch) => { map[ch.id] = ch.title; });
+        setChapterTitles(map);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [quiz?.course_id]);
+
+  // Aggregate per-chapter stats from per-question results.
+  const data = (() => {
+    const buckets = {};
+    (quiz.questions || []).forEach((q, idx) => {
+      const chId = q.chapter_id || 'sin-capitulo';
+      if (!buckets[chId]) buckets[chId] = { id: chId, total: 0, wrong: 0 };
+      buckets[chId].total += 1;
+      const r = results?.results?.[idx];
+      if (r && r.is_correct === false) buckets[chId].wrong += 1;
+    });
+    return Object.values(buckets)
+      .filter((b) => b.total > 0)
+      .map((b) => ({
+        id: b.id,
+        name: chapterTitles[b.id] || (b.id === 'sin-capitulo' ? 'Sin capítulo' : 'Capítulo'),
+        wrong: b.wrong,
+        total: b.total,
+        correct: b.total - b.wrong,
+        // Truncated label for X axis to avoid clipping
+        shortName: (chapterTitles[b.id] || 'Cap.').slice(0, 18) + ((chapterTitles[b.id]?.length || 0) > 18 ? '…' : ''),
+      }))
+      .sort((a, b) => b.wrong - a.wrong);
+  })();
+
+  if (data.length === 0) return null;
+
+  const hasErrors = data.some((d) => d.wrong > 0);
+
+  return (
+    <Card className="border-border bg-card" data-testid="wrong-answers-chart">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-lg flex items-center gap-2 text-foreground">
+          <AlertCircle size={18} className="text-amber-500 dark:text-amber-400" aria-hidden="true" />
+          Errores por capítulo
+        </CardTitle>
+        <CardDescription>
+          {hasErrors
+            ? 'Capítulos ordenados por cantidad de errores. Practica los de arriba.'
+            : '¡No tuviste errores! Excelente trabajo.'}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="h-56 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={data} margin={{ top: 8, right: 12, left: -16, bottom: 8 }}>
+              <XAxis
+                dataKey="shortName"
+                stroke="hsl(var(--muted-foreground))"
+                tick={{ fontSize: 11 }}
+                interval={0}
+                angle={data.length > 4 ? -20 : 0}
+                textAnchor={data.length > 4 ? 'end' : 'middle'}
+                height={data.length > 4 ? 50 : 30}
+              />
+              <YAxis
+                stroke="hsl(var(--muted-foreground))"
+                tick={{ fontSize: 11 }}
+                allowDecimals={false}
+              />
+              <Tooltip
+                contentStyle={{
+                  background: 'hsl(var(--card))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 8,
+                  fontSize: 12,
+                  color: 'hsl(var(--foreground))'
+                }}
+                formatter={(value, name, props) => {
+                  if (name === 'wrong') return [`${value} de ${props.payload.total}`, 'Errores'];
+                  return [value, name];
+                }}
+                labelFormatter={(_, payload) => payload?.[0]?.payload?.name || ''}
+              />
+              <Bar dataKey="wrong" radius={[8, 8, 0, 0]} maxBarSize={56}>
+                {data.map((entry, i) => (
+                  <Cell
+                    key={i}
+                    fill={
+                      entry.wrong === 0
+                        ? 'hsl(var(--primary))'
+                        : entry.wrong / entry.total >= 0.6
+                        ? '#ef4444' // red-500
+                        : entry.wrong / entry.total >= 0.3
+                        ? '#f59e0b' // amber-500
+                        : '#22c55e' // green-500
+                    }
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Legend with per-chapter counts (more accessible than just hover tooltips) */}
+        <ul className="mt-3 space-y-1.5 text-sm">
+          {data.map((d) => (
+            <li key={d.id} className="flex items-center justify-between gap-3">
+              <span className="text-foreground truncate">{d.name}</span>
+              <span className={`flex-shrink-0 tabular-nums text-xs px-2 py-0.5 rounded-full ${
+                d.wrong === 0
+                  ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+                  : d.wrong / d.total >= 0.6
+                  ? 'bg-red-500/15 text-red-700 dark:text-red-300'
+                  : d.wrong / d.total >= 0.3
+                  ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300'
+                  : 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
+              }`}>
+                {d.wrong}/{d.total} errores
+              </span>
+            </li>
+          ))}
+        </ul>
+      </CardContent>
+    </Card>
+  );
+};
+
 // ==================== ACTIVE QUIZ VIEW ====================
+// `quiz.viewOnly === true` skips the timer and pre-loads the saved answers/results
+// so a completed simulacro can be reviewed without re-answering.
 const ActiveQuizView = ({ quiz, onComplete, onCancel }) => {
-  const [answers, setAnswers] = useState({});
-  const [showResults, setShowResults] = useState(false);
-  const [results, setResults] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(quiz.time_limit_minutes ? quiz.time_limit_minutes * 60 : null);
-  const [timeSpent, setTimeSpent] = useState(0);
+  const isViewOnly = !!quiz.viewOnly;
+  const [answers, setAnswers] = useState(quiz.initialAnswers || {});
+  const [showResults, setShowResults] = useState(isViewOnly);
+  const [results, setResults] = useState(quiz.initialResults || null);
+  const [timeLeft, setTimeLeft] = useState(
+    isViewOnly ? null : (quiz.time_limit_minutes ? quiz.time_limit_minutes * 60 : null)
+  );
+  const [timeSpent, setTimeSpent] = useState(quiz.initialTimeSpent || 0);
   const [submitting, setSubmitting] = useState(false);
   const timerRef = useRef(null);
   const startTimeRef = useRef(Date.now());
 
-  // Timer effect
+  // Timer effect — disabled in view-only mode (just reviewing past attempt).
   useEffect(() => {
+    if (isViewOnly) return;
     timerRef.current = setInterval(() => {
       setTimeSpent(prev => prev + 1);
-      
+
       if (timeLeft !== null) {
         setTimeLeft(prev => {
           if (prev <= 1) {
@@ -529,7 +757,8 @@ const ActiveQuizView = ({ quiz, onComplete, onCancel }) => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isViewOnly]);
 
   const handleAnswerSelect = (questionIndex, answer) => {
     if (showResults) return;
@@ -555,6 +784,7 @@ const ActiveQuizView = ({ quiz, onComplete, onCancel }) => {
       } else {
         toast.success(`¡Completado! Nota: ${response.data.grade}`);
       }
+      showAchievementToasts(response.data.newly_unlocked_achievements);
     } catch (error) {
       console.error('Error submitting quiz:', error);
       toast.error('Error al enviar respuestas');
@@ -597,6 +827,13 @@ const ActiveQuizView = ({ quiz, onComplete, onCancel }) => {
           </div>
         </div>
       </div>
+
+      {/* Wrong-answers chart (above questions, after results header) */}
+      {showResults && results && (
+        <div className="mb-6">
+          <WrongAnswersChart quiz={quiz} results={results} />
+        </div>
+      )}
 
       {/* Results header */}
       {showResults && results && (
@@ -740,11 +977,13 @@ const Simulacros = () => {
   };
 
   const handleStartQuiz = async (quiz) => {
-    // If quiz already has questions (from history), use them
+    // If quiz already has questions (from history), use them. We strip the
+    // saved answers so a "Reintentar" starts fresh.
     if (quiz.questions) {
       setActiveQuiz({
         id: quiz.id,
         questions: quiz.questions,
+        course_id: quiz.course_id,
         time_limit_minutes: quiz.time_limit_minutes,
         course_title: quiz.course_title || quiz.topic
       });
@@ -755,6 +994,7 @@ const Simulacros = () => {
         setActiveQuiz({
           id: response.data.id,
           questions: response.data.questions,
+          course_id: response.data.course_id,
           time_limit_minutes: response.data.time_limit_minutes,
           course_title: response.data.course_title || response.data.topic
         });
@@ -763,6 +1003,31 @@ const Simulacros = () => {
         toast.error('Error al cargar el simulacro');
       }
     }
+  };
+
+  // Open a completed simulacro in read-only review mode (with stored answers/results).
+  const handleViewQuiz = async (quiz) => {
+    let full = quiz;
+    if (!full.answers || !full.questions) {
+      try {
+        const response = await axios.get(`${API}/quiz/${quiz.id}`);
+        full = response.data;
+      } catch (error) {
+        toast.error('Error al cargar el resultado');
+        return;
+      }
+    }
+    setActiveQuiz({
+      id: full.id,
+      questions: full.questions,
+      course_id: full.course_id,
+      time_limit_minutes: full.time_limit_minutes,
+      course_title: full.course_title || full.topic,
+      viewOnly: true,
+      initialAnswers: full.answers || {},
+      initialResults: buildResultsFromAttempt(full),
+      initialTimeSpent: full.time_spent_seconds || 0
+    });
   };
 
   const handleDeleteQuiz = async (quizId) => {
@@ -798,22 +1063,35 @@ const Simulacros = () => {
     );
   }
 
+  // Most recent COMPLETED quiz for the "last attempt" banner.
+  const lastCompletedQuiz = quizzes.find(
+    (q) => q.completed && q.grade !== null && q.grade !== undefined
+  );
+
   return (
     <div className="space-y-6 pb-24 lg:pb-8" data-testid="simulacros-page">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Simulacros de Prueba</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">Simulacros de Prueba</h1>
           <p className="text-muted-foreground mt-1">Practica con exámenes personalizados</p>
         </div>
-        <Button 
-          onClick={() => setCreateDialogOpen(true)} 
-          className="rounded-full"
+        <Button
+          onClick={() => setCreateDialogOpen(true)}
+          className="rounded-full bg-primary hover:bg-primary/90"
           data-testid="create-quiz-button"
         >
           <Plus size={20} className="mr-2" />
           Crear simulacro
         </Button>
       </div>
+
+      {!loading && lastCompletedQuiz && (
+        <LastAttemptBanner
+          quiz={lastCompletedQuiz}
+          onView={handleViewQuiz}
+          onRetry={handleStartQuiz}
+        />
+      )}
 
       <CreateQuizDialog
         open={createDialogOpen}
@@ -848,6 +1126,7 @@ const Simulacros = () => {
               key={quiz.id}
               quiz={quiz}
               onStart={handleStartQuiz}
+              onView={handleViewQuiz}
               onDelete={handleDeleteQuiz}
             />
           ))}

@@ -23,7 +23,9 @@ from routes import payments as payments_routes
 from routes import admin_users as admin_users_routes
 from routes import admin_analytics as admin_analytics_routes
 from routes import images as images_routes
+from routes import achievements as achievements_routes
 from services.image_storage import init_image_storage
+from services import achievements as ach_service
 
 ROOT_DIR = Path(__file__).parent
 UPLOADS_DIR = ROOT_DIR / 'uploads'
@@ -40,6 +42,7 @@ auth_routes.set_db(db)
 payments_routes.set_db(db)
 admin_users_routes.set_db(db)
 admin_analytics_routes.set_db(db)
+achievements_routes.set_db(db)
 
 # Initialize image storage with GridFS
 init_image_storage(db)
@@ -580,12 +583,22 @@ async def submit_quiz(request: QuizSubmitRequest):
             }}
         )
     
+    # Achievements: gate by submission (quiz_attempts is keyed by user_id which
+    # may be the localStorage student_id for unauthenticated quiz starts; the
+    # service handles missing users gracefully).
+    newly_unlocked = []
+    try:
+        newly_unlocked = await ach_service.check_and_grant(quiz["user_id"], db)
+    except Exception as e:
+        logging.warning(f"Achievement check failed after quiz submit: {e}")
+
     return {
         "score": score,
         "grade": grade,
         "correct_count": correct_count,
         "total_questions": total_questions,
-        "results": results
+        "results": results,
+        "newly_unlocked_achievements": newly_unlocked,
     }
 
 @api_router.get("/progress/{user_id}")
@@ -642,8 +655,18 @@ async def complete_lesson(request: CompleteLessonRequest):
             "completed_lessons": [request.lesson_id],
             "last_activity": datetime.now(timezone.utc).isoformat()
         })
-    
-    return {"success": True, "message": "Lección completada"}
+
+    newly_unlocked = []
+    try:
+        newly_unlocked = await ach_service.check_and_grant(request.student_id, db)
+    except Exception as e:
+        logging.warning(f"Achievement check failed after lesson complete: {e}")
+
+    return {
+        "success": True,
+        "message": "Lección completada",
+        "newly_unlocked_achievements": newly_unlocked,
+    }
 
 @api_router.get("/quiz/history/{user_id}")
 async def get_quiz_history(user_id: str, limit: int = 20):
@@ -1884,6 +1907,7 @@ app.include_router(payments_routes.router)
 app.include_router(admin_users_routes.router)
 app.include_router(admin_analytics_routes.router)
 app.include_router(images_routes.router)
+app.include_router(achievements_routes.router, prefix="/api")
 
 # Import and include new routers
 from routes import library_universities as library_universities_routes

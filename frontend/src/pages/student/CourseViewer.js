@@ -9,6 +9,7 @@ import { ArrowLeft, ChevronRight, BookOpen, Play, Clock, CheckCircle, Lock, Plus
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import InlineMd from '@/components/course/InlineMd';
+import { showAchievementToasts } from '@/lib/achievementToast';
 
 const fadeUp = (i = 0) => ({
   initial: { opacity: 0, y: 16 },
@@ -76,12 +77,13 @@ const CourseViewer = () => {
     
     setEnrolling(true);
     try {
-      await axios.post(
+      const res = await axios.post(
         `${API}/enrollments`,
         { course_id: courseId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       toast.success('¡Inscrito exitosamente!');
+      showAchievementToasts(res.data?.newly_unlocked_achievements);
       setIsEnrolled(true);
     } catch (error) {
       console.error('Error enrolling:', error);

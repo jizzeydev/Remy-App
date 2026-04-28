@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Home, ClipboardCheck, BookOpen, TrendingUp, Menu, LogOut, User, Crown, CreditCard, Moon, Sun, FolderOpen } from 'lucide-react';
+import { Home, ClipboardCheck, BookOpen, TrendingUp, Menu, LogOut, User, Crown, CreditCard, Moon, Sun, FolderOpen, Award } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
@@ -28,6 +28,7 @@ const Layout = () => {
     { icon: ClipboardCheck, label: 'Simulacros', path: '/simulacros' },
     { icon: BookOpen, label: 'Biblioteca', path: '/biblioteca' },
     { icon: TrendingUp, label: 'Progreso', path: '/progreso' },
+    { icon: Award, label: 'Logros', path: '/logros' },
   ];
 
   const handleLogout = async () => {

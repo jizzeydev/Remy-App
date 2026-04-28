@@ -9,6 +9,7 @@ import { ArrowLeft, ArrowRight, Clock, BookOpen, CheckCircle, Lock, Loader2 } fr
 import { toast } from 'sonner';
 import BlockRenderer from '@/components/course/BlockRenderer';
 import InlineMd from '@/components/course/InlineMd';
+import { showAchievementToasts } from '@/lib/achievementToast';
 
 const fadeUp = (i = 0) => ({
   initial: { opacity: 0, y: 16 },
@@ -122,13 +123,14 @@ const LessonViewer = () => {
       const studentId = getStudentId();
       
       // Mark current lesson as complete
-      await axios.post(`${API}/progress/complete-lesson`, {
+      const completeRes = await axios.post(`${API}/progress/complete-lesson`, {
         student_id: studentId,
         course_id: course.id,
         lesson_id: lessonId
       });
-      
+
       toast.success('¡Lección completada!');
+      showAchievementToasts(completeRes.data?.newly_unlocked_achievements);
       
       // Navigate to next lesson if available
       if (currentIndex < allLessons.length - 1) {
