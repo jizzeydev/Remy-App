@@ -10,6 +10,8 @@ import { toast } from 'sonner';
 import BlockRenderer from '@/components/course/BlockRenderer';
 import InlineMd from '@/components/course/InlineMd';
 import { showAchievementToasts } from '@/lib/achievementToast';
+import { getStudentId } from '@/lib/studentId';
+import { useAuth } from '@/contexts/AuthContext';
 
 const fadeUp = (i = 0) => ({
   initial: { opacity: 0, y: 16 },
@@ -23,6 +25,8 @@ const API = `${BACKEND_URL}/api`;
 const LessonViewer = () => {
   const { lessonId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const studentId = getStudentId(user);
   const [lesson, setLesson] = useState(null);
   const [chapter, setChapter] = useState(null);
   const [course, setCourse] = useState(null);
@@ -33,16 +37,6 @@ const LessonViewer = () => {
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [checkingEnrollment, setCheckingEnrollment] = useState(true);
 
-  // Get student ID from localStorage
-  const getStudentId = () => {
-    let studentId = localStorage.getItem('student_id');
-    if (!studentId) {
-      studentId = 'student_' + Date.now();
-      localStorage.setItem('student_id', studentId);
-    }
-    return studentId;
-  };
-
   useEffect(() => {
     fetchLessonData();
   }, [lessonId]);
@@ -51,59 +45,38 @@ const LessonViewer = () => {
     setLoading(true);
     setCheckingEnrollment(true);
     try {
-      // Fetch the lesson
-      const lessonRes = await axios.get(`${API}/lessons/${lessonId}`);
-      const lessonData = lessonRes.data;
-      setLesson(lessonData);
+      // One backend call returns lesson + chapter + course + ordered sibling
+      // lessons. Replaces the previous O(courses × chapters × lessons) walk.
+      const ctxRes = await axios.get(`${API}/lessons/${lessonId}/context`);
+      const ctx = ctxRes.data;
 
-      // Fetch the chapter
-      const chapterId = lessonData.chapter_id;
-      if (chapterId) {
-        // We need to find the course by iterating through courses
-        const coursesRes = await axios.get(`${API}/courses`);
-        
-        for (const c of coursesRes.data) {
-          const chaptersRes = await axios.get(`${API}/courses/${c.id}/chapters`);
-          const foundChapter = chaptersRes.data.find(ch => ch.id === chapterId);
-          
-          if (foundChapter) {
-            setChapter(foundChapter);
-            setCourse(c);
-            
-            // Check enrollment for this course
-            const token = localStorage.getItem('remy_session_token');
-            if (token) {
-              try {
-                const enrollmentRes = await axios.get(`${API}/enrollments/check/${c.id}`, {
-                  headers: { Authorization: `Bearer ${token}` }
-                });
-                setIsEnrolled(enrollmentRes.data.enrolled);
-              } catch (e) {
-                setIsEnrolled(false);
-              }
-            } else {
-              setIsEnrolled(false);
-            }
-            
-            // Build ordered list of all lessons in this course
-            const orderedLessons = [];
-            for (const ch of chaptersRes.data) {
-              const lessonsRes = await axios.get(`${API}/chapters/${ch.id}/lessons`);
-              lessonsRes.data.forEach(l => {
-                orderedLessons.push({
-                  ...l,
-                  chapterId: ch.id,
-                  chapterTitle: ch.title
-                });
-              });
-            }
-            
-            setAllLessons(orderedLessons);
-            const idx = orderedLessons.findIndex(l => l.id === lessonId);
-            setCurrentIndex(idx);
-            break;
-          }
+      setLesson(ctx.lesson);
+      setChapter(ctx.chapter);
+      setCourse(ctx.course);
+
+      // Normalize sibling list to the shape the rest of the component expects.
+      const orderedLessons = (ctx.all_lessons || []).map((l) => ({
+        ...l,
+        chapterId: l.chapter_id,
+        chapterTitle: l.chapter_title
+      }));
+      setAllLessons(orderedLessons);
+      setCurrentIndex(typeof ctx.lesson_index === 'number' ? ctx.lesson_index : -1);
+
+      // Enrollment check (separate, requires auth header).
+      const token = localStorage.getItem('remy_session_token');
+      if (token && ctx.course?.id) {
+        try {
+          const enrollmentRes = await axios.get(
+            `${API}/enrollments/check/${ctx.course.id}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          setIsEnrolled(enrollmentRes.data.enrolled);
+        } catch (e) {
+          setIsEnrolled(false);
         }
+      } else {
+        setIsEnrolled(false);
       }
     } catch (error) {
       console.error('Error fetching lesson:', error);
@@ -120,7 +93,7 @@ const LessonViewer = () => {
     setMarkingComplete(true);
     
     try {
-      const studentId = getStudentId();
+      const studentId = studentId;
       
       // Mark current lesson as complete
       const completeRes = await axios.post(`${API}/progress/complete-lesson`, {

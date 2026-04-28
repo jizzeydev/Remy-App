@@ -28,6 +28,7 @@ import { Badge } from '@/components/ui/badge';
 import { useAuth } from '../contexts/AuthContext';
 import SubscriptionRequired from '../components/SubscriptionRequired';
 import AchievementsGrid from '../components/AchievementsGrid';
+import { getStudentId } from '@/lib/studentId';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -55,11 +56,6 @@ const Progreso = () => {
   const [chapterTitles, setChapterTitles] = useState({});
   const [achievementsData, setAchievementsData] = useState(null);
 
-  const getStudentId = () => {
-    if (user?.user_id) return user.user_id;
-    return localStorage.getItem('student_id') || 'anonymous';
-  };
-
   useEffect(() => {
     fetchAllData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -67,66 +63,43 @@ const Progreso = () => {
 
   const fetchAllData = async () => {
     setLoading(true);
-    const studentId = getStudentId();
+    const studentId = getStudentId(user);
+    if (!studentId) { setLoading(false); return; }
     const token = localStorage.getItem('remy_session_token');
     const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
 
     try {
-      // Courses + progress per course (used by both legacy "Course progress" block
-      // and the chapter-title lookup for weak-area aggregation).
-      const coursesRes = await axios.get(`${API}/courses`);
-      const coursesData = coursesRes.data;
+      // Three parallel calls. with-stats returns courses + chapter list +
+      // per-course completed_lessons in a single shot, eliminating the legacy
+      // 1+N+M waterfall.
+      const [coursesRes, quizzesRes, achRes] = await Promise.all([
+        axios.get(`${API}/courses/with-stats?student_id=${encodeURIComponent(studentId)}`),
+        axios.get(`${API}/quiz/history/${studentId}?limit=100`).catch(() => ({ data: [] })),
+        token
+          ? axios.get(`${API}/achievements/me`, { headers: authHeaders }).catch(() => null)
+          : Promise.resolve(null)
+      ]);
+
+      const coursesData = coursesRes.data || [];
       setCourses(coursesData);
 
       const progressMap = {};
       const titlesMap = {};
-
-      for (const course of coursesData) {
-        try {
-          const chaptersRes = await axios.get(`${API}/courses/${course.id}/chapters`);
-          const chapters = chaptersRes.data;
-          chapters.forEach((ch) => { titlesMap[ch.id] = ch.title; });
-
-          let courseLessons = 0;
-          for (const chapter of chapters) {
-            const lessonsRes = await axios.get(`${API}/chapters/${chapter.id}/lessons`);
-            courseLessons += lessonsRes.data.length;
-          }
-
-          let courseCompleted = 0;
-          try {
-            const progressRes = await axios.get(`${API}/progress/${studentId}/${course.id}`);
-            courseCompleted = progressRes.data.completed_lessons?.length || 0;
-          } catch (e) { /* no progress yet */ }
-
-          progressMap[course.id] = {
-            total: courseLessons,
-            completed: courseCompleted,
-            percentage: courseLessons > 0 ? Math.round((courseCompleted / courseLessons) * 100) : 0
-          };
-        } catch (e) {
-          progressMap[course.id] = { total: 0, completed: 0, percentage: 0 };
-        }
-      }
-
-      setChapterTitles(titlesMap);
+      coursesData.forEach((c) => {
+        const total = c.lesson_count || 0;
+        const completed = c.completed_lessons || 0;
+        progressMap[c.id] = {
+          total,
+          completed,
+          percentage: total > 0 ? Math.round((completed / total) * 100) : 0
+        };
+        (c.chapters || []).forEach((ch) => { titlesMap[ch.id] = ch.title; });
+      });
       setCourseProgress(progressMap);
+      setChapterTitles(titlesMap);
 
-      // Quiz history (full, sorted desc by created_at server-side, default limit=20)
-      try {
-        const quizzesRes = await axios.get(`${API}/quiz/history/${studentId}?limit=100`);
-        setQuizHistory(quizzesRes.data || []);
-      } catch (e) {
-        console.error('Error fetching quiz history:', e);
-      }
-
-      // Achievements (only meaningful for authed users; 401 silently)
-      if (token) {
-        try {
-          const achRes = await axios.get(`${API}/achievements/me`, { headers: authHeaders });
-          setAchievementsData(achRes.data);
-        } catch (e) { /* not authed or no achievements yet */ }
-      }
+      setQuizHistory(quizzesRes.data || []);
+      if (achRes?.data) setAchievementsData(achRes.data);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {

@@ -15,6 +15,7 @@ import TrialBanner from '../components/TrialBanner';
 import { toast } from 'sonner';
 import InlineMd from '@/components/course/InlineMd';
 import { showAchievementToasts } from '@/lib/achievementToast';
+import { getStudentId as resolveStudentId } from '@/lib/studentId';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -45,16 +46,7 @@ const Biblioteca = () => {
     }
   }, [searchParams]);
 
-  // Get student ID from user context or localStorage
-  const getStudentId = () => {
-    if (user?.user_id) return user.user_id;
-    let studentId = localStorage.getItem('student_id');
-    if (!studentId) {
-      studentId = 'student_' + Date.now();
-      localStorage.setItem('student_id', studentId);
-    }
-    return studentId;
-  };
+  const getStudentId = () => resolveStudentId(user);
 
   useEffect(() => {
     fetchData();
@@ -85,66 +77,49 @@ const Biblioteca = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      // Fetch courses
-      const coursesRes = await axios.get(`${API}/courses`);
-      setCourses(coursesRes.data);
-      
-      // Fetch universities for filter
-      const unisRes = await axios.get(`${API}/library-universities`);
-      setUniversities(unisRes.data);
-      
-      // Fetch enrolled courses
+      const studentId = getStudentId();
       const token = localStorage.getItem('remy_session_token');
+
+      // Single batched request: all visible courses + per-course stats + per-user
+      // progress (when studentId is present). Replaces 1 + N + (N×M) sequential
+      // requests with 1 (and 3 internal Mongo queries server-side).
+      const params = studentId ? `?student_id=${encodeURIComponent(studentId)}` : '';
+      const [coursesRes, unisRes] = await Promise.all([
+        axios.get(`${API}/courses/with-stats${params}`),
+        axios.get(`${API}/library-universities`)
+      ]);
+
+      const coursesData = coursesRes.data;
+      setCourses(coursesData);
+      setUniversities(unisRes.data);
+
+      // Map per-course stats from the same payload (no extra calls).
+      const stats = {};
+      const enrolledIds = [];
+      coursesData.forEach((c) => {
+        const total = c.lesson_count || 0;
+        const completed = c.completed_lessons || 0;
+        stats[c.id] = {
+          chapters: c.chapter_count || 0,
+          lessons: total,
+          completedLessons: completed,
+          progress: total > 0 ? Math.round((completed / total) * 100) : 0
+        };
+        if (c.enrolled) enrolledIds.push(c.id);
+      });
+      setCoursesStats(stats);
+      setEnrolledCourseIds(enrolledIds);
+
+      // Enrollment stats (limit / can_enroll) only when authed; this stays a
+      // separate call because the limit logic is auth-scoped.
       if (token) {
         try {
-          const enrolledRes = await axios.get(`${API}/enrollments`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          setEnrolledCourseIds(enrolledRes.data.map(c => c.id));
-          
           const statsRes = await axios.get(`${API}/enrollments/stats`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           setEnrollmentStats(statsRes.data);
-        } catch (e) {
-          // Not logged in or error
-        }
+        } catch (e) { /* not authed */ }
       }
-      
-      // Fetch course stats
-      const studentId = getStudentId();
-      const stats = {};
-      
-      for (const course of coursesRes.data) {
-        try {
-          const chaptersRes = await axios.get(`${API}/courses/${course.id}/chapters`);
-          const chapters = chaptersRes.data;
-          let totalLessons = 0;
-          
-          for (const chapter of chapters) {
-            try {
-              const lessonsRes = await axios.get(`${API}/chapters/${chapter.id}/lessons`);
-              totalLessons += lessonsRes.data.length;
-            } catch (e) {}
-          }
-          
-          let completedLessons = 0;
-          try {
-            const progressRes = await axios.get(`${API}/progress/${studentId}/${course.id}`);
-            completedLessons = progressRes.data.completed_lessons?.length || 0;
-          } catch (e) {}
-          
-          stats[course.id] = {
-            chapters: chapters.length,
-            lessons: totalLessons,
-            completedLessons,
-            progress: totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0
-          };
-        } catch (e) {
-          stats[course.id] = { chapters: 0, lessons: 0, completedLessons: 0, progress: 0 };
-        }
-      }
-      setCoursesStats(stats);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {

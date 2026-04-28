@@ -348,6 +348,186 @@ async def get_courses(
     
     return courses
 
+@api_router.get("/lessons/{lesson_id}/context")
+async def get_lesson_context(lesson_id: str):
+    """
+    Returns everything LessonViewer needs in one shot:
+      - lesson, chapter, course
+      - all_lessons: ordered list of every lesson in the course (with chapter id/title)
+      - lesson_index: position of `lesson_id` in all_lessons
+
+    Replaces the previous frontend pattern that iterated *all* courses → all
+    chapters → all lessons just to find the parent course of a single lesson
+    (worst case O(courses × chapters) requests).
+    """
+    lesson = await db.lessons.find_one({"id": lesson_id}, {"_id": 0})
+    if not lesson:
+        raise HTTPException(status_code=404, detail="Lección no encontrada")
+
+    chapter_id = lesson.get("chapter_id")
+    chapter = await db.chapters.find_one({"id": chapter_id}, {"_id": 0}) if chapter_id else None
+    if not chapter:
+        raise HTTPException(status_code=404, detail="Capítulo no encontrado")
+
+    course_id = chapter.get("course_id")
+    course = await db.courses.find_one({"id": course_id}, {"_id": 0}) if course_id else None
+    if not course:
+        raise HTTPException(status_code=404, detail="Curso no encontrado")
+
+    # Build the ordered lesson list across all chapters of this course.
+    chapters = await db.chapters.find(
+        {"course_id": course_id}, {"_id": 0}
+    ).sort("order", 1).to_list(500)
+    chapter_ids_ordered = [ch["id"] for ch in chapters]
+
+    all_lessons_docs = await db.lessons.find(
+        {"chapter_id": {"$in": chapter_ids_ordered}},
+        {"_id": 0, "id": 1, "title": 1, "chapter_id": 1, "duration_minutes": 1, "order": 1}
+    ).to_list(2000)
+
+    # Sort: by chapter order first, then by lesson order within the chapter.
+    chapter_index = {cid: i for i, cid in enumerate(chapter_ids_ordered)}
+    all_lessons_docs.sort(
+        key=lambda l: (chapter_index.get(l.get("chapter_id"), 9999), l.get("order") or 0)
+    )
+
+    chapter_titles = {ch["id"]: ch.get("title", "") for ch in chapters}
+    all_lessons = [
+        {
+            **l,
+            "chapter_title": chapter_titles.get(l.get("chapter_id"), "")
+        }
+        for l in all_lessons_docs
+    ]
+
+    lesson_index = next((i for i, l in enumerate(all_lessons) if l["id"] == lesson_id), -1)
+
+    return {
+        "lesson": lesson,
+        "chapter": chapter,
+        "course": course,
+        "all_lessons": all_lessons,
+        "lesson_index": lesson_index,
+    }
+
+@api_router.get("/courses/with-stats")
+async def get_courses_with_stats(
+    student_id: Optional[str] = None,
+    university_id: Optional[str] = None
+):
+    """
+    One-shot listing for Biblioteca / Dashboard / Progreso.
+
+    Returns every visible course augmented with:
+      - chapter_count, lesson_count           (always)
+      - university                            (always)
+      - enrolled, completed_lessons, progress (only when student_id given)
+
+    This replaces the N+1 pattern those pages used (per-course chapters fetch +
+    per-chapter lessons fetch + per-course progress fetch). Three Mongo queries
+    total: courses, all chapters of those courses, all lessons of those chapters.
+    """
+    # 1) Filter visible courses, optionally by university.
+    query = {"$or": [{"visible_to_students": True}, {"visible_to_students": {"$exists": False}}]}
+    if university_id:
+        if university_id == "general":
+            query = {
+                "$and": [
+                    query,
+                    {"$or": [{"university_id": None}, {"university_id": {"$exists": False}}]}
+                ]
+            }
+        else:
+            query["university_id"] = university_id
+
+    courses = await db.courses.find(query, {"_id": 0}).to_list(500)
+    course_ids = [c["id"] for c in courses]
+    if not course_ids:
+        return []
+
+    # 2) Pull all chapters for those courses in one shot, group by course.
+    chapters = await db.chapters.find(
+        {"course_id": {"$in": course_ids}},
+        {"_id": 0, "id": 1, "course_id": 1, "title": 1}
+    ).to_list(2000)
+
+    chapters_by_course: Dict[str, List[str]] = {}
+    chapter_id_to_course: Dict[str, str] = {}
+    for ch in chapters:
+        chapters_by_course.setdefault(ch["course_id"], []).append(ch["id"])
+        chapter_id_to_course[ch["id"]] = ch["course_id"]
+
+    chapter_ids = list(chapter_id_to_course.keys())
+    chapter_titles_map = {ch["id"]: ch.get("title", "") for ch in chapters}
+
+    # 3) Lesson counts per chapter via a single aggregation.
+    lesson_counts_by_chapter: Dict[str, int] = {}
+    if chapter_ids:
+        pipeline = [
+            {"$match": {"chapter_id": {"$in": chapter_ids}}},
+            {"$group": {"_id": "$chapter_id", "n": {"$sum": 1}}}
+        ]
+        async for doc in db.lessons.aggregate(pipeline):
+            lesson_counts_by_chapter[doc["_id"]] = doc["n"]
+
+    # 4) Per-student data (enrollments + completed lessons) — only when needed.
+    enrolled_set: set = set()
+    completed_by_course: Dict[str, int] = {}
+    if student_id:
+        enrollments = await db.student_enrollments.find(
+            {"student_id": student_id, "course_id": {"$in": course_ids}},
+            {"_id": 0, "course_id": 1}
+        ).to_list(500)
+        enrolled_set = {e["course_id"] for e in enrollments}
+
+        progresses = await db.lesson_progress.find(
+            {"student_id": student_id, "course_id": {"$in": course_ids}},
+            {"_id": 0, "course_id": 1, "completed_lessons": 1}
+        ).to_list(500)
+        for p in progresses:
+            completed_by_course[p["course_id"]] = len(p.get("completed_lessons") or [])
+
+    # 5) Universities (single batch lookup so we don't issue one per course).
+    uni_ids = list({c.get("university_id") for c in courses if c.get("university_id")})
+    universities_map: Dict[str, dict] = {}
+    if uni_ids:
+        unis = await db.library_universities.find(
+            {"id": {"$in": uni_ids}},
+            {"_id": 0, "id": 1, "name": 1, "short_name": 1, "logo_url": 1}
+        ).to_list(200)
+        universities_map = {u["id"]: u for u in unis}
+
+    # 6) Compose response.
+    out = []
+    for c in courses:
+        if isinstance(c.get("created_at"), str):
+            c["created_at"] = datetime.fromisoformat(c["created_at"])
+        ch_ids = chapters_by_course.get(c["id"], [])
+        lesson_count = sum(lesson_counts_by_chapter.get(ch_id, 0) for ch_id in ch_ids)
+
+        uni_id = c.get("university_id")
+        c["university"] = universities_map.get(uni_id) if uni_id else {"name": "General", "short_name": "GEN"}
+
+        c["chapter_count"] = len(ch_ids)
+        c["lesson_count"] = lesson_count
+
+        if student_id:
+            completed = completed_by_course.get(c["id"], 0)
+            c["enrolled"] = c["id"] in enrolled_set
+            c["completed_lessons"] = completed
+            c["progress_percentage"] = round((completed / lesson_count) * 100) if lesson_count > 0 else 0
+
+        # Lightweight chapter list (id + title only) so consumers like Progreso
+        # can resolve chapter titles for weak-area analysis without a follow-up.
+        c["chapters"] = [
+            {"id": ch_id, "title": chapter_titles_map.get(ch_id, "")}
+            for ch_id in ch_ids
+        ]
+
+        out.append(c)
+
+    return out
+
 @api_router.get("/courses/{course_id}", response_model=Course)
 async def get_course(course_id: str):
     course = await db.courses.find_one(

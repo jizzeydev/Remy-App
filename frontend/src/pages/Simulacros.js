@@ -17,18 +17,16 @@ import { QuestionContent, QuestionOption, ExplanationBlock } from '@/components/
 import SubscriptionRequired from '@/components/SubscriptionRequired';
 import { useAuth } from '../contexts/AuthContext';
 import { showAchievementToasts } from '@/lib/achievementToast';
+import { getStudentId as resolveStudentId } from '@/lib/studentId';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-// Get or create student ID
-const getStudentId = () => {
-  let studentId = localStorage.getItem('student_id');
-  if (!studentId) {
-    studentId = 'student_' + Date.now();
-    localStorage.setItem('student_id', studentId);
-  }
-  return studentId;
+// Local wrapper kept for callsites that don't have user available; the modules
+// that DO read auth use resolveStudentId(user) directly. New writes always go
+// to the canonical (auth) id when the user is logged in.
+const getStudentIdAnonymous = () => {
+  return localStorage.getItem('student_id') || null;
 };
 
 // Format time as MM:SS
@@ -194,6 +192,7 @@ const LastAttemptBanner = ({ quiz, onView, onRetry }) => {
 
 // ==================== CREATE QUIZ DIALOG ====================
 const CreateQuizDialog = ({ open, onOpenChange, onQuizCreated }) => {
+  const { user } = useAuth();
   const [courses, setCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [chapters, setChapters] = useState([]);
@@ -338,7 +337,7 @@ const CreateQuizDialog = ({ open, onOpenChange, onQuizCreated }) => {
     setCreating(true);
     try {
       const response = await axios.post(`${API}/quiz/start`, {
-        user_id: getStudentId(),
+        user_id: resolveStudentId(user) || getStudentIdAnonymous(),
         course_id: selectedCourse.id,
         chapter_ids: chapterIds,
         lesson_ids: lessonIds,
@@ -954,6 +953,8 @@ const ActiveQuizView = ({ quiz, onComplete, onCancel }) => {
 
 // ==================== MAIN COMPONENT ====================
 const Simulacros = () => {
+  const { user } = useAuth();
+  const studentId = resolveStudentId(user) || getStudentIdAnonymous();
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -961,12 +962,14 @@ const Simulacros = () => {
 
   useEffect(() => {
     fetchQuizzes();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [studentId]);
 
   const fetchQuizzes = async () => {
+    if (!studentId) return;
     setLoading(true);
     try {
-      const response = await axios.get(`${API}/quiz/history/${getStudentId()}`);
+      const response = await axios.get(`${API}/quiz/history/${studentId}`);
       setQuizzes(response.data);
     } catch (error) {
       console.error('Error fetching quizzes:', error);
@@ -1034,7 +1037,7 @@ const Simulacros = () => {
     if (!window.confirm('¿Eliminar este simulacro?')) return;
     
     try {
-      await axios.delete(`${API}/quiz/${quizId}?user_id=${getStudentId()}`);
+      await axios.delete(`${API}/quiz/${quizId}?user_id=${studentId}`);
       toast.success('Simulacro eliminado');
       fetchQuizzes();
     } catch (error) {

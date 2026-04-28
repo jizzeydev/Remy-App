@@ -1,35 +1,57 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Toaster } from '@/components/ui/sonner';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
+import { Loader2 } from 'lucide-react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { PricingProvider } from './hooks/usePricing';
+
+// ----- Eagerly loaded (first paint / common nav) -----
 import Layout from './components/Layout';
 import AdminLayout from './components/AdminLayout';
 import Landing from './pages/Landing';
 import AuthPage from './pages/AuthPage';
-import SubscribePage from './pages/SubscribePage';
 import MiSuscripcion from './pages/MiSuscripcion';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
-import Simulacros from './pages/Simulacros';
 import Biblioteca from './pages/Biblioteca';
 import MisCursos from './pages/MisCursos';
-import Progreso from './pages/Progreso';
-import Logros from './pages/Logros';
 import CourseViewer from './pages/student/CourseViewer';
-import LessonViewer from './pages/student/LessonViewer';
 import AdminLogin from './pages/admin/AdminLogin';
-import AdminDashboard from './pages/admin/AdminDashboard';
-import AdminCourses from './pages/admin/AdminCourses';
-import AdminQuestions from './pages/admin/AdminQuestions';
-import AdminUsers from './pages/admin/AdminUsers';
-import AdminPricing from './pages/admin/AdminPricing';
-import AdminLibraryUniversities from './pages/admin/AdminLibraryUniversities';
-import CourseContentEditor from './pages/admin/CourseContentEditor';
-import AdminTrash from './pages/admin/AdminTrash';
+
+// ----- Lazy chunks (heavy deps + rarely-visited routes) -----
+// Charts (recharts) — Simulacros & Progreso each pull recharts ~140KB.
+const Simulacros = lazy(() => import('./pages/Simulacros'));
+const Progreso = lazy(() => import('./pages/Progreso'));
+const Logros = lazy(() => import('./pages/Logros'));
+// LessonViewer pulls katex + markdown + BlockRenderer (plotly/three.js for some
+// lesson content) — biggest single page in the app.
+const LessonViewer = lazy(() => import('./pages/student/LessonViewer'));
+// Mercado Pago SDK only loads when the user actually enters checkout.
+const SubscribePage = lazy(() => import('./pages/SubscribePage'));
+// Admin: most users never visit any of these — keep them off the student
+// bundle entirely. Each admin page becomes its own chunk.
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
+const AdminCourses = lazy(() => import('./pages/admin/AdminCourses'));
+const AdminQuestions = lazy(() => import('./pages/admin/AdminQuestions'));
+const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
+const AdminPricing = lazy(() => import('./pages/admin/AdminPricing'));
+const AdminLibraryUniversities = lazy(() => import('./pages/admin/AdminLibraryUniversities'));
+const CourseContentEditor = lazy(() => import('./pages/admin/CourseContentEditor'));
+const AdminTrash = lazy(() => import('./pages/admin/AdminTrash'));
+
 import '@/App.css';
+
+// Spinner shown while a lazy chunk is downloading. Match the auth/loading look.
+function ChunkFallback() {
+  return (
+    <div className="flex items-center justify-center min-h-[60vh] bg-background" role="status" aria-live="polite">
+      <Loader2 className="animate-spin text-primary" size={32} />
+      <span className="sr-only">Cargando…</span>
+    </div>
+  );
+}
 
 // Protected Route for Admin
 function AdminProtectedRoute({ children }) {
@@ -78,40 +100,42 @@ function StudentProtectedRoute({ children }) {
 // App Router
 function AppRouter() {
   return (
-    <Routes>
-      {/* Public Routes */}
-      <Route path="/" element={<Landing />} />
-      <Route path="/auth" element={<AuthPage />} />
-      <Route path="/subscribe" element={<StudentProtectedRoute><SubscribePage /></StudentProtectedRoute>} />
-      <Route path="/mi-suscripcion" element={<StudentProtectedRoute><MiSuscripcion /></StudentProtectedRoute>} />
+    <Suspense fallback={<ChunkFallback />}>
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<Landing />} />
+        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/subscribe" element={<StudentProtectedRoute><SubscribePage /></StudentProtectedRoute>} />
+        <Route path="/mi-suscripcion" element={<StudentProtectedRoute><MiSuscripcion /></StudentProtectedRoute>} />
 
-      {/* Student App - Protected */}
-      <Route element={<StudentProtectedRoute><Layout /></StudentProtectedRoute>}>
-        <Route path="/inicio" element={<Home />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/mis-cursos" element={<MisCursos />} />
-        <Route path="/simulacros" element={<Simulacros />} />
-        <Route path="/biblioteca" element={<Biblioteca />} />
-        <Route path="/course/:courseId" element={<CourseViewer />} />
-        <Route path="/lesson/:lessonId" element={<LessonViewer />} />
-        <Route path="/progreso" element={<Progreso />} />
-        <Route path="/logros" element={<Logros />} />
-      </Route>
+        {/* Student App - Protected */}
+        <Route element={<StudentProtectedRoute><Layout /></StudentProtectedRoute>}>
+          <Route path="/inicio" element={<Home />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/mis-cursos" element={<MisCursos />} />
+          <Route path="/simulacros" element={<Simulacros />} />
+          <Route path="/biblioteca" element={<Biblioteca />} />
+          <Route path="/course/:courseId" element={<CourseViewer />} />
+          <Route path="/lesson/:lessonId" element={<LessonViewer />} />
+          <Route path="/progreso" element={<Progreso />} />
+          <Route path="/logros" element={<Logros />} />
+        </Route>
 
-      {/* Admin Routes */}
-      <Route path="/admin/login" element={<AdminLogin />} />
-      <Route element={<AdminProtectedRoute><AdminLayout /></AdminProtectedRoute>}>
-        <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/courses" element={<AdminCourses />} />
-        <Route path="/admin/courses/:courseId/content" element={<CourseContentEditor />} />
-        <Route path="/admin/questions" element={<AdminQuestions />} />
-        <Route path="/admin/users" element={<AdminUsers />} />
-        <Route path="/admin/pricing" element={<AdminPricing />} />
-        <Route path="/admin/library-universities" element={<AdminLibraryUniversities />} />
-        <Route path="/admin/papelera" element={<AdminTrash />} />
-      </Route>
-    </Routes>
+        {/* Admin Routes */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route element={<AdminProtectedRoute><AdminLayout /></AdminProtectedRoute>}>
+          <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/courses" element={<AdminCourses />} />
+          <Route path="/admin/courses/:courseId/content" element={<CourseContentEditor />} />
+          <Route path="/admin/questions" element={<AdminQuestions />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/pricing" element={<AdminPricing />} />
+          <Route path="/admin/library-universities" element={<AdminLibraryUniversities />} />
+          <Route path="/admin/papelera" element={<AdminTrash />} />
+        </Route>
+      </Routes>
+    </Suspense>
   );
 }
 

@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import InlineMd from '@/components/course/InlineMd';
 import { showAchievementToasts } from '@/lib/achievementToast';
+import { getStudentId } from '@/lib/studentId';
 
 const fadeUp = (i = 0) => ({
   initial: { opacity: 0, y: 16 },
@@ -23,7 +24,8 @@ const API = `${BACKEND_URL}/api`;
 const CourseViewer = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
-  const { canAccessContent } = useAuth();
+  const { user, canAccessContent } = useAuth();
+  const studentId = getStudentId(user);
   const [course, setCourse] = useState(null);
   const [chapters, setChapters] = useState([]);
   const [completedLessons, setCompletedLessons] = useState([]);
@@ -31,16 +33,6 @@ const CourseViewer = () => {
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [checkingEnrollment, setCheckingEnrollment] = useState(true);
   const [enrolling, setEnrolling] = useState(false);
-
-  // Get student ID from localStorage
-  const getStudentId = () => {
-    let studentId = localStorage.getItem('student_id');
-    if (!studentId) {
-      studentId = 'student_' + Date.now();
-      localStorage.setItem('student_id', studentId);
-    }
-    return studentId;
-  };
 
   useEffect(() => {
     checkEnrollment();
@@ -118,7 +110,7 @@ const CourseViewer = () => {
 
       // Fetch progress
       try {
-        const studentId = getStudentId();
+        // studentId comes from outer scope (auth-aware)
         const progressRes = await axios.get(`${API}/progress/${studentId}/${courseId}`);
         setCompletedLessons(progressRes.data.completed_lessons || []);
       } catch (e) {

@@ -12,6 +12,7 @@ import { Progress } from '@/components/ui/progress';
 import { useAuth } from '../contexts/AuthContext';
 import SubscriptionRequired from '../components/SubscriptionRequired';
 import TrialBanner from '../components/TrialBanner';
+import { getStudentId } from '@/lib/studentId';
 
 const fadeUp = (i = 0) => ({
   initial: { opacity: 0, y: 16 },
@@ -30,92 +31,61 @@ const Dashboard = () => {
   const [stats, setStats] = useState({ lessons: 0, totalLessons: 0, quizzes: 0, average: 0 });
   const [loading, setLoading] = useState(true);
 
-  const getStudentId = () => {
-    if (user?.user_id) return user.user_id;
-    return localStorage.getItem('student_id') || 'anonymous';
-  };
-
   useEffect(() => {
     fetchDashboardData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchDashboardData = async () => {
     setLoading(true);
-    const studentId = getStudentId();
+    const studentId = getStudentId(user);
+    if (!studentId) {
+      setLoading(false);
+      return;
+    }
     
     try {
-      // Fetch ENROLLED courses only
-      const token = localStorage.getItem('remy_session_token');
-      let coursesData = [];
-      
-      if (token) {
-        try {
-          const enrolledRes = await axios.get(`${API}/enrollments`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          coursesData = enrolledRes.data.slice(0, 3);
-        } catch (e) {
-          // Fallback to empty if not logged in
-          coursesData = [];
-        }
-      }
-      
-      setCourses(coursesData);
+      // Single batched call: all courses with per-course stats + per-user
+      // progress (enrolled + completed_lessons + progress_percentage). We then
+      // filter to enrolled-only on the client; that's cheaper than the legacy
+      // 1+N+M sequential calls.
+      const [coursesWithStatsRes, quizzesRes] = await Promise.all([
+        axios.get(`${API}/courses/with-stats?student_id=${encodeURIComponent(studentId)}`),
+        axios.get(`${API}/quiz/history/${studentId}`).catch(() => ({ data: [] }))
+      ]);
 
-      // Calculate progress for each course
+      const enrolled = (coursesWithStatsRes.data || [])
+        .filter((c) => c.enrolled)
+        .slice(0, 3);
+      setCourses(enrolled);
+
       const progressMap = {};
       let totalLessons = 0;
       let completedLessons = 0;
-
-      for (const course of coursesData) {
-        try {
-          const chaptersRes = await axios.get(`${API}/courses/${course.id}/chapters`);
-          let courseLessons = 0;
-          
-          for (const chapter of chaptersRes.data) {
-            const lessonsRes = await axios.get(`${API}/chapters/${chapter.id}/lessons`);
-            courseLessons += lessonsRes.data.length;
-          }
-
-          let courseCompleted = 0;
-          try {
-            const progressRes = await axios.get(`${API}/progress/${studentId}/${course.id}`);
-            courseCompleted = progressRes.data.completed_lessons?.length || 0;
-          } catch (e) {}
-
-          progressMap[course.id] = {
-            total: courseLessons,
-            completed: courseCompleted,
-            percentage: courseLessons > 0 ? Math.round((courseCompleted / courseLessons) * 100) : 0
-          };
-
-          totalLessons += courseLessons;
-          completedLessons += courseCompleted;
-        } catch (e) {
-          progressMap[course.id] = { total: 0, completed: 0, percentage: 0 };
-        }
-      }
-
+      enrolled.forEach((c) => {
+        const total = c.lesson_count || 0;
+        const completed = c.completed_lessons || 0;
+        progressMap[c.id] = {
+          total,
+          completed,
+          percentage: total > 0 ? Math.round((completed / total) * 100) : 0
+        };
+        totalLessons += total;
+        completedLessons += completed;
+      });
       setCourseProgress(progressMap);
 
-      // Fetch quiz stats
-      let quizCount = 0;
-      let quizAverage = 0;
-      try {
-        const quizzesRes = await axios.get(`${API}/quiz/history/${studentId}`);
-        const quizzes = quizzesRes.data || [];
-        quizCount = quizzes.length;
-        
-        const grades = quizzes.map(q => q.grade || 0).filter(g => g > 0);
-        if (grades.length > 0) {
-          quizAverage = (grades.reduce((a, b) => a + b, 0) / grades.length).toFixed(1);
-        }
-      } catch (e) {}
+      // Quiz stats from the existing history endpoint.
+      const quizzes = quizzesRes.data || [];
+      const grades = quizzes.map((q) => q.grade || 0).filter((g) => g > 0);
+      const quizAverage = grades.length
+        ? (grades.reduce((a, b) => a + b, 0) / grades.length).toFixed(1)
+        : 0;
 
       setStats({
         lessons: completedLessons,
         totalLessons: totalLessons,
-        quizzes: quizCount,
+        quizzes: quizzes.length,
         average: parseFloat(quizAverage)
       });
 
