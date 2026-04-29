@@ -158,7 +158,6 @@ const AuthPage = () => {
                   <GoogleLogin
                     onSuccess={handleSuccess}
                     onError={handleError}
-                    useOneTap
                     theme="filled_blue"
                     size="large"
                     shape="pill"

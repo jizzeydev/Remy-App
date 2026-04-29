@@ -1,4 +1,5 @@
-from fastapi import FastAPI, APIRouter, HTTPException, UploadFile, File, Depends, status
+from fastapi import FastAPI, APIRouter, HTTPException, UploadFile, File, Depends, status, Request
+from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -1643,11 +1644,19 @@ async def create_chapter(chapter: Chapter, _: str = Depends(verify_admin_token))
 
 @admin_router.put("/chapters/{chapter_id}", response_model=Chapter)
 async def update_chapter(chapter_id: str, chapter: Chapter, _: str = Depends(verify_admin_token)):
+    # Preserve linkage fields that the admin form doesn't surface — otherwise
+    # editing a linked chapter's title would silently drop template_chapter_id
+    # and excluded_lesson_ids, breaking the inheritance from the General course.
+    existing = await db.chapters.find_one({"id": chapter_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Capítulo no encontrado")
     doc = chapter.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
-    result = await db.chapters.update_one({"id": chapter_id}, {"$set": doc})
-    if result.matched_count == 0:
-        raise HTTPException(status_code=404, detail="Capítulo no encontrado")
+    if existing.get('template_chapter_id'):
+        doc['template_chapter_id'] = existing['template_chapter_id']
+        doc['excluded_lesson_ids'] = existing.get('excluded_lesson_ids', [])
+        doc['excluded_question_ids'] = existing.get('excluded_question_ids', [])
+    await db.chapters.update_one({"id": chapter_id}, {"$set": doc})
     return chapter
 
 @admin_router.delete("/chapters/{chapter_id}")
@@ -1685,6 +1694,49 @@ class LinkChaptersRequest(BaseModel):
     template_chapter_ids: Optional[List[str]] = None
     # Preferred shape: list of entries with optional exclusions.
     chapters: Optional[List[LinkChapterEntry]] = None
+
+
+class ReorderChaptersRequest(BaseModel):
+    chapter_ids: List[str]  # Full ordered list of chapter ids in their new sequence
+
+
+@admin_router.post("/courses/{course_id}/reorder-chapters")
+async def reorder_chapters(
+    course_id: str,
+    request: ReorderChaptersRequest,
+    _: str = Depends(verify_admin_token)
+):
+    """Reorder chapters of a course by sending the desired full ordering.
+
+    Each chapter in `chapter_ids` gets its `order` set to its 1-based position
+    in the list. Chapters belonging to `course_id` that are NOT in the list
+    are pushed to the end (preserving their relative order) so an accidental
+    short list doesn't silently lose chapters. Linked chapters are reorderable
+    just like regular ones — `order` lives on the linked chapter doc, not on
+    the template, so the General course is unaffected.
+    """
+    course = await db.courses.find_one({"id": course_id}, {"_id": 0})
+    if not course:
+        raise HTTPException(status_code=404, detail="Curso no encontrado")
+
+    existing = await db.chapters.find(
+        {"course_id": course_id}, {"_id": 0, "id": 1, "order": 1}
+    ).sort("order", 1).to_list(500)
+    existing_ids = [c["id"] for c in existing]
+
+    # Validate that requested ids actually belong to this course; ignore strays.
+    requested = [cid for cid in request.chapter_ids if cid in existing_ids]
+    leftover = [cid for cid in existing_ids if cid not in requested]
+    final_order = requested + leftover  # implicit "tail keeps current order"
+
+    for idx, ch_id in enumerate(final_order, start=1):
+        await db.chapters.update_one({"id": ch_id}, {"$set": {"order": idx}})
+
+    return {
+        "success": True,
+        "reordered": len(final_order),
+        "ignored": [cid for cid in request.chapter_ids if cid not in existing_ids],
+    }
 
 
 @admin_router.post("/courses/{course_id}/link-chapters")
@@ -2542,6 +2594,23 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# Ensure 500s carry CORS headers — otherwise ServerErrorMiddleware (outer than CORSMiddleware)
+# returns a bare error and the browser misreports it as "No Access-Control-Allow-Origin".
+@app.exception_handler(Exception)
+async def _unhandled_exception_handler(request: Request, exc: Exception):
+    logger = logging.getLogger(__name__)
+    logger.exception("Unhandled exception on %s %s", request.method, request.url.path)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal Server Error"},
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "*",
+            "Access-Control-Allow-Headers": "*",
+        },
+    )
 
 logging.basicConfig(
     level=logging.INFO,
