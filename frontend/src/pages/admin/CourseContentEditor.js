@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import InlineMd from '@/components/course/InlineMd';
-import { Plus, Edit, Trash2, ArrowLeft, GripVertical, BookOpen, FileText, X, Link2, Unlink, Layers, AlertTriangle, EyeOff, Eye, GitFork, Undo2, ChevronDown, ChevronRight } from 'lucide-react';
+import { Plus, Edit, Trash2, ArrowLeft, ArrowUp, ArrowDown, GripVertical, BookOpen, FileText, X, Link2, Unlink, Layers, AlertTriangle, EyeOff, Eye, GitFork, Undo2, ChevronDown, ChevronRight } from 'lucide-react';
 import BlockEditor from '@/components/admin/BlockEditor';
 import BlockRenderer from '@/components/course/BlockRenderer';
 
@@ -171,6 +171,36 @@ const CourseContentEditor = () => {
       toast.error('Error al guardar capítulo');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Move a chapter up or down by swapping with its neighbor and persisting
+  // the new order. Works on both linked and owned chapters because order
+  // lives on the local chapter doc, not the template.
+  const handleReorderChapter = async (chapterId, direction) => {
+    const idx = chapters.findIndex((c) => c.id === chapterId);
+    if (idx === -1) return;
+    const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (targetIdx < 0 || targetIdx >= chapters.length) return;
+
+    const next = [...chapters];
+    [next[idx], next[targetIdx]] = [next[targetIdx], next[idx]];
+    // Optimistic local update with refreshed `order` numbers so the UI doesn't flicker.
+    setChapters(next.map((c, i) => ({ ...c, order: i + 1 })));
+
+    try {
+      const token = localStorage.getItem('admin_token');
+      await axios.post(
+        `${ADMIN_API}/courses/${courseId}/reorder-chapters`,
+        { chapter_ids: next.map((c) => c.id) },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      // Refetch to pull canonical order from server.
+      fetchChapters();
+    } catch (error) {
+      console.error('Error reordering chapters:', error);
+      toast.error('Error al reordenar capítulos');
+      fetchChapters();
     }
   };
 
@@ -547,7 +577,28 @@ const CourseContentEditor = () => {
               <CardHeader className={chapter.is_linked ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-slate-50 dark:bg-slate-800/50'}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <GripVertical className="text-slate-400" size={20} />
+                    <div className="flex flex-col gap-0.5">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-6 w-6"
+                        onClick={() => handleReorderChapter(chapter.id, 'up')}
+                        disabled={chapterIndex === 0}
+                        title="Subir capítulo"
+                      >
+                        <ArrowUp size={14} />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-6 w-6"
+                        onClick={() => handleReorderChapter(chapter.id, 'down')}
+                        disabled={chapterIndex === chapters.length - 1}
+                        title="Bajar capítulo"
+                      >
+                        <ArrowDown size={14} />
+                      </Button>
+                    </div>
                     <div>
                       <div className="flex items-center gap-2">
                         <CardTitle className="text-lg">
@@ -575,11 +626,14 @@ const CourseContentEditor = () => {
                       <Plus size={16} className="mr-1" />
                       Lección
                     </Button>
-                    {!chapter.is_linked && (
-                      <Button size="sm" variant="outline" onClick={() => openEditChapter(chapter)}>
-                        <Edit size={16} />
-                      </Button>
-                    )}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => openEditChapter(chapter)}
+                      title={chapter.is_linked ? 'Editar título/orden de este curso (no afecta el general)' : 'Editar capítulo'}
+                    >
+                      <Edit size={16} />
+                    </Button>
                     {chapter.is_linked && (
                       <Button
                         size="sm"
