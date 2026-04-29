@@ -80,12 +80,14 @@ const Progreso = () => {
           : Promise.resolve(null)
       ]);
 
-      const coursesData = coursesRes.data || [];
-      setCourses(coursesData);
+      // Only show courses the student is enrolled in. with-stats already returns
+      // an `enrolled` flag per course when student_id is set, so we filter here.
+      const enrolledCourses = (coursesRes.data || []).filter((c) => c.enrolled);
+      setCourses(enrolledCourses);
 
       const progressMap = {};
       const titlesMap = {};
-      coursesData.forEach((c) => {
+      enrolledCourses.forEach((c) => {
         const total = c.lesson_count || 0;
         const completed = c.completed_lessons || 0;
         progressMap[c.id] = {
@@ -420,12 +422,23 @@ const Progreso = () => {
         <Card className="border-border bg-card">
           <CardHeader>
             <CardTitle>Progreso por curso</CardTitle>
-            <CardDescription>Tu avance en cada curso disponible</CardDescription>
+            <CardDescription>Tu avance en los cursos en los que estás inscrito</CardDescription>
           </CardHeader>
           <CardContent>
             {courses.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                No hay cursos disponibles aún
+              <div className="text-center py-8 space-y-3">
+                <p className="text-muted-foreground">
+                  Aún no estás inscrito en ningún curso.
+                </p>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => navigate('/biblioteca')}
+                  className="rounded-full"
+                >
+                  <BookOpen size={14} className="mr-1.5" />
+                  Explorar biblioteca
+                </Button>
               </div>
             ) : (
               <div className="space-y-3">
