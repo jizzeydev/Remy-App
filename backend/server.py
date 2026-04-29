@@ -1374,15 +1374,29 @@ async def get_all_questions(
             questions = [q for q in questions if q.get("topic") == topic]
         return questions
 
-    # No chapter filter: classic list (no linkage logic needed).
-    query = {}
+    # When course_id is given, walk that course's chapters and resolve each one
+    # so linked chapters surface their inherited questions. The naive
+    # `questions.find({course_id})` would return only "own" questions and miss
+    # everything inherited via template_chapter_id (which is how PUC courses
+    # get their content).
     if course_id:
-        query["course_id"] = course_id
+        chapters = await db.chapters.find(
+            {"course_id": course_id}, {"_id": 0}
+        ).to_list(500)
+        out: List[dict] = []
+        for ch in chapters:
+            out.extend(await _resolve_chapter_questions(ch, lesson_id=lesson_id))
+        if topic:
+            out = [q for q in out if q.get("topic") == topic]
+        return out
+
+    # No course/chapter filter: classic flat list.
+    query = {}
     if lesson_id:
         query["lesson_id"] = lesson_id
     if topic:
         query["topic"] = topic
-    return await db.questions.find(query, {"_id": 0}).to_list(2000)
+    return await db.questions.find(query, {"_id": 0}).to_list(5000)
 
 @admin_router.put("/questions/{question_id}", response_model=Question)
 async def update_question(question_id: str, question: Question, _: str = Depends(verify_admin_token)):
