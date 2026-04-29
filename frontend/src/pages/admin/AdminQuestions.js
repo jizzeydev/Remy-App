@@ -15,7 +15,8 @@ import {
   Plus, Edit, Trash2, FileText, Upload,
   ArrowLeft, BookOpen, Layers, HelpCircle,
   ChevronDown, ChevronRight, Loader2,
-  Search, Filter, Building2
+  Search, Filter, Building2,
+  Link2, GitFork, EyeOff, Undo2
 } from 'lucide-react';
 import { QuestionContent, QuestionOption, ExplanationBlock } from '@/components/course/QuestionRenderer';
 
@@ -317,19 +318,56 @@ const QuestionManager = ({ course, onBack }) => {
     }
   };
 
-  const handleDeleteQuestion = async (questionId) => {
-    if (!window.confirm('¿Eliminar esta pregunta?')) return;
-    
+  // Smart delete that mirrors the lesson dispatch in CourseContentEditor.
+  // Inherited template question → exclude from this course (template intact).
+  // Override (forked) → revert by deleting the local override.
+  // Pure local → real DELETE.
+  const handleDeleteQuestion = async (chapter, question) => {
+    const token = localStorage.getItem('admin_token');
+    const headers = { Authorization: `Bearer ${token}` };
+
     try {
-      const token = localStorage.getItem('admin_token');
-      await axios.delete(`${ADMIN_API}/questions/${questionId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      toast.success('Pregunta eliminada');
+      if (chapter?.is_linked && question.inherited_from_template && !question.overrides_template) {
+        if (!window.confirm('¿Excluir esta pregunta de este curso? La pregunta queda intacta en el curso general.')) return;
+        await axios.post(
+          `${ADMIN_API}/chapters/${chapter.id}/exclude-questions`,
+          { ids: [question.id] },
+          { headers }
+        );
+        toast.success('Pregunta excluida de este curso');
+      } else if (question.overrides_template) {
+        if (!window.confirm('¿Revertir esta pregunta a la versión general? Se perderán los cambios locales.')) return;
+        await axios.delete(`${ADMIN_API}/questions/${question.id}`, { headers });
+        toast.success('Revertida a la versión general');
+      } else {
+        if (!window.confirm('¿Eliminar esta pregunta?')) return;
+        await axios.delete(`${ADMIN_API}/questions/${question.id}`, { headers });
+        toast.success('Pregunta eliminada');
+      }
       fetchData();
     } catch (error) {
       console.error('Error deleting question:', error);
-      toast.error('Error al eliminar pregunta');
+      toast.error(error.response?.data?.detail || 'Error al eliminar pregunta');
+    }
+  };
+
+  // Fork an inherited question into a course-specific override, then open the
+  // editor on the fork. Idempotent server-side.
+  const handleForkAndEditQuestion = async (chapter, templateQuestion) => {
+    try {
+      const token = localStorage.getItem('admin_token');
+      const res = await axios.post(
+        `${ADMIN_API}/chapters/${chapter.id}/fork-question/${templateQuestion.id}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const fork = res.data.question;
+      if (res.data.created) toast.success('Pregunta clonada localmente, ahora podés editarla.');
+      await fetchData();
+      openEditQuestion(fork);
+    } catch (error) {
+      console.error('Error forking question:', error);
+      toast.error(error.response?.data?.detail || 'Error al clonar pregunta');
     }
   };
 
@@ -479,21 +517,26 @@ const QuestionManager = ({ course, onBack }) => {
           chapters.map(chapter => {
             const chapterQuestions = getQuestionsForChapter(chapter.id);
             const isExpanded = expandedChapters[chapter.id];
-            
+
             return (
-              <Card key={chapter.id}>
-                <CardHeader 
-                  className="cursor-pointer hover:bg-slate-50"
+              <Card key={chapter.id} className={chapter.is_linked ? 'border-blue-300 dark:border-blue-700' : ''}>
+                <CardHeader
+                  className={`cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 ${chapter.is_linked ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
                   onClick={() => toggleChapter(chapter.id)}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       {isExpanded ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
                       <CardTitle className="text-lg">{chapter.title}</CardTitle>
+                      {chapter.is_linked && (
+                        <Badge variant="secondary" className="text-xs bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">
+                          <Link2 size={11} className="mr-0.5" /> Heredado
+                        </Badge>
+                      )}
                       <Badge variant="secondary">{chapterQuestions.length} preguntas</Badge>
                     </div>
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       variant="outline"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -505,7 +548,7 @@ const QuestionManager = ({ course, onBack }) => {
                     </Button>
                   </div>
                 </CardHeader>
-                
+
                 {isExpanded && (
                   <CardContent className="pt-0">
                     {chapterQuestions.length === 0 ? (
@@ -514,20 +557,37 @@ const QuestionManager = ({ course, onBack }) => {
                       </p>
                     ) : (
                       <div className="space-y-3">
-                        {chapterQuestions.map((question, idx) => (
-                          <div 
+                        {chapterQuestions.map((question, idx) => {
+                          const isInherited = question.inherited_from_template;
+                          const isOverride = question.overrides_template;
+                          return (
+                          <div
                             key={question.id}
-                            className="border rounded-lg p-4 hover:bg-slate-50 transition-colors"
+                            className={`border rounded-lg p-4 transition-colors ${
+                              isOverride
+                                ? 'border-amber-300 dark:border-amber-700 bg-amber-50/50 dark:bg-amber-900/10 hover:bg-amber-50 dark:hover:bg-amber-900/20'
+                                : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                            }`}
                           >
                             <div className="flex items-start justify-between gap-4">
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-2">
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-2 flex-wrap">
                                   <Badge className={getDifficultyBadge(question.difficulty)}>
                                     {question.difficulty}
                                   </Badge>
                                   {question.lesson_id && (
                                     <Badge variant="outline" className="text-xs">
                                       {lessons.find(l => l.id === question.lesson_id)?.title || 'Lección'}
+                                    </Badge>
+                                  )}
+                                  {isInherited && !isOverride && (
+                                    <Badge variant="secondary" className="text-[10px] bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">
+                                      <Link2 size={10} className="mr-0.5" /> Heredada
+                                    </Badge>
+                                  )}
+                                  {isOverride && (
+                                    <Badge variant="secondary" className="text-[10px] bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300">
+                                      <GitFork size={10} className="mr-0.5" /> Editada localmente
                                     </Badge>
                                   )}
                                   <span className="text-xs text-slate-400">
@@ -538,25 +598,38 @@ const QuestionManager = ({ course, onBack }) => {
                                   <QuestionContent content={question.question_text} />
                                 </div>
                               </div>
-                              <div className="flex gap-2">
-                                <Button 
-                                  size="sm" 
+                              <div className="flex gap-2 flex-shrink-0">
+                                <Button
+                                  size="sm"
                                   variant="ghost"
-                                  onClick={() => openEditQuestion(question)}
+                                  onClick={() => isInherited && !isOverride
+                                    ? handleForkAndEditQuestion(chapter, question)
+                                    : openEditQuestion(question)
+                                  }
+                                  title={isInherited && !isOverride ? 'Clonar localmente y editar' : 'Editar'}
                                 >
-                                  <Edit size={16} />
+                                  {isInherited && !isOverride ? <GitFork size={16} /> : <Edit size={16} />}
                                 </Button>
-                                <Button 
-                                  size="sm" 
+                                <Button
+                                  size="sm"
                                   variant="ghost"
                                   className="text-red-600 hover:text-red-700"
-                                  onClick={() => handleDeleteQuestion(question.id)}
+                                  onClick={() => handleDeleteQuestion(chapter, question)}
+                                  title={
+                                    isInherited && !isOverride
+                                      ? 'Excluir de este curso (no afecta general)'
+                                      : isOverride
+                                      ? 'Revertir a versión general'
+                                      : 'Eliminar'
+                                  }
                                 >
-                                  <Trash2 size={16} />
+                                  {isInherited && !isOverride ? <EyeOff size={16} /> : isOverride ? <Undo2 size={16} /> : <Trash2 size={16} />}
                                 </Button>
                               </div>
                             </div>
                           </div>
+                          );
+                        })}
                         ))}
                       </div>
                     )}
@@ -623,7 +696,7 @@ const QuestionManager = ({ course, onBack }) => {
                             size="sm" 
                             variant="ghost"
                             className="text-red-600 hover:text-red-700"
-                            onClick={() => handleDeleteQuestion(question.id)}
+                            onClick={() => handleDeleteQuestion(null, question)}
                           >
                             <Trash2 size={16} />
                           </Button>

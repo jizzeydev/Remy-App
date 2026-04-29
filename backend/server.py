@@ -81,14 +81,28 @@ class Course(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class Chapter(BaseModel):
+    """A chapter belongs to a course and groups lessons.
+
+    Linked-chapter semantics (for university-specific courses):
+      - `template_chapter_id` set → this chapter is a "linked clone" of a chapter
+        in a General course. Lessons + questions are read from the template at
+        runtime, so updates to the General course propagate automatically.
+      - `excluded_lesson_ids` / `excluded_question_ids` → IDs from the template
+        that should be hidden in THIS course only. Used when (e.g.) UANDES skips
+        "Sustitución Trigonométrica" but UC includes it.
+      - Lesson-level overrides ("copy-on-write") live in `lessons` documents
+        that have `chapter_id == this.id` AND `template_lesson_id == originalId`.
+        They beat the template version when reading.
+    """
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     course_id: str
     title: str
     description: str
     order: int
-    # Template linking: if set, this chapter inherits content from the template chapter
-    template_chapter_id: Optional[str] = None  # ID of the source chapter (from General courses)
+    template_chapter_id: Optional[str] = None      # Link to source chapter (General course)
+    excluded_lesson_ids: List[str] = Field(default_factory=list)
+    excluded_question_ids: List[str] = Field(default_factory=list)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class Lesson(BaseModel):
@@ -100,6 +114,11 @@ class Lesson(BaseModel):
 
     Each block is a dict with at minimum {id: str, type: str, ...type-specific fields}.
     The admin editor constructs blocks via typed forms; loose validation here is fine.
+
+    Override semantics:
+      `template_lesson_id` set → this is a "fork" of a template lesson living
+      inside a linked chapter (the chapter has template_chapter_id). When reading
+      lessons of the linked chapter, this override shadows the template lesson.
     """
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -109,6 +128,7 @@ class Lesson(BaseModel):
     blocks: List[Dict[str, Any]] = Field(default_factory=list)
     order: int
     duration_minutes: int = 30
+    template_lesson_id: Optional[str] = None  # If set, this is a fork of an inherited lesson
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class Material(BaseModel):
@@ -122,6 +142,13 @@ class Material(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class Question(BaseModel):
+    """A multiple-choice question. Lives under a course/chapter/lesson.
+
+    Override semantics: a question with `template_question_id` set is a fork of
+    a template question, living in a course where the parent chapter is linked.
+    The override shadows the template when reading questions of the linked
+    chapter (same pattern as Lesson overrides).
+    """
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     course_id: str
@@ -136,6 +163,7 @@ class Question(BaseModel):
     explanation: str     # Supports Markdown + KaTeX
     latex_content: Optional[str] = None  # Legacy field for main formula
     image_placeholder: Optional[str] = None  # Description for GPAI image generation
+    template_question_id: Optional[str] = None  # If set, this is a fork of an inherited question
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class QuizAttempt(BaseModel):
@@ -227,6 +255,116 @@ def calculate_chilean_grade(percentage: float) -> float:
 class FormulaSearchRequest(BaseModel):
     query: str
     course_id: Optional[str] = None
+
+# ==================== LINKED-CHAPTER RESOLVERS ====================
+# Single source of truth for how a chapter's lessons and questions resolve when
+# the chapter is "linked" (template_chapter_id set, e.g. UC linking from a
+# General course):
+#   1. Local lessons living directly on the chapter (template_lesson_id == None)
+#      are appended at the end (these are course-specific additions).
+#   2. Template lessons (the template chapter's lessons) are included unless
+#      their id appears in the linked chapter's `excluded_lesson_ids`.
+#   3. Overrides — local lessons with `template_lesson_id == X` — shadow the
+#      template lesson with id X. The override's content wins; the order of
+#      the template lesson is preserved so the list keeps its original shape.
+# Same shape for questions, applied per-chapter at read-time.
+
+async def _resolve_chapter_lessons(chapter: dict) -> List[dict]:
+    """Return the effective lesson list for a chapter, honoring linkage."""
+    chapter_id = chapter["id"]
+    template_id = chapter.get("template_chapter_id")
+    excluded = set(chapter.get("excluded_lesson_ids") or [])
+
+    if not template_id:
+        # Plain chapter: no linkage logic needed.
+        lessons = await db.lessons.find(
+            {"chapter_id": chapter_id}, {"_id": 0}
+        ).sort("order", 1).to_list(500)
+        return lessons
+
+    # Template lessons (excluding those in the exclude list).
+    template_lessons = await db.lessons.find(
+        {"chapter_id": template_id}, {"_id": 0}
+    ).sort("order", 1).to_list(500)
+    template_lessons = [l for l in template_lessons if l["id"] not in excluded]
+
+    # Lessons living locally on the linked chapter.
+    local_lessons = await db.lessons.find(
+        {"chapter_id": chapter_id}, {"_id": 0}
+    ).to_list(500)
+
+    overrides_by_template_id = {
+        l["template_lesson_id"]: l for l in local_lessons if l.get("template_lesson_id")
+    }
+    pure_locals = [l for l in local_lessons if not l.get("template_lesson_id")]
+
+    out: List[dict] = []
+    for tl in template_lessons:
+        override = overrides_by_template_id.get(tl["id"])
+        if override:
+            # Inherit template's order if missing on the override.
+            if "order" not in override or override.get("order") is None:
+                override["order"] = tl.get("order", 0)
+            override["overrides_template"] = True
+            out.append(override)
+        else:
+            tl["inherited_from_template"] = True
+            out.append(tl)
+
+    # Append pure local additions, sorted by order.
+    pure_locals.sort(key=lambda l: l.get("order", 0))
+    out.extend(pure_locals)
+    return out
+
+
+async def _resolve_chapter_questions(chapter: dict, lesson_id: Optional[str] = None) -> List[dict]:
+    """Return the effective question list for a chapter, honoring linkage.
+
+    `lesson_id` filter is applied AFTER override resolution (matches against
+    the resolved lesson_id, not raw template ids), so callers can ask "give me
+    questions of this lesson" and get the union of local + non-excluded
+    template questions belonging to that lesson.
+    """
+    chapter_id = chapter["id"]
+    template_id = chapter.get("template_chapter_id")
+    excluded = set(chapter.get("excluded_question_ids") or [])
+
+    if not template_id:
+        query = {"chapter_id": chapter_id}
+        if lesson_id is not None:
+            query["lesson_id"] = lesson_id
+        return await db.questions.find(query, {"_id": 0}).to_list(2000)
+
+    # Template questions minus the excluded ones.
+    template_questions = await db.questions.find(
+        {"chapter_id": template_id}, {"_id": 0}
+    ).to_list(2000)
+    template_questions = [q for q in template_questions if q["id"] not in excluded]
+
+    local_questions = await db.questions.find(
+        {"chapter_id": chapter_id}, {"_id": 0}
+    ).to_list(2000)
+
+    overrides_by_template_id = {
+        q["template_question_id"]: q for q in local_questions if q.get("template_question_id")
+    }
+    pure_locals = [q for q in local_questions if not q.get("template_question_id")]
+
+    out: List[dict] = []
+    for tq in template_questions:
+        override = overrides_by_template_id.get(tq["id"])
+        if override:
+            override["overrides_template"] = True
+            out.append(override)
+        else:
+            tq["inherited_from_template"] = True
+            out.append(tq)
+    out.extend(pure_locals)
+
+    if lesson_id is not None:
+        out = [q for q in out if q.get("lesson_id") == lesson_id]
+    return out
+
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
@@ -650,31 +788,54 @@ async def start_quiz(request: QuizStartRequest):
                     detail="Tu prueba gratuita ha terminado. Suscríbete para acceder a los simulacros."
                 )
     
-    # Build query based on chapter_ids and lesson_ids
-    query = {"course_id": request.course_id}
-    
-    # If specific chapters or lessons are provided, use them
-    if request.chapter_ids or request.lesson_ids:
-        or_conditions = []
-        if request.chapter_ids:
-            or_conditions.append({"chapter_id": {"$in": request.chapter_ids}})
+    # Build the question pool. When the requested chapter is "linked" to a
+    # template, we resolve via _resolve_chapter_questions so excluded questions
+    # are filtered out and overrides shadow their template counterparts. For
+    # plain chapters we hit the questions collection directly.
+    all_questions: List[dict] = []
+    if request.chapter_ids:
+        chapters = await db.chapters.find(
+            {"id": {"$in": request.chapter_ids}}, {"_id": 0}
+        ).to_list(500)
+        for ch in chapters:
+            all_questions.extend(await _resolve_chapter_questions(ch))
+        # Optional lesson filter (intersects with the resolved chapter pool).
         if request.lesson_ids:
-            or_conditions.append({"lesson_id": {"$in": request.lesson_ids}})
-        if or_conditions:
-            query["$or"] = or_conditions
-    
-    # Filter by difficulty if not "todos"
+            lesson_set = set(request.lesson_ids)
+            all_questions = [q for q in all_questions if q.get("lesson_id") in lesson_set]
+    elif request.lesson_ids:
+        # Lesson-only selection: lessons can be inherited via template chapters,
+        # so look up each lesson's parent chapter and resolve from there.
+        lesson_docs = await db.lessons.find(
+            {"id": {"$in": request.lesson_ids}}, {"_id": 0, "id": 1, "chapter_id": 1, "template_lesson_id": 1}
+        ).to_list(500)
+        chapter_ids = list({l.get("chapter_id") for l in lesson_docs if l.get("chapter_id")})
+        chapters = await db.chapters.find(
+            {"id": {"$in": chapter_ids}}, {"_id": 0}
+        ).to_list(500)
+        lesson_set = set(request.lesson_ids)
+        # Also include the template_lesson_id of any forks so questions linked
+        # to the template lesson surface for the override.
+        lesson_set.update(l["template_lesson_id"] for l in lesson_docs if l.get("template_lesson_id"))
+        for ch in chapters:
+            ch_questions = await _resolve_chapter_questions(ch)
+            all_questions.extend(q for q in ch_questions if q.get("lesson_id") in lesson_set)
+    else:
+        # No chapter/lesson filter — fall back to course-wide pool.
+        all_questions = await db.questions.find(
+            {"course_id": request.course_id}, {"_id": 0}
+        ).to_list(2000)
+
+    # Difficulty filter applied after resolution.
     if request.difficulty and request.difficulty != "todos":
-        query["difficulty"] = request.difficulty
-    
-    all_questions = await db.questions.find(query, {"_id": 0}).to_list(1000)
-    
-    # If using legacy topic field
+        all_questions = [q for q in all_questions if q.get("difficulty") == request.difficulty]
+
+    # Legacy topic-only fallback (only if nothing matched yet).
     if not all_questions and request.topic:
         legacy_query = {"course_id": request.course_id, "topic": request.topic}
         if request.difficulty and request.difficulty != "todos":
             legacy_query["difficulty"] = request.difficulty
-        all_questions = await db.questions.find(legacy_query, {"_id": 0}).to_list(1000)
+        all_questions = await db.questions.find(legacy_query, {"_id": 0}).to_list(2000)
     
     if len(all_questions) == 0:
         raise HTTPException(
@@ -1159,32 +1320,29 @@ async def get_all_questions(
     topic: Optional[str] = None,
     _: str = Depends(verify_admin_token)
 ):
+    """Question list with linked-chapter resolution.
+
+    When chapter_id is given, the result is the merge of (template questions
+    minus excluded) + (local questions, with overrides shadowing the template).
+    """
+    if chapter_id:
+        chapter = await db.chapters.find_one({"id": chapter_id}, {"_id": 0})
+        if not chapter:
+            return []
+        questions = await _resolve_chapter_questions(chapter, lesson_id=lesson_id)
+        if topic:
+            questions = [q for q in questions if q.get("topic") == topic]
+        return questions
+
+    # No chapter filter: classic list (no linkage logic needed).
     query = {}
     if course_id:
         query["course_id"] = course_id
-    
-    # Handle chapter_id - check if it's a linked chapter
-    actual_chapter_id = chapter_id
-    if chapter_id:
-        chapter = await db.chapters.find_one({"id": chapter_id}, {"_id": 0})
-        if chapter and chapter.get("template_chapter_id"):
-            actual_chapter_id = chapter["template_chapter_id"]
-        query["chapter_id"] = actual_chapter_id
-    
     if lesson_id:
         query["lesson_id"] = lesson_id
     if topic:
         query["topic"] = topic
-    
-    questions = await db.questions.find(query, {"_id": 0}).to_list(1000)
-    
-    # Mark questions as inherited if from template
-    if chapter_id and actual_chapter_id != chapter_id:
-        for q in questions:
-            q['inherited_from_template'] = True
-            q['read_only'] = True
-    
-    return questions
+    return await db.questions.find(query, {"_id": 0}).to_list(2000)
 
 @admin_router.put("/questions/{question_id}", response_model=Question)
 async def update_question(question_id: str, question: Question, _: str = Depends(verify_admin_token)):
@@ -1480,8 +1638,20 @@ async def delete_chapter(chapter_id: str, admin: str = Depends(verify_admin_toke
     return {"message": "Capítulo movido a la papelera"}
 
 # Link chapters from template courses (General courses)
+class LinkChapterEntry(BaseModel):
+    """One template chapter to link, with optional per-chapter exclusions
+    so the link dialog can do granular import in a single round-trip."""
+    template_chapter_id: str
+    excluded_lesson_ids: List[str] = Field(default_factory=list)
+    excluded_question_ids: List[str] = Field(default_factory=list)
+
+
 class LinkChaptersRequest(BaseModel):
-    template_chapter_ids: List[str]  # IDs of chapters to link from General courses
+    # Backwards-compatible: callers can still send a flat list of ids.
+    template_chapter_ids: Optional[List[str]] = None
+    # Preferred shape: list of entries with optional exclusions.
+    chapters: Optional[List[LinkChapterEntry]] = None
+
 
 @admin_router.post("/courses/{course_id}/link-chapters")
 async def link_chapters(
@@ -1489,67 +1659,268 @@ async def link_chapters(
     request: LinkChaptersRequest,
     _: str = Depends(verify_admin_token)
 ):
+    """Link chapters from General courses into this course.
+
+    Creates reference (linked) chapters that inherit content from the template
+    at read time. Per-chapter `excluded_lesson_ids` / `excluded_question_ids`
+    let the caller pick a subset of the template's content in one shot — used
+    by the granular link dialog in the admin UI.
     """
-    Link chapters from General courses to this course.
-    Creates reference chapters that inherit content from templates.
-    """
-    # Verify target course exists
     target_course = await db.courses.find_one({"id": course_id}, {"_id": 0})
     if not target_course:
         raise HTTPException(status_code=404, detail="Curso destino no encontrado")
-    
-    # Get max order in target course
+
+    # Normalize either input form into a list of LinkChapterEntry.
+    entries: List[LinkChapterEntry] = []
+    if request.chapters:
+        entries.extend(request.chapters)
+    if request.template_chapter_ids:
+        entries.extend(
+            LinkChapterEntry(template_chapter_id=tid)
+            for tid in request.template_chapter_ids
+            if not any(e.template_chapter_id == tid for e in entries)
+        )
+    if not entries:
+        raise HTTPException(status_code=400, detail="No hay capítulos para vincular")
+
     max_order_result = await db.chapters.find_one(
         {"course_id": course_id},
         {"order": 1},
         sort=[("order", -1)]
     )
     current_max_order = max_order_result.get("order", 0) if max_order_result else 0
-    
+
     linked_chapters = []
     errors = []
-    
-    for template_id in request.template_chapter_ids:
-        # Get template chapter
-        template_chapter = await db.chapters.find_one({"id": template_id}, {"_id": 0})
+
+    for entry in entries:
+        template_chapter = await db.chapters.find_one(
+            {"id": entry.template_chapter_id}, {"_id": 0}
+        )
         if not template_chapter:
-            errors.append(f"Capítulo plantilla {template_id} no encontrado")
+            errors.append(f"Capítulo plantilla {entry.template_chapter_id} no encontrado")
             continue
-        
-        # Check if already linked
+
         existing = await db.chapters.find_one({
             "course_id": course_id,
-            "template_chapter_id": template_id
+            "template_chapter_id": entry.template_chapter_id
         }, {"_id": 0})
         if existing:
             errors.append(f"Capítulo '{template_chapter.get('title')}' ya está vinculado")
             continue
-        
-        # Create linked chapter
+
         current_max_order += 1
         new_chapter = {
             "id": str(uuid.uuid4()),
             "course_id": course_id,
-            "title": template_chapter.get("title"),  # Use same title
+            "title": template_chapter.get("title"),
             "description": template_chapter.get("description", ""),
             "order": current_max_order,
-            "template_chapter_id": template_id,  # Link to template
+            "template_chapter_id": entry.template_chapter_id,
+            "excluded_lesson_ids": entry.excluded_lesson_ids,
+            "excluded_question_ids": entry.excluded_question_ids,
             "created_at": datetime.now(timezone.utc).isoformat()
         }
-        
         await db.chapters.insert_one(new_chapter)
         linked_chapters.append({
             "id": new_chapter["id"],
             "title": new_chapter["title"],
-            "template_id": template_id
+            "template_id": entry.template_chapter_id,
+            "excluded_lesson_ids": entry.excluded_lesson_ids,
+            "excluded_question_ids": entry.excluded_question_ids,
         })
-    
+
     return {
         "success": True,
         "message": f"Vinculados {len(linked_chapters)} capítulo(s)",
         "linked_chapters": linked_chapters,
         "errors": errors if errors else None
     }
+
+# ==================== LINKED-CHAPTER GRANULAR OPS ====================
+# These endpoints let admins curate a linked chapter at the lesson/question
+# level WITHOUT dropping the link to the template. Source content is never
+# touched — only the per-course exclude lists and per-course override docs.
+
+class ExcludeIdsRequest(BaseModel):
+    ids: List[str]
+
+
+@admin_router.post("/chapters/{chapter_id}/exclude-lessons")
+async def exclude_lessons(
+    chapter_id: str,
+    request: ExcludeIdsRequest,
+    _: str = Depends(verify_admin_token)
+):
+    """Add template lesson ids to this chapter's exclude list (idempotent)."""
+    chapter = await db.chapters.find_one({"id": chapter_id}, {"_id": 0})
+    if not chapter:
+        raise HTTPException(status_code=404, detail="Capítulo no encontrado")
+    if not chapter.get("template_chapter_id"):
+        raise HTTPException(
+            status_code=400,
+            detail="Este capítulo no es heredado; no puede excluir lecciones."
+        )
+    current = set(chapter.get("excluded_lesson_ids") or [])
+    current.update(request.ids)
+    await db.chapters.update_one(
+        {"id": chapter_id},
+        {"$set": {"excluded_lesson_ids": list(current)}}
+    )
+    return {"success": True, "excluded_lesson_ids": list(current)}
+
+
+@admin_router.post("/chapters/{chapter_id}/include-lessons")
+async def include_lessons(
+    chapter_id: str,
+    request: ExcludeIdsRequest,
+    _: str = Depends(verify_admin_token)
+):
+    """Remove template lesson ids from this chapter's exclude list."""
+    chapter = await db.chapters.find_one({"id": chapter_id}, {"_id": 0})
+    if not chapter:
+        raise HTTPException(status_code=404, detail="Capítulo no encontrado")
+    current = set(chapter.get("excluded_lesson_ids") or [])
+    current.difference_update(request.ids)
+    await db.chapters.update_one(
+        {"id": chapter_id},
+        {"$set": {"excluded_lesson_ids": list(current)}}
+    )
+    return {"success": True, "excluded_lesson_ids": list(current)}
+
+
+@admin_router.post("/chapters/{chapter_id}/exclude-questions")
+async def exclude_questions(
+    chapter_id: str,
+    request: ExcludeIdsRequest,
+    _: str = Depends(verify_admin_token)
+):
+    chapter = await db.chapters.find_one({"id": chapter_id}, {"_id": 0})
+    if not chapter:
+        raise HTTPException(status_code=404, detail="Capítulo no encontrado")
+    if not chapter.get("template_chapter_id"):
+        raise HTTPException(
+            status_code=400,
+            detail="Este capítulo no es heredado; no puede excluir preguntas."
+        )
+    current = set(chapter.get("excluded_question_ids") or [])
+    current.update(request.ids)
+    await db.chapters.update_one(
+        {"id": chapter_id},
+        {"$set": {"excluded_question_ids": list(current)}}
+    )
+    return {"success": True, "excluded_question_ids": list(current)}
+
+
+@admin_router.post("/chapters/{chapter_id}/include-questions")
+async def include_questions(
+    chapter_id: str,
+    request: ExcludeIdsRequest,
+    _: str = Depends(verify_admin_token)
+):
+    chapter = await db.chapters.find_one({"id": chapter_id}, {"_id": 0})
+    if not chapter:
+        raise HTTPException(status_code=404, detail="Capítulo no encontrado")
+    current = set(chapter.get("excluded_question_ids") or [])
+    current.difference_update(request.ids)
+    await db.chapters.update_one(
+        {"id": chapter_id},
+        {"$set": {"excluded_question_ids": list(current)}}
+    )
+    return {"success": True, "excluded_question_ids": list(current)}
+
+
+@admin_router.post("/chapters/{chapter_id}/fork-lesson/{template_lesson_id}")
+async def fork_lesson(
+    chapter_id: str,
+    template_lesson_id: str,
+    _: str = Depends(verify_admin_token)
+):
+    """Create a course-specific override of an inherited lesson (copy-on-write).
+
+    The override is a new Lesson document that lives directly on the linked
+    chapter (chapter_id == this chapter, template_lesson_id == source). Editing
+    it from then on doesn't touch the template — the General course is safe.
+    Idempotent: returns the existing fork if one already exists.
+    """
+    chapter = await db.chapters.find_one({"id": chapter_id}, {"_id": 0})
+    if not chapter:
+        raise HTTPException(status_code=404, detail="Capítulo no encontrado")
+    if not chapter.get("template_chapter_id"):
+        raise HTTPException(
+            status_code=400,
+            detail="Solo se puede forkear en capítulos heredados."
+        )
+
+    # Idempotency: return the existing fork if there is one.
+    existing = await db.lessons.find_one(
+        {"chapter_id": chapter_id, "template_lesson_id": template_lesson_id},
+        {"_id": 0}
+    )
+    if existing:
+        return {"success": True, "lesson": existing, "created": False}
+
+    template_lesson = await db.lessons.find_one(
+        {"id": template_lesson_id}, {"_id": 0}
+    )
+    if not template_lesson:
+        raise HTTPException(status_code=404, detail="Lección plantilla no encontrada")
+
+    new_lesson = {
+        "id": str(uuid.uuid4()),
+        "chapter_id": chapter_id,
+        "title": template_lesson.get("title"),
+        "description": template_lesson.get("description"),
+        "blocks": template_lesson.get("blocks", []),
+        "order": template_lesson.get("order", 0),
+        "duration_minutes": template_lesson.get("duration_minutes", 30),
+        "template_lesson_id": template_lesson_id,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.lessons.insert_one(new_lesson)
+    return {"success": True, "lesson": new_lesson, "created": True}
+
+
+@admin_router.post("/chapters/{chapter_id}/fork-question/{template_question_id}")
+async def fork_question(
+    chapter_id: str,
+    template_question_id: str,
+    _: str = Depends(verify_admin_token)
+):
+    """Course-specific override of an inherited question. Same shape as fork-lesson."""
+    chapter = await db.chapters.find_one({"id": chapter_id}, {"_id": 0})
+    if not chapter:
+        raise HTTPException(status_code=404, detail="Capítulo no encontrado")
+    if not chapter.get("template_chapter_id"):
+        raise HTTPException(
+            status_code=400,
+            detail="Solo se puede forkear en capítulos heredados."
+        )
+
+    existing = await db.questions.find_one(
+        {"chapter_id": chapter_id, "template_question_id": template_question_id},
+        {"_id": 0}
+    )
+    if existing:
+        return {"success": True, "question": existing, "created": False}
+
+    template_question = await db.questions.find_one(
+        {"id": template_question_id}, {"_id": 0}
+    )
+    if not template_question:
+        raise HTTPException(status_code=404, detail="Pregunta plantilla no encontrada")
+
+    new_question = {
+        **template_question,
+        "id": str(uuid.uuid4()),
+        "course_id": chapter.get("course_id"),
+        "chapter_id": chapter_id,
+        "template_question_id": template_question_id,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.questions.insert_one(new_question)
+    return {"success": True, "question": new_question, "created": True}
+
 
 @admin_router.post("/chapters/{chapter_id}/unlink")
 async def unlink_chapter(
@@ -1615,27 +1986,35 @@ async def unlink_chapter(
 # Get available template chapters (from General courses)
 @admin_router.get("/template-chapters")
 async def get_template_chapters(_: str = Depends(verify_admin_token)):
-    """Get all chapters from General courses (available as templates)"""
-    # Get General courses (no university_id)
+    """Get all chapters (with their lessons) from General courses.
+
+    Includes lesson list per chapter so the granular link dialog in the admin
+    UI can render checkboxes per lesson without N+1 follow-up calls.
+    """
     general_courses = await db.courses.find(
         {"$or": [{"university_id": None}, {"university_id": {"$exists": False}}]},
         {"_id": 0}
     ).to_list(100)
-    
+
     result = []
     for course in general_courses:
         chapters = await db.chapters.find(
             {"course_id": course["id"]},
             {"_id": 0}
         ).sort("order", 1).to_list(100)
-        
-        # Get lesson count for each chapter
+
         for chapter in chapters:
-            lesson_count = await db.lessons.count_documents({"chapter_id": chapter["id"]})
+            # Lightweight lesson list (id + title + order + duration) so the
+            # link dialog can show per-lesson checkboxes.
+            chapter_lessons = await db.lessons.find(
+                {"chapter_id": chapter["id"]},
+                {"_id": 0, "id": 1, "title": 1, "order": 1, "duration_minutes": 1}
+            ).sort("order", 1).to_list(500)
             question_count = await db.questions.count_documents({"chapter_id": chapter["id"]})
-            chapter["lesson_count"] = lesson_count
+            chapter["lessons"] = chapter_lessons
+            chapter["lesson_count"] = len(chapter_lessons)
             chapter["question_count"] = question_count
-        
+
         result.append({
             "course": {
                 "id": course["id"],
@@ -1644,7 +2023,7 @@ async def get_template_chapters(_: str = Depends(verify_admin_token)):
             },
             "chapters": chapters
         })
-    
+
     return result
 
 # Import chapters from another course (for content splitting/reuse)
@@ -1661,8 +2040,10 @@ async def import_chapters(
     _: str = Depends(verify_admin_token)
 ):
     """
-    Import chapters (with lessons and questions) from another course.
-    Creates copies with new IDs, linked to the target course.
+    DEPRECATED: deep-copy chapters (with lessons and questions) from another
+    course. Prefer `link-chapters` (with optional per-chapter exclusions) so
+    the General-course content stays as the single source of truth and updates
+    propagate. This endpoint is preserved only for legacy callers.
     """
     # Verify target course exists
     target_course = await db.courses.find_one({"id": target_course_id}, {"_id": 0})
@@ -1807,23 +2188,14 @@ async def import_chapters(
 # Lessons endpoints
 @admin_router.get("/chapters/{chapter_id}/lessons")
 async def get_chapter_lessons(chapter_id: str, _: str = Depends(verify_admin_token)):
-    # Check if this chapter has a template (is linked)
+    """Lesson list for a chapter — handles linked-chapter merging + exclusions."""
     chapter = await db.chapters.find_one({"id": chapter_id}, {"_id": 0})
-    
-    # Determine source chapter for lessons
-    source_chapter_id = chapter_id
-    is_linked = False
-    if chapter and chapter.get("template_chapter_id"):
-        source_chapter_id = chapter["template_chapter_id"]
-        is_linked = True
-    
-    lessons = await db.lessons.find({"chapter_id": source_chapter_id}, {"_id": 0}).sort("order", 1).to_list(100)
+    if not chapter:
+        return []
+    lessons = await _resolve_chapter_lessons(chapter)
     for lesson in lessons:
         if isinstance(lesson.get('created_at'), str):
             lesson['created_at'] = datetime.fromisoformat(lesson['created_at'])
-        if is_linked:
-            lesson['inherited_from_template'] = True
-            lesson['read_only'] = True  # Can't edit inherited lessons
     return lessons
 
 @admin_router.post("/lessons", response_model=Lesson)
@@ -1929,21 +2301,14 @@ async def get_public_course_chapters(course_id: str):
 
 @api_router.get("/chapters/{chapter_id}/lessons")
 async def get_public_chapter_lessons(chapter_id: str):
-    # First, check if this chapter has a template (is linked)
+    """Public lesson list — same linkage rules as the admin endpoint."""
     chapter = await db.chapters.find_one({"id": chapter_id}, {"_id": 0})
-    
-    # Use template chapter's lessons if linked
-    source_chapter_id = chapter_id
-    if chapter and chapter.get("template_chapter_id"):
-        source_chapter_id = chapter["template_chapter_id"]
-    
-    lessons = await db.lessons.find({"chapter_id": source_chapter_id}, {"_id": 0}).sort("order", 1).to_list(100)
+    if not chapter:
+        return []
+    lessons = await _resolve_chapter_lessons(chapter)
     for lesson in lessons:
         if isinstance(lesson.get('created_at'), str):
             lesson['created_at'] = datetime.fromisoformat(lesson['created_at'])
-        # Mark lessons as inherited if from template
-        if source_chapter_id != chapter_id:
-            lesson['inherited_from_template'] = True
     return lessons
 
 @api_router.get("/lessons/{lesson_id}")
