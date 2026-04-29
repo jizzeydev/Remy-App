@@ -581,12 +581,15 @@ const CreateQuizDialog = ({ open, onOpenChange, onQuizCreated }) => {
   );
 };
 
-// ==================== WRONG-ANSWERS BY CHAPTER CHART ====================
-// Surfaces where the student lost points so they can target practice next time.
+// ==================== WRONG-ANSWERS BREAKDOWN ====================
+// Two-tier breakdown so the student can see WHERE they lost points: by chapter
+// (overview) and by lesson within each chapter (so a single-chapter quiz still
+// has actionable detail — which lesson to re-read).
 const WrongAnswersChart = ({ quiz, results }) => {
   const [chapterTitles, setChapterTitles] = useState({});
+  const [lessonInfo, setLessonInfo] = useState({}); // id -> {title, chapter_id, chapter_title}
 
-  // Fetch all chapters for the quiz course so we can show titles instead of UUIDs.
+  // Fetch chapter titles for the quiz course (cheap, single call).
   useEffect(() => {
     if (!quiz?.course_id) return;
     let cancelled = false;
@@ -601,118 +604,219 @@ const WrongAnswersChart = ({ quiz, results }) => {
     return () => { cancelled = true; };
   }, [quiz?.course_id]);
 
-  // Aggregate per-chapter stats from per-question results.
-  const data = (() => {
-    const buckets = {};
+  // Batch-fetch lesson titles for the lesson_ids referenced in this quiz.
+  useEffect(() => {
+    const ids = Array.from(new Set(
+      (quiz.questions || []).map((q) => q.lesson_id).filter(Boolean)
+    ));
+    if (ids.length === 0) return;
+    let cancelled = false;
+    axios.get(`${API}/lessons/by-ids?ids=${encodeURIComponent(ids.join(','))}`)
+      .then((r) => {
+        if (cancelled) return;
+        const map = {};
+        (r.data || []).forEach((l) => { map[l.id] = l; });
+        setLessonInfo(map);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [quiz]);
+
+  // Aggregate per-chapter and per-lesson buckets in a single pass.
+  const { chapterData, lessonData, hasErrors, totalErrors } = (() => {
+    const chBuckets = {};
+    const lsBuckets = {};
+    let errors = 0;
+
     (quiz.questions || []).forEach((q, idx) => {
-      const chId = q.chapter_id || 'sin-capitulo';
-      if (!buckets[chId]) buckets[chId] = { id: chId, total: 0, wrong: 0 };
-      buckets[chId].total += 1;
       const r = results?.results?.[idx];
-      if (r && r.is_correct === false) buckets[chId].wrong += 1;
+      const isWrong = r && r.is_correct === false;
+      if (isWrong) errors += 1;
+
+      const chId = q.chapter_id || 'sin-capitulo';
+      if (!chBuckets[chId]) chBuckets[chId] = { id: chId, total: 0, wrong: 0 };
+      chBuckets[chId].total += 1;
+      if (isWrong) chBuckets[chId].wrong += 1;
+
+      // Group at lesson granularity when available; fall back to a per-chapter
+      // bucket so questions without lesson_id still show up somewhere.
+      const lsId = q.lesson_id || `chapter:${chId}`;
+      if (!lsBuckets[lsId]) {
+        lsBuckets[lsId] = { id: lsId, total: 0, wrong: 0, chapter_id: chId, lesson_id: q.lesson_id || null };
+      }
+      lsBuckets[lsId].total += 1;
+      if (isWrong) lsBuckets[lsId].wrong += 1;
     });
-    return Object.values(buckets)
-      .filter((b) => b.total > 0)
-      .map((b) => ({
-        id: b.id,
-        name: chapterTitles[b.id] || (b.id === 'sin-capitulo' ? 'Sin capítulo' : 'Capítulo'),
-        wrong: b.wrong,
-        total: b.total,
-        correct: b.total - b.wrong,
-        // Truncated label for X axis to avoid clipping
-        shortName: (chapterTitles[b.id] || 'Cap.').slice(0, 18) + ((chapterTitles[b.id]?.length || 0) > 18 ? '…' : ''),
-      }))
-      .sort((a, b) => b.wrong - a.wrong);
+
+    const formatChapter = (b) => ({
+      ...b,
+      name: chapterTitles[b.id] || (b.id === 'sin-capitulo' ? 'Sin capítulo' : 'Capítulo'),
+      shortName: ((chapterTitles[b.id] || 'Cap.').slice(0, 18) + ((chapterTitles[b.id]?.length || 0) > 18 ? '…' : ''))
+    });
+
+    const formatLesson = (b) => {
+      const li = lessonInfo[b.lesson_id];
+      const lessonName = li?.title || (b.lesson_id ? 'Lección' : `Sin lección · ${chapterTitles[b.chapter_id] || 'Capítulo'}`);
+      const chapterName = li?.chapter_title || chapterTitles[b.chapter_id] || '';
+      return {
+        ...b,
+        name: lessonName,
+        chapterName,
+        shortName: lessonName.slice(0, 22) + (lessonName.length > 22 ? '…' : '')
+      };
+    };
+
+    return {
+      chapterData: Object.values(chBuckets)
+        .filter((b) => b.total > 0)
+        .map(formatChapter)
+        .sort((a, b) => b.wrong - a.wrong),
+      lessonData: Object.values(lsBuckets)
+        .filter((b) => b.total > 0)
+        .map(formatLesson)
+        .sort((a, b) => b.wrong - a.wrong),
+      hasErrors: errors > 0,
+      totalErrors: errors
+    };
   })();
 
-  if (data.length === 0) return null;
+  if (chapterData.length === 0 && lessonData.length === 0) return null;
 
-  const hasErrors = data.some((d) => d.wrong > 0);
+  const colorFor = (entry) =>
+    entry.wrong === 0
+      ? '#22c55e' // green-500 — perfect bucket
+      : entry.wrong / entry.total >= 0.6
+      ? '#ef4444' // red-500
+      : entry.wrong / entry.total >= 0.3
+      ? '#f59e0b' // amber-500
+      : '#22c55e';
+
+  const pillFor = (entry) =>
+    entry.wrong === 0
+      ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+      : entry.wrong / entry.total >= 0.6
+      ? 'bg-red-500/15 text-red-700 dark:text-red-300'
+      : entry.wrong / entry.total >= 0.3
+      ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300'
+      : 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300';
+
+  // The per-chapter chart is only useful when the quiz spans 2+ chapters; for
+  // single-chapter quizzes we show only the per-lesson view (which is what
+  // they really want to see).
+  const showChapterChart = chapterData.length >= 2;
+  // Show the per-lesson chart when there's >1 lesson bucket, OR when there's
+  // any lesson breakdown at all (helps even with 1 lesson — it's still useful
+  // info).
+  const showLessonChart = lessonData.length >= 1;
+
+  const tooltipStyle = {
+    background: 'hsl(var(--card))',
+    border: '1px solid hsl(var(--border))',
+    borderRadius: 8,
+    fontSize: 12,
+    color: 'hsl(var(--foreground))'
+  };
 
   return (
     <Card className="border-border bg-card" data-testid="wrong-answers-chart">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg flex items-center gap-2 text-foreground">
           <AlertCircle size={18} className="text-amber-500 dark:text-amber-400" aria-hidden="true" />
-          Errores por capítulo
+          Errores por capítulo y lección
         </CardTitle>
         <CardDescription>
           {hasErrors
-            ? 'Capítulos ordenados por cantidad de errores. Practica los de arriba.'
+            ? `${totalErrors} ${totalErrors === 1 ? 'pregunta incorrecta' : 'preguntas incorrectas'}. Practica las áreas con más errores.`
             : '¡No tuviste errores! Excelente trabajo.'}
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="h-56 w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} margin={{ top: 8, right: 12, left: -16, bottom: 8 }}>
-              <XAxis
-                dataKey="shortName"
-                stroke="hsl(var(--muted-foreground))"
-                tick={{ fontSize: 11 }}
-                interval={0}
-                angle={data.length > 4 ? -20 : 0}
-                textAnchor={data.length > 4 ? 'end' : 'middle'}
-                height={data.length > 4 ? 50 : 30}
-              />
-              <YAxis
-                stroke="hsl(var(--muted-foreground))"
-                tick={{ fontSize: 11 }}
-                allowDecimals={false}
-              />
-              <Tooltip
-                contentStyle={{
-                  background: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: 8,
-                  fontSize: 12,
-                  color: 'hsl(var(--foreground))'
-                }}
-                formatter={(value, name, props) => {
-                  if (name === 'wrong') return [`${value} de ${props.payload.total}`, 'Errores'];
-                  return [value, name];
-                }}
-                labelFormatter={(_, payload) => payload?.[0]?.payload?.name || ''}
-              />
-              <Bar dataKey="wrong" radius={[8, 8, 0, 0]} maxBarSize={56}>
-                {data.map((entry, i) => (
-                  <Cell
-                    key={i}
-                    fill={
-                      entry.wrong === 0
-                        ? 'hsl(var(--primary))'
-                        : entry.wrong / entry.total >= 0.6
-                        ? '#ef4444' // red-500
-                        : entry.wrong / entry.total >= 0.3
-                        ? '#f59e0b' // amber-500
-                        : '#22c55e' // green-500
-                    }
+      <CardContent className="space-y-6">
+        {/* Per-chapter chart — overview when the quiz spans multiple chapters */}
+        {showChapterChart && (
+          <section>
+            <h4 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-2">
+              Por capítulo
+            </h4>
+            <div className="h-44 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chapterData} margin={{ top: 8, right: 12, left: -16, bottom: 8 }}>
+                  <XAxis
+                    dataKey="shortName"
+                    stroke="hsl(var(--muted-foreground))"
+                    tick={{ fontSize: 11 }}
+                    interval={0}
+                    angle={chapterData.length > 4 ? -20 : 0}
+                    textAnchor={chapterData.length > 4 ? 'end' : 'middle'}
+                    height={chapterData.length > 4 ? 50 : 30}
                   />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+                  <YAxis stroke="hsl(var(--muted-foreground))" tick={{ fontSize: 11 }} allowDecimals={false} />
+                  <Tooltip
+                    contentStyle={tooltipStyle}
+                    formatter={(v, _, props) => [`${v} de ${props.payload.total}`, 'Errores']}
+                    labelFormatter={(_, payload) => payload?.[0]?.payload?.name || ''}
+                  />
+                  <Bar dataKey="wrong" radius={[8, 8, 0, 0]} maxBarSize={56}>
+                    {chapterData.map((entry, i) => (<Cell key={i} fill={colorFor(entry)} />))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </section>
+        )}
 
-        {/* Legend with per-chapter counts (more accessible than just hover tooltips) */}
-        <ul className="mt-3 space-y-1.5 text-sm">
-          {data.map((d) => (
-            <li key={d.id} className="flex items-center justify-between gap-3">
-              <span className="text-foreground truncate">{d.name}</span>
-              <span className={`flex-shrink-0 tabular-nums text-xs px-2 py-0.5 rounded-full ${
-                d.wrong === 0
-                  ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
-                  : d.wrong / d.total >= 0.6
-                  ? 'bg-red-500/15 text-red-700 dark:text-red-300'
-                  : d.wrong / d.total >= 0.3
-                  ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300'
-                  : 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
-              }`}>
-                {d.wrong}/{d.total} errores
-              </span>
-            </li>
-          ))}
-        </ul>
+        {/* Per-lesson chart — actionable detail */}
+        {showLessonChart && (
+          <section>
+            <h4 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-2">
+              Por lección
+            </h4>
+            <div className="h-48 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={lessonData} margin={{ top: 8, right: 12, left: -16, bottom: 8 }}>
+                  <XAxis
+                    dataKey="shortName"
+                    stroke="hsl(var(--muted-foreground))"
+                    tick={{ fontSize: 11 }}
+                    interval={0}
+                    angle={lessonData.length > 3 ? -22 : 0}
+                    textAnchor={lessonData.length > 3 ? 'end' : 'middle'}
+                    height={lessonData.length > 3 ? 60 : 30}
+                  />
+                  <YAxis stroke="hsl(var(--muted-foreground))" tick={{ fontSize: 11 }} allowDecimals={false} />
+                  <Tooltip
+                    contentStyle={tooltipStyle}
+                    formatter={(v, _, props) => [`${v} de ${props.payload.total}`, 'Errores']}
+                    labelFormatter={(_, payload) => {
+                      const p = payload?.[0]?.payload;
+                      return p?.chapterName ? `${p.chapterName} · ${p.name}` : (p?.name || '');
+                    }}
+                  />
+                  <Bar dataKey="wrong" radius={[8, 8, 0, 0]} maxBarSize={56}>
+                    {lessonData.map((entry, i) => (<Cell key={i} fill={colorFor(entry)} />))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Per-lesson legend with chapter context — what the user really
+                needs to act on. */}
+            <ul className="mt-3 space-y-1.5 text-sm">
+              {lessonData.map((d) => (
+                <li key={d.id} className="flex items-center justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-foreground truncate">{d.name}</p>
+                    {d.chapterName && (
+                      <p className="text-xs text-muted-foreground truncate">{d.chapterName}</p>
+                    )}
+                  </div>
+                  <span className={`flex-shrink-0 tabular-nums text-xs px-2 py-0.5 rounded-full ${pillFor(d)}`}>
+                    {d.wrong}/{d.total} errores
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </CardContent>
     </Card>
   );

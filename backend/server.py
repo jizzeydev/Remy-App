@@ -348,6 +348,44 @@ async def get_courses(
     
     return courses
 
+@api_router.get("/lessons/by-ids")
+async def get_lessons_by_ids(ids: str = ""):
+    """
+    Batch lookup for lesson metadata. Used by the quiz-results "errors per
+    lesson" chart so it doesn't have to fire one request per lesson.
+
+    Query: ?ids=l1,l2,l3
+    Returns: list of {id, title, chapter_id, chapter_title}
+    """
+    lesson_ids = [s for s in (ids or "").split(",") if s]
+    if not lesson_ids:
+        return []
+
+    lessons = await db.lessons.find(
+        {"id": {"$in": lesson_ids}},
+        {"_id": 0, "id": 1, "title": 1, "chapter_id": 1}
+    ).to_list(2000)
+
+    chapter_ids = list({l.get("chapter_id") for l in lessons if l.get("chapter_id")})
+    chapter_titles = {}
+    if chapter_ids:
+        chapters = await db.chapters.find(
+            {"id": {"$in": chapter_ids}},
+            {"_id": 0, "id": 1, "title": 1}
+        ).to_list(500)
+        chapter_titles = {c["id"]: c.get("title", "") for c in chapters}
+
+    return [
+        {
+            "id": l["id"],
+            "title": l.get("title", ""),
+            "chapter_id": l.get("chapter_id"),
+            "chapter_title": chapter_titles.get(l.get("chapter_id"), "")
+        }
+        for l in lessons
+    ]
+
+
 @api_router.get("/lessons/{lesson_id}/context")
 async def get_lesson_context(lesson_id: str):
     """
