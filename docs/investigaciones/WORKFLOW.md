@@ -1,122 +1,109 @@
 # Workflow de investigación por universidad
 
-Proceso para investigar **una universidad chilena** y mapear **todas las carreras de pregrado** con sus respectivas mallas, en **una sola sesión de Claude Cowork** usando el prompt master de [PROMPTS_COWORK.md](./PROMPTS_COWORK.md).
+Proceso para investigar **una universidad chilena** mapeando **las 4 carreras de mayor demanda** con sus mallas y los **programas oficiales** de los ramos prioritarios. Una sola sesión de Claude Cowork con el prompt master de [PROMPTS_COWORK.md](./PROMPTS_COWORK.md).
 
-Tiempo estimado: **3 a 6 horas** por universidad según cantidad de carreras y calidad del sitio.
+Tiempo estimado: **1.5 a 2.5 horas** por universidad.
 
 ## Idea general
 
-Una sola conversación de Cowork resuelve toda la investigación. El **prompt master** instruye al modelo a recorrer 8 fases dentro de la misma sesión:
+Una sola conversación de Cowork resuelve toda la investigación. El prompt master instruye al modelo a recorrer 5 fases:
 
-1. Setup y datos institucionales
-2. Inventario completo de carreras
-3. Priorización (ALTA/MEDIA/BAJA)
-4. Extracción de mallas
-5. Agregación por área
-6. Propuesta de catálogo Remy
-7. Mapeo carrera → cursos Remy
-8. Verificación final y fuentes
+1. **Setup y datos institucionales** (5 min) — sigla, sitio, sedes, URL del listado de mallas.
+2. **Mallas de las 4 carreras objetivo** (30–45 min) — Ing. Civil/plan común, Medicina, Ing. Comercial, Derecho. Tabla compacta por carrera (código, nombre, semestre, créditos, área).
+3. **Programas verificados de los ramos prioritarios** (45–75 min) — solo los ramos que mapean al catálogo Remy actual o futuro. Para cada uno: abrir el programa oficial, **citar verbatim** los contenidos por unidad y la bibliografía.
+4. **Propuesta de catálogo Remy** (15 min) — cursos a crear/expandir, con **capítulos derivados de los contenidos reales** de la Fase 3.
+5. **Mapeo carrera → cursos Remy + verificación final + fuentes** (15 min).
 
-El output del modelo va llenando, fase por fase, las secciones de [PLANTILLA_UNIVERSIDAD.md](./PLANTILLA_UNIVERSIDAD.md) — que copiaste antes como `<sigla>.md`.
+El output va llenando, fase por fase, las secciones de [PLANTILLA_UNIVERSIDAD.md](./PLANTILLA_UNIVERSIDAD.md).
 
 ## Pre-requisitos
 
-Antes de empezar:
-
 - [ ] **Claude Cowork** abierto en una pestaña dedicada (conversación nueva).
-- [ ] **Extensión Claude in Chrome** instalada y autenticada (`chrome://extensions` la muestra activa).
-- [ ] El navegador con permisos para que Claude opere las pestañas (clickear, leer DOM, descargar).
+- [ ] **Extensión Claude in Chrome** instalada y autenticada.
+- [ ] Permiso explícito a la extensión para operar la pestaña (clickear, leer DOM, descargar).
 - [ ] Una pestaña en blanco lista para que Claude navegue.
-- [ ] La taxonomía de áreas (sección "Áreas de conocimiento" en [README.md](./README.md)) — el prompt la incluye, pero tenerla a mano para verificar no está de más.
-- [ ] Una copia de [PLANTILLA_UNIVERSIDAD.md](./PLANTILLA_UNIVERSIDAD.md) renombrada como `<sigla>.md` (ej. `uc.md`, `uchile.md`, `usach.md`) en esta carpeta.
+- [ ] Una copia de [PLANTILLA_UNIVERSIDAD.md](./PLANTILLA_UNIVERSIDAD.md) renombrada como `<sigla>.md` (ej. `uc.md`, `uchile.md`).
 
 ## Cómo correr una investigación
 
-1. **Crear el archivo de la universidad.** Copiá `PLANTILLA_UNIVERSIDAD.md` → `docs/investigaciones/<sigla>.md` y completá el encabezado (nombre, sigla, fecha).
-
-2. **Preparar el prompt master.** Abrí [PROMPTS_COWORK.md](./PROMPTS_COWORK.md), copiá el "Prompt master" completo y reemplazá los placeholders:
-
-   - `{{NOMBRE_UNIVERSIDAD}}` — nombre completo (ej. "Pontificia Universidad Católica de Chile").
-   - `{{SIGLA}}` — sigla institucional (ej. "UC").
-   - `{{DOMINIO_OFICIAL_O_VACIO}}` — dominio raíz oficial (ej. `uc.cl`). Si no lo conocés, dejá vacío y Cowork lo busca.
-   - `{{URL_LISTADO_CARRERAS_O_VACIO}}` — URL del listado completo de carreras si la conocés. Si no, dejá vacío.
-
-3. **Iniciar la conversación.** Abrí Cowork en una conversación nueva, **activá la extensión Chrome** y pegá el prompt completo.
-
-4. **Acompañar el proceso.** Cowork va a recorrer las 8 fases. En las largas (especialmente Fase 4 con muchas carreras) va a pausar para que confirmes con "ok, sigamos". Mientras tanto:
-
-   - **Pegá el output de cada fase** en el `<sigla>.md` a medida que avanza, **no esperes al final**.
-   - **Verificá las extracciones** importantes: muestra de URLs, año del plan, áreas asignadas.
-   - **Si Cowork queda atascado** (captcha, login, sitio caído), usá uno de los **prompts auxiliares** del archivo PROMPTS para destrabarlo.
-
-5. **Verificar y cerrar.** Al terminar la Fase 8, revisá la sección final del informe y completá lo que falte (tu nombre, tiempo invertido, observaciones).
+1. **Crear el archivo.** Copiá la plantilla → `docs/investigaciones/<sigla>.md` y completá el encabezado.
+2. **Preparar el prompt master.** Abrí [PROMPTS_COWORK.md](./PROMPTS_COWORK.md), copiá el "Prompt master" y reemplazá:
+   - `{{NOMBRE_UNIVERSIDAD}}` — nombre completo (ej. "Universidad de Chile").
+   - `{{SIGLA}}` — sigla (ej. "UCH").
+   - `{{DOMINIO_OFICIAL_O_VACIO}}` — dominio raíz (ej. `uchile.cl`).
+   - `{{URL_LISTADO_CARRERAS_O_VACIO}}` — URL del listado de carreras si la conocés.
+   - `{{NOTAS_DE_REEMPLAZO_DE_CARRERAS}}` — si la universidad no dicta alguna de las 4 carreras objetivo (ej. UTFSM no tiene Medicina ni Derecho), aclarar el reemplazo o el "skip" acá.
+3. **Iniciar la conversación.** Abrí Cowork en conversación nueva, **activá la extensión Chrome** y pegá el prompt completo.
+4. **Acompañar.** Cowork va a recorrer las 5 fases. Pegá el output de cada fase en `<sigla>.md` a medida que avanza, **no esperes al final**.
+5. **Verificar Fase 3.** Es la fase crítica. Para cada programa "verificado" debe haber un link al PDF/HTML del programa oficial **y** una cita textual de los contenidos. Si Cowork resume sin citar, pedile la cita.
+6. **Cerrar.** Al terminar la Fase 5, completá el encabezado (tu nombre, tiempo invertido, observaciones).
 
 ## Sobre el uso de Claude in Chrome
 
-La extensión permite que Claude **opere directamente en el navegador**: navega URLs, lee el contenido renderizado, sigue links, descarga PDFs. Esto es esencial porque muchas mallas están en:
+La extensión permite que Claude **opere directamente en el navegador**: navega URLs, lee DOM, sigue links, descarga PDFs. Esencial porque las mallas suelen estar en:
 
 - Páginas dinámicas con JavaScript que no se ven con un fetch simple.
-- Tablas HTML que requieren parseo de la estructura visible.
-- PDFs embebidos en visores propios de la universidad.
-- Formularios que requieren navegación (seleccionar carrera → submit → ver malla).
+- Tablas HTML con estructura visible solo renderizada.
+- PDFs embebidos en visores propios.
+- Formularios (seleccionar carrera → submit → ver malla).
 
 **Buenas prácticas:**
 
 1. **Una pestaña dedicada** a la investigación, sin otras tabs interfiriendo.
-2. **Permití explícitamente** a Claude operar la pestaña al inicio de la sesión.
-3. Si Claude se atasca en un sitio (banner de cookies, modal, login), **resolvelo manualmente** y volvé a darle el control con el prompt auxiliar correspondiente.
-4. Si la extensión no logra acceder a algo (PDFs protegidos, paywall), **descargá manualmente** y subilo a la conversación.
-5. Para universidades con muchas carreras, el prompt master ya divide la Fase 4 en lotes — confirmá entre lotes para evitar perder contexto.
+2. **Permití explícitamente** a Claude operar la pestaña al inicio.
+3. Si Claude se atasca (banner de cookies, modal, login), **resolvelo manualmente** y devolvele el control con el prompt auxiliar correspondiente.
+4. Si la extensión no logra acceder a un PDF, **descargalo manualmente** y subilo a la conversación.
+5. **Para Fase 3 (programas), exigí siempre el link al programa oficial.** Si no lo hay, el ramo se marca con ⚠️ y queda fuera de la propuesta.
 
 ## Sobre Cowork
 
-Cowork mantiene contexto entre mensajes dentro de la misma conversación. Eso significa que:
-
 - **Una sola conversación cubre toda la investigación** de una universidad.
-- **Una conversación por universidad** — no mezcles dos en la misma sesión.
-- Si la conversación se vuelve muy larga (50+ carreras o más de 4 horas), abrí una segunda conversación con el prompt auxiliar **"Para acelerar dividiendo en sesiones distintas"** y pasá como contexto inicial el archivo `<sigla>.md` parcial.
+- **Una conversación por universidad** — no mezcles dos.
+- Si la conversación se vuelve muy larga (más de 2.5 hrs), abrí una segunda con el prompt auxiliar **"Para acelerar dividiendo en sesiones distintas"** y pasá el `<sigla>.md` parcial como contexto inicial.
 
-## Catálogo actual de Remy (referencia)
+## Catálogo actual de Remy (referencia para Fase 4)
 
-Lo que Remy tiene **hoy** son cursos de matemáticas, todos en la categoría `MAT`:
+Lo que Remy tiene **hoy** (todos área `MAT`):
 
 - precalculo (8 caps)
-- calculo-diferencial (3 caps)
-- calculo-integral (3 caps)
-- calculo-multivariable (7 caps)
-- calculo-vectorial (3 caps)
+- calculo-diferencial (3 caps), calculo-integral (3), calculo-multivariable (7), calculo-vectorial (3)
 - algebra-lineal (8 caps)
 - ecuaciones-diferenciales (4 caps)
 
-**Cualquier ramo que no sea de matemáticas universitarias es, por definición, un gap del catálogo actual.** Esto es esperable y deseado: el objetivo del workflow es identificar qué cursos crear a continuación.
+**Cualquier ramo fuera de matemáticas universitarias es un gap esperable.** El objetivo del workflow es identificar qué cursos crear.
 
-Algunos cursos que probablemente aparezcan como gaps recurrentes (ya esperables):
+Gaps recurrentes esperables (ya validados con la primera investigación PUC):
 
-- Probabilidad y estadística (área `MAT`).
-- Variable compleja, métodos numéricos, EDPs (área `MAT`).
-- Microeconomía, macroeconomía, finanzas básicas (área `ECO`).
-- Contabilidad financiera, costos (área `CTB`).
-- Marketing, gestión, RRHH, estrategia (área `ADM`).
-- Anatomía, fisiología, bioquímica, farmacología (área `MED`).
-- Derecho civil, penal, comercial, constitucional (área `JUR`).
-- Psicología general, evolutiva, social (área `PSI`).
-- Programación introductoria, bases de datos, redes (área `INF`).
-- Física básica universitaria (área `FIS`).
-- Química general, orgánica (área `QUI`).
-- Metodología de investigación (área `MET`).
+- Probabilidad y estadística (`MAT`).
+- Programación introductoria — Python (`INF`).
+- Microeconomía + Macroeconomía intro (`ECO`).
+- Contabilidad financiera básica (`CTB`).
+- Química general universitaria (`QUI`).
+- Biología celular intro (`BIO`).
+- Física mecánica + electromagnetismo (`FIS`).
+- Anatomía + fisiología intro (`MED`).
+- Introducción al derecho + Derecho civil I (`JUR`).
 
 ## Errores comunes a evitar
 
-- **Filtrar carreras por "tienen matemática" o no.** No aplica. **Todas las carreras se inventarían.**
-- **Confundir mallas viejas con vigentes.** Las universidades suelen tener varios planes activos según cohorte. Tomá siempre la más reciente, anotando el año.
-- **Tomar mallas de un campus por las del otro.** UDP Santiago no es lo mismo que UDP Concepción si ambas existen.
-- **Asumir que el nombre del ramo equivale al contenido.** "Cálculo II" en una universidad puede ser cálculo integral; en otra puede ser cálculo multivariable. Siempre verificar el programa cuando esté disponible.
-- **Asignar área `OTRO` sin justificar.** Eso indica que no se entendió el ramo. Investigar el programa antes de etiquetar así.
-- **Dejar prácticas / tesis / talleres con área vacía.** Etiquetar como `PRA` o `MET` para mantener consistencia.
+- **Etiquetar contenidos por el nombre del ramo.** El error #1 documentado: "Cálculo II" puede ser cálculo integral en una universidad y multivariable en otra (en PUC, MAT1620 = multivariable, no integral; integral va dentro de MAT1610). **Siempre abrir el programa oficial y citar textualmente.**
+- **Confundir mallas viejas con vigentes.** Tomar siempre la última, anotando el año de cohorte.
+- **Tomar mallas de un campus por las del otro.** Si la carrera se dicta en varias sedes con planes distintos, declarar cuál se usa y por qué.
+- **Asignar área `OTRO` sin justificar.** Indica que no se entendió el ramo.
+- **Dejar prácticas / tesis con área vacía.** Etiquetar como `PRA` o `MET`.
+- **Inventar bibliografía.** Si el programa oficial no la lista, dejar el campo vacío con ⚠️.
 - **No anotar la fecha de consulta.** Las mallas cambian; sin fecha, en 6 meses no sabremos si la info sigue vigente.
-- **Olvidarse de las carreras vespertinas o de continuidad de estudios.** Algunas universidades tienen mallas distintas para sus programas vespertinos o "advance"; mencionarlas en notas.
-- **Pegar el output de Cowork solo al final.** Pegar fase por fase reduce el riesgo de perder trabajo si la conversación se cae o se vuelve inmanejable.
+- **Pegar el output solo al final.** Pegar fase por fase reduce el riesgo de perder trabajo si la conversación se cae.
 
 ## Output esperado
 
-Al cerrar el workflow, `<sigla>.md` debe tener llenas todas las secciones de la plantilla. Ese archivo es el **entregable** de la investigación y la base para que el equipo de producto decida qué cursos producir a continuación.
+Al cerrar el workflow, `<sigla>.md` debe tener:
+
+- Datos institucionales mínimos.
+- Las 4 mallas objetivo con tabla compacta de ramos.
+- La sección **"Programas verificados"** con cita textual de contenidos para los ramos prioritarios.
+- Propuesta de catálogo Remy con capítulos derivados de esos contenidos.
+- Mapeo carrera → cursos Remy.
+- Tabla de fuentes con URL + fecha + estado.
+
+Eso es el **entregable** y la base para que producto decida qué cursos producir.

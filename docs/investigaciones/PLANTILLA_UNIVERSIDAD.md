@@ -1,8 +1,8 @@
 # {{NOMBRE_UNIVERSIDAD}} ({{SIGLA}})
 
 > **Cómo usar esta plantilla:** copialá renombrándola como `<sigla>.md` (ej. `uc.md`, `uchile.md`)
-> y completá las secciones a medida que avanzás los 7 pasos del [WORKFLOW.md](./WORKFLOW.md)
-> con los [PROMPTS_COWORK.md](./PROMPTS_COWORK.md).
+> y completá las secciones a medida que avanzás las 5 fases del [WORKFLOW.md](./WORKFLOW.md)
+> con el prompt master de [PROMPTS_COWORK.md](./PROMPTS_COWORK.md).
 
 **Investigado por:** {{tu nombre}}
 **Fecha de consulta:** {{YYYY-MM-DD}}
@@ -13,7 +13,7 @@
 
 ## Datos institucionales
 
-> Completar después del **Prompt 1**.
+> Completar después de la **Fase 1**.
 
 - **Nombre oficial:** {{nombre completo}}
 - **Sigla:** {{SIGLA}}
@@ -21,312 +21,196 @@
 - **Sedes:** {{ciudad 1, ciudad 2, ...}}
 - **Portal de admisión:** [{{URL}}]({{URL}})
 - **Listado de carreras:** [{{URL}}]({{URL}})
+- **Catálogo de cursos / programas:** [{{URL}}]({{URL}})
+
+### Notas de reemplazo de carreras
+
+> Si la universidad NO dicta alguna de las 4 carreras objetivo, anotalo acá con la URL donde
+> verificaste la ausencia y la decisión tomada (skip o reemplazo).
+
+- {{ej. "UTFSM no dicta Medicina ni Derecho — verificado en [admision.usm.cl](...). Skip."}}
 
 ---
 
-## Facultades y escuelas
+## Las 4 carreras objetivo
 
-> Completar después del **Prompt 1**.
+> Completar después de la **Fase 2**. Una sub-sección por carrera con la tabla compacta de
+> su malla (sin contenidos — esos van en la sección "Programas verificados").
 
-| Facultad / Escuela / Instituto | Área macro | URL |
-|---|---|---|
-| {{Facultad de Ingeniería}} | Ingeniería y Tecnología | [link]({{...}}) |
-| {{Facultad de Medicina}} | Ciencias de la Salud | [link]({{...}}) |
-| {{Facultad de Derecho}} | Derecho | [link]({{...}}) |
-| {{Facultad de Economía y Negocios}} | Ciencias Económicas y Administración | [link]({{...}}) |
-| {{Facultad de Ciencias Sociales}} | Ciencias Sociales | [link]({{...}}) |
-| {{Facultad de Humanidades}} | Humanidades y Educación | [link]({{...}}) |
-| {{Facultad de Arte / Arquitectura}} | Arte y Comunicaciones | [link]({{...}}) |
-| {{Facultad de Ciencias}} | Ciencias Básicas | [link]({{...}}) |
-| ... | | |
+### Ingeniería Civil — plan común 🎯
 
----
+**Facultad:** {{...}} · **Plan:** {{año}} · **Total ramos:** {{n}} · **Sede:** {{...}}
+**URL malla:** [{{...}}]({{...}})
 
-## Inventario de carreras
+| Código | Nombre | Sem | Créditos | Pre-req | Área | URL programa |
+|---|---|---|---|---|---|---|
+| {{MAT1610}} | {{Cálculo I}} | 1 | 10 | — | MAT | [prog]({{...}}) |
+| {{MAT1203}} | {{Álgebra Lineal}} | 1 | 10 | — | MAT | [prog]({{...}}) |
+| {{IIC1103}} | {{Introducción a la Programación}} | 1 | 10 | — | INF | [prog]({{...}}) |
+| ... | | | | | | |
 
-> Completar después del **Prompt 2** (sin prioridad) y agregar columna "Prioridad" después del **Prompt 3**.
-> **Importante:** todas las carreras de pregrado, sin filtro.
-
-| Carrera | Sede | Facultad | Área macro | Plan (año) | Duración | Grado | URL malla | Prioridad |
-|---|---|---|---|---|---|---|---|---|
-| {{Plan común Ingeniería}} | {{Santiago}} | {{Ingeniería}} | Ingeniería y Tecnología | {{2024}} | 12s | Lic + Prof | [link]({{...}}) | 🔴 |
-| {{Medicina}} | {{Santiago}} | {{Medicina}} | Ciencias de la Salud | {{2024}} | 14s | Profesional | [link]({{...}}) | 🔴 |
-| {{Derecho}} | {{Santiago}} | {{Derecho}} | Derecho | {{2024}} | 10s | Licenciatura | [link]({{...}}) | 🔴 |
-| {{Ing. Comercial}} | {{Santiago}} | {{Economía}} | Cs. Económicas | {{2023}} | 10s | Profesional | [link]({{...}}) | 🔴 |
-| {{Psicología}} | {{Santiago}} | {{Cs. Sociales}} | Ciencias Sociales | {{2024}} | 10s | Profesional | [link]({{...}}) | 🔴 |
-| {{Enfermería}} | {{Santiago}} | {{Medicina}} | Ciencias de la Salud | {{2024}} | 10s | Profesional | [link]({{...}}) | 🟡 |
-| {{Arquitectura}} | {{Santiago}} | {{Arquitectura}} | Arte y Comunicaciones | {{2023}} | 12s | Profesional | [link]({{...}}) | 🟡 |
-| {{Periodismo}} | {{Santiago}} | {{Comunicación}} | Arte y Comunicaciones | {{2024}} | 8s | Profesional | [link]({{...}}) | 🟡 |
-| {{Pedagogía Básica}} | {{Santiago}} | {{Educación}} | Humanidades y Educación | {{2024}} | 10s | Profesional | [link]({{...}}) | 🟡 |
-| ... | | | | | | | | |
-
-**Distribución por área macro:**
-
-- Ingeniería y Tecnología: {{n}} carreras
-- Ciencias Económicas y Administración: {{n}}
-- Ciencias de la Salud: {{n}}
-- Ciencias Sociales: {{n}}
-- Derecho: {{n}}
-- Humanidades y Educación: {{n}}
-- Arte y Comunicaciones: {{n}}
-- Ciencias Básicas: {{n}}
-- **Total:** {{N}} carreras
-
-**Notas:**
-
-- ⚠️ {{cualquier observación sobre carreras con malla no encontrada o ambigüedades}}.
+**Ramos prioritarios para Remy (que pasarán a Fase 3):**
+- {{lista de códigos}}
 
 ---
 
-## Mallas extraídas
+### Medicina 🎯
 
-> Completar después del **Prompts 4 y 5**. Una sub-sección por carrera procesada (ALTA y MEDIA),
-> y al final una sección con las BAJAS solo con lista de nombres.
+**Facultad:** {{...}} · **Plan:** {{año}} · **Total ramos:** {{n}} · **Sede:** {{...}}
+**URL malla:** [{{...}}]({{...}})
 
-### {{Plan común Ingeniería}} 🔴
+| Código | Nombre | Sem | Créditos | Pre-req | Área | URL programa |
+|---|---|---|---|---|---|---|
+| {{MED101}} | {{Anatomía I}} | 1 | 10 | — | MED | [prog]({{...}}) |
+| {{MED102}} | {{Bioquímica}} | 1 | 8 | — | MED+QUI | [prog]({{...}}) |
+| ... | | | | | | |
 
-**Facultad:** {{Ingeniería}} · **Plan:** {{2024}} · **Total ramos:** {{n}}
-**URL malla:** [link]({{...}})
-
-| Código | Nombre | Sem | Créditos | Pre-req | Área | Link programa | Contenidos |
-|---|---|---|---|---|---|---|---|
-| {{MAT1014}} | {{Cálculo I}} | 1 | 10 | — | MAT | [prog]({{...}}) | {{Límites, derivadas, integrales}} |
-| {{MAT1024}} | {{Álgebra Lineal}} | 1 | 10 | — | MAT | [prog]({{...}}) | {{Vectores, matrices, autovalores}} |
-| {{FIS1014}} | {{Mecánica}} | 2 | 10 | MAT1014 | FIS | [prog]({{...}}) | {{Cinemática, dinámica, energía}} |
-| {{INF1014}} | {{Programación}} | 1 | 8 | — | INF | [prog]({{...}}) | {{Python, estructuras de datos básicas}} |
-| ... | | | | | | | |
-
-### {{Medicina}} 🔴
-
-**Facultad:** {{Medicina}} · **Plan:** {{2024}} · **Total ramos:** {{n}}
-**URL malla:** [link]({{...}})
-
-| Código | Nombre | Sem | Créditos | Pre-req | Área | Link programa | Contenidos |
-|---|---|---|---|---|---|---|---|
-| {{MED1101}} | {{Anatomía I}} | 1 | 10 | — | MED | [prog]({{...}}) | {{Sistema musculoesquelético}} |
-| {{MED1102}} | {{Histología}} | 1 | 6 | — | MED | [prog]({{...}}) | {{Tejidos epitelial, conectivo}} |
-| {{MED1201}} | {{Bioquímica}} | 2 | 8 | — | MED+QUI | [prog]({{...}}) | {{Macromoléculas, metabolismo}} |
-| {{MED1301}} | {{Fisiología}} | 3 | 10 | MED1101 | MED | [prog]({{...}}) | {{Sistemas de órganos}} |
-| ... | | | | | | | |
-
-### {{Derecho}} 🔴
-
-**Facultad:** {{Derecho}} · **Plan:** {{2024}} · **Total ramos:** {{n}}
-**URL malla:** [link]({{...}})
-
-| Código | Nombre | Sem | Créditos | Pre-req | Área | Link programa | Contenidos |
-|---|---|---|---|---|---|---|---|
-| {{DER1101}} | {{Introducción al Derecho}} | 1 | 10 | — | JUR | [prog]({{...}}) | {{Conceptos básicos, fuentes}} |
-| {{DER1102}} | {{Derecho Romano}} | 1 | 6 | — | JUR+HUM | [prog]({{...}}) | {{Origen del derecho civil}} |
-| {{DER1201}} | {{Derecho Civil I}} | 2 | 10 | DER1101 | JUR | [prog]({{...}}) | {{Personas, bienes, hechos jurídicos}} |
-| ... | | | | | | | |
-
-### {{Ing. Comercial}} 🔴
-
-| ... | | | | | | | |
-
-### {{Psicología}} 🔴
-
-| ... | | | | | | | |
-
-### Más carreras ALTAS y MEDIAS aquí...
+**Ramos prioritarios para Remy:**
+- {{lista de códigos}}
 
 ---
 
-### Carreras de prioridad 🟢 BAJA — solo lista de ramos
+### Ingeniería Comercial 🎯
 
-#### {{Carrera}}
-**Solapamiento con:** {{otra carrera ya procesada}}.
-- {{Ramo 1}} (área: {{X}})
-- {{Ramo 2}} (área: {{Y}})
+**Facultad:** {{...}} · **Plan:** {{año}} · **Total ramos:** {{n}} · **Sede:** {{...}}
+**URL malla:** [{{...}}]({{...}})
+
+| Código | Nombre | Sem | Créditos | Pre-req | Área | URL programa |
+|---|---|---|---|---|---|---|
+| {{EAE110}} | {{Microeconomía I}} | 2 | 10 | — | ECO | [prog]({{...}}) |
+| {{EAE210}} | {{Macroeconomía I}} | 3 | 10 | EAE110 | ECO | [prog]({{...}}) |
+| ... | | | | | | |
+
+**Ramos prioritarios para Remy:**
+- {{lista de códigos}}
+
+---
+
+### Derecho 🎯
+
+**Facultad:** {{...}} · **Plan:** {{año}} · **Total ramos:** {{n}} · **Sede:** {{...}}
+**URL malla:** [{{...}}]({{...}})
+
+| Código | Nombre | Sem | Créditos | Pre-req | Área | URL programa |
+|---|---|---|---|---|---|---|
+| {{DER101}} | {{Introducción al Derecho}} | 1 | 10 | — | JUR | [prog]({{...}}) |
+| {{DER102}} | {{Derecho Romano}} | 1 | 6 | — | JUR+HUM | [prog]({{...}}) |
+| ... | | | | | | |
+
+**Ramos prioritarios para Remy:**
+- {{lista de códigos}}
+
+---
+
+## Programas verificados
+
+> Completar después de la **Fase 3**. Una sub-sección por ramo prioritario, con cita textual
+> de contenidos. Sin cita verbatim, el ramo no entra acá — se queda con ⚠️ en la malla.
+
+### {{CÓDIGO1}} — {{Nombre oficial}}
+
+- **Carrera origen:** {{Ing. Civil / Medicina / Ing. Comercial / Derecho}}
+- **URL programa:** [{{...}}]({{...}})
+- **Año / vigencia del programa:** {{...}}
+- **Pre-requisitos:** {{...}}
+- **Descripción / objetivos** (cita textual):
+  > "{{cita verbatim 2–4 líneas del programa oficial}}"
+- **Contenidos por unidad** (cita textual o transcripción fiel):
+  - **Unidad 1:** {{...}}
+  - **Unidad 2:** {{...}}
+  - **Unidad 3:** {{...}}
+- **Bibliografía principal:**
+  - {{Autor, Título, Editorial, Año}}
+  - {{...}}
+- **Mapeo a Remy:**
+  - **Curso Remy:** {{nombre tentativo, ej. `calculo-multivariable`}}
+  - **Encaje:** ✅ calce total / 🟡 calce parcial / ❌ es un curso nuevo
+
+---
+
+### {{CÓDIGO2}} — {{Nombre oficial}}
+
 - ...
 
 ---
 
-## Agregación por área de conocimiento
-
-> Completar después del **Prompt 6**. Una sub-sección por cada área con 5+ ramos.
-> Ordenar por cantidad de ramos descendente.
-
-### Área: Matemáticas (MAT)
-
-**Total ramos únicos:** {{n}}
-**Carreras donde aparecen:** {{n}}
-
-**Top 10 ramos más frecuentes:**
-
-| # | Código | Nombre | Carreras (cantidad) | Carreras (lista breve) |
-|---|---|---|---|---|
-| 1 | MAT1014 | Cálculo I | {{12}} | {{Plan común, Ing. Civil Mat, Lic. Mat, Ing. Comercial}} |
-| 2 | MAT1024 | Álgebra Lineal | {{10}} | {{...}} |
-| ... | | | | |
-
-**Patrón temático observado:** {{descripción del currículum común}}.
-
-### Área: Medicina y salud (MED)
-
-**Total ramos únicos:** {{n}}
-...
-
-### Área: Derecho (JUR)
-
-**Total ramos únicos:** {{n}}
-...
-
-### Área: Economía y finanzas (ECO)
-
-...
-
-### Área: Administración y gestión (ADM)
-
-...
-
-### Área: ... (todas las que tengan 5+ ramos)
-
----
-
-### Áreas menores (menos de 5 ramos)
-
-- **{{IDI}}**: {{n}} ramos. {{lista breve}}.
-- **{{ART}}**: {{n}} ramos.
-- ...
-
----
-
-## Resumen ejecutivo
-
-> Completar después del **Prompt 7**.
-
-**Carreras procesadas:**
-
-- 🔴 ALTA: {{n}} carreras.
-- 🟡 MEDIA: {{n}} carreras.
-- 🟢 BAJA: {{n}} carreras.
-- **Total inventariadas:** {{N}} carreras.
-
-**Ramos únicos identificados (deduplicados por código):** {{n}}
-
-**Top 5 áreas con más ramos:**
-
-| # | Área | Ramos únicos | % del total |
-|---|---|---|---|
-| 1 | {{MED}} | {{n}} | {{%}} |
-| 2 | {{JUR}} | {{n}} | {{%}} |
-| 3 | {{MAT}} | {{n}} | {{%}} |
-| 4 | {{ECO}} | {{n}} | {{%}} |
-| 5 | {{...}} | | |
-
-**Carreras con más ramos únicos (no compartidos con otras):**
-
-| Carrera | Ramos únicos |
-|---|---|
-| {{Medicina}} | {{n}} |
-| {{Derecho}} | {{n}} |
-| {{...}} | |
+### Más ramos verificados aquí...
 
 ---
 
 ## Propuesta de catálogo Remy
 
-> Completar después del **Prompt 7**. Cursos a producir o expandir, ordenados por demanda.
+> Completar después de la **Fase 4**. Cursos a producir o expandir, con capítulos derivados
+> directamente de los contenidos verbatim citados arriba.
 
-### Curso propuesto 1: {{Anatomía Humana}}
+### Curso propuesto 1: {{nombre-tentativo-en-kebab-case}}
 
-- **Área principal:** MED
-- **Estado en Remy:** ❌ Falta crear
-- **Carreras que lo usan:** {{8}} ({{Medicina, Enfermería, Kinesiología, Obstetricia, Tecnología Médica, Nutrición, Fonoaudiología, Odontología}})
+- **Área principal:** {{XXX}}
+- **Estado en Remy:** ❌ Falta crear / 🟡 Existe pero falta expandir / ✅ Ya existe
+- **Carreras (de las 4) que lo usan:** {{n}} ({{lista corta}})
 - **Ramos universitarios que lo justifican:**
-  * {{MED1101}} — Anatomía I
-  * {{ENF1101}} — Anatomía Aplicada
-  * {{KIN1101}} — Anatomía del Sistema Locomotor
-- **Sub-temas a cubrir:**
-  * Sistema musculoesquelético
-  * Sistema nervioso
-  * Sistema cardiovascular
-  * Sistema digestivo / respiratorio / urinario
-  * Sistema endocrino
-- **Prioridad sugerida:** 🔴 ALTA
+  * {{CÓDIGO}} — {{Nombre}}
+  * {{CÓDIGO}} — {{Nombre}}
+- **Capítulos propuestos** (derivados de contenidos verbatim de Programas Verificados):
+  1. {{Capítulo 1}} — basado en Unidad 1 de {{CÓDIGO}}
+  2. {{Capítulo 2}} — basado en Unidad 2 de {{CÓDIGO}}
+  3. ...
+- **Bibliografía base recomendada:**
+  - {{Autor, Título}}
+- **Prioridad sugerida:** 🔴 ALTA (≥3 carreras) / 🟡 MEDIA (2 carreras) / 🟢 BAJA (1 carrera)
 
-### Curso propuesto 2: {{Microeconomía}}
+---
 
-- **Área principal:** ECO
-- **Estado en Remy:** ❌ Falta crear
-- **Carreras que lo usan:** {{6}} ({{Ing. Comercial, Economía, Auditoría, Ing. Civil Industrial, Administración, Contador}})
-- **Ramos universitarios que lo justifican:**
-  * {{ECO1101}} — Microeconomía I
-  * {{ECO1102}} — Microeconomía II
-  * ...
-- **Sub-temas a cubrir:**
-  * Comportamiento del consumidor
-  * Comportamiento del productor
-  * Mercados competitivos
-  * Externalidades
-  * Equilibrio general
-- **Prioridad sugerida:** 🔴 ALTA
+### Curso propuesto 2: {{...}}
 
-### Curso propuesto 3: {{Introducción al Derecho}}
-
-- **Área principal:** JUR
-- **Estado en Remy:** ❌ Falta crear
 - ...
 
-### Curso propuesto 4: {{Probabilidad y Estadística}}
-
-- **Área principal:** MAT
-- **Estado en Remy:** 🟡 Existe pero falta expandir (no hay un curso dedicado, solo cap suelto)
-- **Carreras que lo usan:** {{15+}} ({{prácticamente todas}})
-- ...
+---
 
 ### Curso propuesto N: {{...}}
-
-...
 
 ---
 
 ## Mapeo carrera → cursos Remy
 
-> Tabla útil para producto: si un alumno se registra como estudiante de {{carrera}}, qué cursos
-> de Remy (existentes o propuestos) le sirven directamente.
+> Tabla útil para producto: si un alumno se registra como estudiante de {{carrera}}, qué
+> cursos de Remy (existentes ✅ o propuestos ❌) le sirven directamente.
 
 | Carrera | Cursos Remy aplicables (orden de relevancia) |
 |---|---|
-| Plan común Ingeniería | precalculo (refuerzo), calculo-diferencial, algebra-lineal, calculo-integral, [propuesto] fisica-mecanica, [propuesto] programacion-introductoria |
-| Ing. Civil Matemática | algebra-lineal, calculo-multivariable, calculo-vectorial, ecuaciones-diferenciales, [propuesto] variable-compleja, [propuesto] metodos-numericos |
-| Ing. Comercial | precalculo, calculo-diferencial, algebra-lineal (parcial), [propuesto] microeconomia, [propuesto] macroeconomia, [propuesto] contabilidad-financiera, [propuesto] estadistica |
-| Medicina | [propuesto] anatomia, [propuesto] fisiologia, [propuesto] bioquimica-medica, [propuesto] farmacologia, [propuesto] estadistica-medica |
-| Derecho | [propuesto] intro-derecho, [propuesto] derecho-civil-1, [propuesto] derecho-romano, [propuesto] derecho-constitucional |
-| Psicología | [propuesto] psicologia-general, [propuesto] estadistica-aplicada, [propuesto] psicobiologia |
-| Enfermería | [propuesto] anatomia, [propuesto] fisiologia, [propuesto] farmacologia, [propuesto] estadistica-bioestadistica |
-| Arquitectura | [propuesto] geometria-descriptiva, [propuesto] historia-arquitectura, [propuesto] estructuras-basicas |
-| Periodismo | [propuesto] redaccion-periodistica, [propuesto] historia-de-medios, [propuesto] etica-comunicacional |
-| Pedagogía Básica | [propuesto] didactica-general, [propuesto] curriculum, [propuesto] psicopedagogia |
-| ... | |
+| Ingeniería Civil — plan común | ✅ precalculo · ✅ calculo-diferencial · ✅ calculo-integral · ✅ algebra-lineal · ✅ calculo-multivariable · ✅ calculo-vectorial · ✅ ecuaciones-diferenciales · ❌ probabilidades-y-estadistica · ❌ intro-programacion-python · ❌ fisica-mecanica |
+| Medicina | ✅ precalculo · ❌ quimica-general · ❌ biologia-celular · ❌ anatomia · ❌ fisiologia · ❌ bioquimica-medica |
+| Ingeniería Comercial | ✅ precalculo · ✅ calculo-diferencial · ✅ calculo-integral · ✅ algebra-lineal *(parcial)* · ❌ microeconomia · ❌ macroeconomia · ❌ contabilidad-financiera · ❌ probabilidades-y-estadistica · ❌ intro-programacion-python |
+| Derecho | ❌ intro-derecho · ❌ derecho-civil-1 · ❌ derecho-romano · ❌ derecho-constitucional |
 
 ---
 
 ## Verificación final
 
-- [ ] Todos los links del inventario funcionan.
-- [ ] Los ramos sin programa están marcados con ⚠️.
-- [ ] Las áreas están bien asignadas (sin "OTRO" sin justificar).
-- [ ] La fecha de consulta está al final.
+- [ ] Las 4 mallas (o las disponibles, según notas de reemplazo) están extraídas.
+- [ ] Cada ramo en "Programas verificados" tiene cita textual de contenidos.
+- [ ] Cada propuesta de curso Remy tiene capítulos derivados de contenidos verbatim.
+- [ ] Una muestra de 5 URLs de programas se probó y sigue activa.
+- [ ] No hay áreas `OTRO` sin justificar.
+- [ ] La fecha de consulta está al inicio del archivo.
 - [ ] No hay datos sin fuente trazable.
 
 ---
 
 ## Fuentes consultadas
 
-> Completar después del **Prompt 7**. Toda URL usada en este informe debe estar acá.
+> Completar al cerrar la **Fase 5**. Toda URL usada en este informe debe estar acá.
 
 | URL | Descripción | Fecha consulta | Estado |
 |---|---|---|---|
-| {{https://...}} | {{Portal admisión}} | {{2026-04-27}} | ✅ Activa |
-| {{https://...}} | {{Listado de facultades}} | {{2026-04-27}} | ✅ Activa |
-| {{https://...}} | {{Malla Plan común Ingeniería}} | {{2026-04-27}} | ✅ Activa |
-| {{https://...}} | {{Malla Medicina}} | {{2026-04-27}} | ✅ Activa |
-| {{https://...}} | {{Malla Derecho}} | {{2026-04-27}} | ✅ Activa |
-| {{https://...}} | {{Programa MAT1014}} | {{2026-04-27}} | ✅ Activa |
-| {{https://.../malla.pdf}} | {{PDF descargado, guardado en docs/...}} | {{2026-04-27}} | 📄 PDF |
+| {{https://...}} | {{Portal admisión}} | {{2026-04-28}} | ✅ Activa |
+| {{https://...}} | {{Listado de carreras}} | {{2026-04-28}} | ✅ Activa |
+| {{https://...}} | {{Malla Ing. Civil}} | {{2026-04-28}} | ✅ Activa |
+| {{https://...}} | {{Malla Medicina}} | {{2026-04-28}} | ✅ Activa |
+| {{https://...}} | {{Malla Ing. Comercial}} | {{2026-04-28}} | ✅ Activa |
+| {{https://...}} | {{Malla Derecho}} | {{2026-04-28}} | ✅ Activa |
+| {{https://...}} | {{Programa MAT1610}} | {{2026-04-28}} | ✅ Activa |
+| {{https://.../prog.pdf}} | {{Programa EAE110, PDF guardado}} | {{2026-04-28}} | 📄 PDF |
 | ... | | | |
 
 **Estados posibles:** ✅ Activa / 📄 PDF descargado / ⚠️ Inestable / ❌ Caída.
@@ -338,8 +222,17 @@
 > Cualquier cosa útil para futuras investigaciones de esta misma universidad o como referencia
 > para otras.
 
-- {{El sitio de la facultad de ingeniería tiene un buscador de programas en {{URL}} muy útil.}}
-- {{Las mallas de Ciencias están en otro subdominio, no en el portal central.}}
-- {{Cuidado con la cohorte 2020 que tiene plan distinto a la 2024.}}
-- {{La facultad de Arte tiene mallas solo en PDF, hay que descargarlas una por una.}}
-- {{...}}
+- {{ej. "El catálogo de cursos en `catalogo.<dominio>` requiere clic en cada ramo para abrir el
+  programa, no hay vista batch."}}
+- {{ej. "Los programas de Medicina están detrás de login institucional — los descargué con
+  ayuda manual."}}
+- ...
+
+### Correcciones aplicadas (solo si esto es una curación)
+
+> Solo aplica si este archivo se generó con el "Prompt de curación" de PROMPTS_COWORK.md.
+> Listar las afirmaciones del archivo previo que se reemplazaron y el motivo.
+
+- {{ej. "[MAT1620] — antes mapeado a `calculo-integral` → corregido a `calculo-multivariable`
+  según programa oficial en catalogo.uc.cl/MAT1620 (cita: 'cálculo en varias variables...')."}}
+- ...
