@@ -89,13 +89,15 @@ const LessonViewer = () => {
 
   const handleNextLesson = async () => {
     if (currentIndex < 0 || !course) return;
+    if (!studentId) {
+      toast.error('Sesión no disponible. Vuelve a iniciar sesión.');
+      return;
+    }
 
     setMarkingComplete(true);
-    
+
     try {
-      const studentId = studentId;
-      
-      // Mark current lesson as complete
+      // Mark current lesson as complete (studentId from outer scope = auth user_id)
       const completeRes = await axios.post(`${API}/progress/complete-lesson`, {
         student_id: studentId,
         course_id: course.id,
