@@ -2,12 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
-import { BookOpen, Loader2, Layers, GraduationCap, Crown, Lock, CheckCircle, Search, Building2, Filter, Plus } from 'lucide-react';
+import { BookOpen, Loader2, GraduationCap, Crown, Lock, CheckCircle, Search, Building2, Filter, Plus } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '../contexts/AuthContext';
 import { usePricing } from '../hooks/usePricing';
@@ -15,7 +14,6 @@ import TrialBanner from '../components/TrialBanner';
 import { toast } from 'sonner';
 import InlineMd from '@/components/course/InlineMd';
 import { showAchievementToasts } from '@/lib/achievementToast';
-import { getStudentId as resolveStudentId } from '@/lib/studentId';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -23,11 +21,10 @@ const API = `${BACKEND_URL}/api`;
 const Biblioteca = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user, hasActiveSubscription, canAccessContent } = useAuth();
+  const { canAccessContent } = useAuth();
   const { monthly, formatPrice, getLowestPrice, loading: pricingLoading } = usePricing();
   const [courses, setCourses] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState([]);
-  const [coursesStats, setCoursesStats] = useState({});
   const [universities, setUniversities] = useState([]);
   const [enrolledCourseIds, setEnrolledCourseIds] = useState([]);
   const [enrollmentStats, setEnrollmentStats] = useState({ can_enroll_more: true });
@@ -45,8 +42,6 @@ const Biblioteca = () => {
       window.history.replaceState({}, '', '/biblioteca');
     }
   }, [searchParams]);
-
-  const getStudentId = () => resolveStudentId(user);
 
   useEffect(() => {
     fetchData();
@@ -77,48 +72,28 @@ const Biblioteca = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const studentId = getStudentId();
       const token = localStorage.getItem('remy_session_token');
 
-      // Single batched request: all visible courses + per-course stats + per-user
-      // progress (when studentId is present). Replaces 1 + N + (N×M) sequential
-      // requests with 1 (and 3 internal Mongo queries server-side).
-      const params = studentId ? `?student_id=${encodeURIComponent(studentId)}` : '';
+      // Catalog-only fetch: course title/category/level/university — no chapters,
+      // no lessons, no progress. Counts and progress live on Mis Cursos / Progreso.
       const [coursesRes, unisRes] = await Promise.all([
-        axios.get(`${API}/courses/with-stats${params}`),
+        axios.get(`${API}/courses`),
         axios.get(`${API}/library-universities`)
       ]);
 
-      const coursesData = coursesRes.data;
-      setCourses(coursesData);
+      setCourses(coursesRes.data);
       setUniversities(unisRes.data);
 
-      // Map per-course stats from the same payload (no extra calls).
-      const stats = {};
-      const enrolledIds = [];
-      coursesData.forEach((c) => {
-        const total = c.lesson_count || 0;
-        const completed = c.completed_lessons || 0;
-        stats[c.id] = {
-          chapters: c.chapter_count || 0,
-          lessons: total,
-          completedLessons: completed,
-          progress: total > 0 ? Math.round((completed / total) * 100) : 0
-        };
-        if (c.enrolled) enrolledIds.push(c.id);
-      });
-      setCoursesStats(stats);
-      setEnrolledCourseIds(enrolledIds);
-
-      // Enrollment stats (limit / can_enroll) only when authed; this stays a
-      // separate call because the limit logic is auth-scoped.
+      // Enrolled course IDs + enrollment limits (only when authed). Both endpoints
+      // are user-scoped and small; running them in parallel keeps the page fast.
       if (token) {
-        try {
-          const statsRes = await axios.get(`${API}/enrollments/stats`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          setEnrollmentStats(statsRes.data);
-        } catch (e) { /* not authed */ }
+        const headers = { Authorization: `Bearer ${token}` };
+        const [enrollmentsRes, statsRes] = await Promise.all([
+          axios.get(`${API}/enrollments`, { headers }).catch(() => ({ data: [] })),
+          axios.get(`${API}/enrollments/stats`, { headers }).catch(() => null)
+        ]);
+        setEnrolledCourseIds((enrollmentsRes.data || []).map((c) => c.id));
+        if (statsRes?.data) setEnrollmentStats(statsRes.data);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -307,7 +282,6 @@ const Biblioteca = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
           {filteredCourses.map((course, index) => {
-            const stats = coursesStats[course.id] || { chapters: 0, lessons: 0, completedLessons: 0, progress: 0 };
             const enrolled = isEnrolled(course.id);
 
             return (
@@ -341,27 +315,15 @@ const Biblioteca = () => {
                         {course.title.charAt(0)}
                       </span>
                     </div>
-                  <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <Badge className={getLevelColor(course.level)}>
-                        {course.level}
+                  <div className="flex items-center gap-2 flex-wrap mb-2">
+                    <Badge className={getLevelColor(course.level)}>
+                      {course.level}
+                    </Badge>
+                    {course.university && course.university.short_name !== 'GEN' && (
+                      <Badge variant="outline" className="text-xs">
+                        {course.university.short_name}
                       </Badge>
-                      {course.university && course.university.short_name !== 'GEN' && (
-                        <Badge variant="outline" className="text-xs">
-                          {course.university.short_name}
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1" title={`${stats.chapters} capítulos`}>
-                        <Layers size={14} aria-hidden="true" />
-                        <span className="tabular-nums">{stats.chapters}</span>
-                      </span>
-                      <span className="flex items-center gap-1" title={`${stats.lessons} lecciones`}>
-                        <BookOpen size={14} aria-hidden="true" />
-                        <span className="tabular-nums">{stats.lessons}</span>
-                      </span>
-                    </div>
+                    )}
                   </div>
                   <CardTitle className="text-lg text-foreground">{course.title}</CardTitle>
                   <CardDescription className="line-clamp-2">
@@ -378,16 +340,6 @@ const Biblioteca = () => {
                     </span>
                   </div>
                   
-                  {enrolled && (
-                    <div className="mb-3">
-                      <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
-                        <span>Progreso</span>
-                        <span>{stats.completedLessons}/{stats.lessons} lecciones</span>
-                      </div>
-                      <Progress value={stats.progress} className="h-2" />
-                    </div>
-                  )}
-                  
                   <div className="mt-auto">
                     {hasAccess ? (
                       enrolled ? (
@@ -399,7 +351,7 @@ const Biblioteca = () => {
                           }}
                         >
                           <CheckCircle className="mr-2" size={16} />
-                          {stats.progress === 0 ? 'Comenzar' : stats.progress === 100 ? 'Repasar' : 'Continuar'}
+                          Continuar
                         </Button>
                       ) : (
                         <Button

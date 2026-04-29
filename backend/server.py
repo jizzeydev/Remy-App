@@ -469,22 +469,27 @@ async def get_courses(
         query["title"] = {"$regex": search, "$options": "i"}
     
     courses = await db.courses.find(query, {"_id": 0}).to_list(500)
-    
+
+    # Batch-fetch universities once instead of one query per course (was N+1).
+    uni_ids = list({c.get("university_id") for c in courses if c.get("university_id")})
+    universities_map: Dict[str, dict] = {}
+    if uni_ids:
+        unis = await db.library_universities.find(
+            {"id": {"$in": uni_ids}},
+            {"_id": 0, "id": 1, "name": 1, "short_name": 1, "logo_url": 1}
+        ).to_list(200)
+        universities_map = {u["id"]: u for u in unis}
+
     for course in courses:
         if isinstance(course.get('created_at'), str):
             course['created_at'] = datetime.fromisoformat(course['created_at'])
-        
-        # Add university info
+
         uni_id = course.get('university_id')
-        if uni_id:
-            uni = await db.library_universities.find_one(
-                {"id": uni_id},
-                {"_id": 0, "name": 1, "short_name": 1, "logo_url": 1}
-            )
-            course['university'] = uni
-        else:
-            course['university'] = {"name": "General", "short_name": "GEN"}
-    
+        course['university'] = (
+            universities_map.get(uni_id) if uni_id
+            else {"name": "General", "short_name": "GEN"}
+        )
+
     return courses
 
 @api_router.get("/lessons/by-ids")
