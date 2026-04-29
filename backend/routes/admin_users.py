@@ -116,10 +116,18 @@ async def list_users(
     """
     # Build query
     query = {}
-    
+
     if status_filter:
-        query["subscription_status"] = status_filter
-    
+        # `trial` is a virtual filter that combines: not subscribed AND trial flag is on.
+        # The expiry-by-date check is done client-side from trial_end_date — keeping it
+        # there means a user whose trial just ticked over still surfaces here until the
+        # next /me call flips trial_active to False.
+        if status_filter == "trial":
+            query["trial_active"] = True
+            query["subscription_status"] = {"$in": [None, "inactive", "expired", "cancelled"]}
+        else:
+            query["subscription_status"] = status_filter
+
     if search:
         query["$or"] = [
             {"email": {"$regex": search, "$options": "i"}},
@@ -186,7 +194,13 @@ async def get_user_stats(_: str = Depends(verify_admin_token)):
     recent_users = await db.users.count_documents({
         "created_at": {"$gte": week_ago.isoformat()}
     })
-    
+
+    # Active trials (trial_active flag — date-expiry is reconciled on /me).
+    trial_users = await db.users.count_documents({
+        "trial_active": True,
+        "subscription_status": {"$in": [None, "inactive", "expired", "cancelled"]}
+    })
+
     return {
         "total_users": total_users,
         "subscription_stats": {
@@ -203,7 +217,8 @@ async def get_user_stats(_: str = Depends(verify_admin_token)):
             "google": google_users,
             "email": email_users
         },
-        "recent_registrations": recent_users
+        "recent_registrations": recent_users,
+        "trial_users": trial_users
     }
 
 

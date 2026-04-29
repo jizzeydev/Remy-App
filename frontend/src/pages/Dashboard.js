@@ -12,6 +12,7 @@ import { Progress } from '@/components/ui/progress';
 import { useAuth } from '../contexts/AuthContext';
 import SubscriptionRequired from '../components/SubscriptionRequired';
 import TrialBanner from '../components/TrialBanner';
+import TrialCountdown from '../components/TrialCountdown';
 import { getStudentId } from '@/lib/studentId';
 
 const fadeUp = (i = 0) => ({
@@ -106,9 +107,6 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-8 pb-24 lg:pb-8">
-      {/* Trial Banner - Shows trial status or subscription prompt */}
-      <TrialBanner />
-      
       {/* Welcome Section */}
       <motion.div data-testid="welcome-section" {...fadeUp(0)}>
         <div className="flex items-center gap-3 mb-2">
@@ -119,6 +117,13 @@ const Dashboard = () => {
         </div>
         <p className="text-muted-foreground text-lg">¿Listo para aprender hoy?</p>
       </motion.div>
+
+      {/* Trial Countdown — granular days/hours/minutes for trial users.
+          Renders nothing for subscribed users or expired trials. */}
+      <TrialCountdown />
+
+      {/* Trial Banner — handles expired trial messaging + simulation cap UX. */}
+      <TrialBanner />
 
       {/* Quick Actions */}
       <div className="grid grid-cols-3 gap-3 md:gap-4">

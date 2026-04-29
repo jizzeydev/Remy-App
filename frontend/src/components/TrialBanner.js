@@ -4,19 +4,18 @@
  */
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Clock, Zap, AlertTriangle, Crown, ChevronRight } from 'lucide-react';
+import { Zap, AlertTriangle, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 
 const TrialBanner = () => {
   const navigate = useNavigate();
-  const { 
-    user, 
-    hasActiveSubscription, 
-    hasActiveTrial, 
-    getTrialDaysRemaining, 
-    getTrialSimulationsRemaining 
+  const {
+    user,
+    hasActiveSubscription,
+    hasActiveTrial,
+    getTrialSimulationsRemaining
   } = useAuth();
 
   // Don't show if user has active subscription
@@ -25,7 +24,6 @@ const TrialBanner = () => {
   }
 
   const isTrialActive = hasActiveTrial();
-  const daysRemaining = getTrialDaysRemaining();
   const simulationsRemaining = getTrialSimulationsRemaining();
   const simulationsUsed = user?.trial_simulations_used || 0;
   const simulationsLimit = user?.trial_simulations_limit || 10;
@@ -66,40 +64,8 @@ const TrialBanner = () => {
     return null;
   }
 
-  // Warning banner when 2 or less days remaining
-  if (daysRemaining <= 2) {
-    return (
-      <Card className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 shadow-lg overflow-hidden">
-        <CardContent className="py-5 px-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="bg-white/20 rounded-full p-3">
-                <AlertTriangle size={24} />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg flex items-center gap-2">
-                  Tu prueba gratuita está por terminar
-                </h3>
-                <p className="text-amber-100 text-sm">
-                  Te {daysRemaining === 1 ? 'queda' : 'quedan'} <span className="font-bold">{daysRemaining} {daysRemaining === 1 ? 'día' : 'días'}</span> y <span className="font-bold">{simulationsRemaining} simulacros</span> disponibles
-                </p>
-              </div>
-            </div>
-            <Button 
-              className="bg-white hover:bg-amber-50 text-amber-600 font-semibold px-6"
-              onClick={() => navigate('/subscribe')}
-              data-testid="trial-warning-subscribe-btn"
-            >
-              Suscribirse y no perder acceso
-              <ChevronRight size={18} className="ml-1" />
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  // Normal trial banner
+  // Active trial: granular countdown lives in <TrialCountdown />. Here we
+  // surface the simulation cap so the user knows how many free quizzes remain.
   return (
     <Card className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white border-0 shadow-lg overflow-hidden">
       <CardContent className="py-5 px-6">
@@ -113,25 +79,24 @@ const TrialBanner = () => {
                 Estás usando la prueba gratuita de Remy
               </h3>
               <p className="text-cyan-100 text-sm">
-                Te quedan <span className="font-bold">{daysRemaining} días</span> de prueba gratuita y <span className="font-bold">{simulationsRemaining} simulacros</span> disponibles
+                Tienes <span className="font-bold">{simulationsRemaining} simulacros</span> disponibles durante tu prueba.
               </p>
             </div>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto">
-            {/* Simulation progress */}
             <div className="bg-white/10 rounded-xl px-4 py-3 min-w-[180px]">
               <div className="flex items-center justify-between text-xs mb-1.5">
                 <span className="text-cyan-100">Simulacros</span>
-                <span className="font-medium">{simulationsUsed}/{simulationsLimit}</span>
+                <span className="font-medium tabular-nums">{simulationsUsed}/{simulationsLimit}</span>
               </div>
-              <Progress 
-                value={simulationsProgress} 
+              <Progress
+                value={simulationsProgress}
                 className="h-2 bg-white/20"
               />
             </div>
-            
-            <Button 
+
+            <Button
               variant="secondary"
               className="bg-white hover:bg-cyan-50 text-cyan-600 font-semibold px-5"
               onClick={() => navigate('/subscribe')}

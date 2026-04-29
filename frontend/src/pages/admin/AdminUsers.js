@@ -236,6 +236,44 @@ const AdminUsers = () => {
     }
   };
 
+  // Trial cell: returns null when user has no trial / is subscribed / trial expired.
+  // Otherwise an "Día N de 7" + "Xd Yh restantes" pair so the admin can spot
+  // free-riders at a glance.
+  const renderTrialCell = (user) => {
+    const sub = user.subscription_status;
+    const subActive = sub === 'active';
+    if (subActive || !user.trial_active || !user.trial_start_date) return <span className="text-slate-400">—</span>;
+
+    const start = new Date(user.trial_start_date).getTime();
+    const end = user.trial_end_date ? new Date(user.trial_end_date).getTime() : start + 7 * 86400000;
+    const now = Date.now();
+    const totalDays = Math.max(1, Math.round((end - start) / 86400000));
+    const elapsedMs = Math.max(0, now - start);
+    const remainingMs = Math.max(0, end - now);
+    const dayNumber = Math.min(totalDays, Math.floor(elapsedMs / 86400000) + 1);
+    const remDays = Math.floor(remainingMs / 86400000);
+    const remHours = Math.floor((remainingMs % 86400000) / 3600000);
+
+    if (remainingMs <= 0) {
+      return <Badge className="bg-red-100 text-red-700">Expirado</Badge>;
+    }
+    const tone = remDays < 1
+      ? 'bg-red-100 text-red-700'
+      : remDays < 3
+        ? 'bg-amber-100 text-amber-700'
+        : 'bg-cyan-100 text-cyan-700';
+    return (
+      <div className="flex flex-col gap-0.5 text-xs">
+        <Badge className={tone} variant="secondary">
+          Día {dayNumber} de {totalDays}
+        </Badge>
+        <span className="text-slate-500 tabular-nums">
+          {remDays}d {remHours}h restantes
+        </span>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -395,6 +433,7 @@ const AdminUsers = () => {
               <SelectContent>
                 <SelectItem value="all">Todos</SelectItem>
                 <SelectItem value="active">Activos</SelectItem>
+                <SelectItem value="trial">Prueba gratuita</SelectItem>
                 <SelectItem value="inactive">Inactivos</SelectItem>
                 <SelectItem value="cancelled">Cancelados</SelectItem>
                 <SelectItem value="expired">Expirados</SelectItem>
@@ -422,6 +461,7 @@ const AdminUsers = () => {
                   <TableHead>Usuario</TableHead>
                   <TableHead>Estado</TableHead>
                   <TableHead>Tipo</TableHead>
+                  <TableHead>Trial</TableHead>
                   <TableHead>Plan</TableHead>
                   <TableHead>Vence</TableHead>
                   <TableHead>Registro</TableHead>
@@ -452,6 +492,7 @@ const AdminUsers = () => {
                     </TableCell>
                     <TableCell>{getStatusBadge(user.subscription_status)}</TableCell>
                     <TableCell>{getTypeBadge(user.subscription_type)}</TableCell>
+                    <TableCell>{renderTrialCell(user)}</TableCell>
                     <TableCell>
                       {user.subscription_plan ? (
                         <span className="capitalize">{user.subscription_plan}</span>
