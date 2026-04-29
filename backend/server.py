@@ -622,29 +622,63 @@ async def get_courses_with_stats(
         return []
 
     # 2) Pull all chapters for those courses in one shot, group by course.
+    # We also keep `template_chapter_id` and `excluded_lesson_ids` so the
+    # lesson count correctly reflects linked chapters (count the template's
+    # lessons minus any excluded).
     chapters = await db.chapters.find(
         {"course_id": {"$in": course_ids}},
-        {"_id": 0, "id": 1, "course_id": 1, "title": 1}
+        {"_id": 0, "id": 1, "course_id": 1, "title": 1, "template_chapter_id": 1, "excluded_lesson_ids": 1}
     ).to_list(2000)
 
-    chapters_by_course: Dict[str, List[str]] = {}
-    chapter_id_to_course: Dict[str, str] = {}
+    chapters_by_course: Dict[str, List[dict]] = {}
     for ch in chapters:
-        chapters_by_course.setdefault(ch["course_id"], []).append(ch["id"])
-        chapter_id_to_course[ch["id"]] = ch["course_id"]
+        chapters_by_course.setdefault(ch["course_id"], []).append(ch)
 
-    chapter_ids = list(chapter_id_to_course.keys())
     chapter_titles_map = {ch["id"]: ch.get("title", "") for ch in chapters}
 
-    # 3) Lesson counts per chapter via a single aggregation.
-    lesson_counts_by_chapter: Dict[str, int] = {}
-    if chapter_ids:
-        pipeline = [
-            {"$match": {"chapter_id": {"$in": chapter_ids}}},
-            {"$group": {"_id": "$chapter_id", "n": {"$sum": 1}}}
-        ]
-        async for doc in db.lessons.aggregate(pipeline):
-            lesson_counts_by_chapter[doc["_id"]] = doc["n"]
+    # 3) Lesson counts. For a linked chapter we count lessons that live on the
+    # template and subtract excluded ids (plus any local pure-additions). For
+    # a plain chapter we count lessons with chapter_id == ch.id directly.
+    # One Mongo aggregation covers both cases (we union template ids and own
+    # ids in the $match).
+    all_chapter_query_ids = set()
+    for ch in chapters:
+        all_chapter_query_ids.add(ch["id"])
+        if ch.get("template_chapter_id"):
+            all_chapter_query_ids.add(ch["template_chapter_id"])
+
+    # lessons_by_chapter[X] = list of {id, template_lesson_id} for lessons
+    # whose chapter_id == X. We need template_lesson_id so we don't double-
+    # count overrides on a linked chapter (override + template both visible).
+    lessons_by_chapter: Dict[str, List[dict]] = {}
+    if all_chapter_query_ids:
+        cursor = db.lessons.find(
+            {"chapter_id": {"$in": list(all_chapter_query_ids)}},
+            {"_id": 0, "id": 1, "chapter_id": 1, "template_lesson_id": 1}
+        )
+        async for doc in cursor:
+            lessons_by_chapter.setdefault(doc["chapter_id"], []).append(doc)
+
+    def _effective_lesson_count(ch: dict) -> int:
+        """Mirrors the resolver: template lessons (minus excluded) plus local
+        additions, with overrides shadowing rather than double-counting."""
+        local = lessons_by_chapter.get(ch["id"], [])
+        if not ch.get("template_chapter_id"):
+            return len(local)
+        excluded = set(ch.get("excluded_lesson_ids") or [])
+        template_lessons = lessons_by_chapter.get(ch["template_chapter_id"], [])
+        # Template lessons that survive the exclusion filter.
+        kept_template = [t for t in template_lessons if t["id"] not in excluded]
+        overridden_template_ids = {l.get("template_lesson_id") for l in local if l.get("template_lesson_id")}
+        # Each kept template lesson shows up exactly once: either the override
+        # version (if present) or the template version itself.
+        kept_count = len(kept_template)
+        # Pure local additions live on the chapter without a template_lesson_id.
+        pure_local = [l for l in local if not l.get("template_lesson_id")]
+        # Avoid double counting overrides whose template was already excluded.
+        # (If a fork exists for a now-excluded template lesson, the resolver
+        # silently drops both, so we don't add it here either.)
+        return kept_count + len(pure_local)
 
     # 4) Per-student data (enrollments + completed lessons) — only when needed.
     enrolled_set: set = set()
@@ -678,13 +712,13 @@ async def get_courses_with_stats(
     for c in courses:
         if isinstance(c.get("created_at"), str):
             c["created_at"] = datetime.fromisoformat(c["created_at"])
-        ch_ids = chapters_by_course.get(c["id"], [])
-        lesson_count = sum(lesson_counts_by_chapter.get(ch_id, 0) for ch_id in ch_ids)
+        ch_docs = chapters_by_course.get(c["id"], [])
+        lesson_count = sum(_effective_lesson_count(ch) for ch in ch_docs)
 
         uni_id = c.get("university_id")
         c["university"] = universities_map.get(uni_id) if uni_id else {"name": "General", "short_name": "GEN"}
 
-        c["chapter_count"] = len(ch_ids)
+        c["chapter_count"] = len(ch_docs)
         c["lesson_count"] = lesson_count
 
         if student_id:
@@ -696,8 +730,8 @@ async def get_courses_with_stats(
         # Lightweight chapter list (id + title only) so consumers like Progreso
         # can resolve chapter titles for weak-area analysis without a follow-up.
         c["chapters"] = [
-            {"id": ch_id, "title": chapter_titles_map.get(ch_id, "")}
-            for ch_id in ch_ids
+            {"id": ch["id"], "title": chapter_titles_map.get(ch["id"], "")}
+            for ch in ch_docs
         ]
 
         out.append(c)
