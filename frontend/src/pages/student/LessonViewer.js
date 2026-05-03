@@ -36,6 +36,22 @@ const LessonViewer = () => {
   const [markingComplete, setMarkingComplete] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [checkingEnrollment, setCheckingEnrollment] = useState(true);
+  // Mobile block-by-block pagination
+  const [isMobile, setIsMobile] = useState(false);
+  const [blockPage, setBlockPage] = useState(0);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mq = window.matchMedia('(max-width: 767px)');
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
+
+  useEffect(() => {
+    setBlockPage(0);
+  }, [lessonId]);
 
   useEffect(() => {
     fetchLessonData();
@@ -171,6 +187,26 @@ const LessonViewer = () => {
   const isFirstLesson = currentIndex === 0;
   const lessonProgress = allLessons.length > 0 ? ((currentIndex + 1) / allLessons.length) * 100 : 0;
 
+  const blocks = lesson.blocks || [];
+  const totalBlocks = blocks.length;
+  // Paginated mobile view: one block per page. Desktop unchanged.
+  const paginated = isMobile && totalBlocks > 1;
+  const safeBlockPage = Math.min(blockPage, Math.max(totalBlocks - 1, 0));
+  const isFirstBlock = safeBlockPage === 0;
+  const isLastBlock = safeBlockPage >= totalBlocks - 1;
+  const showLessonFooter = !paginated || isLastBlock;
+  const visibleBlocks = paginated ? [blocks[safeBlockPage]].filter(Boolean) : blocks;
+  const blockProgress = totalBlocks > 0 ? ((safeBlockPage + 1) / totalBlocks) * 100 : 0;
+
+  const goPrevBlock = () => {
+    setBlockPage((p) => Math.max(0, p - 1));
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  const goNextBlock = () => {
+    setBlockPage((p) => Math.min(totalBlocks - 1, p + 1));
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="max-w-4xl mx-auto space-y-5 pb-24 lg:pb-8">
       {/* Navigation header + progress */}
@@ -221,12 +257,70 @@ const LessonViewer = () => {
               </div>
             </div>
 
-            <BlockRenderer blocks={lesson.blocks || []} />
+            {paginated && (
+              <div className="mb-5 flex items-center justify-between gap-3">
+                <span
+                  className="text-xs font-semibold uppercase tracking-wider text-muted-foreground tabular-nums"
+                  aria-live="polite"
+                >
+                  Bloque {safeBlockPage + 1} de {totalBlocks}
+                </span>
+                <span className="text-xs text-muted-foreground tabular-nums">
+                  {Math.round(blockProgress)}%
+                </span>
+              </div>
+            )}
+            {paginated && (
+              <Progress
+                value={blockProgress}
+                className="h-1 mb-5"
+                aria-label={`Progreso de la lección: bloque ${safeBlockPage + 1} de ${totalBlocks}`}
+              />
+            )}
+
+            <motion.div
+              key={paginated ? `block-${safeBlockPage}` : 'all-blocks'}
+              initial={paginated ? { opacity: 0, y: 12 } : false}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <BlockRenderer blocks={visibleBlocks} />
+            </motion.div>
+
+            {paginated && (
+              <div className="mt-6 pt-5 border-t border-border flex items-center justify-between gap-3">
+                <Button
+                  variant="outline"
+                  onClick={goPrevBlock}
+                  disabled={isFirstBlock}
+                  className="gap-2"
+                  aria-label="Bloque anterior"
+                >
+                  <ArrowLeft size={18} />
+                  Anterior
+                </Button>
+                {!isLastBlock ? (
+                  <Button
+                    onClick={goNextBlock}
+                    className="gap-2 bg-primary hover:bg-primary/90"
+                    aria-label="Bloque siguiente"
+                  >
+                    Siguiente
+                    <ArrowRight size={18} />
+                  </Button>
+                ) : (
+                  <span className="text-xs text-muted-foreground italic">
+                    Fin de la lección
+                  </span>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
       </motion.div>
 
       {/* Navigation footer */}
+      {showLessonFooter && (
       <motion.div {...fadeUp(2)}>
         <Card className="bg-secondary/40 border-border">
           <CardContent className="py-4 px-4 md:px-6">
@@ -275,6 +369,7 @@ const LessonViewer = () => {
           </CardContent>
         </Card>
       </motion.div>
+      )}
     </div>
   );
 };
