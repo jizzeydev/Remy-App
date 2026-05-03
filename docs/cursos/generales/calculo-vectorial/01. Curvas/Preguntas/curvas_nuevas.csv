@@ -99,3 +99,10 @@ Curvas,Frenet-Serret,dificil,Una curva tiene $\kappa(s)=1$ constante y $\tau(s)=
 Curvas,Frenet-Serret,dificil,Una curva tiene $\kappa(s)=0$ en todos los puntos. ¿Qué tipo de curva es?,Un círculo,Una recta,Una hélice,Una curva cualquiera,B,"$\kappa=0$ significa $\vec{T}'=\vec{0}$, así $\vec{T}$ es constante. Una curva con dirección constante es una recta."
 Curvas,Frenet-Serret,dificil,Una matriz $A$ es antisimétrica si y solo si:,$A=A^{T}$,$A^{2}=-I$,$A^{T}=-A$,$\det A=0$,C,Antisimétrica significa que la transpuesta es la matriz opuesta. Como consecuencia los elementos diagonales son cero.
 Curvas,Frenet-Serret,dificil,"Para aplicar las fórmulas de Frenet-Serret usando un parámetro general $t$ (no longitud de arco), hay que multiplicar las derivadas por:",$1/t$,$\kappa$,$\tau$,$ds/dt=\|\vec{r}'(t)\|$,D,Por la regla de la cadena: $d/ds=(d/dt)/(ds/dt)=(d/dt)/\|\vec{r}'\|$. Equivalentemente $d/dt=\|\vec{r}'\|\cdot d/ds$.
+Curvas,Funciones vectoriales,facil,Una función vectorial $\vec{r}(t)$ asigna a $t$:,Un escalar,Un vector,Una matriz,Un punto en $\mathbb{R}$,B,Vector valuada.
+Curvas,Funciones vectoriales,facil,"$\vec{r}(t) = (\cos t, \sin t)$ traza:",Recta,Círculo unitario,Espiral,Parábola,B,Parametrización del círculo.
+Curvas,Funciones vectoriales,medio,$\vec{r}'(t) = $:,Vector tangente,Vector normal,Cero,$\vec{r}$,A,Derivada de función vectorial.
+Curvas,Vector tangente,facil,Vector tangente unitario:,$\vec{r}'(t)/\|\vec{r}'(t)\|$,$\vec{r}'(t)$,$\vec{r}(t)$,$\vec{0}$,A,Normalizar la derivada.
+Curvas,Curvatura,facil,$\kappa = $:,$\|d\vec{T}/ds\|$,$\|\vec{r}\|$,$\vec{r}'$,$0$,A,Tasa de cambio del tangente.
+Curvas,Longitud de arco,facil,Longitud $L = $:,$\int \|\vec{r}'(t)\| dt$,$\int \vec{r}(t)$,$\vec{r}(b) - \vec{r}(a)$,$0$,A,Integral de la rapidez.
+Curvas,Longitud de arco,medio,"Longitud de $\vec{r}(t) = (\cos t, \sin t)$ en $[0, 2\pi]$:",$\pi$,$2\pi$,1,$2$,B,Circunferencia: $2\pi$.

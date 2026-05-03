@@ -79,3 +79,7 @@ Números Complejos,Teorema de De Moivre y raíces,dificil,Una de las raíces cú
 Números Complejos,Teorema de De Moivre y raíces,dificil,"Si $z = \left(\cos\frac{\pi}{12} + i\sin\frac{\pi}{12}\right)^{12}$, ¿cuánto vale $z$?",$1$,$i$,$-i$,$-1$,D,Por De Moivre: $z = \cos\left(12 \cdot \frac{\pi}{12}\right) + i\sin\left(12 \cdot \frac{\pi}{12}\right) = \cos\pi + i\sin\pi = -1$.
 Números Complejos,Teorema de De Moivre y raíces,dificil,Las raíces cuartas de $z = 16$ son:,"$2, \; 2i, \; -2, \; -2i$","$2, \; -2, \; 4, \; -4$","$4, \; 4i, \; -4, \; -4i$","$2, \; -2$",A,"$16 = 16(\cos 0 + i\sin 0)$. $r^{1/4} = 2$. Las raíces son $2e^{ik\pi/2}$ para $k = 0, 1, 2, 3$, es decir: $2, 2i, -2, -2i$."
 Números Complejos,Teorema de De Moivre y raíces,dificil,Calcule $(1 - i)^6$.,$-8i$,$8$,$8i$,$-8$,C,$1 - i = \sqrt{2}e^{-i\pi/4}$. Entonces $(1-i)^6 = (\sqrt{2})^6 e^{-i6\pi/4} = 8e^{-i3\pi/2} = 8(\cos\frac{\pi}{2} + i\sin\frac{\pi}{2}) = 8i$.
+Números Complejos,Forma binomial,facil,$i^2 = $:,1,$-1$,$i$,0,B,Unidad imaginaria.
+Números Complejos,Forma binomial,facil,$(2+3i) + (1-i) = $:,$3+2i$,$3-2i$,$1+4i$,$3+i$,A,Suma componente a componente.
+Números Complejos,Forma polar,facil,$z = re^{i\theta}$ es forma:,Binomial,Polar/exponencial,Trigonométrica,Cartesiana,B,Forma polar exponencial.
+Números Complejos,De Moivre,facil,$(re^{i\theta})^n = $:,$r e^{in\theta}$,$r^n e^{in\theta}$,$re^{i\theta}$,$n$,B,De Moivre.

@@ -179,3 +179,22 @@ Series y Sucesiones,Series de Taylor y Maclaurin,dificil,Encuentre el polinomio 
 Series y Sucesiones,Series de Taylor y Maclaurin,dificil,Determine la serie de Maclaurin de $\frac{\sin(x)}{x}$ y su valor en $x=0$.,"$\sum_{n=0}^{\infty} \frac{x^{2n}}{(2n+1)!}$, valor en $0$: $1$","$\sum_{n=0}^{\infty} \frac{(-1)^n x^{2n+1}}{(2n+1)!}$, valor en $0$: $0$","$\sum_{n=1}^{\infty} \frac{(-1)^{n-1} x^{2n}}{(2n)!}$, valor en $0$: $0$","$\sum_{n=0}^{\infty} \frac{(-1)^n x^{2n}}{(2n+1)!}$, valor en $0$: $1$",D,$\frac{\sin x}{x}=\frac{1}{x}\sum\frac{(-1)^n x^{2n+1}}{(2n+1)!}=\sum\frac{(-1)^n x^{2n}}{(2n+1)!}$. En $x=0$: primer termino $=\frac{1}{1!}=1$.
 Series y Sucesiones,Series de Taylor y Maclaurin,dificil,Encuentre la serie de Maclaurin de $x e^{-x^2}$ hasta el termino $x^5$.,$x - x^3 + x^5$,$x + x^3 + \frac{x^5}{2}$,$x - \frac{x^3}{3} + \frac{x^5}{5}$,$x - x^3 + \frac{x^5}{2}$,D,$e^{-x^2}=1-x^2+\frac{x^4}{2}-\cdots$ Multiplicando por $x$: $xe^{-x^2}=x-x^3+\frac{x^5}{2}-\cdots$
 Series y Sucesiones,Series de Taylor y Maclaurin,dificil,Use la serie de Maclaurin para evaluar $\lim_{x\to 0} \frac{e^x - 1 - x}{x^2}$.,$0$,$\frac{1}{2}$,$1$,$\infty$,B,$e^x=1+x+\frac{x^2}{2}+\cdots$ Entonces $\frac{e^x-1-x}{x^2}=\frac{x^2/2+x^3/6+\cdots}{x^2}=\frac{1}{2}+\frac{x}{6}+\cdots\to\frac{1}{2}$.
+Series y Sucesiones,Series,facil,"Una serie es:",Suma de números,Suma infinita de términos de una sucesión,Producto,Función,B,"$\sum_{n=1}^\infty a_n$."
+Series y Sucesiones,Series,facil,"Una serie geométrica $\sum r^n$ converge si:",$|r| > 1$,$|r| < 1$,$r = 1$,$r = 0$,B,"Convergencia para $|r| < 1$, suma $1/(1-r)$ (empezando en $n=0$)."
+Series y Sucesiones,Series,medio,"$\sum_{n=0}^\infty (1/2)^n = $:",1,$2$,$\infty$,$1/2$,B,"$1/(1 - 1/2) = 2$."
+Series y Sucesiones,Series,medio,"Serie armónica $\sum 1/n$:",Converge,Diverge,Converge a 1,Converge a $e$,B,"Diverge (lentamente)."
+Series y Sucesiones,Series,medio,"Serie p $\sum 1/n^p$ converge ⇔:",$p \leq 1$,$p > 1$,$p = 1$,$p \neq 0$,B,"Criterio: $p > 1$."
+Series y Sucesiones,Convergencia,facil,"Si $\sum a_n$ converge, entonces $a_n \to $:",1,0,$\infty$,Indeterminado,B,"Condición necesaria: $a_n \to 0$."
+Series y Sucesiones,Convergencia,medio,"Si $a_n \not\to 0$, $\sum a_n$:",Converge,Diverge,Indefinida,Es 0,B,"Test de divergencia."
+Series y Sucesiones,Convergencia,medio,"Test de la razón: $\lim |a_{n+1}/a_n| < 1$:",Converge absolutamente,Diverge,Inconcluyente,Indefinido,A,"$L < 1$ ⇒ converge absolutamente."
+Series y Sucesiones,Convergencia,medio,"Test de la raíz: $\lim \sqrt[n]{|a_n|} > 1$:",Converge,Diverge,Inconcluyente,Indefinido,B,"$L > 1$ ⇒ diverge."
+Series y Sucesiones,Series alternantes,facil,"$\sum (-1)^n a_n$ con $a_n > 0$ converge si:",$a_n$ creciente,$a_n \to 0$ y decreciente,$a_n = c$,$\sum a_n$ diverge,B,"Test de Leibniz."
+Series y Sucesiones,Series alternantes,medio,"$\sum (-1)^n / n$ es:",Convergente (condicional),Convergente absoluta,Divergente,No definida,A,"Converge por Leibniz, pero $\sum 1/n$ diverge."
+Series y Sucesiones,Series de potencias,facil,"$\sum c_n (x-a)^n$ es serie de potencias centrada en:",$0$,$a$,$x$,$c_n$,B,"Centro $a$."
+Series y Sucesiones,Series de potencias,medio,"Radio de convergencia $R$ de $\sum x^n$:",0,1,$\infty$,$e$,B,"$R = 1$ por test de la razón."
+Series y Sucesiones,Series de Taylor,facil,"Serie de Taylor de $f$ en $a$:",$\sum f^{(n)}(a) (x-a)^n / n!$,$f(a) + f'(a)$,$\int f$,$f(x)$,A,"Definición."
+Series y Sucesiones,Series de Taylor,medio,"Serie de Maclaurin de $e^x$:",$\sum x^n / n!$,$\sum x^n$,$\sum x^{n+1}$,$\sum 1/n$,A,"$e^x = 1 + x + x^2/2! + ...$"
+Series y Sucesiones,Series de Taylor,medio,"Serie de Maclaurin de $\sin x$:",$\sum (-1)^n x^{2n+1}/(2n+1)!$,$\sum x^n/n!$,$\sum x^{2n}$,$x$,A,"Coeficientes alternantes."
+Series y Sucesiones,Series de Taylor,medio,"Serie de Maclaurin de $\cos x$:",$\sum (-1)^n x^{2n}/(2n)!$,$\sum x^n/n!$,$\sum (-1)^n x^{2n+1}$,$1$,A,"Pares con signos alternantes."
+Series y Sucesiones,Series de Taylor,medio,"$\ln(1+x) = $ alrededor de 0:",$\sum (-1)^{n-1} x^n / n$,$\sum x^n$,$\ln x$,$1$,A,"$x - x^2/2 + x^3/3 - ...$"
+Series y Sucesiones,Series de Taylor,dificil,"$1/(1-x) = $ para $|x|<1$:",$\sum x^n$,$\sum 1/x^n$,$x$,$1 - x$,A,"Serie geométrica."

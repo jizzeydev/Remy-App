@@ -6,12 +6,16 @@ content live on prod without touching real users, attempts, subscriptions, etc.
 
 Usage:
     # dry-run (default): print what would happen, no writes
-    python scripts/sync_content_to_atlas.py "mongodb+srv://USER:PASS@CLUSTER.mongodb.net/?..."
+    python scripts/sync_content_to_atlas.py
 
     # actually push (drops + reinserts the CONTENT collections in Atlas)
-    python scripts/sync_content_to_atlas.py "mongodb+srv://USER:PASS@CLUSTER.mongodb.net/?..." --confirm
+    python scripts/sync_content_to_atlas.py --confirm
 
-Reads source from MONGO_URL/DB_NAME in backend/.env.
+    # override the URI on the fly (env var takes precedence; arg overrides if you want)
+    python scripts/sync_content_to_atlas.py "mongodb+srv://..." --confirm
+
+Reads source from MONGO_URL/DB_NAME and target from ATLAS_URL in backend/.env.
+ATLAS_URL must be set (or the URI passed as the first arg).
 
 Each CONTENT collection in Atlas is dropped and replaced with the local copy.
 USER collections are never read or written.
@@ -52,15 +56,25 @@ PRESERVE_COLLECTIONS = [
 
 
 async def main():
-    if len(sys.argv) < 2:
-        print("ERROR: pass the Atlas URI as first argument.")
-        print('Example: python scripts/sync_content_to_atlas.py "mongodb+srv://..." [--confirm]')
-        sys.exit(1)
-
-    atlas_uri = sys.argv[1]
-    confirm = "--confirm" in sys.argv[2:]
-
     load_dotenv(Path(__file__).parent.parent / "backend" / ".env")
+
+    args = sys.argv[1:]
+    confirm = "--confirm" in args
+    args = [a for a in args if a != "--confirm"]
+
+    # Si pasaste un URI como argumento, ese gana. Si no, usar ATLAS_URL del env.
+    if args:
+        atlas_uri = args[0]
+    else:
+        atlas_uri = os.environ.get("ATLAS_URL", "").strip()
+        if not atlas_uri:
+            print("ERROR: no encontré la URI de Atlas.")
+            print()
+            print("Opciones:")
+            print('  1. Agregá ATLAS_URL=mongodb+srv://... a backend/.env (recomendado)')
+            print('  2. Pasala como argumento: python scripts/sync_content_to_atlas.py "<URI>" [--confirm]')
+            sys.exit(1)
+
     src_url = os.environ["MONGO_URL"]
     db_name = os.environ["DB_NAME"]
 
@@ -110,6 +124,7 @@ async def main():
     print()
     print("=== APPLYING ===")
     total = 0
+    mismatches: list[str] = []
     for c, n_src in plan:
         await dst[c].drop()
         if n_src == 0:
@@ -119,11 +134,52 @@ async def main():
         await dst[c].insert_many(docs)
         copied = await dst[c].count_documents({})
         total += copied
-        flag = "OK" if copied == n_src else f"MISMATCH src={n_src} dst={copied}"
+        if copied == n_src:
+            flag = "OK"
+        else:
+            flag = f"MISMATCH src={n_src} dst={copied}"
+            mismatches.append(c)
         print(f"  {c:35s} {copied:>6} docs  [{flag}]")
 
     print()
     print(f"DONE. {total} content docs synced. User collections untouched.")
+    if mismatches:
+        print(f"⚠️  Conteos no coinciden en: {', '.join(mismatches)}. "
+              "Reintentá el sync o revisá la red.")
+
+    # Smoke test contra la API pública: si responde con la cantidad esperada de
+    # cursos visibles, el deploy está sirviendo lo nuevo. No fallar duro si la
+    # request falla (firewall, prod en redeploy, etc.) — solo avisar.
+    print()
+    print("=== Smoke test API pública ===")
+    try:
+        import urllib.error
+        import urllib.request
+        req = urllib.request.Request(
+            "https://api.remy.seremonta.store/api/courses",
+            headers={"User-Agent": "remy-sync-script"},
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            import json
+            payload = json.loads(resp.read().decode("utf-8"))
+            n_visible = len(payload) if isinstance(payload, list) else 0
+            print(f"  GET /api/courses → {resp.status}, {n_visible} cursos visibles.")
+            if "courses" in [c for c, _ in plan]:
+                n_local_visible = await src.courses.count_documents(
+                    {"visible_to_students": {"$ne": False}}
+                )
+                if n_visible != n_local_visible:
+                    print(f"  ⚠️  prod expone {n_visible} pero local tiene {n_local_visible} "
+                          "visibles. Puede ser cache / redeploy en curso — chequeá en 1 min.")
+    except (urllib.error.URLError, TimeoutError, OSError) as e:
+        print(f"  No pude verificar la API ({e}). Chequeá manualmente:")
+        print("    https://remy.seremonta.store")
+        print("    https://api.remy.seremonta.store/api/courses")
+
+    print()
+    print("URLs:")
+    print("  https://remy.seremonta.store")
+    print("  https://api.remy.seremonta.store")
 
 
 if __name__ == "__main__":

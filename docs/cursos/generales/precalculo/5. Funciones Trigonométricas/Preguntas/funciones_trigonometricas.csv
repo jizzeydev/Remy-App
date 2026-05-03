@@ -139,3 +139,7 @@ Funciones Trigonométricas,Leyes trigonométricas,dificil,Dos caminos forman un 
 Funciones Trigonométricas,Leyes trigonométricas,dificil,"En un caso ambiguo con $A=30°$, $a=5$, $b=9$, determine cuántas soluciones existen.",No existe triángulo,Dos soluciones,Una solución,Solución única rectángula,B,"$\operatorname{sen} B=\frac{9\cdot\frac{1}{2}}{5}=0{,}9<1$. $B_1\approx 64°$, $B_2\approx 116°$. Ambos válidos: dos soluciones."
 Funciones Trigonométricas,Leyes trigonométricas,dificil,"Calcule el área de un triángulo con $a=10$, $b=14$ y $C=60°$.",$70$ u²,$70\sqrt{3}$ u²,$35\sqrt{3}$ u²,$35$ u²,C,$A=\frac{1}{2}(10)(14)\operatorname{sen} 60°=70\cdot\frac{\sqrt{3}}{2}=35\sqrt{3}$ u².
 Funciones Trigonométricas,Leyes trigonométricas,dificil,"Un barco navega $150$ km con rumbo N $25°$ E, luego $80$ km con rumbo N $60°$ E. ¿Qué ley se usa para la distancia al origen?",Ley de Senos,Teorema de Pitágoras,Fórmula de Herón,Ley de Cosenos,D,Se forma un triángulo oblicuángulo; se aplica la Ley de Cosenos.
+Funciones Trigonométricas,Ángulos,facil,"$\pi$ rad = :""",$90°$,$180°$,$360°$,$45°$,B,$\pi$ = media vuelta.
+Funciones Trigonométricas,Razones,facil,$\sin(\pi/2) = $:,0,1,$1/2$,$-1$,B,Estándar.
+Funciones Trigonométricas,Razones,facil,$\cos(0) = $:,0,1,$\pi$,$-1$,B,Estándar.
+Funciones Trigonométricas,Identidades,facil,$\sin^2 x + \cos^2 x = $:,$0$,$1$,$\pi$,$x$,B,Identidad pitagórica.

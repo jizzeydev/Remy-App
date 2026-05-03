@@ -159,3 +159,11 @@ Fundamentos,Inecuaciones,dificil,Resuelve $x^2 - 2x - 8 \leq 0$:,"$[-2, 4]$","$(
 Fundamentos,Inecuaciones,dificil,Resuelve $\lvert 2x + 1 \rvert > 5$:,"$(-3, 2)$","$(-\infty, -3) \cup (2, +\infty)$","$[-3, 2]$","$(-\infty, -3] \cup [2, +\infty)$",B,"$2x + 1 > 5$ o $2x + 1 < -5$, es decir $x > 2$ o $x < -3$. Solución: $(-\infty, -3) \cup (2, +\infty)$."
 Fundamentos,Inecuaciones,dificil,Resuelve $\frac{x}{x - 2} < 0$:,"$(-\infty, 0) \cup (2, +\infty)$","$(2, +\infty)$","$(0, 2)$","$(-\infty, 0)$",C,"La expresión es negativa cuando numerador y denominador tienen signos opuestos: $0 < x < 2$. Solución: $(0, 2)$."
 Fundamentos,Inecuaciones,dificil,¿Cuál es el conjunto solución de $x^2 + 1 > 0$?,"$(0, +\infty)$","$(-1, 1)$",$\emptyset$,$\mathbb{R}$,D,"Como $x^2 \geq 0$ para todo real, $x^2 + 1 \geq 1 > 0$ siempre. Se cumple para todos los reales."
+Fundamentos,Conjuntos numéricos,facil,$\mathbb{N}$ son los:,Números enteros,Números naturales,Números reales,Complejos,B,Naturales.
+Fundamentos,Conjuntos numéricos,facil,$\sqrt{2}$ pertenece a:,$\mathbb{Q}$,$\mathbb{R}$ pero no $\mathbb{Q}$,$\mathbb{N}$,$\mathbb{Z}$,B,Irracional.
+Fundamentos,Operaciones,facil,$2^3 = $:,6,8,9,16,B,$2 \cdot 2 \cdot 2 = 8$.
+Fundamentos,Exponentes y radicales,facil,$\sqrt{16} = $:,2,4,8,16,B,$4^2 = 16$.
+Fundamentos,Polinomios,facil,Grado de $3x^2 + 5x + 1$:,1,2,3,0,B,Mayor exponente.
+Fundamentos,Factorización,facil,$x^2 - 4 = $:,$(x-2)^2$,$(x-2)(x+2)$,$x^2-2$,$(x-4)$,B,Diferencia de cuadrados.
+Fundamentos,Ecuaciones,facil,Solución de $2x + 3 = 7$:,1,2,3,4,B,$2x = 4 \iff x = 2$.
+Fundamentos,Inecuaciones,facil,$x + 1 > 0$ ⇔:,$x < -1$,$x > -1$,$x = -1$,$\mathbb{R}$,B,Restar 1.

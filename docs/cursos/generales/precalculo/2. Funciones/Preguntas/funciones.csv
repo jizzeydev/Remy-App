@@ -119,3 +119,7 @@ Funciones,Funciones inversas,dificil,"Si $f(x) = \frac{x-1}{x+2}$ y $g = f^{-1}$
 Funciones,Funciones inversas,dificil,¿Cuál función $f: \mathbb{R} \to \mathbb{R}$ es biyectiva?,$f(x) = x^2$,$f(x) = x^3$,$f(x) = \lvert x \rvert$,$f(x) = x^4 + 1$,B,$x^3$ es estrictamente creciente (inyectiva) y su rango es $\mathbb{R}$ (sobreyectiva).
 Funciones,Funciones inversas,dificil,"Si $f(x) = 3x-5$ y $g(x) = 2x+1$, ¿cuál es $(f \circ g)^{-1}(x)$?",$\frac{x+8}{6}$,$\frac{x-2}{6}$,$\frac{x+2}{6}$,$\frac{6}{x+2}$,C,$(f \circ g)(x) = 6x-2$. Inversa: $x = \frac{y+2}{6}$. Entonces $(f \circ g)^{-1}(x) = \frac{x+2}{6}$.
 Funciones,Funciones inversas,dificil,"Si $f(x) = \sqrt{x+1}$ con dominio $[-1, \infty)$ y $g = f^{-1}$, ¿cuál es el dominio de $g$?","$[-1, \infty)$","$(0, \infty)$",$\mathbb{R}$,"$[0, \infty)$",D,"El dominio de $f^{-1}$ es el rango de $f$. Como $\sqrt{x+1} \geq 0$ y alcanza $0$, el rango de $f$ es $[0, \infty)$."
+Funciones,Definición,facil,Una función $f$ asigna a cada $x$:,Dos valores,Un único $y$,Cero,Múltiples,B,Definición.
+Funciones,Dominio y rango,facil,Dominio de $\sqrt{x}$:,$\mathbb{R}$,"$[0,\infty)$","$(0,\infty)$",$\{0\}$,B,$x \geq 0$.
+Funciones,Composición,facil,$(f \circ g)(x) = $:,$f(g(x))$,$g(f(x))$,$fg$,$f+g$,A,Composición.
+Funciones,Inversa,facil,$f^{-1}$ existe ⇔ $f$ es:,Constante,Biyectiva,Cero,Lineal,B,Bilectividad.

@@ -119,3 +119,23 @@ Métodos de Integración,Fracciones parciales,dificil,¿Cuál es la descomposici
 Métodos de Integración,Fracciones parciales,dificil,"Calcula $\int\dfrac{2x+3}{(x+1)^{2}}\,dx$.",$2\ln\lvert x+1\rvert+\dfrac{1}{x+1}+C$,$\dfrac{2x+3}{-(x+1)}+C$,$\ln\lvert x+1\rvert^{2}+C$,$2\ln\lvert x+1\rvert-\dfrac{1}{x+1}+C$,D,$\tfrac{2x+3}{(x+1)^{2}}=\tfrac{2}{x+1}+\tfrac{1}{(x+1)^{2}}$. Integrando: $2\ln\lvert x+1\rvert-\tfrac{1}{x+1}+C$.
 Métodos de Integración,Fracciones parciales,dificil,"Calcula $\int\dfrac{2x+1}{x^{2}(x-1)}\,dx$.",$3\ln\lvert x-1\rvert+3\ln\lvert x\rvert-\dfrac{1}{x}+C$,$\ln\lvert x^{2}(x-1)\rvert+C$,$3\ln\lvert x-1\rvert-3\ln\lvert x\rvert+\dfrac{1}{x}+C$,$\dfrac{2x+1}{x(x-1)}+C$,C,$\tfrac{2x+1}{x^{2}(x-1)}=\tfrac{-3}{x}+\tfrac{-1}{x^{2}}+\tfrac{3}{x-1}$; integrando se obtiene el resultado.
 Métodos de Integración,Fracciones parciales,dificil,"Calcula $\int_{2}^{3}\dfrac{1}{x^{2}-1}\,dx$.",$\dfrac{1}{2}\ln\left(\dfrac{3}{2}\right)$,$\dfrac{1}{2}\ln\left(\dfrac{2}{3}\right)$,$\ln(3)-\ln(2)$,$\dfrac{1}{2}\ln(2)$,A,Antiderivada $\tfrac{1}{2}\ln\left\lvert\tfrac{x-1}{x+1}\right\rvert$. Evaluada: $\tfrac{1}{2}[\ln(1/2)-\ln(1/3)]=\tfrac{1}{2}\ln(3/2)$.
+Métodos de Integración,Sustitución simple,facil,"En sustitución $u = g(x)$, $du = $:",$g'(x) dx$,$g(x) dx$,$dx$,$1$,A,"Diferencial: $du = u'(x) dx = g'(x) dx$."
+Métodos de Integración,Sustitución simple,facil,"$\int 2x \cos(x^2) dx$ con $u = x^2$:",$\sin(x^2) + C$,$\cos(x^2) + C$,$x^2 \sin x$,$\sin x$,A,"$du = 2x dx$, $\int \cos u \, du = \sin u + C$."
+Métodos de Integración,Sustitución simple,medio,"$\int e^{3x} dx = $:",$e^{3x}/3 + C$,$3e^{3x} + C$,$e^{3x} + C$,$\ln 3x$,A,"Sustitución $u = 3x$."
+Métodos de Integración,Sustitución simple,medio,"$\int \sin(2x) dx = $:",$-\cos(2x)/2 + C$,$-\cos(2x) + C$,$\cos(2x) + C$,$2\cos(2x)$,A,"$u = 2x$."
+Métodos de Integración,Integración por partes,facil,"Fórmula de integración por partes:","$\int u \, dv = uv - \int v \, du$",$uv$,$\int u \int v$,$\int u + v$,A,"Producto: derivada del producto integrado."
+Métodos de Integración,Integración por partes,medio,"$\int x e^x dx = $:",$e^x(x-1) + C$,$xe^x$,$e^x + C$,$x^2 e^x$,A,"$u=x, dv=e^x dx$. $xe^x - \int e^x dx$."
+Métodos de Integración,Integración por partes,medio,"$\int \ln x \, dx = $:",$x \ln x - x + C$,$\ln x + C$,$1/x$,$x \ln x$,A,"$u = \ln x, dv = dx$."
+Métodos de Integración,Integración por partes,medio,"$\int x \cos x \, dx = $:",$x \sin x + \cos x + C$,$x \cos x$,$\sin x$,$x \sin x$,A,"$u = x, dv = \cos x \, dx$."
+Métodos de Integración,Integrales trigonométricas,facil,"$\int \sin^2 x \, dx$ usar identidad:",$\sin^2 x = (1 - \cos 2x)/2$,$\sin^2 x = 1$,$\cos x$,$\sin 2x$,A,"Identidad de reducción."
+Métodos de Integración,Integrales trigonométricas,medio,"$\int \tan x \, dx = $:",$-\ln|\cos x| + C$,$\sec x$,$\tan^2 x$,$\sec^2 x$,A,"$u = \cos x$."
+Métodos de Integración,Sustitución trigonométrica,facil,"Para $\sqrt{a^2 - x^2}$, $x = $:",$a \sin\theta$,$a \tan\theta$,$a \sec\theta$,$a \cos\theta$,A,"Sust. clásica para arco circular."
+Métodos de Integración,Sustitución trigonométrica,facil,"Para $\sqrt{a^2 + x^2}$, $x = $:",$a \sin\theta$,$a \tan\theta$,$a \sec\theta$,$a \cos\theta$,B,"Sust. para hiperbólica."
+Métodos de Integración,Sustitución trigonométrica,medio,"$\int \frac{dx}{\sqrt{1-x^2}} = $:",$\arcsin x + C$,$\arccos x + C$,$\arctan x + C$,$1$,A,"Estándar."
+Métodos de Integración,División polinomial,facil,"Para $\int \frac{x^2}{x-1}$ se hace primero:",División polinomial,Factorización,Sustitución,Integración por partes,A,"Numerador grado $\geq$ denominador: dividir."
+Métodos de Integración,División polinomial,medio,"$\frac{x^2 + 1}{x - 1}$ tras división:",$x + 1 + \frac{2}{x-1}$,$x - 1$,$x^2$,$\frac{2}{x-1}$,A,"$x^2 + 1 = (x-1)(x+1) + 2$."
+Métodos de Integración,Fracciones parciales,facil,"$\frac{1}{x(x-1)} = $:",$\frac{1}{x} - \frac{1}{x-1}$,$\frac{-1}{x} + \frac{1}{x-1}$,$\frac{1}{x} + \frac{1}{x-1}$,$\frac{2}{x-1}$,B,"Descomposición: $\frac{A}{x} + \frac{B}{x-1}$, $A=-1, B=1$."
+Métodos de Integración,Fracciones parciales,medio,"$\int \frac{1}{x(x-1)} dx = $:",$\ln|\frac{x-1}{x}| + C$,$\ln|x| + \ln|x-1|$,$\arctan$,$1/x$,A,"Por descomposición."
+Métodos de Integración,Integrales impropias,facil,"$\int_1^\infty \frac{1}{x^2} dx = $:",1,$\infty$,0,$1/2$,A,"$[-1/x]_1^\infty = 0 - (-1) = 1$. Convergente."
+Métodos de Integración,Integrales impropias,facil,"$\int_1^\infty \frac{1}{x} dx = $:",1,$\infty$,0,Convergente,B,"$\ln x$ diverge."
+Métodos de Integración,Integrales impropias,medio,"$\int_0^1 \frac{1}{\sqrt{x}} dx = $:",2,$\infty$,1,Divergente,A,"$2\sqrt{x}$ entre 0 y 1: $2$. Converge."

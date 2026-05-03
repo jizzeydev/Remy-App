@@ -59,3 +59,13 @@ Derivadas Parciales,Regla de la cadena,dificil,"Si $u=x^4 y+y^2 z^3$, $x=rse^t$,
 Derivadas Parciales,Regla de la cadena,dificil,"Con $u=x^4 y+y^2 z^3$, $x=rse^t$, $y=rs^2 e^{-t}$, $z=r^2 s\sin(t)$, evaluar $\frac{\partial u}{\partial s}$ en $r=2$, $s=1$, $t=0$.",$128$,$192$,$64$,$256$,B,"En $(r,s,t)=(2,1,0)$: $x=2$, $y=2$, $z=0$. $u_x=64$, $u_y=16$, $u_z=0$; $x_s=2$, $y_s=4$, $z_s=0$. Total: $128+64=192$."
 Derivadas Parciales,Regla de la cadena,dificil,"Si $z=f(x,y)$ con $x=r\cos\theta$, $y=r\sin\theta$, entonces $\frac{\partial z}{\partial\theta} =$",$f_x\cos\theta+f_y\sin\theta$,$-f_x r\cos\theta+f_y r\sin\theta$,$-f_x r\sin\theta+f_y r\cos\theta$,$f_x r\sin\theta-f_y r\cos\theta$,C,$\frac{\partial z}{\partial\theta} = f_x(-r\sin\theta)+f_y(r\cos\theta)$.
 Derivadas Parciales,Regla de la cadena,dificil,"Si $F(x,y,z) = x^2 yz + xz^3 - 10 = 0$, determine $\frac{\partial z}{\partial x}$ en $(1,1,2)$.",$\frac{12}{13}$,$-\frac{13}{12}$,$-\frac{4}{13}$,$-\frac{12}{13}$,D,"$F_x=2xyz+z^3=12$, $F_z=x^2 y+3xz^2=13$. $\frac{\partial z}{\partial x}=-\frac{12}{13}$."
+Derivadas Parciales,Definición de derivada parcial,facil,$\partial f/\partial x$:,Derivada respecto a $x$ con $y$ fija,Derivada total,$df/dx$,Cero,A,Tratar otras variables como constantes.
+Derivadas Parciales,Definición de derivada parcial,facil,$\partial(x^2 y)/\partial x = $:,$2xy$,$x^2$,$2y$,$y$,A,$y$ es constante.
+Derivadas Parciales,Definición de derivada parcial,medio,$\partial(x^2 y)/\partial y = $:,$2xy$,$x^2$,$2y$,$0$,B,Coeficiente de $y$ es $x^2$.
+Derivadas Parciales,Diferenciabilidad,facil,$f$ diferenciable implica:,Continua,No continua,Inyectiva,Acotada,A,Diferenciabilidad ⇒ continuidad.
+Derivadas Parciales,Diferenciabilidad,medio,Existencia de parciales NO garantiza:,Continuidad ni diferenciabilidad,Continuidad solamente,Diferenciabilidad solamente,Nada,A,Existencia de parciales es débil.
+Derivadas Parciales,Regla de la cadena,facil,"$dz/dt$ con $z = f(x(t), y(t))$:",$f_x dx/dt + f_y dy/dt$,$f_x + f_y$,$dx/dt$,$f$,A,Cadena multivariable.
+Derivadas Parciales,Derivadas direccionales,facil,$D_\vec{u} f = $:,$\nabla f$,$\nabla f \cdot \vec{u}$,$\|\nabla f\|$,$\vec{u}$,B,Producto del gradiente con dirección unitaria.
+Derivadas Parciales,Gradiente,facil,$\nabla f = $:,$f_x \vec{i} + f_y \vec{j}$,$f$,$\partial^2 f$,$0$,A,Vector de parciales.
+Derivadas Parciales,Gradiente,medio,$\nabla f$ apunta en la dirección de:,Mínimo descenso,Máximo crecimiento,Curvatura,Origen,B,Gradiente: dirección de máxima derivada.
+Derivadas Parciales,Plano tangente,facil,"Plano tangente a $z = f(x,y)$ en $(a,b)$:","$z = f(a,b) + f_x(a-x) + f_y(b-y)$","$z = f_x(x-a) + f_y(y-b) + f(a,b)$",$z = 0$,$z = ax+by$,B,Forma punto-normal.
