@@ -214,6 +214,15 @@ def lesson_7_1():
             ),
         ),
 
+        fig(
+            "Vista 2D superior de una lámina plana con forma irregular (silueta tipo gota o "
+            "frijol) en el plano xy, sombreada en color teal #06b6d4 translúcido representando "
+            "masa distribuida uniformemente. Ejes x, y marcados con escala. El punto del centro "
+            "de masa (x̄, ȳ) marcado con una cruz ámbar #f59e0b grande y etiqueta '(x̄, ȳ)'. "
+            "Debajo de la figura, dos fórmulas grandes en cajita: 'x̄ = (1/M)∬ x ρ dA' y "
+            "'ȳ = (1/M)∬ y ρ dA', con etiqueta 'M = masa total'. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Confundir $M_x$ con 'integrar $x$'.** $M_x$ tiene $y$ adentro (es momento respecto al eje $x$).",
@@ -401,6 +410,16 @@ def lesson_7_2():
             solucion=(
                 "$I_x = \\int_0^1 \\dfrac{(2x)^3}{3} dx = \\int_0^1 \\dfrac{8x^3}{3} dx = \\dfrac{8}{3} \\cdot \\dfrac{1}{4} = \\dfrac{2}{3}$."
             ),
+        ),
+
+        fig(
+            "Tres mini-paneles lado a lado mostrando la misma lámina plana irregular en color "
+            "teal #06b6d4 translúcido, con un elemento dA pequeño marcado adentro. Panel 1: "
+            "eje de rotación = eje x (línea horizontal punteada ámbar #f59e0b en y = 0). "
+            "Distancia r = y desde dA al eje, con flecha doble vertical. Etiqueta 'I_x = ∬ y² "
+            "ρ dA'. Panel 2: eje = eje y (línea vertical punteada ámbar). Distancia r = x. "
+            "'I_y = ∬ x² ρ dA'. Panel 3: eje = origen (punto ámbar en (0,0)). Distancia "
+            "r = √(x²+y²). 'I_0 = ∬ (x²+y²) ρ dA = I_x + I_y'. " + STYLE
         ),
 
         b("errores_comunes",

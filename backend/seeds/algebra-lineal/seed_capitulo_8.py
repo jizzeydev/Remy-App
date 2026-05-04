@@ -298,6 +298,14 @@ def lesson_8_1():
             ),
         ),
 
+        fig(
+            "Diagonalización ortogonal de matriz simétrica A en R^2: una cuadrícula 2D se transforma bajo A. "
+            "Mostrar dos autovectores v1 (teal #06b6d4) y v2 (ámbar #f59e0b) ortogonales entre sí, con marca de "
+            "ángulo recto en el origen. A los estira (factores λ1, λ2) sin rotar la base ortonormal. Etiquetar "
+            "ejes principales como nuevos ejes ortogonales y la nota 'simétrica → autovectores ortogonales'. "
+            + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Aplicar Gram-Schmidt entre espacios propios distintos.** No es necesario — son automáticamente ortogonales.",
@@ -596,6 +604,13 @@ def lesson_8_2():
             ),
         ),
 
+        fig(
+            "Tres curvas de nivel en R^2 para Q(x)=x^T A x lado a lado: (a) elipse cerrada en teal #06b6d4 "
+            "con A definida positiva (λ1, λ2 > 0); (b) hipérbola en ámbar #f59e0b con A indefinida (λ1>0, λ2<0, "
+            "signos opuestos); (c) par de rectas paralelas (elipse degenerada / cilindro) con A semidefinida "
+            "positiva (λ1>0, λ2=0). Etiquetar cada panel con su matriz A y eigenvalores. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Olvidar dividir entre 2** los coeficientes de productos cruzados al construir $A$.",
@@ -887,6 +902,13 @@ def lesson_8_3():
                 "**Rango exacto:** $4$ (cuatro $\\sigma_i \\neq 0$).\n\n"
                 "**Rango numérico:** si $0.001$ se considera 'casi cero' (umbral típico vs. el valor más grande), el rango efectivo es $3$. Esta es la base de la **regularización** y del análisis de componentes principales: descartar las componentes con $\\sigma_i$ pequeños."
             ),
+        ),
+
+        fig(
+            "SVD A = U Σ V^T como pipeline en R^2 con cuatro paneles en serie unidos por flechas etiquetadas: "
+            "(1) círculo unitario inicial; (2) tras V^T el círculo rota (sigue siendo círculo); (3) tras Σ se "
+            "estira a una elipse en teal #06b6d4 con semiejes σ1 y σ2; (4) tras U la elipse rota a su posición "
+            "final en ámbar #f59e0b. Etiquetar cada flecha con V^T, Σ y U. " + STYLE
         ),
 
         b("errores_comunes",

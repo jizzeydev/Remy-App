@@ -1233,6 +1233,11 @@ def lesson_3_7():
             ),
         ),
 
+        fig(
+            "Lámina con tres paneles físicos lado a lado. Panel (a): resorte horizontal estirado con fórmula W = ∫ F(x) dx, con flecha de fuerza en teal #06b6d4 y desplazamiento marcado en ámbar #f59e0b. Panel (b): placa plana con eje x debajo y fórmula del centro de masa x̄ = (1/M) ∫ x ρ(x) dA, con un punto teal marcando x̄. Panel (c): pared vertical inundada con líquido azulado, mostrando presión hidrostática creciente con la profundidad y flechas ámbar perpendiculares a la pared."
+            + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Confundir fuerza con trabajo.** $F$ tiene unidades N; $W$ tiene unidades $\\text{N} \\cdot \\text{m} = \\text{J}$.",
@@ -1573,6 +1578,11 @@ def lesson_3_9():
                 "$$\\Delta P = \\int_0^5 (50 + 10t) \\, dt = [50t + 5t^2]_0^5 = 250 + 125 = 375$$\n\n"
                 "**$375$ individuos nuevos** en 5 años."
             ),
+        ),
+
+        fig(
+            "Dos paneles con ejes cartesianos. Panel (a) titulado 'Crecimiento logístico': curva en forma de S en teal #06b6d4 que parte cerca del eje x, asciende, pasa por un punto de inflexión marcado con un círculo ámbar #f59e0b, y se aplana acercándose a una asíntota horizontal punteada ámbar etiquetada K (capacidad de carga). Eje x = tiempo, eje y = población. Panel (b) titulado 'Distribución de tamaños': curva campana simétrica en gris con área bajo la curva sombreada en teal #06b6d4 entre dos límites verticales a y b; etiqueta P(a < X < b)."
+            + STYLE
         ),
 
         b("errores_comunes",

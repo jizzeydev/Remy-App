@@ -916,6 +916,16 @@ def lesson_expresiones_algebraicas():
             ),
         ),
 
+        fig(
+            "Diagrama geométrico que ilustra el cuadrado de binomio $(a+b)^2 = a^2 + 2ab + b^2$. "
+            "Un cuadrado grande de lado $a+b$ subdividido en cuatro regiones rectangulares: "
+            "(arriba-izq) un cuadrado de área $a^2$ en color teal #06b6d4 con su etiqueta; "
+            "(abajo-der) un cuadrado de área $b^2$ en color teal claro; "
+            "(arriba-der y abajo-izq) dos rectángulos idénticos de área $ab$ en color ámbar #f59e0b — "
+            "el doble producto que típicamente se olvida. Etiquetas $a$, $b$ en los lados, marcador "
+            "de la suma total. Fondo blanco, líneas claras. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**$(a + b)^2 = a^2 + b^2$.** **Falso.** Falta el doble producto: $(a + b)^2 = a^2 + 2 a b + b^2$.",
@@ -1389,6 +1399,16 @@ def lesson_expresiones_racionales():
             (
                 "$\\dfrac{2}{1 + \\sqrt{3}} \\cdot \\dfrac{1 - \\sqrt{3}}{1 - \\sqrt{3}} = \\dfrac{2(1 - \\sqrt{3})}{1 - 3} = \\dfrac{2(1 - \\sqrt{3})}{-2} = \\sqrt{3} - 1$."
             ),
+        ),
+
+        fig(
+            "Pizarra dividida en dos columnas con encabezados grandes 'CORRECTO ✓' (color teal #06b6d4) "
+            "y 'INCORRECTO ✗' (color ámbar #f59e0b). En la columna correcta: la simplificación "
+            "$\\frac{(x-2)(x+3)}{(x-2)(x+1)} = \\frac{x+3}{x+1}$ con los factores $(x-2)$ tachados con una línea diagonal "
+            "verde y la nota 'cancelo factor común', además del recordatorio 'restricción: $x \\neq 2$' destacado. "
+            "En la columna incorrecta: el ejemplo prohibido $\\frac{x+2}{x+5} = \\frac{2}{5}$ con una gran X roja, "
+            "y la nota 'NO se cancelan términos sumados, solo factores multiplicados'. Estilo pizarra educativa. "
+            + STYLE
         ),
 
         b("errores_comunes",

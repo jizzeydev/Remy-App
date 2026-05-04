@@ -243,6 +243,26 @@ def lesson_2_1():
              "Por inducción generalizada desde $n_0 = 4$, $n^2 \\le 2^n$ para todo $n \\ge 4$. $\\blacksquare$")
         ),
 
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "¿Cuáles son los **dos pasos** que componen una demostración por inducción matemática estándar?",
+               "opciones_md": ["Caso base $P(0)$ y caso final $P(\\infty)$", "Caso base $P(n_0)$ y paso inductivo $P(k) \\Rightarrow P(k+1)$", "Verificar varios casos $P(1), P(2), P(3)$ y generalizar", "Demostrar $P(k)$ y $P(k-1)$"],
+               "correcta": "B",
+               "pista_md": "Pensá en el efecto dominó: la primera ficha y el efecto entre fichas consecutivas.",
+               "explicacion_md": "Inducción consta de **caso base** ($P(n_0)$ verdadero) y **paso inductivo** (asumiendo $P(k)$ se demuestra $P(k+1)$). Verificar finitos casos individuales no es inducción."},
+              {"enunciado_md": "En el paso inductivo de la demostración de $\\sum_{i=1}^{n} i = \\frac{n(n+1)}{2}$, ¿cuál es la **hipótesis inductiva**?",
+               "opciones_md": ["$\\sum_{i=1}^{k+1} i = \\frac{(k+1)(k+2)}{2}$", "$\\sum_{i=1}^{k} i = \\frac{k(k+1)}{2}$", "$\\sum_{i=1}^{1} i = 1$", "$P(n)$ es verdadera para todo $n$"],
+               "correcta": "B",
+               "pista_md": "La hipótesis inductiva es lo que se asume, no lo que se demuestra.",
+               "explicacion_md": "La hipótesis inductiva es $P(k)$: se asume que la fórmula vale para $n=k$. La opción A es la **tesis** $P(k+1)$ (lo que hay que demostrar)."},
+              {"enunciado_md": "Si en una demostración por inducción **no se usa la hipótesis** $P(k)$ para probar $P(k+1)$, ¿qué significa?",
+               "opciones_md": ["La inducción es inválida", "El caso base es innecesario", "Probablemente hay un error o la propiedad admite prueba directa", "La conclusión sigue siendo correcta"],
+               "correcta": "C",
+               "pista_md": "El núcleo de la inducción es heredar $P(k)$ a $P(k+1)$.",
+               "explicacion_md": "Si nunca usás $P(k)$, el paso inductivo está demostrando $P(k+1)$ por sí solo, lo que sugiere o un error en la prueba o que la propiedad puede demostrarse directamente sin inducción."},
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Olvidar el caso base.** Sin él, el paso inductivo no demuestra nada (la primera ficha podría no caer).",
@@ -436,6 +456,28 @@ def lesson_2_2():
              "$a_{15} = 2^{15} = \\boxed{32\\,768}$ antepasados.")
         ),
 
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "Sea la sucesión aritmética $a_1 = 5$, $d = 3$. ¿Cuánto vale $a_{10}$?",
+               "opciones_md": ["$30$", "$32$", "$33$", "$35$"],
+               "correcta": "B",
+               "pista_md": "Recordá $a_n = a_1 + (n-1)d$.",
+               "explicacion_md": "$a_{10} = 5 + (10-1)\\cdot 3 = 5 + 27 = 32$. Cuidado con usar $a_1 + nd$ en vez de $a_1 + (n-1)d$: ese error daría $35$."},
+              {"enunciado_md": "¿Cuál de las siguientes sucesiones **no es** geométrica?",
+               "opciones_md": ["$2, 6, 18, 54, \\ldots$", "$1, -1, 1, -1, \\ldots$", "$3, 6, 9, 12, \\ldots$", "$1, \\tfrac{1}{2}, \\tfrac{1}{4}, \\tfrac{1}{8}, \\ldots$"],
+               "correcta": "C",
+               "pista_md": "En una geométrica el cociente entre términos consecutivos es constante.",
+               "explicacion_md": "$3, 6, 9, 12$ es **aritmética** con $d = 3$, no geométrica: $6/3 = 2$ pero $9/6 = 1.5$. Las otras tres tienen razón constante $r = 3, -1, 1/2$ respectivamente."},
+              {"enunciado_md": "Si $S_n = \\sum_{k=1}^{n} a_k$ y la sucesión es geométrica con razón $r \\neq 1$, ¿cuál es la fórmula correcta de $S_n$?",
+               "opciones_md": ["$S_n = a_1 \\cdot r^n$", "$S_n = n \\cdot a_1$", "$S_n = a_1 \\dfrac{1-r^n}{1-r}$", "$S_n = \\dfrac{a_1 + a_n}{2}$"],
+               "correcta": "C",
+               "pista_md": "La opción D es de las aritméticas; la opción B vale solo cuando $r=1$.",
+               "explicacion_md": "Para una progresión geométrica con $r \\neq 1$: $S_n = a_1 \\dfrac{1-r^n}{1-r}$. Cuando $r=1$ la fórmula se indefine y se reduce a $S_n = n a_1$. La opción D corresponde a sumas aritméticas."},
+          ]),
+
+        fig("Diagrama educativo en español que compara una sucesión aritmética y una geométrica. A la izquierda, puntos $(1,2),(2,5),(3,8),(4,11),(5,14)$ alineados sobre una recta (crecimiento lineal) en teal #06b6d4 con etiqueta «$d = 3$». A la derecha, puntos $(1,2),(2,4),(3,8),(4,16),(5,32)$ siguiendo una curva exponencial en ámbar #f59e0b con etiqueta «$r = 2$». Ejes con marcas de 1 a 5, fondo blanco. " + STYLE),
+
         b("errores_comunes",
           items_md=[
               "**Confundir aritmética con geométrica.** Aritmética: diferencia constante; geométrica: razón constante.",
@@ -628,6 +670,28 @@ def lesson_2_3():
              "$$\\sum_{k=0}^n k \\cdot k! = \\sum_{k=0}^n (a_{k+1} - a_k) = a_{n+1} - a_0 = (n+1)! - 0! = \\boxed{(n+1)! - 1}.$$")
         ),
 
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "¿Cuánto vale $\\sum_{k=1}^{100} k$?",
+               "opciones_md": ["$5000$", "$5050$", "$10000$", "$10100$"],
+               "correcta": "B",
+               "pista_md": "Usá $\\sum_{k=1}^n k = \\frac{n(n+1)}{2}$.",
+               "explicacion_md": "$\\sum_{k=1}^{100} k = \\frac{100 \\cdot 101}{2} = 5050$. Es la famosa suma de Gauss."},
+              {"enunciado_md": "¿Cuál es la fórmula correcta de la suma geométrica $\\sum_{k=0}^{n} r^k$ cuando $r \\neq 1$?",
+               "opciones_md": ["$\\dfrac{r^n - 1}{r - 1}$", "$\\dfrac{r^{n+1} - 1}{r - 1}$", "$\\dfrac{r^n}{r - 1}$", "$\\dfrac{1 - r^n}{r - 1}$"],
+               "correcta": "B",
+               "pista_md": "Cuidado con el rango: empieza en $k=0$.",
+               "explicacion_md": "$\\sum_{k=0}^{n} r^k = 1 + r + r^2 + \\cdots + r^n = \\dfrac{r^{n+1} - 1}{r - 1}$. Hay $n+1$ términos, por eso aparece $r^{n+1}$. Si fuera $\\sum_{k=1}^n r^k$ habría $n$ términos y la respuesta sería A."},
+              {"enunciado_md": "Aplicando la propiedad de **partición** del rango: $\\sum_{k=1}^{20} a_k = \\sum_{k=1}^{10} a_k + \\square$. ¿Qué va en el cuadrado?",
+               "opciones_md": ["$\\sum_{k=10}^{20} a_k$", "$\\sum_{k=11}^{20} a_k$", "$\\sum_{k=10}^{19} a_k$", "$\\sum_{k=11}^{19} a_k$"],
+               "correcta": "B",
+               "pista_md": "El primer rango llega hasta $10$, así que el segundo arranca en $11$.",
+               "explicacion_md": "Para no contar dos veces $a_{10}$, el segundo rango debe empezar en $k=11$ y llegar hasta $20$ inclusive. Así: $\\sum_{k=1}^{10} + \\sum_{k=11}^{20} = \\sum_{k=1}^{20}$."},
+          ]),
+
+        fig("Diagrama educativo en español que ilustra una suma telescópica: cinco rectángulos representan $a_1 - a_0$, $a_2 - a_1$, $a_3 - a_2$, $a_4 - a_3$, $a_5 - a_4$, con flechas de cancelación cruzadas que muestran cómo los términos intermedios se anulan, dejando el resultado $a_5 - a_0$. Trazos en teal #06b6d4 para los rectángulos y ámbar #f59e0b para las flechas. Etiquetas claras en español, fondo blanco. " + STYLE),
+
         b("errores_comunes",
           items_md=[
               "**Aplicar mal la partición.** $\\sum_{k=m}^n a_k = \\sum_{k=1}^n a_k - \\sum_{k=1}^{m-1} a_k$ (no hasta $m$).",
@@ -819,6 +883,26 @@ def lesson_2_4():
              "Los pares válidos son $(k=17, \\ell=0)$ y $(k=19, \\ell=3)$. Coeficiente final: "
              "$\\binom{20}{17}\\binom{17}{0}(-1)^0 + \\binom{20}{19}\\binom{19}{3}(-1)^3 = \\binom{20}{17} - 20 \\cdot \\binom{19}{3}.$")
         ),
+
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "¿Cuántos términos tiene la expansión de $(a + b)^{10}$?",
+               "opciones_md": ["$9$", "$10$", "$11$", "$12$"],
+               "correcta": "C",
+               "pista_md": "El índice $k$ va de $0$ a $n$.",
+               "explicacion_md": "$(a+b)^n$ tiene $n+1$ términos porque $k$ recorre $0, 1, \\ldots, n$. Por lo tanto $(a+b)^{10}$ tiene $11$ términos."},
+              {"enunciado_md": "En la expansión de $(x + 2)^5$, ¿cuál es el coeficiente del término $x^3$?",
+               "opciones_md": ["$10$", "$20$", "$40$", "$80$"],
+               "correcta": "C",
+               "pista_md": "El término general es $\\binom{5}{k} x^{5-k} 2^k$.",
+               "explicacion_md": "Para $x^3$ necesitamos $5-k=3$, es decir $k=2$. El coeficiente es $\\binom{5}{2} \\cdot 2^2 = 10 \\cdot 4 = 40$."},
+              {"enunciado_md": "¿Cuál es el valor de $\\sum_{k=0}^{n} \\binom{n}{k}$?",
+               "opciones_md": ["$n$", "$n!$", "$2^n$", "$2n$"],
+               "correcta": "C",
+               "pista_md": "Aplicá el Teorema del Binomio a $(1 + 1)^n$.",
+               "explicacion_md": "Tomando $a = b = 1$ en $(a+b)^n = \\sum_k \\binom{n}{k} a^{n-k}b^k$ se obtiene $2^n = \\sum_{k=0}^n \\binom{n}{k}$. Cuenta también el total de subconjuntos de un conjunto de $n$ elementos."},
+          ]),
 
         b("errores_comunes",
           items_md=[

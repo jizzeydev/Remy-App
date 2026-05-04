@@ -383,6 +383,36 @@ def lesson_1_1():
             ),
         ),
 
+        b("verificacion",
+          intro_md="Verifica tu manejo del algoritmo de la división polinomial:",
+          preguntas=[
+              {"enunciado_md": "Al dividir $P(x) = 2x^3 + 5x - 7$ entre $D(x) = x^2 + 1$, ¿cuáles son los grados posibles del resto $R(x)$?",
+               "opciones_md": [
+                   "$\\text{grad}(R) = 0$ o $R \\equiv 0$ (solo constante)",
+                   "$\\text{grad}(R) \\leq 1$ o $R \\equiv 0$",
+                   "$\\text{grad}(R) = 2$",
+                   "$\\text{grad}(R) \\leq 3$",
+               ],
+               "correcta": "B",
+               "pista_md": "El algoritmo exige $\\text{grad}(R) < \\text{grad}(D)$.",
+               "explicacion_md": "Como $\\text{grad}(D) = 2$, el resto puede ser cero, constante (grado 0) o lineal (grado 1)."},
+              {"enunciado_md": "Si $P(x) = D(x) \\cdot Q(x) + R(x)$ con $\\text{grad}(P) = 7$ y $\\text{grad}(D) = 3$, ¿cuál es $\\text{grad}(Q)$?",
+               "opciones_md": ["$3$", "$4$", "$7$", "$10$"],
+               "correcta": "B",
+               "pista_md": "El término líder de $P$ proviene de $D \\cdot Q$.",
+               "explicacion_md": "$\\text{grad}(Q) = \\text{grad}(P) - \\text{grad}(D) = 7 - 3 = 4$."},
+              {"enunciado_md": "Al dividir $x^4 - 1$ entre $x - 1$ usando división larga, ¿qué error es más común si saltás escribir las potencias ausentes?",
+               "opciones_md": [
+                   "El cociente queda con grado mayor",
+                   "Los términos se desalinean y se calcula mal el resto",
+                   "El resto siempre es positivo",
+                   "No afecta al resultado",
+               ],
+               "correcta": "B",
+               "pista_md": "Por eso conviene escribir $x^4 + 0x^3 + 0x^2 + 0x - 1$.",
+               "explicacion_md": "Si no se escriben los $0x^3, 0x^2, 0x$, las restas se hacen contra términos equivocados y el resto sale mal."},
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Olvidar escribir las potencias ausentes con coeficiente $0$.** Si saltás un grado, "
@@ -824,6 +854,36 @@ def lesson_1_2():
                 "El Teorema del Resto convierte un cálculo aparentemente brutal en una evaluación trivial."
             ),
         ),
+
+        b("verificacion",
+          intro_md="Verifica tu dominio del Teorema del Resto y del Factor:",
+          preguntas=[
+              {"enunciado_md": "¿Cuál es el resto al dividir $P(x) = x^{50} - 3x + 1$ entre $x + 1$?",
+               "opciones_md": ["$-1$", "$3$", "$5$", "$-3$"],
+               "correcta": "C",
+               "pista_md": "Aplicá el Teorema del Resto con $c = -1$ (porque $x + 1 = x - (-1)$).",
+               "explicacion_md": "$P(-1) = (-1)^{50} - 3(-1) + 1 = 1 + 3 + 1 = 5$. El signo del divisor invierte $c$."},
+              {"enunciado_md": "Si $P$ es un polinomio de grado $4$ con coeficiente líder $a_4 = 3$ y raíces $1, -1, 2, -2$, ¿cuál es la factorización?",
+               "opciones_md": [
+                   "$P(x) = (x - 1)(x + 1)(x - 2)(x + 2)$",
+                   "$P(x) = 3(x - 1)(x + 1)(x - 2)(x + 2)$",
+                   "$P(x) = 3(x + 1)(x - 1)(x + 2)(x - 2) + 3$",
+                   "$P(x) = (x - 1)(x + 1)(x - 2)(x + 2) + 3$",
+               ],
+               "correcta": "B",
+               "pista_md": "Cuando reconstruís desde raíces, no olvides el coeficiente líder $a_n$.",
+               "explicacion_md": "$P(x) = a_n \\prod (x - c_i) = 3(x-1)(x+1)(x-2)(x+2)$. Sin el $3$ el polinomio sería mónico."},
+              {"enunciado_md": "¿Cuál es la factorización correcta de $x^3 + 8$ sobre $\\mathbb{R}$?",
+               "opciones_md": [
+                   "$(x + 2)(x^2 + 2x + 4)$",
+                   "$(x + 2)(x^2 - 2x + 4)$",
+                   "$(x - 2)(x^2 + 2x + 4)$",
+                   "$(x - 2)(x^2 - 2x + 4)$",
+               ],
+               "correcta": "B",
+               "pista_md": "Suma de cubos: $x^3 + a^3 = (x + a)(x^2 - ax + a^2)$.",
+               "explicacion_md": "Con $a = 2$: $(x + 2)(x^2 - 2x + 4)$. El término medio del cuadrático lleva signo opuesto al de la suma."},
+          ]),
 
         b("errores_comunes",
           items_md=[

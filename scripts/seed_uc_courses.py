@@ -77,6 +77,20 @@ CH = {
     "ed_superior":           "ch-ed-edo-orden-superior",
     "ed_sistemas":           "ch-ed-sistemas-edo",
     "ed_laplace":            "ch-ed-transformada-laplace",
+
+    # Introducción al Cálculo (general → linkeado por MAT1107)
+    "ic_polinomios":         "ch-ic-polinomios",
+    "ic_desigualdades":      "ch-ic-desigualdades",
+    "ic_funciones":          "ch-ic-funciones-reales",
+    "ic_sucesiones":         "ch-ic-sucesiones",
+    "ic_exp_log":            "ch-ic-exp-log",
+
+    # Introducción al Álgebra (general → linkeado por MAT1207)
+    "ia_lenguaje":           "ch-ia-lenguaje",
+    "ia_naturales":          "ch-ia-naturales",
+    "ia_trigonometria":      "ch-ia-trigonometria",
+    "ia_polinomios":         "ch-ia-polinomios",
+    "ia_geometria":          "ch-ia-geometria-analitica",
 }
 
 # PUC university id resolved at runtime so the seed survives a re-import.
@@ -221,6 +235,34 @@ UC_COURSES = [
             CH["al_subespacios"],
             CH["al_valores"],
             # MAT1279 NO incluye Ortogonalidad ni Matrices Simétricas.
+        ],
+    },
+    {
+        "id": "puc-mat1107-intro-calculo",
+        "title": "Introducción al Cálculo (PUC MAT1107)",
+        "description": "Curso introductorio al cálculo según el programa MAT1107 de la PUC: división de polinomios y teorema del factor, axiomas de orden y desigualdades en la recta real, valor absoluto, inecuaciones lineales, cuadráticas, racionales y con valor absoluto, funciones reales, gráficas, transformaciones, biyectividad, álgebra y composición, función inversa, límites y convergencia de sucesiones, teorema del Sandwich, sucesiones monótonas y acotadas, límites relevantes, límites infinitos, funciones exponencial y logarítmica con sus ecuaciones.",
+        "category": "Matemáticas",
+        "level": "Universitario",
+        "chapters": [
+            CH["ic_polinomios"],
+            CH["ic_desigualdades"],
+            CH["ic_funciones"],
+            CH["ic_sucesiones"],
+            CH["ic_exp_log"],
+        ],
+    },
+    {
+        "id": "puc-mat1207-intro-algebra-geometria",
+        "title": "Introducción al Álgebra y Geometría (PUC MAT1207)",
+        "description": "Curso introductorio al álgebra y geometría según el programa MAT1207 de la PUC: lenguaje matemático (lógica proposicional, leyes de la lógica, reglas de inferencia, técnicas de demostración, teoría de conjuntos, cuantificadores), números naturales (inducción matemática, sucesiones, sumas finitas, teorema del binomio), trigonometría (razones, funciones, identidades, funciones inversas, ecuaciones, teoremas del seno y del coseno), polinomios (números complejos, forma polar, raíces n-ésimas, gráficas de polinomios, raíces racionales y complejas, teorema fundamental del álgebra) y geometría analítica (rectas, distancia punto-recta, circunferencia, parábola, elipse, hipérbola, rotación de ejes, identificación de cónicas).",
+        "category": "Matemáticas",
+        "level": "Universitario",
+        "chapters": [
+            CH["ia_lenguaje"],
+            CH["ia_naturales"],
+            CH["ia_trigonometria"],
+            CH["ia_polinomios"],
+            CH["ia_geometria"],
         ],
     },
 ]

@@ -27,6 +27,10 @@ def b(type_, **fields):
     return {"id": str(uuid.uuid4()), "type": type_, **fields}
 
 
+def fig(prompt):
+    return b("figura", image_url="", caption_md="", prompt_image_md=prompt)
+
+
 def ej(titulo, enunciado, pistas, solucion):
     return b("ejercicio", titulo=titulo, enunciado_md=enunciado,
              pistas_md=pistas, solucion_md=solucion)
@@ -34,6 +38,13 @@ def ej(titulo, enunciado, pistas, solucion):
 
 def now():
     return datetime.now(timezone.utc).isoformat()
+
+
+STYLE = (
+    "Estilo: diagrama educativo limpio, fondo blanco, líneas claras, etiquetas en español, "
+    "notación matemática con buena tipografía. Acentos teal #06b6d4 y ámbar #f59e0b. "
+    "Sin sombras dramáticas, sin texturas. Apto para libro universitario."
+)
 
 
 # =====================================================================
@@ -194,6 +205,11 @@ def lesson_2_1():
                 "$u = \\ln x$, $du = \\dfrac{dx}{x}$. La integral:\n\n"
                 "$$\\int u \\, du = \\dfrac{u^2}{2} + C = \\dfrac{(\\ln x)^2}{2} + C$$"
             ),
+        ),
+
+        fig(
+            "Diagrama dividido en dos paneles lado a lado conectados por una flecha curva. Panel izquierdo titulado 'En x': integral ∫ f(g(x)) g'(x) dx con la sub-expresión g(x) destacada con un recuadro ámbar #f59e0b. Panel derecho titulado 'En u': integral resultante ∫ f(u) du, más simple, encerrada en un recuadro teal #06b6d4. Entre ambos, flecha curva con la leyenda 'u = g(x), du = g'(x) dx'. Estilo de pizarrón didáctico con tipografía matemática clara."
+            + STYLE
         ),
 
         b("errores_comunes",
@@ -408,6 +424,11 @@ def lesson_2_2():
             ),
         ),
 
+        fig(
+            "Lámina con la fórmula grande y centrada ∫ u dv = uv − ∫ v du en color teal #06b6d4. A la izquierda, una tabla DI (Derivar / Integrar) con dos columnas: columna D con u, u', u'' y columna I con dv, v, ∫v. A la derecha un ejemplo aplicado al integrar ∫ x e^x dx mostrando u = x, dv = e^x dx. Flechas curvas ámbar #f59e0b conectan las celdas de la tabla con los términos correspondientes de la fórmula y del ejemplo."
+            + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Elegir $u$ y $dv$ al revés.** Si $du$ se vuelve más complicado que $u$, o si no sabes integrar $dv$, elegiste mal. LIATE ayuda.",
@@ -605,6 +626,11 @@ def lesson_2_3():
             ),
         ),
 
+        fig(
+            "Tabla mnemotécnica de tres columnas para ∫ sin^m x cos^n x dx según la paridad de m y n. Columna 1 'm impar': sustitución u = cos x, ejemplo ∫ sin^3 x cos^2 x dx. Columna 2 'n impar': sustitución u = sin x, ejemplo ∫ sin^2 x cos^5 x dx. Columna 3 'ambos pares': identidades de ángulo doble sin²=(1−cos2x)/2. Encabezados en teal #06b6d4 y las sustituciones u = … resaltadas en ámbar #f59e0b."
+            + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Aplicar la pitagórica cuando ambas potencias son pares.** No avanza: hay que usar ángulo doble.",
@@ -778,6 +804,11 @@ def lesson_2_4():
             ),
         ),
 
+        fig(
+            "Tres triángulos rectángulos lado a lado, uno por cada caso de sustitución trigonométrica. Triángulo 1: hipotenusa a, cateto opuesto x, cateto adyacente √(a²−x²); etiqueta 'x = a sin θ'. Triángulo 2: cateto opuesto x, cateto adyacente a, hipotenusa √(a²+x²); etiqueta 'x = a tan θ'. Triángulo 3: hipotenusa x, cateto adyacente a, cateto opuesto √(x²−a²); etiqueta 'x = a sec θ'. Lados etiquetados en teal #06b6d4, sustituciones en ámbar #f59e0b. Ángulo θ marcado en cada uno."
+            + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Elegir la sustitución equivocada.** Solo memorizar la tabla evita esto: $\\sqrt{a^2 - x^2}$ → seno, $\\sqrt{a^2 + x^2}$ → tangente, $\\sqrt{x^2 - a^2}$ → secante.",
@@ -917,6 +948,11 @@ def lesson_2_5():
                 "$$\\dfrac{x^2 + 5}{x + 2} = x - 2 + \\dfrac{9}{x + 2}$$\n\n"
                 "$$\\int \\left(x - 2 + \\dfrac{9}{x+2}\\right) dx = \\dfrac{x^2}{2} - 2x + 9\\ln|x+2| + C$$"
             ),
+        ),
+
+        fig(
+            "Esquema de división polinomial larga al estilo de pizarrón didáctico. A la izquierda, dividendo P(x) = x² + 5 dentro del símbolo de división y divisor Q(x) = x + 2 fuera. Pasos sucesivos de cocientes parciales y restos alineados verticalmente, con flechas ámbar #f59e0b indicando cada resta. Cociente 'x − 2' arriba y resto '9' abajo. Debajo, en grande, la igualdad final: P(x)/Q(x) = (x − 2) + 9/(x+2). Cociente en teal #06b6d4 y resto en ámbar."
+            + STYLE
         ),
 
         b("errores_comunes",
@@ -1080,6 +1116,11 @@ def lesson_2_6():
                 "$1 = A(x+2) + B(x-2)$. **$x = 2$:** $1 = 4A \\implies A = 1/4$. **$x = -2$:** $1 = -4B \\implies B = -1/4$.\n\n"
                 "$$\\int \\left(\\dfrac{1/4}{x-2} - \\dfrac{1/4}{x+2}\\right) dx = \\dfrac{1}{4}\\ln\\left|\\dfrac{x-2}{x+2}\\right| + C$$"
             ),
+        ),
+
+        fig(
+            "Diagrama tipo árbol jerárquico. En la raíz, una fracción racional genérica P(x)/Q(x) en teal #06b6d4. Tres ramas hacia abajo, cada una etiquetada con un caso de descomposición en fracciones parciales: rama 1 'Factores lineales simples' con término A/(x−a); rama 2 'Factores lineales repetidos' con términos A/(x−a) + B/(x−a)²; rama 3 'Factor cuadrático irreducible' con término (Cx+D)/(x²+1). Los numeradores A, B, C, D resaltados en ámbar #f59e0b."
+            + STYLE
         ),
 
         b("errores_comunes",
@@ -1285,6 +1326,11 @@ def lesson_2_7():
                 "$p = 1 \\geq 1$ → **diverge** (criterio $p$ en $[0, 1]$).\n\n"
                 "Verificación: $\\int_t^1 \\dfrac{1}{x} \\, dx = -\\ln t \\to +\\infty$ cuando $t \\to 0^+$."
             ),
+        ),
+
+        fig(
+            "Dos paneles con ejes cartesianos. Panel izquierdo 'Intervalo infinito': curva y = 1/x² desde x = 1 extendiéndose a la derecha; el área bajo la curva entre x = 1 y un x = b grande está sombreada en teal #06b6d4, con flecha ámbar #f59e0b apuntando a la derecha y leyenda 'lim_{b→∞}'. Panel derecho 'Función no acotada': curva y = 1/√x cerca de x = 0 con asíntota vertical ámbar #f59e0b en x = 0; área entre x = t y x = 1 sombreada en teal y leyenda 'lim_{t→0+}'. Etiquetas claras."
+            + STYLE
         ),
 
         b("errores_comunes",

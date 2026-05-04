@@ -470,6 +470,14 @@ def lesson_3_1():
             ),
         ),
 
+        fig(
+            "Diagrama del producto de matrices AB visualizado como composición de transformaciones lineales en R^2. "
+            "Tres cuadrículas alineadas horizontalmente: cuadrícula canónica inicial, cuadrícula intermedia tras aplicar B, "
+            "y cuadrícula final tras aplicar A. Flechas curvas en teal #06b6d4 conectan las cuadrículas con las etiquetas "
+            "'primero B' y 'luego A'. Vectores básicos destacados en ámbar #f59e0b mostrando cómo cada paso los transforma. "
+            "Título: '(AB)x = A(Bx)'. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Sumar matrices de tamaños distintos.** $A + B$ exige $A$ y $B$ del mismo tamaño.",
@@ -806,6 +814,13 @@ def lesson_3_2():
             ),
         ),
 
+        fig(
+            "Diagrama de matriz inversa como 'deshacer' una transformación. Dos paneles lado a lado: panel izquierdo muestra una "
+            "cuadrícula canónica que tras aplicar A queda rotada y estirada, dibujada en teal #06b6d4. Panel derecho muestra esa "
+            "cuadrícula deformada regresando a la canónica tras aplicar A^-1, dibujada en ámbar #f59e0b. Flecha curva teal "
+            "etiquetada 'A' yendo de izquierda a derecha y flecha curva ámbar 'A^-1' regresando. Etiqueta central: 'A·A^-1 = I'. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Hablar de inversa de matrices no cuadradas.** $A^{-1}$ exige $A \\in \\mathbb{R}^{n \\times n}$.",
@@ -1097,6 +1112,13 @@ def lesson_3_3():
                 "$T^{-1}$ es la rotación de $-30°$ (o equivalente, $330°$), con matriz $A^{-1} = \\begin{bmatrix} \\cos 30° & \\sin 30° \\\\ -\\sin 30° & \\cos 30° \\end{bmatrix}$.\n\n"
                 "**Patrón general:** la inversa de la rotación por $\\varphi$ es la rotación por $-\\varphi$, y $A^{-1} = A^T$ (matriz **ortogonal**, cap. 7)."
             ),
+        ),
+
+        fig(
+            "Tres paneles pequeños mostrando las tres operaciones elementales de fila como transformaciones de la cuadrícula del plano. "
+            "Panel 1: intercambio de filas representado como una reflexión, cuadrícula reflejada en teal #06b6d4 con su matriz E1. "
+            "Panel 2: escalar fila como estiramiento de un eje, cuadrícula estirada en ámbar #f59e0b con su matriz E2. "
+            "Panel 3: sumar múltiplo de fila como cizalla (shear), cuadrícula inclinada en teal #06b6d4 con matriz E3. " + STYLE
         ),
 
         b("errores_comunes",
@@ -1404,6 +1426,13 @@ def lesson_3_4():
                 "Con $P = \\begin{bmatrix} 0 & 1 \\\\ 1 & 0 \\end{bmatrix}$: $PA = \\begin{bmatrix} 1 & 0 \\\\ 0 & 1 \\end{bmatrix} = I$.\n\n"
                 "Trivialmente $PA = I = I \\cdot I$, así que $L = U = I$. **PALU existe** (y es la identidad)."
             ),
+        ),
+
+        fig(
+            "Diagrama esquemático de la factorización A = LU. A la izquierda, una matriz cuadrada A genérica con entradas. "
+            "Signo igual y a la derecha el producto de dos matrices: L triangular inferior con unos en la diagonal en color teal "
+            "#06b6d4, multiplicada por U triangular superior con pivotes destacados en ámbar #f59e0b. Debajo, dos flechas etiquetadas "
+            "'forward substitution (Ly = b)' y 'back substitution (Ux = y)' indicando el flujo de resolución del sistema. " + STYLE
         ),
 
         b("errores_comunes",

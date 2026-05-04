@@ -241,6 +241,26 @@ def lesson_1_1():
              "falsa, lo que invalida $q \\Rightarrow p$.")
         ),
 
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "Si $p$ es **falsa** y $q$ es **verdadera**, ¿cuál es el valor de verdad de $p \\Rightarrow q$?",
+               "opciones_md": ["Verdadera", "Falsa", "Indeterminada", "Depende del contexto"],
+               "correcta": "A",
+               "pista_md": "Una implicación con hipótesis falsa es vacuamente verdadera.",
+               "explicacion_md": "Cuando la hipótesis $p$ es falsa, la implicación $p \\Rightarrow q$ es **vacuamente verdadera**, sin importar el valor de $q$. Solo es falsa cuando $p$ es verdadera y $q$ falsa."},
+              {"enunciado_md": "¿Cuál de las siguientes oraciones **no es** una proposición?",
+               "opciones_md": ["$2+2=5$", "$\\sqrt{2}$ es irracional", "¿Qué hora es?", "Todos los números primos son impares"],
+               "correcta": "C",
+               "pista_md": "Una proposición debe tener valor de verdad bien definido.",
+               "explicacion_md": "«¿Qué hora es?» es una pregunta y no admite valor V/F. Las otras tres son enunciados declarativos clasificables como verdaderos o falsos (la primera es F, la segunda V, la cuarta F porque $2$ es primo y par)."},
+              {"enunciado_md": "En la disyunción matemática $p \\vee q$, ¿cuándo resulta **falsa**?",
+               "opciones_md": ["Solo cuando ambas son verdaderas", "Cuando exactamente una es verdadera", "Cuando ambas son falsas", "Nunca puede ser falsa"],
+               "correcta": "C",
+               "pista_md": "El «o» matemático es inclusivo.",
+               "explicacion_md": "$p \\vee q$ es **inclusivo**: vale cuando al menos una es verdadera, incluyendo el caso en que ambas lo son. Solo es falsa cuando $p$ y $q$ son ambas falsas."},
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Confundir $p \\Rightarrow q$ con $q \\Rightarrow p$.** Son distintas: la segunda se llama recíproca y no equivale a la primera.",
@@ -436,6 +456,28 @@ def lesson_1_2():
              "$\\mathbf{F} \\vee r \\equiv r$, queda: $(\\overline{p} \\wedge \\overline{q}) \\vee (p \\wedge q)$. $\\blacksquare$")
         ),
 
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "¿Cuál es la negación correcta de $p \\wedge q$ según las leyes de De Morgan?",
+               "opciones_md": ["$\\overline{p} \\wedge \\overline{q}$", "$\\overline{p} \\vee \\overline{q}$", "$\\overline{p \\vee q}$", "$p \\vee q$"],
+               "correcta": "B",
+               "pista_md": "De Morgan intercambia $\\wedge$ y $\\vee$ al pasar la negación.",
+               "explicacion_md": "$\\overline{p \\wedge q} \\equiv \\overline{p} \\vee \\overline{q}$. La negación distribuye y el conector cambia: una conjunción negada se convierte en disyunción de las negaciones."},
+              {"enunciado_md": "¿Cuál es la equivalencia algebraica correcta de $p \\Rightarrow q$?",
+               "opciones_md": ["$p \\wedge q$", "$\\overline{p} \\wedge q$", "$\\overline{p} \\vee q$", "$p \\vee \\overline{q}$"],
+               "correcta": "C",
+               "pista_md": "Recordá la caracterización de la implicación.",
+               "explicacion_md": "$p \\Rightarrow q \\equiv \\overline{p} \\vee q$. Esto permite reducir cualquier implicación a una disyunción y aplicarle las leyes algebraicas."},
+              {"enunciado_md": "¿Cuál de las siguientes leyes lógicas es **incorrecta**?",
+               "opciones_md": ["$p \\vee \\mathbf{F} \\equiv p$ (identidad)", "$p \\wedge \\overline{p} \\equiv \\mathbf{F}$ (consistencia)", "$p \\wedge p \\equiv p$ (idempotencia)", "$\\overline{\\overline{p}} \\equiv \\overline{p}$ (doble negación)"],
+               "correcta": "D",
+               "pista_md": "La doble negación cancela ambas barras.",
+               "explicacion_md": "La doble negación correcta es $\\overline{\\overline{p}} \\equiv p$, no $\\overline{p}$. Las otras tres leyes están enunciadas correctamente."},
+          ]),
+
+        fig("Diagrama educativo en español que muestra las Leyes de De Morgan: dos diagramas de Venn lado a lado. El primero ilustra que $\\overline{A \\cup B} = \\overline{A} \\cap \\overline{B}$ (la región fuera de la unión coincide con la intersección de los complementos), el segundo muestra $\\overline{A \\cap B} = \\overline{A} \\cup \\overline{B}$. Acentos teal #06b6d4 para los conjuntos y ámbar #f59e0b para las regiones sombreadas que destacan la igualdad. Etiquetas en español, fondo blanco. " + STYLE),
+
         b("errores_comunes",
           items_md=[
               "**Olvidar paréntesis en De Morgan.** $\\overline{p \\wedge q} \\neq \\overline{p} \\wedge \\overline{q}$. La barra cubre todo.",
@@ -598,6 +640,28 @@ def lesson_1_3():
              "\\Rightarrow q$. Como $\\overline{p}$ es verdadera, por **Modus Ponens** "
              "se concluye $q$.")
         ),
+
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "Sabemos que «si llueve, entonces el suelo está mojado» y observamos que **el suelo está mojado**. ¿Qué podemos concluir?",
+               "opciones_md": ["Que llovió (Modus Ponens)", "Que no llovió (Modus Tollens)", "Nada con certeza: sería afirmar el consecuente", "Que el suelo no está mojado"],
+               "correcta": "C",
+               "pista_md": "Razoná sobre la dirección de la implicación.",
+               "explicacion_md": "Concluir $p$ a partir de $p \\Rightarrow q$ y $q$ es la **falacia de afirmar el consecuente**. El suelo puede estar mojado por riego, derrame, etc. Modus Ponens parte de $p$, no de $q$."},
+              {"enunciado_md": "¿Cuál es la forma correcta de **Modus Tollens**?",
+               "opciones_md": ["De $p \\Rightarrow q$ y $p$ se concluye $q$", "De $p \\Rightarrow q$ y $\\overline{q}$ se concluye $\\overline{p}$", "De $p \\Rightarrow q$ y $\\overline{p}$ se concluye $\\overline{q}$", "De $p \\Rightarrow q$ y $q$ se concluye $p$"],
+               "correcta": "B",
+               "pista_md": "Tollens niega la tesis para inferir la negación de la hipótesis.",
+               "explicacion_md": "Modus Tollens: $(p \\Rightarrow q) \\wedge \\overline{q} \\Rightarrow \\overline{p}$. La opción A es Modus Ponens; las otras dos son falacias clásicas (negar el antecedente y afirmar el consecuente)."},
+              {"enunciado_md": "Una inferencia $p_1, p_2 \\Rightarrow q$ es **válida** si y solo si:",
+               "opciones_md": ["Las premisas son verdaderas", "$q$ es tautología", "$(p_1 \\wedge p_2) \\Rightarrow q$ es tautología", "$p_1 \\Leftrightarrow p_2$ es tautología"],
+               "correcta": "C",
+               "pista_md": "La validez es independiente del valor concreto de las premisas.",
+               "explicacion_md": "Una inferencia es válida cuando la implicación de las premisas a la conclusión es **tautología**: en toda asignación donde las premisas son verdaderas, la conclusión también lo es."},
+          ]),
+
+        fig("Diagrama educativo en español que muestra las cuatro reglas de inferencia básicas como esquemas tipo \"premisas → conclusión\" en cuatro tarjetas: Modus Ponens ($p \\Rightarrow q$, $p$ ⊢ $q$), Modus Tollens ($p \\Rightarrow q$, $\\lnot q$ ⊢ $\\lnot p$), Silogismo Hipotético, y Método de Contradicción. Cada tarjeta con borde teal #06b6d4 y el conector ⊢ destacado en ámbar #f59e0b. Tipografía clara con notación matemática en español, fondo blanco. " + STYLE),
 
         b("errores_comunes",
           items_md=[
@@ -812,6 +876,28 @@ def lesson_1_4():
              "original también lo es. $\\blacksquare$")
         ),
 
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "¿Cuál es la **contrarrecíproca** de «si $n^2$ es par, entonces $n$ es par»?",
+               "opciones_md": ["Si $n$ es par, entonces $n^2$ es par", "Si $n^2$ es impar, entonces $n$ es impar", "Si $n$ es impar, entonces $n^2$ es impar", "Si $n^2$ no es par, entonces $n$ es par"],
+               "correcta": "C",
+               "pista_md": "Contrarrecíproca de $p \\Rightarrow q$ es $\\overline{q} \\Rightarrow \\overline{p}$.",
+               "explicacion_md": "La contrarrecíproca niega tesis e hipótesis y las intercambia: $\\overline{q} \\Rightarrow \\overline{p}$. Aquí $q$ = «$n$ es par», $p$ = «$n^2$ es par». La contrarrecíproca es: si $n$ es impar, entonces $n^2$ es impar (lógicamente equivalente al original)."},
+              {"enunciado_md": "Para demostrar por **reducción al absurdo** que $p \\Rightarrow q$, ¿qué debe suponerse?",
+               "opciones_md": ["Que $p$ es falsa", "Que $q$ es verdadera", "Que $p$ es verdadera y $q$ falsa", "Que $p$ y $q$ son ambas falsas"],
+               "correcta": "C",
+               "pista_md": "Negá la implicación entera y derivá una contradicción.",
+               "explicacion_md": "La negación de $p \\Rightarrow q$ es $p \\wedge \\overline{q}$. Para reducción al absurdo se asume $p \\wedge \\overline{q}$ y se deriva una contradicción, lo que invalida la suposición y prueba $p \\Rightarrow q$."},
+              {"enunciado_md": "Para refutar «todo número primo es impar», basta exhibir:",
+               "opciones_md": ["Un número impar que no es primo", "Un número par que no es primo", "Un número primo que es par", "Una infinidad de primos impares"],
+               "correcta": "C",
+               "pista_md": "Un contraejemplo necesita la hipótesis verdadera y la tesis falsa.",
+               "explicacion_md": "Un **contraejemplo** requiere un objeto que cumpla la hipótesis (ser primo) y viole la tesis (no ser impar). El número $2$ es primo y par, por lo tanto refuta la afirmación."},
+          ]),
+
+        fig("Diagrama educativo en español que compara las cuatro técnicas de demostración como un panel 2x2: Demostración Directa (asume $p$, deduce $q$), Contrarrecíproca (asume $\\lnot q$, deduce $\\lnot p$), Reducción al Absurdo (asume $p \\wedge \\lnot q$, llega a contradicción), Contraejemplo (un caso con $p$ verdadera y $q$ falsa). Flechas en ámbar #f59e0b indicando la dirección lógica, marcos teal #06b6d4. Tipografía clara, fondo blanco, en español. " + STYLE),
+
         b("errores_comunes",
           items_md=[
               "**Confundir contrarrecíproca con recíproca.** Contrarrecíproca de $p \\Rightarrow q$ es $\\overline{q} \\Rightarrow \\overline{p}$ (equivalente). Recíproca es $q \\Rightarrow p$ (no equivalente).",
@@ -999,6 +1085,26 @@ def lesson_1_5():
              "de diferencia. Factorizamos $A$ por distributividad: "
              "$= A \\cap (B \\cup B^c) = A \\cap U = A$. $\\blacksquare$")
         ),
+
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "Sea $A = \\{1, 2, \\{3\\}\\}$. ¿Cuál afirmación es verdadera?",
+               "opciones_md": ["$3 \\in A$", "$\\{3\\} \\in A$", "$\\{1\\} \\in A$", "$\\{1,2\\} \\in A$"],
+               "correcta": "B",
+               "pista_md": "Mirá cada elemento de $A$ literalmente.",
+               "explicacion_md": "Los elementos de $A$ son $1$, $2$ y el conjunto $\\{3\\}$. Por lo tanto $\\{3\\} \\in A$. En cambio $3 \\notin A$ (es elemento del subconjunto, no de $A$ directamente)."},
+              {"enunciado_md": "Aplicando De Morgan, $(A \\cap B)^c$ es igual a:",
+               "opciones_md": ["$A^c \\cap B^c$", "$A^c \\cup B^c$", "$A \\cup B$", "$(A \\cup B)^c$"],
+               "correcta": "B",
+               "pista_md": "De Morgan intercambia $\\cap$ por $\\cup$ al complementar.",
+               "explicacion_md": "$(A \\cap B)^c = A^c \\cup B^c$. El complemento de una intersección es la unión de los complementos: cualquier elemento que no está en ambos, falta en al menos uno."},
+              {"enunciado_md": "¿Cuál de estas igualdades **no** es válida en general?",
+               "opciones_md": ["$A \\cup A = A$", "$A - B = A \\cap B^c$", "$A - B = B - A$", "$A \\cap (B \\cup C) = (A \\cap B) \\cup (A \\cap C)$"],
+               "correcta": "C",
+               "pista_md": "La diferencia no es conmutativa.",
+               "explicacion_md": "$A - B$ contiene los elementos de $A$ que no están en $B$, y $B - A$ los de $B$ que no están en $A$: en general son distintos. Las otras tres igualdades son leyes válidas (idempotencia, definición de diferencia y distributividad)."},
+          ]),
 
         b("errores_comunes",
           items_md=[
@@ -1211,6 +1317,28 @@ def lesson_1_6():
              "En ambos casos $x^2 > 0$. Como $x$ era arbitrario, se cumple para "
              "todo $x \\in \\mathbb{R} \\setminus \\{0\\}$. $\\blacksquare$")
         ),
+
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "¿Cuál es la negación correcta de $(\\forall x \\in \\mathbb{R})(x^2 \\geq 0)$?",
+               "opciones_md": ["$(\\forall x \\in \\mathbb{R})(x^2 < 0)$", "$(\\exists x \\in \\mathbb{R})(x^2 < 0)$", "$(\\exists x \\in \\mathbb{R})(x^2 \\geq 0)$", "$(\\forall x \\in \\mathbb{R})(x^2 \\leq 0)$"],
+               "correcta": "B",
+               "pista_md": "Negar $\\forall$ produce $\\exists$ con el predicado negado.",
+               "explicacion_md": "$\\overline{(\\forall x)\\, p(x)} \\equiv (\\exists x)\\, \\overline{p(x)}$. La negación de $x^2 \\geq 0$ es $x^2 < 0$, y el cuantificador universal pasa a existencial."},
+              {"enunciado_md": "Tomando $\\mathbb{R}$ como dominio, ¿cuál de estas proposiciones es **verdadera**?",
+               "opciones_md": ["$(\\forall x)(\\exists y)(x + y = 0)$", "$(\\exists y)(\\forall x)(x + y = 0)$", "Ambas", "Ninguna"],
+               "correcta": "A",
+               "pista_md": "El orden de los cuantificadores cambia el sentido.",
+               "explicacion_md": "$(\\forall x)(\\exists y)(x+y=0)$ es verdadera: para cada $x$ basta tomar $y=-x$. La segunda exige un mismo $y$ que anule todo $x$ a la vez, lo cual es imposible. El orden importa."},
+              {"enunciado_md": "Para demostrar $(\\forall x \\in U)\\, p(x)$ por método directo, ¿cómo se debe empezar?",
+               "opciones_md": ["Tomando un $x$ específico", "Tomando $x \\in U$ arbitrario sin asumir nada extra", "Suponiendo $\\overline{p(x)}$", "Verificando varios valores de $x$"],
+               "correcta": "B",
+               "pista_md": "El elemento debe ser genérico para que la prueba cubra todo el dominio.",
+               "explicacion_md": "Para probar una afirmación universal, se toma $x \\in U$ **arbitrario** (sin propiedades adicionales) y se demuestra $p(x)$ usando solo lo que se cumple para todo $U$. Verificar casos no demuestra para todo el dominio."},
+          ]),
+
+        fig("Diagrama educativo en español que ilustra la diferencia entre cuantificador universal y existencial: dos paneles. Panel izquierdo: el conjunto $\\mathbb{R}$ con todos sus puntos resaltados en teal #06b6d4 y la frase $\\forall x \\in \\mathbb{R}: x^2 \\geq 0$ debajo. Panel derecho: el conjunto $\\mathbb{R}$ con un único punto destacado en ámbar #f59e0b y la frase $\\exists x \\in \\mathbb{R}: x^2 = 2$. Tipografía clara, fondo blanco. " + STYLE),
 
         b("errores_comunes",
           items_md=[

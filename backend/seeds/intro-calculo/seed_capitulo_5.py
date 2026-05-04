@@ -241,6 +241,31 @@ def lesson_5_1():
             ),
         ),
 
+        b("verificacion",
+          intro_md="Verifica las propiedades de la función exponencial:",
+          preguntas=[
+              {"enunciado_md": "¿Cuál es la propiedad correcta de la exponencial?",
+               "opciones_md": [
+                   "$e^{x + y} = e^x + e^y$",
+                   "$e^{x + y} = e^x \\cdot e^y$",
+                   "$e^{xy} = e^x + e^y$",
+                   "$e^{x - y} = e^x - e^y$",
+               ],
+               "correcta": "B",
+               "pista_md": "Suma en el exponente $\\to$ producto de exponenciales.",
+               "explicacion_md": "$e^{x+y} = e^x \\cdot e^y$. La suma en el exponente se transforma en producto de exponenciales (no en suma)."},
+              {"enunciado_md": "¿Cuál es el recorrido de $f(x) = e^x$?",
+               "opciones_md": ["$\\mathbb{R}$", "$(0, +\\infty)$", "$[0, +\\infty)$", "$(-\\infty, 0)$"],
+               "correcta": "B",
+               "pista_md": "$e^x$ siempre es estrictamente positivo.",
+               "explicacion_md": "$e^x > 0$ para todo $x \\in \\mathbb{R}$ y alcanza todos los positivos: $\\text{Rec}(e^x) = (0, +\\infty)$. NUNCA llega a $0$ ni a negativos."},
+              {"enunciado_md": "¿Cuál es $\\lim_{x \\to -\\infty} e^x$?",
+               "opciones_md": ["$0$", "$-\\infty$", "$1$", "No existe"],
+               "correcta": "A",
+               "pista_md": "Asíntota horizontal cuando $x$ se va a $-\\infty$.",
+               "explicacion_md": "$e^x \\to 0^+$ cuando $x \\to -\\infty$. Hay asíntota horizontal $y = 0$, pero nunca llega a $0$."},
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Confundir $e^x$ con $e \\cdot x$:** son cosas distintas. $e^x$ es exponencial, $e \\cdot x$ es lineal.",
@@ -479,6 +504,36 @@ def lesson_5_2():
                 "$\\ln(x/y) = \\ln(x \\cdot y^{-1}) \\stackrel{(1)}{=} \\ln(x) + \\ln(y^{-1}) \\stackrel{(3)}{=} \\ln(x) + (-1)\\ln(y) = \\ln(x) - \\ln(y). \\quad\\square$"
             ),
         ),
+
+        b("verificacion",
+          intro_md="Verifica las propiedades del logaritmo:",
+          preguntas=[
+              {"enunciado_md": "¿Cuál es la propiedad correcta del logaritmo?",
+               "opciones_md": [
+                   "$\\ln(x + y) = \\ln(x) + \\ln(y)$",
+                   "$\\ln(xy) = \\ln(x) + \\ln(y)$ con $x, y > 0$",
+                   "$\\ln(x \\cdot y) = \\ln(x) \\cdot \\ln(y)$",
+                   "$\\ln(x^y) = \\ln(x) + y$",
+               ],
+               "correcta": "B",
+               "pista_md": "El log convierte producto en suma, no suma en suma.",
+               "explicacion_md": "$\\ln(xy) = \\ln(x) + \\ln(y)$ (producto $\\to$ suma). $\\ln(x + y)$ NO simplifica."},
+              {"enunciado_md": "¿Cuál es el dominio máximo de $f(x) = \\ln(x - 3)$?",
+               "opciones_md": ["$\\mathbb{R}$", "$x \\geq 3$", "$x > 3$", "$x \\neq 3$"],
+               "correcta": "C",
+               "pista_md": "El argumento del log debe ser estrictamente positivo.",
+               "explicacion_md": "$\\ln$ exige argumento $> 0$, así $x - 3 > 0 \\iff x > 3$. Dominio: $(3, +\\infty)$."},
+              {"enunciado_md": "Si $a > 1$, ¿la función $\\log_a$ es creciente o decreciente?",
+               "opciones_md": [
+                   "Creciente",
+                   "Decreciente",
+                   "Constante",
+                   "Depende del argumento",
+               ],
+               "correcta": "A",
+               "pista_md": "Es la inversa de $a^x$ con $a > 1$, que es creciente.",
+               "explicacion_md": "Como $a^x$ es estrictamente creciente para $a > 1$, su inversa $\\log_a$ también lo es: si $0 < x < y$ entonces $\\log_a x < \\log_a y$."},
+          ]),
 
         b("errores_comunes",
           items_md=[
@@ -768,6 +823,36 @@ def lesson_5_3():
                 "$\\boxed{S = \\{0, 1\\}.}$"
             ),
         ),
+
+        b("verificacion",
+          intro_md="Verifica la resolución de ecuaciones exponenciales y logarítmicas:",
+          preguntas=[
+              {"enunciado_md": "¿Cuál es la solución de $2^{x+1} = 8$?",
+               "opciones_md": ["$x = 2$", "$x = 3$", "$x = 4$", "$x = -1$"],
+               "correcta": "A",
+               "pista_md": "Reescribí $8 = 2^3$ y compará exponentes.",
+               "explicacion_md": "$2^{x+1} = 2^3 \\iff x + 1 = 3 \\iff x = 2$. Bases iguales $\\Rightarrow$ exponentes iguales."},
+              {"enunciado_md": "Al resolver $\\ln(x - 1) + \\ln(x + 1) = \\ln(8)$, se obtiene $x^2 - 1 = 8$, i.e. $x = \\pm 3$. ¿Cuál es la solución correcta?",
+               "opciones_md": [
+                   "$x = 3$ y $x = -3$",
+                   "$x = 3$ solamente",
+                   "$x = -3$ solamente",
+                   "Ninguna",
+               ],
+               "correcta": "B",
+               "pista_md": "Verificá que ambos argumentos del log sean positivos.",
+               "explicacion_md": "Dominio: $x - 1 > 0$ y $x + 1 > 0 \\iff x > 1$. $x = -3$ se descarta (fuera del dominio). Solo $x = 3$."},
+              {"enunciado_md": "Tras el cambio $u = e^x$, una ecuación da $u^2 - 3u - 4 = 0$, con soluciones $u = 4$ y $u = -1$. ¿Cuáles son válidas?",
+               "opciones_md": [
+                   "Ambas: $x = \\ln 4$ y $x = \\ln(-1)$",
+                   "Solo $u = 4$: $x = \\ln 4$",
+                   "Solo $u = -1$",
+                   "Ninguna",
+               ],
+               "correcta": "B",
+               "pista_md": "$e^x > 0$ siempre — ningún $u \\leq 0$ es admisible.",
+               "explicacion_md": "Como $u = e^x > 0$, descartamos $u = -1$. Solo $u = 4 \\Rightarrow x = \\ln 4$."},
+          ]),
 
         b("errores_comunes",
           items_md=[

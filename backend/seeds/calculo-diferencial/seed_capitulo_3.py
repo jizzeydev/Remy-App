@@ -30,6 +30,24 @@ def now():
     return datetime.now(timezone.utc).isoformat()
 
 
+# ============ helpers para ejercicios y figuras ============
+STYLE = (
+    "Estilo: diagrama educativo limpio, fondo blanco, lineas claras, etiquetas "
+    "en espanol, notacion matematica renderizada con buena tipografia. Acentos "
+    "de color suaves (teal #06b6d4 y ambar #f59e0b). Sin sombras dramaticas, "
+    "sin texturas. Apto para libro universitario."
+)
+
+
+def ej(titulo, enunciado, pistas, solucion):
+    return b("ejercicio", titulo=titulo, enunciado_md=enunciado,
+             pistas_md=pistas, solucion_md=solucion)
+
+
+def fig(prompt):
+    return b("figura", image_url="", caption_md="", prompt_image_md=prompt)
+
+
 # =====================================================================
 # LECCIÓN 3.1 — Razones relacionadas
 # =====================================================================
@@ -150,6 +168,34 @@ def lesson_3_1():
                   ),
               },
           ]),
+
+        fig(
+            "Diagrama de problema clasico de razones relacionadas: una escalera apoyada en una pared "
+            "vertical. Pared vertical (linea negra), suelo horizontal (linea negra), escalera diagonal "
+            "en teal #06b6d4 con etiqueta 'L = 5 m'. Se marca x = distancia base al pie de la pared "
+            "(con flecha indicando que crece, en ambar #f59e0b) y y = altura del extremo superior "
+            "(flecha indicando que decrece, en ambar). Pequenas flechas dx/dt y dy/dt junto a cada "
+            "cantidad. Triangulo rectangulo formado, con el angulo recto destacado. Fondo blanco. "
+            + STYLE
+        ),
+        ej(
+            "Escalera deslizándose contra la pared",
+            "Una escalera de $5$ m está apoyada contra una pared vertical. La base de la escalera se aleja de la pared a $0{,}3$ m/s. ¿A qué velocidad **desciende** el extremo superior cuando la base está a $3$ m de la pared?",
+            [
+                "Sea $x$ la distancia de la base a la pared y $y$ la altura del extremo superior. Plantea la ecuación que los relaciona usando Pitágoras.",
+                "Deriva implícitamente respecto al tiempo y despeja $dy/dt$.",
+            ],
+            "**Modelo.** Por Pitágoras, $x^2 + y^2 = 5^2 = 25$.\n\n**Datos cuando $x = 3$:** $y = \\sqrt{25 - 9} = 4$ m. Y $\\dfrac{dx}{dt} = 0{,}3$ m/s.\n\n**Derivar respecto a $t$:** $2x \\dfrac{dx}{dt} + 2y \\dfrac{dy}{dt} = 0$.\n\n**Despejar:** $\\dfrac{dy}{dt} = -\\dfrac{x}{y} \\cdot \\dfrac{dx}{dt} = -\\dfrac{3}{4} \\cdot 0{,}3 = -0{,}225$ m/s.\n\n**Interpretación:** el extremo superior **desciende** a $0{,}225$ m/s (el signo negativo indica disminución de altura).",
+        ),
+        ej(
+            "Globo esférico inflándose",
+            "Un globo esférico se infla y su volumen aumenta a razón de $100$ cm³/s. ¿A qué velocidad crece el **radio** cuando el radio mide $5$ cm?",
+            [
+                "El volumen de la esfera es $V = \\dfrac{4}{3}\\pi r^3$. Deriva respecto a $t$.",
+                "Despeja $dr/dt$ y sustituye los valores en el instante dado.",
+            ],
+            "**Modelo.** $V = \\dfrac{4}{3}\\pi r^3$.\n\n**Datos:** $\\dfrac{dV}{dt} = 100$ cm³/s, $r = 5$ cm.\n\n**Derivar:** $\\dfrac{dV}{dt} = 4\\pi r^2 \\dfrac{dr}{dt}$.\n\n**Despejar:** $\\dfrac{dr}{dt} = \\dfrac{1}{4\\pi r^2} \\cdot \\dfrac{dV}{dt} = \\dfrac{100}{4\\pi(25)} = \\dfrac{1}{\\pi} \\approx 0{,}318$ cm/s.\n\n**Interpretación:** el radio crece aproximadamente a $0{,}318$ cm por segundo en ese instante.",
+        ),
 
         b("errores_comunes",
           items_md=[
@@ -288,6 +334,33 @@ def lesson_3_2():
                   ),
               },
           ]),
+
+        fig(
+            "Grafica que ilustra la aproximacion lineal: una curva no lineal y = f(x) en teal #06b6d4 "
+            "(forma similar a y = sqrt(x)). Marcado el punto de tangencia (a, f(a)) y trazada la recta "
+            "tangente (linealizacion L(x)) en color ambar #f59e0b. A la derecha del punto, marca un "
+            "x cercano y muestra dos segmentos verticales: dy (incremento de la tangente) y delta y "
+            "(incremento real). Etiquetas claras para dx, dy, delta y. Anotacion: 'L(x) = f(a) + f'(a)(x-a)'. "
+            "Fondo blanco, ejes con flechas. " + STYLE
+        ),
+        ej(
+            "Aproximación lineal de una raíz",
+            "Usa la linealización de $f(x) = \\sqrt{x}$ en $a = 25$ para estimar $\\sqrt{26}$. Compara con el valor real con calculadora.",
+            [
+                "Calcula $f(25)$, $f'(x) = 1/(2\\sqrt{x})$ y $f'(25)$.",
+                "Aplica $L(x) = f(a) + f'(a)(x - a)$ con $x = 26$, $a = 25$.",
+            ],
+            "**Paso 1 — Datos en $a = 25$.** $f(25) = 5$, $f'(x) = \\dfrac{1}{2\\sqrt{x}}$, $f'(25) = \\dfrac{1}{10}$.\n\n**Paso 2 — Linealización.**\n\n$$L(x) = 5 + \\dfrac{1}{10}(x - 25).$$\n\n**Paso 3 — Estimar $\\sqrt{26}$.**\n\n$$\\sqrt{26} \\approx L(26) = 5 + \\dfrac{1}{10}(1) = 5{,}1.$$\n\n**Comparación:** valor real $\\sqrt{26} \\approx 5{,}09902$. Error absoluto $\\approx 0{,}001$ ($0{,}02\\%$).",
+        ),
+        ej(
+            "Estimación de error con diferenciales",
+            "Se mide el radio de una esfera y resulta $r = 10$ cm con un error máximo de $0{,}1$ cm. Estima el **error máximo absoluto** y el **error relativo** al calcular el volumen.",
+            [
+                "Volumen $V = \\dfrac{4}{3}\\pi r^3$. Calcula $dV = V'(r)\\, dr$.",
+                "Error relativo $= |dV / V|$.",
+            ],
+            "**Paso 1 — Diferencial.** $V = \\tfrac{4}{3}\\pi r^3$, así $dV = 4\\pi r^2\\, dr$.\n\n**Paso 2 — Sustituir.** Con $r = 10$ y $dr = 0{,}1$: $dV = 4\\pi (100)(0{,}1) = 40\\pi \\approx 125{,}66$ cm³.\n\n**Paso 3 — Volumen nominal.** $V = \\tfrac{4}{3}\\pi (1000) \\approx 4188{,}79$ cm³.\n\n**Paso 4 — Error relativo.**\n\n$$\\left|\\dfrac{dV}{V}\\right| = \\dfrac{40\\pi}{(4/3)\\pi(1000)} = \\dfrac{40 \\cdot 3}{4000} = 0{,}03 = 3\\%.$$\n\n**Resumen:** error absoluto $\\approx 125{,}7$ cm³; error relativo $3\\%$. Observa que un error de $1\\%$ en el radio se amplifica a $3\\%$ en el volumen (factor $3$ que viene del exponente cúbico).",
+        ),
 
         b("errores_comunes",
           items_md=[
@@ -448,6 +521,33 @@ def lesson_3_3():
               },
           ]),
 
+        fig(
+            "Grafica de una funcion en un intervalo cerrado [a, b] que ilustra los tipos de extremos. "
+            "Curva continua en teal #06b6d4. Marcar con puntos en ambar #f59e0b: un maximo local interior "
+            "(con tangente horizontal), un minimo local interior, el maximo absoluto en el borde derecho "
+            "x=b, y el minimo absoluto en un punto critico interior. Etiquetas: 'maximo local', 'minimo "
+            "local', 'maximo absoluto', 'minimo absoluto'. Lineas tangentes horizontales en los puntos "
+            "interiores. Ejes con flechas, fondo blanco. " + STYLE
+        ),
+        ej(
+            "Extremos absolutos en un intervalo cerrado",
+            "Encuentra los valores **máximo y mínimo absolutos** de $f(x) = x^3 - 3x + 1$ en $[-2, 2]$.",
+            [
+                "Encuentra los puntos críticos resolviendo $f'(x) = 0$.",
+                "Evalúa $f$ en cada punto crítico interior y en los extremos del intervalo. Compara.",
+            ],
+            "**Paso 1 — Puntos críticos.** $f'(x) = 3x^2 - 3 = 3(x-1)(x+1) = 0 \\Rightarrow x = -1,\\ x = 1$.\n\nAmbos están en $(-2, 2)$.\n\n**Paso 2 — Evaluar.**\n\n| $x$ | $f(x)$ |\n|---|---|\n| $-2$ | $-8 + 6 + 1 = -1$ |\n| $-1$ | $-1 + 3 + 1 = 3$ |\n| $1$ | $1 - 3 + 1 = -1$ |\n| $2$ | $8 - 6 + 1 = 3$ |\n\n**Paso 3 — Conclusión.** Máximo absoluto: $3$, alcanzado en $x = -1$ y $x = 2$. Mínimo absoluto: $-1$, alcanzado en $x = -2$ y $x = 1$.",
+        ),
+        ej(
+            "Crítico no derivable",
+            "Encuentra todos los puntos críticos y los extremos absolutos de $f(x) = |x^2 - 4|$ en $[-3, 3]$.",
+            [
+                "Reescribe $f$ por tramos abriendo el valor absoluto donde $x^2 - 4$ cambia de signo.",
+                "Hay dos tipos de puntos críticos: donde $f' = 0$ y donde $f$ no es derivable.",
+            ],
+            "**Paso 1 — Función por tramos.** $x^2 - 4 \\geq 0 \\iff |x| \\geq 2$. Así $f(x) = \\begin{cases} x^2 - 4 & |x| \\geq 2 \\\\ 4 - x^2 & |x| < 2 \\end{cases}$.\n\n**Paso 2 — Derivada por tramos.** $f'(x) = 2x$ si $|x| > 2$, $f'(x) = -2x$ si $|x| < 2$. En $x = \\pm 2$ las pendientes laterales no coinciden — **no derivable**.\n\n**Paso 3 — Puntos críticos.**\n- $f'(x) = 0$: en interior $|x| < 2$, $-2x = 0 \\Rightarrow x = 0$. En interior $|x| > 2$ no hay (en $(-3, -2)$ y $(2, 3)$, $2x = 0$ da $x = 0$ que no pertenece).\n- No derivables: $x = -2,\\ x = 2$.\n\n**Paso 4 — Evaluar en críticos y bordes.** $f(-3) = 5$, $f(-2) = 0$, $f(0) = 4$, $f(2) = 0$, $f(3) = 5$.\n\n**Conclusión:** máximo absoluto $5$ en $x = \\pm 3$; mínimo absoluto $0$ en $x = \\pm 2$.",
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Aplicar el método del intervalo cerrado en intervalos abiertos.** El TVE no garantiza extremos en abiertos.",
@@ -605,6 +705,32 @@ def lesson_3_4():
               },
           ]),
 
+        fig(
+            "Diagrama del Teorema del Valor Medio: una curva continua y derivable en un intervalo [a,b] "
+            "dibujada en teal #06b6d4. Marcar los puntos extremos A=(a, f(a)) y B=(b, f(b)) y trazar la "
+            "secante A-B con linea punteada. Marcar un punto interior (c, f(c)) y trazar la tangente a "
+            "la curva en ese punto en color ambar #f59e0b. La tangente debe ser visiblemente paralela a "
+            "la secante. Anotacion: 'f'(c) = (f(b)-f(a))/(b-a)'. Ejes con flechas, fondo blanco. " + STYLE
+        ),
+        ej(
+            "Aplicar el TVM y encontrar el $c$ explícito",
+            "Verifica que $f(x) = x^2 - 3x + 2$ satisface las hipótesis del TVM en $[1, 4]$ y encuentra explícitamente el valor de $c \\in (1, 4)$ que el teorema garantiza.",
+            [
+                "$f$ es polinomio: continua y derivable en todo $\\mathbb{R}$, así satisface las hipótesis.",
+                "Calcula la pendiente de la secante $(f(4) - f(1))/(4 - 1)$ y resuelve $f'(c) =$ ese valor.",
+            ],
+            "**Paso 1 — Hipótesis.** $f$ es polinomio: continua en $[1, 4]$ y derivable en $(1, 4)$. ✓\n\n**Paso 2 — Pendiente de la secante.** $f(1) = 0$, $f(4) = 6$. Pendiente $= \\dfrac{6 - 0}{4 - 1} = 2$.\n\n**Paso 3 — Resolver $f'(c) = 2$.** $f'(x) = 2x - 3$, así $2c - 3 = 2 \\Rightarrow c = \\dfrac{5}{2}$.\n\n**Verificación:** $\\dfrac{5}{2} \\in (1, 4)$. ✓\n\n**Conclusión:** el TVM garantiza la existencia de $c = 5/2$ donde la tangente es paralela a la secante.",
+        ),
+        ej(
+            "Acotar variación con el TVM",
+            "Sea $f$ una función derivable en $\\mathbb{R}$ tal que $|f'(x)| \\leq 5$ para todo $x$, y $f(2) = 1$. Demuestra que $|f(7) - 1| \\leq 25$ y describe en general qué dice el TVM sobre el crecimiento de $f$.",
+            [
+                "Aplica el TVM en el intervalo $[2, 7]$.",
+                "Toma valor absoluto y usa la cota $|f'| \\leq 5$.",
+            ],
+            "**Paso 1 — Aplicar el TVM en $[2, 7]$.** Existe $c \\in (2, 7)$ tal que\n\n$$\\dfrac{f(7) - f(2)}{7 - 2} = f'(c) \\;\\Longleftrightarrow\\; f(7) - f(2) = 5\\, f'(c).$$\n\n**Paso 2 — Acotar.** $|f(7) - f(2)| = 5\\,|f'(c)| \\leq 5 \\cdot 5 = 25$.\n\nComo $f(2) = 1$, esto da $|f(7) - 1| \\leq 25$, es decir $f(7) \\in [-24, 26]$.\n\n**Interpretación general:** si $|f'| \\leq M$ en un intervalo, entonces $|f(b) - f(a)| \\leq M\\,|b - a|$ — la función es **Lipschitz** con constante $M$. Es una herramienta clásica para acotar variación a partir de cotas en la derivada.",
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Aplicar Rolle o TVM sin verificar continuidad o derivabilidad.** Si fallan, el teorema no garantiza nada.",
@@ -759,6 +885,33 @@ def lesson_3_5():
               },
           ]),
 
+        fig(
+            "Tabla-resumen visual con cuatro combinaciones de signos de f' y f'' representadas con mini-"
+            "graficos. Cuadricula 2x2 con tarjetas: (1) f'>0, f''>0: 'creciente y concava arriba' con "
+            "mini-curva en teal #06b6d4 tipo y=e^x. (2) f'>0, f''<0: 'creciente y concava abajo' con "
+            "mini-curva tipo y=ln(x) en ambar #f59e0b. (3) f'<0, f''<0: 'decreciente y concava abajo' "
+            "tipo y=-x^2 en ambar. (4) f'<0, f''>0: 'decreciente y concava arriba' tipo y=1/x en teal. "
+            "Cada celda con su mini-grafico y la conclusion. Fondo blanco. " + STYLE
+        ),
+        ej(
+            "Análisis completo de monotonía y concavidad",
+            "Para $f(x) = x^3 - 6x^2 + 9x + 1$, determina los intervalos de crecimiento, decrecimiento, concavidad y los extremos locales y puntos de inflexión.",
+            [
+                "Calcula $f'(x)$, factoriza y construye una tabla de signos.",
+                "Repite con $f''(x)$ para concavidad y puntos de inflexión.",
+            ],
+            "**Paso 1 — Primera derivada.** $f'(x) = 3x^2 - 12x + 9 = 3(x-1)(x-3)$.\n\nCríticos: $x = 1$ y $x = 3$.\n\n**Tabla de signos de $f'$:**\n\n| Intervalo | $(-\\infty, 1)$ | $(1, 3)$ | $(3, +\\infty)$ |\n|---|---|---|---|\n| $f'$ | $+$ | $-$ | $+$ |\n| $f$ | crece | decrece | crece |\n\n→ **Máximo local** en $x = 1$, $f(1) = 5$. **Mínimo local** en $x = 3$, $f(3) = 1$.\n\n**Paso 2 — Segunda derivada.** $f''(x) = 6x - 12 = 6(x - 2)$. Cero en $x = 2$.\n\n**Tabla de signos de $f''$:**\n\n| Intervalo | $(-\\infty, 2)$ | $(2, +\\infty)$ |\n|---|---|---|\n| $f''$ | $-$ | $+$ |\n| concavidad | abajo | arriba |\n\n→ **Punto de inflexión** en $x = 2$, $f(2) = 3$.",
+        ),
+        ej(
+            "Aplicar el criterio de la segunda derivada",
+            "Determina si los puntos críticos de $f(x) = x^4 - 4x^3$ son máximos, mínimos o ninguno usando el criterio de la segunda derivada cuando sea posible. Si no aplica, usa el de la primera.",
+            [
+                "Calcula $f'$ y resuelve $f' = 0$.",
+                "Evalúa $f''$ en cada crítico: $f''(c) > 0 \\Rightarrow$ mínimo, $f''(c) < 0 \\Rightarrow$ máximo, $f''(c) = 0 \\Rightarrow$ no decide.",
+            ],
+            "**Paso 1 — Primera derivada.** $f'(x) = 4x^3 - 12x^2 = 4x^2(x - 3) = 0 \\Rightarrow x = 0$ o $x = 3$.\n\n**Paso 2 — Segunda derivada.** $f''(x) = 12x^2 - 24x = 12x(x - 2)$.\n\n- $f''(3) = 12(3)(1) = 36 > 0 \\Rightarrow$ **mínimo local** en $x = 3$, $f(3) = -27$.\n- $f''(0) = 0 \\Rightarrow$ el criterio **no decide** en $x = 0$.\n\n**Paso 3 — Usar criterio de la primera en $x = 0$.** Cerca de $0$: para $x < 0$, $f'(x) = 4x^2(x-3) > 0$ porque $x^2 > 0$ y $x-3 < 0$... espera: $4x^2 > 0$, $(x-3) < 0$, así $f' < 0$. Para $0 < x < 3$, $f'$ sigue $< 0$. **No hay cambio de signo** en $0$ → **ni máximo ni mínimo** (es solo un punto crítico, con tangente horizontal pero sin extremo).",
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Concluir extremo desde $f'(c) = 0$ sin verificar el cambio de signo.** Recordar: $x^3$ tiene $f'(0) = 0$ pero no extremo.",
@@ -883,6 +1036,25 @@ def lesson_3_6():
                   ),
               },
           ]),
+
+        ej(
+            "Graficar una racional con asíntotas",
+            "Realiza el análisis completo de la función $f(x) = \\dfrac{x^2}{x - 1}$ (dominio, simetría, intersecciones, asíntotas, monotonía, extremos, concavidad) y describe la forma del gráfico.",
+            [
+                "Comienza por el dominio y las asíntotas verticales/horizontales/oblicuas.",
+                "Calcula $f'(x)$ y $f''(x)$ con la regla del cociente.",
+            ],
+            "**Dominio:** $\\mathbb{R} \\setminus \\{1\\}$.\n\n**Intersecciones:** $f(0) = 0 \\Rightarrow$ pasa por $(0,0)$.\n\n**Asíntotas:** vertical $x = 1$ (denominador cero, numerador no). División larga: $\\dfrac{x^2}{x-1} = x + 1 + \\dfrac{1}{x-1}$ → asíntota oblicua $y = x + 1$.\n\n**Primera derivada:** $f'(x) = \\dfrac{2x(x-1) - x^2}{(x-1)^2} = \\dfrac{x^2 - 2x}{(x-1)^2} = \\dfrac{x(x-2)}{(x-1)^2}$.\n\nCríticos: $x = 0$ y $x = 2$. Signos: $+$ en $(-\\infty, 0)$, $-$ en $(0, 1)$, $-$ en $(1, 2)$, $+$ en $(2, +\\infty)$.\n\n→ **Máximo local** en $x = 0$, $f(0) = 0$. **Mínimo local** en $x = 2$, $f(2) = 4$.\n\n**Segunda derivada:** $f''(x) = \\dfrac{2}{(x-1)^3}$. Signo: negativo si $x < 1$, positivo si $x > 1$. **Concava abajo** en $(-\\infty, 1)$, **arriba** en $(1, +\\infty)$. No hay puntos de inflexión (en $x = 1$ no está definida).\n\n**Forma del gráfico:** dos ramas separadas por $x = 1$. La rama izquierda sube, alcanza máximo en $(0,0)$, baja hasta $-\\infty$ al acercarse a $x = 1^-$. La rama derecha viene de $+\\infty$ al acercarse a $1^+$, baja hasta el mínimo $(2, 4)$ y luego sube hacia la oblicua $y = x + 1$.",
+        ),
+        ej(
+            "Graficar una función exponencial",
+            "Analiza y describe la gráfica de $f(x) = x e^{-x}$ (intersecciones, monotonía, extremos, concavidad, asíntotas y comportamiento en el infinito).",
+            [
+                "Calcula $f'(x)$ usando la regla del producto y observa el signo.",
+                "Para $\\lim_{x \\to +\\infty} x e^{-x}$, usa que $e^{-x}$ vence a $x$ (o L'Hôpital).",
+            ],
+            "**Dominio:** $\\mathbb{R}$.\n\n**Intersecciones:** $f(0) = 0 \\Rightarrow (0, 0)$.\n\n**Comportamiento en infinito:**\n- $\\lim_{x \\to +\\infty} x e^{-x} = 0$ (exponencial vence a polinomio) → **asíntota horizontal $y = 0$ por la derecha**.\n- $\\lim_{x \\to -\\infty} x e^{-x} = -\\infty$ (ambos factores empujan hacia $-\\infty$).\n\n**Primera derivada:** $f'(x) = e^{-x} - x e^{-x} = e^{-x}(1 - x)$. Cero en $x = 1$.\n\n- $f'(x) > 0$ si $x < 1$, $f'(x) < 0$ si $x > 1$. → **Máximo local en $x = 1$**, $f(1) = 1/e \\approx 0{,}368$.\n\n**Segunda derivada:** $f''(x) = -e^{-x}(1 - x) + e^{-x}(-1) = e^{-x}(x - 2)$. Cero en $x = 2$.\n\n- $f'' < 0$ si $x < 2$, $f'' > 0$ si $x > 2$. → **Punto de inflexión** en $x = 2$, $f(2) = 2/e^2 \\approx 0{,}271$.\n\n**Forma:** crece desde $-\\infty$ pasando por el origen, alcanza un máximo en $(1, 1/e)$, decrece y se aproxima asintóticamente a $0^+$ por la derecha; cambia concavidad en $(2, 2/e^2)$.",
+        ),
 
         b("errores_comunes",
           items_md=[
@@ -1021,6 +1193,33 @@ def lesson_3_7():
                   ),
               },
           ]),
+
+        fig(
+            "Diagrama de problema clasico de optimizacion: una caja abierta (sin tapa) construida a "
+            "partir de una lamina rectangular de carton de dimensiones 30 cm por 40 cm. En cada esquina "
+            "se recorta un cuadrado de lado x (esquinas marcadas en ambar #f59e0b) y luego se doblan los "
+            "lados hacia arriba para formar la caja. Mostrar la lamina plana arriba con cortes y el "
+            "resultado tridimensional abajo (caja en perspectiva, aristas teal #06b6d4). Etiquetas: '40', "
+            "'30', 'x', 'altura = x', 'base = (40-2x)(30-2x)'. Fondo blanco. " + STYLE
+        ),
+        ej(
+            "Caja de volumen máximo a partir de una lámina",
+            "De una lámina rectangular de cartón de $30 \\times 40$ cm se construye una caja **abierta** recortando cuadrados de lado $x$ en las esquinas y plegando los lados. Encuentra el valor de $x$ que **maximiza el volumen** y calcula ese volumen máximo.",
+            [
+                "Expresa $V(x) = x(30 - 2x)(40 - 2x)$ y determina el dominio físico.",
+                "Resuelve $V'(x) = 0$ y verifica con la segunda derivada.",
+            ],
+            "**Modelo.** $V(x) = x(30 - 2x)(40 - 2x)$. Dominio físico: $x \\in (0, 15)$ (para que las dos dimensiones bases sean positivas).\n\n**Expandir:** $V(x) = x(1200 - 140x + 4x^2) = 4x^3 - 140x^2 + 1200x$.\n\n**Derivar:** $V'(x) = 12x^2 - 280x + 1200$.\n\n**Resolver $V'(x) = 0$:**\n\n$$x = \\dfrac{280 \\pm \\sqrt{280^2 - 4(12)(1200)}}{24} = \\dfrac{280 \\pm \\sqrt{78400 - 57600}}{24} = \\dfrac{280 \\pm \\sqrt{20800}}{24}.$$\n\n$\\sqrt{20800} \\approx 144{,}22$. Soluciones: $x_1 \\approx \\dfrac{280 - 144{,}22}{24} \\approx 5{,}66$ y $x_2 \\approx \\dfrac{280 + 144{,}22}{24} \\approx 17{,}68$.\n\n**Solo $x_1 \\approx 5{,}66$ está en el dominio.**\n\n**Segunda derivada:** $V''(x) = 24x - 280$. En $x_1 \\approx 5{,}66$: $V''(5{,}66) \\approx 135{,}8 - 280 < 0$ → **máximo**. ✓\n\n**Volumen máximo:** $V(5{,}66) \\approx 5{,}66 \\cdot (30 - 11{,}32)(40 - 11{,}32) \\approx 5{,}66 \\cdot 18{,}68 \\cdot 28{,}68 \\approx 3032$ cm³.",
+        ),
+        ej(
+            "Cilindro de volumen fijo y superficie mínima",
+            "Una empresa fabrica latas cilíndricas con tapa con un volumen fijo de $V = 1000$ cm³. Encuentra las dimensiones (radio $r$ y altura $h$) que **minimizan la superficie total** de hojalata utilizada.",
+            [
+                "Función objetivo: $S(r, h) = 2\\pi r^2 + 2\\pi r h$. Restricción: $\\pi r^2 h = 1000$.",
+                "Despeja $h$ de la restricción y sustituye en $S$ para reducir a una variable.",
+            ],
+            "**Paso 1 — Reducir a una variable.** De $\\pi r^2 h = 1000$ obtenemos $h = \\dfrac{1000}{\\pi r^2}$.\n\nSustituyendo en $S$:\n\n$$S(r) = 2\\pi r^2 + 2\\pi r \\cdot \\dfrac{1000}{\\pi r^2} = 2\\pi r^2 + \\dfrac{2000}{r}, \\quad r > 0.$$\n\n**Paso 2 — Derivar.** $S'(r) = 4\\pi r - \\dfrac{2000}{r^2}$.\n\n**Paso 3 — Punto crítico.** $S'(r) = 0 \\Leftrightarrow 4\\pi r = \\dfrac{2000}{r^2} \\Leftrightarrow r^3 = \\dfrac{500}{\\pi}$.\n\n$$r = \\sqrt[3]{\\dfrac{500}{\\pi}} \\approx 5{,}42 \\text{ cm}.$$\n\n**Paso 4 — Confirmar mínimo.** $S''(r) = 4\\pi + \\dfrac{4000}{r^3} > 0$ siempre → mínimo. ✓\n\n**Paso 5 — Altura óptima.** $h = \\dfrac{1000}{\\pi r^2} \\approx \\dfrac{1000}{\\pi (29{,}4)} \\approx 10{,}84$ cm.\n\n**Observación clave:** $h = 2r$ — la lata óptima tiene **altura igual al diámetro**. Es el resultado clásico de minimización de superficie con volumen fijo.",
+        ),
 
         b("errores_comunes",
           items_md=[

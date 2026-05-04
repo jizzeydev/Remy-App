@@ -31,6 +31,24 @@ def now():
     return datetime.now(timezone.utc).isoformat()
 
 
+# ============ helpers para ejercicios y figuras ============
+STYLE = (
+    "Estilo: diagrama educativo limpio, fondo blanco, lineas claras, etiquetas "
+    "en espanol, notacion matematica renderizada con buena tipografia. Acentos "
+    "de color suaves (teal #06b6d4 y ambar #f59e0b). Sin sombras dramaticas, "
+    "sin texturas. Apto para libro universitario."
+)
+
+
+def ej(titulo, enunciado, pistas, solucion):
+    return b("ejercicio", titulo=titulo, enunciado_md=enunciado,
+             pistas_md=pistas, solucion_md=solucion)
+
+
+def fig(prompt):
+    return b("figura", image_url="", caption_md="", prompt_image_md=prompt)
+
+
 # =====================================================================
 # LECCIÓN 1.1 — Introducción intuitiva
 # =====================================================================
@@ -230,6 +248,25 @@ def lesson_1_1():
               "Estas dos expresiones son **definiciones alternativas** del número $e \\approx 2{,}71828\\ldots$, base de los logaritmos naturales. Aparecen en cálculo financiero (interés continuo), probabilidades y ecuaciones diferenciales."
           )),
 
+        ej(
+            "Conjeturar un límite por tabla numérica",
+            "Construye una tabla con $x \\in \\{0.9,\\, 0.99,\\, 0.999,\\, 1.001,\\, 1.01,\\, 1.1\\}$ y conjetura el valor de $\\lim_{x \\to 1} \\dfrac{x^3 - 1}{x - 1}$.",
+            [
+                "Evalúa la fracción en cada $x$ con calculadora y observa hacia qué valor se aproximan los resultados.",
+                "Recuerda que $x^3 - 1 = (x-1)(x^2 + x + 1)$, así que la expresión se simplifica a $x^2 + x + 1$ para $x \\neq 1$.",
+            ],
+            "**Tabla de valores:**\n\n| $x$ | $f(x) = (x^3-1)/(x-1)$ |\n|---|---|\n| $0.9$ | $2.71$ |\n| $0.99$ | $2.9701$ |\n| $0.999$ | $2.997001$ |\n| $1.001$ | $3.003001$ |\n| $1.01$ | $3.0301$ |\n| $1.1$ | $3.31$ |\n\nLos valores se aproximan a $3$ desde ambos lados. **Conjetura:** $\\lim_{x \\to 1} \\dfrac{x^3 - 1}{x - 1} = 3$. La conjetura se confirma algebraicamente: $\\dfrac{x^3-1}{x-1} = x^2 + x + 1$ para $x \\neq 1$, y $1^2 + 1 + 1 = 3$.",
+        ),
+        ej(
+            "Límites laterales de una función por tramos",
+            "Sea $f(x) = \\begin{cases} 2x + 1 & \\text{si } x < 2 \\\\ x^2 - 1 & \\text{si } x \\geq 2 \\end{cases}$. Calcula $\\lim_{x \\to 2^-} f(x)$, $\\lim_{x \\to 2^+} f(x)$ y decide si $\\lim_{x \\to 2} f(x)$ existe.",
+            [
+                "Para cada lateral, usa la fórmula del tramo correspondiente al lado de aproximación.",
+                "El bilateral existe sólo si los dos laterales son iguales.",
+            ],
+            "**Lateral izquierdo** ($x < 2$): $\\lim_{x \\to 2^-} (2x + 1) = 2(2) + 1 = 5$.\n\n**Lateral derecho** ($x \\geq 2$): $\\lim_{x \\to 2^+} (x^2 - 1) = 4 - 1 = 3$.\n\nComo $5 \\neq 3$, el bilateral **no existe**: la función presenta un **salto** en $x = 2$. Aunque cada lateral por separado sí existe, el límite global no.",
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Confundir $\\lim_{x \\to a} f(x)$ con $f(a)$.** El límite habla del comportamiento *cerca* de $a$, sin preocuparse del valor *en* $a$. Una función puede no estar definida en $a$ y tener límite, o estar definida pero con un valor distinto al límite.",
@@ -411,6 +448,25 @@ def lesson_1_2():
                "justificacion_md": "Esta es la estructura general para polinomios y funciones más complejas: **acotar** los factores extra con una restricción inicial sobre $|x-c|$, y elegir $\\delta = \\min$ de las cotas resultantes.",
                "es_resultado": True},
           ]),
+
+        ej(
+            "Demostración $\\epsilon$-$\\delta$ para una función lineal",
+            "Demuestra usando la definición formal que $\\lim_{x \\to 3} (4x - 5) = 7$.",
+            [
+                "Reescribe $|f(x) - L|$ y factoriza $|x - 3|$ para encontrar la relación entre $\\delta$ y $\\epsilon$.",
+                "El factor $4$ que aparece sugiere elegir $\\delta = \\epsilon / 4$.",
+            ],
+            "**Paso 1 — Acotar.** $|f(x) - 7| = |4x - 5 - 7| = |4x - 12| = 4|x - 3|$.\n\n**Paso 2 — Elegir $\\delta$.** Queremos $4|x - 3| < \\epsilon$, es decir $|x - 3| < \\epsilon/4$. Tomamos $\\delta = \\dfrac{\\epsilon}{4}$.\n\n**Paso 3 — Verificación.** Si $0 < |x - 3| < \\delta = \\epsilon/4$, entonces $|f(x) - 7| = 4|x - 3| < 4 \\cdot \\epsilon/4 = \\epsilon$. $\\square$\n\nLa elección $\\delta = \\epsilon/4$ depende sólo de $\\epsilon$ y de la pendiente $4$ de la recta.",
+        ),
+        ej(
+            "Demostración $\\epsilon$-$\\delta$ para una cuadrática",
+            "Demuestra usando $\\epsilon$-$\\delta$ que $\\lim_{x \\to 2} x^2 = 4$.",
+            [
+                "Escribe $|x^2 - 4| = |x-2|\\,|x+2|$ y acota $|x+2|$ asumiendo primero $|x-2| < 1$.",
+                "Toma $\\delta = \\min\\{1,\\, \\epsilon/5\\}$.",
+            ],
+            "**Paso 1 — Factorizar.** $|x^2 - 4| = |x - 2|\\,|x + 2|$.\n\n**Paso 2 — Acotar el factor extra.** Si $|x - 2| < 1$, entonces $1 < x < 3$, así que $|x + 2| < 5$.\n\n**Paso 3 — Combinar.** Bajo esa restricción, $|x^2 - 4| < 5\\,|x - 2|$. Para que esto sea $< \\epsilon$ basta $|x - 2| < \\epsilon/5$.\n\n**Paso 4 — Elegir $\\delta$.** $\\delta = \\min\\{1,\\, \\epsilon/5\\}$. Si $0 < |x-2| < \\delta$, entonces se cumplen ambas restricciones y $|x^2 - 4| < 5 \\cdot \\epsilon/5 = \\epsilon$. $\\square$",
+        ),
 
         b("errores_comunes",
           items_md=[
@@ -634,6 +690,32 @@ def lesson_1_3():
               },
           ]),
 
+        fig(
+            "Diagrama del Teorema del Sandwich (squeeze theorem) en una sola figura: tres curvas en el "
+            "plano cartesiano. La curva inferior g(x) en color teal #06b6d4 y la superior h(x) en ambar "
+            "#f59e0b convergen al mismo punto L=0 cuando x->0. Entre ambas, la curva atrapada f(x) (en "
+            "negro) oscila pero queda forzada al mismo limite. Etiquetas g(x), f(x), h(x), punto (0, L) "
+            "marcado, ejes con flechas. Subtitulo: 'g(x) <= f(x) <= h(x) y lim g = lim h = L => lim f = L'. "
+            + STYLE
+        ),
+        ej(
+            "Calcular un límite usando propiedades algebraicas",
+            "Calcula $\\displaystyle\\lim_{x \\to 2} \\dfrac{x^2 + 3x - 1}{\\sqrt{x + 7}}$ identificando explícitamente las propiedades del límite que utilizas.",
+            [
+                "Como las funciones polinómica y radical son continuas y el denominador no se anula, puedes aplicar la sustitución directa apoyándote en las leyes del límite (suma, producto, cociente, raíz).",
+            ],
+            "**Aplicación de propiedades:**\n\n1. *Ley de la suma y el producto:* $\\lim_{x\\to 2}(x^2 + 3x - 1) = 4 + 6 - 1 = 9$.\n2. *Ley de la suma dentro del radicando:* $\\lim_{x\\to 2}(x + 7) = 9$.\n3. *Ley de la raíz* (válida porque $9 \\geq 0$): $\\lim_{x\\to 2}\\sqrt{x+7} = \\sqrt{9} = 3$.\n4. *Ley del cociente* (válida porque el denominador $\\to 3 \\neq 0$): $\\lim_{x\\to 2} \\dfrac{x^2+3x-1}{\\sqrt{x+7}} = \\dfrac{9}{3} = 3$.\n\n**Resultado:** $\\boxed{3}$.",
+        ),
+        ej(
+            "Aplicar el Teorema del Sándwich",
+            "Demuestra que $\\displaystyle\\lim_{x \\to 0} x^2 \\cos\\!\\left(\\dfrac{1}{x^2}\\right) = 0$.",
+            [
+                "El factor $\\cos(1/x^2)$ está acotado entre $-1$ y $1$ aunque oscile rápido cerca de $0$.",
+                "Multiplica la desigualdad por $x^2 \\geq 0$ para no cambiar el sentido y aplica el sándwich.",
+            ],
+            "**Paso 1 — Acotar el factor oscilante.** Para todo $x \\neq 0$: $-1 \\leq \\cos(1/x^2) \\leq 1$.\n\n**Paso 2 — Multiplicar por $x^2$.** Como $x^2 \\geq 0$, la desigualdad se conserva: $-x^2 \\leq x^2 \\cos(1/x^2) \\leq x^2$.\n\n**Paso 3 — Tomar límites de las cotas.** $\\lim_{x \\to 0}(-x^2) = 0$ y $\\lim_{x \\to 0} x^2 = 0$.\n\n**Paso 4 — Sándwich.** Como las dos cotas tienden al mismo valor $0$, la función atrapada también: $\\lim_{x \\to 0} x^2 \\cos(1/x^2) = 0$. $\\square$",
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Aplicar la ley del cociente cuando el denominador tiende a $0$.** No es válido. Hay que analizar el caso aparte (factorización, laterales, asíntotas).",
@@ -854,6 +936,25 @@ def lesson_1_4():
               },
           ]),
 
+        ej(
+            "Continuidad de una función por tramos",
+            "Determina el valor de $a \\in \\mathbb{R}$ para que la función $f(x) = \\begin{cases} x^2 + 2 & \\text{si } x \\leq 1 \\\\ ax + 5 & \\text{si } x > 1 \\end{cases}$ sea continua en $x = 1$.",
+            [
+                "Calcula los dos límites laterales y úsalos para imponer la condición de continuidad.",
+                "Para que $f$ sea continua en $1$, deben coincidir $\\lim_{x\\to 1^-} f(x) = \\lim_{x\\to 1^+} f(x) = f(1)$.",
+            ],
+            "**Lateral izquierdo** ($x \\leq 1$): $\\lim_{x\\to 1^-}(x^2 + 2) = 3 = f(1)$.\n\n**Lateral derecho** ($x > 1$): $\\lim_{x \\to 1^+}(ax + 5) = a + 5$.\n\n**Condición de continuidad:** $a + 5 = 3 \\iff a = -2$.\n\n**Verificación:** con $a = -2$, $f(x) = -2x + 5$ a la derecha y $f(1^+) = 3 = f(1)$. La función es continua en $x = 1$.",
+        ),
+        ej(
+            "Clasificar la discontinuidad",
+            "Clasifica el tipo de discontinuidad de $f(x) = \\dfrac{x^2 - 4}{x - 2}$ en $x = 2$ y propone una redefinición que la haga continua.",
+            [
+                "Factoriza el numerador y simplifica para $x \\neq 2$.",
+                "Si el límite existe y es finito pero $f(c)$ no está definido, la discontinuidad es **removible**.",
+            ],
+            "**Paso 1 — Simplificar.** $\\dfrac{x^2 - 4}{x - 2} = \\dfrac{(x-2)(x+2)}{x-2} = x + 2$ para $x \\neq 2$.\n\n**Paso 2 — Calcular el límite.** $\\lim_{x \\to 2} f(x) = \\lim_{x \\to 2}(x + 2) = 4$.\n\n**Paso 3 — Clasificar.** El límite existe y es finito $(=4)$, pero $f(2)$ **no está definido** (denominador cero). Esto es una **discontinuidad removible** (también llamada *evitable*).\n\n**Paso 4 — Redefinir.** Definimos $\\tilde{f}(x) = \\begin{cases} \\dfrac{x^2-4}{x-2} & x \\neq 2 \\\\ 4 & x = 2 \\end{cases}$. Esta extensión es continua en $\\mathbb{R}$.",
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Pensar que \"continua\" significa \"definida en todo $\\mathbb{R}$\".** No: $\\sqrt{x}$ es continua en su dominio $[0, +\\infty)$, aunque no esté definida en negativos.",
@@ -1010,6 +1111,25 @@ def lesson_1_5():
                   ),
               },
           ]),
+
+        ej(
+            "Existencia de raíz por TVI",
+            "Demuestra que la ecuación $x^3 + x - 1 = 0$ tiene al menos una solución real en el intervalo $(0, 1)$.",
+            [
+                "Define $f(x) = x^3 + x - 1$ y verifica que $f$ es continua.",
+                "Evalúa $f$ en los extremos del intervalo y observa los signos.",
+            ],
+            "**Paso 1 — Hipótesis de continuidad.** $f(x) = x^3 + x - 1$ es polinomio, luego continua en $\\mathbb{R}$ y en particular en $[0, 1]$.\n\n**Paso 2 — Valores en los extremos.** $f(0) = -1 < 0$ y $f(1) = 1 + 1 - 1 = 1 > 0$.\n\n**Paso 3 — Aplicar el TVI.** Como $f$ es continua en $[0, 1]$ y $0$ está estrictamente entre $f(0) = -1$ y $f(1) = 1$, el TVI garantiza que existe $c \\in (0, 1)$ tal que $f(c) = 0$, es decir, una solución de $x^3 + x - 1 = 0$. $\\square$",
+        ),
+        ej(
+            "Localizar una raíz por bisección",
+            "Usa el TVI y dos pasos de bisección para localizar la raíz de $f(x) = x^3 + x - 1$ en un intervalo de longitud $\\leq 1/4$ contenido en $(0, 1)$.",
+            [
+                "Calcula $f(1/2)$ para decidir en qué subintervalo continuar.",
+                "Repite el argumento en el subintervalo donde haya cambio de signo.",
+            ],
+            "**Paso 1 — Punto medio.** $f(1/2) = 1/8 + 1/2 - 1 = -3/8 < 0$. Como $f(0) < 0$ y $f(1) > 0$, el cambio de signo está en $(1/2, 1)$.\n\n**Paso 2 — Nuevo punto medio.** $f(3/4) = 27/64 + 3/4 - 1 = 27/64 - 16/64 = 11/64 > 0$. Como $f(1/2) < 0$ y $f(3/4) > 0$, hay raíz en $(1/2,\\, 3/4)$.\n\n**Conclusión:** la raíz está en el intervalo $(1/2,\\, 3/4)$, de longitud $1/4$. (Aproximación: $c \\approx 0{,}6823$.)",
+        ),
 
         b("errores_comunes",
           items_md=[
@@ -1188,6 +1308,25 @@ def lesson_1_6():
                   ),
               },
           ]),
+
+        ej(
+            "Asíntotas de una función racional",
+            "Encuentra **todas** las asíntotas (verticales, horizontales y oblicuas) de $f(x) = \\dfrac{2x^2 - 3x + 1}{x - 2}$.",
+            [
+                "Para verticales, busca ceros del denominador que no cancelen con el numerador.",
+                "Para oblicua, divide polinomios: $\\dfrac{2x^2-3x+1}{x-2}$ con división larga.",
+            ],
+            "**Verticales:** $x - 2 = 0 \\iff x = 2$. El numerador en $x=2$ vale $2(4) - 6 + 1 = 3 \\neq 0$, así que **$x = 2$ es asíntota vertical**.\n\n**Horizontales:** grado numerador $(2)$ > grado denominador $(1)$, así que $\\lim_{x \\to \\pm\\infty} f(x) = \\pm\\infty$ — **no hay horizontales**.\n\n**Oblicua** (grado supera al denominador en $1$): división larga\n\n$$\\dfrac{2x^2 - 3x + 1}{x - 2} = 2x + 1 + \\dfrac{3}{x - 2}.$$\n\nComo $\\dfrac{3}{x-2} \\to 0$ cuando $x \\to \\pm\\infty$, **la asíntota oblicua es $y = 2x + 1$** (la misma por ambos lados).",
+        ),
+        ej(
+            "Asíntotas con raíz en el infinito",
+            "Determina las asíntotas horizontales u oblicuas de $f(x) = \\sqrt{x^2 + 4x}$ cuando $x \\to +\\infty$ y cuando $x \\to -\\infty$.",
+            [
+                "Saca factor común $x^2$ dentro de la raíz, recordando que $\\sqrt{x^2} = |x|$.",
+                "Para encontrar la oblicua $y = mx + n$, calcula $m = \\lim f(x)/x$ y $n = \\lim (f(x) - mx)$.",
+            ],
+            "**Reescribir:** $f(x) = \\sqrt{x^2(1 + 4/x)} = |x|\\sqrt{1 + 4/x}$.\n\n**Caso $x \\to +\\infty$:** $|x| = x$, así $f(x) = x\\sqrt{1 + 4/x}$.\n\n$m = \\lim_{x\\to+\\infty} f(x)/x = \\lim \\sqrt{1 + 4/x} = 1.$\n\n$n = \\lim_{x \\to +\\infty}(\\sqrt{x^2 + 4x} - x) = \\lim \\dfrac{(x^2+4x) - x^2}{\\sqrt{x^2+4x} + x} = \\lim \\dfrac{4x}{2x} = 2.$\n\n**Asíntota oblicua $+\\infty$:** $y = x + 2$.\n\n**Caso $x \\to -\\infty$:** $|x| = -x$, así $f(x) = -x\\sqrt{1 + 4/x}$.\n\n$m = \\lim f(x)/x = -\\sqrt{1} = -1$, y análogamente $n = -2$.\n\n**Asíntota oblicua $-\\infty$:** $y = -x - 2$.",
+        ),
 
         b("errores_comunes",
           items_md=[
@@ -1471,6 +1610,33 @@ def lesson_1_7():
                   ),
               },
           ]),
+
+        fig(
+            "Diagrama de flujo educativo en formato vertical: arbol de decision para resolver limites. "
+            "Nodo raiz: 'Sustitucion directa f(a)'. Si da numero -> 'Limite = f(a) (FIN)'. Si da 0/0 -> "
+            "rama teal #06b6d4 con tres opciones: 'Factorizar', 'Racionalizar', 'L Hopital'. Si da k/0 -> "
+            "rama ambar #f59e0b 'Analizar laterales -> infinito o no existe'. Si da infinito/infinito -> "
+            "rama 'Dividir por mayor potencia o L Hopital'. Cajas redondeadas, flechas claras, fondo blanco. "
+            + STYLE
+        ),
+        ej(
+            "Indeterminación 0/0 con factorización",
+            "Calcula $\\displaystyle\\lim_{x \\to 3} \\dfrac{x^2 - 9}{x^2 - 4x + 3}$.",
+            [
+                "Sustitución directa da $0/0$: indeterminación.",
+                "Factoriza numerador y denominador para cancelar el factor problemático $(x - 3)$.",
+            ],
+            "**Sustitución directa:** $\\dfrac{9 - 9}{9 - 12 + 3} = \\dfrac{0}{0}$ (indeterminación).\n\n**Factorizar:** $x^2 - 9 = (x-3)(x+3)$ y $x^2 - 4x + 3 = (x-3)(x-1)$.\n\n$$\\dfrac{x^2-9}{x^2-4x+3} = \\dfrac{(x-3)(x+3)}{(x-3)(x-1)} = \\dfrac{x+3}{x-1} \\quad (x \\neq 3).$$\n\n**Tomar límite:** $\\lim_{x \\to 3} \\dfrac{x+3}{x-1} = \\dfrac{6}{2} = 3$.",
+        ),
+        ej(
+            "Indeterminación con raíz: racionalizar",
+            "Calcula $\\displaystyle\\lim_{x \\to 0} \\dfrac{\\sqrt{x + 4} - 2}{x}$.",
+            [
+                "Sustitución directa da $0/0$.",
+                "Multiplica y divide por el conjugado $\\sqrt{x+4} + 2$.",
+            ],
+            "**Sustitución directa:** $\\dfrac{\\sqrt{4} - 2}{0} = \\dfrac{0}{0}$.\n\n**Racionalizar** multiplicando arriba y abajo por $\\sqrt{x+4} + 2$:\n\n$$\\dfrac{\\sqrt{x+4} - 2}{x} \\cdot \\dfrac{\\sqrt{x+4} + 2}{\\sqrt{x+4} + 2} = \\dfrac{(x+4) - 4}{x(\\sqrt{x+4} + 2)} = \\dfrac{x}{x(\\sqrt{x+4} + 2)} = \\dfrac{1}{\\sqrt{x+4} + 2}.$$\n\n**Tomar límite:** $\\lim_{x \\to 0} \\dfrac{1}{\\sqrt{x+4} + 2} = \\dfrac{1}{2 + 2} = \\dfrac{1}{4}$.",
+        ),
 
         b("errores_comunes",
           items_md=[

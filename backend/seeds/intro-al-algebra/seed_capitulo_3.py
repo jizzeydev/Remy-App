@@ -211,6 +211,26 @@ def lesson_3_1():
              "luego $k = \\sqrt{5}$. Por tanto $a = 3\\sqrt{5}$.")
         ),
 
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "En un triángulo rectángulo con ángulo agudo $\\alpha$, ¿cuál es la definición correcta de $\\cos(\\alpha)$?",
+               "opciones_md": ["$\\dfrac{\\text{opuesto}}{\\text{hipotenusa}}$", "$\\dfrac{\\text{adyacente}}{\\text{hipotenusa}}$", "$\\dfrac{\\text{opuesto}}{\\text{adyacente}}$", "$\\dfrac{\\text{adyacente}}{\\text{opuesto}}$"],
+               "correcta": "B",
+               "pista_md": "SOH-CAH-TOA: el coseno usa adyacente sobre hipotenusa.",
+               "explicacion_md": "$\\cos(\\alpha) = \\dfrac{\\text{cateto adyacente}}{\\text{hipotenusa}}$. La opción A es $\\sin$, C es $\\tan$, D es $\\cot$."},
+              {"enunciado_md": "¿Cuánto vale $\\sin(30°)$?",
+               "opciones_md": ["$\\dfrac{1}{2}$", "$\\dfrac{\\sqrt{2}}{2}$", "$\\dfrac{\\sqrt{3}}{2}$", "$1$"],
+               "correcta": "A",
+               "pista_md": "Es uno de los ángulos especiales.",
+               "explicacion_md": "$\\sin(30°) = \\frac{1}{2}$. Memoriza la trinidad de ángulos especiales: $\\sin(30°)=1/2$, $\\sin(45°)=\\sqrt{2}/2$, $\\sin(60°)=\\sqrt{3}/2$."},
+              {"enunciado_md": "Si $\\sin(\\alpha) = \\dfrac{3}{5}$ y $\\alpha$ es agudo, ¿cuánto vale $\\cos(\\alpha)$?",
+               "opciones_md": ["$\\dfrac{3}{5}$", "$\\dfrac{4}{5}$", "$\\dfrac{5}{3}$", "$\\dfrac{5}{4}$"],
+               "correcta": "B",
+               "pista_md": "Aplicá la identidad pitagórica $\\sin^2 + \\cos^2 = 1$.",
+               "explicacion_md": "$\\cos^2(\\alpha) = 1 - \\sin^2(\\alpha) = 1 - 9/25 = 16/25$. Como $\\alpha$ es agudo, $\\cos(\\alpha) > 0$, por lo tanto $\\cos(\\alpha) = 4/5$ (triángulo 3-4-5)."},
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Confundir cateto opuesto y adyacente.** Siempre referenciado al ángulo $\\alpha$ que se está usando.",
@@ -392,6 +412,26 @@ def lesson_3_2():
              "$\\pi/4$ (cero), $\\pi/2$ (máximo $3$), $3\\pi/4$ (cero), $\\pi$ (mínimo $-3$), $5\\pi/4$ (cero).")
         ),
 
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "¿Cuál es el **período** de la función $y = \\sin(3x)$?",
+               "opciones_md": ["$\\pi$", "$\\dfrac{2\\pi}{3}$", "$2\\pi$", "$3\\pi$"],
+               "correcta": "B",
+               "pista_md": "El período de $\\sin(kx)$ es $2\\pi/k$.",
+               "explicacion_md": "Para $\\sin(kx)$ el período se contrae en factor $k$: $T = \\dfrac{2\\pi}{k} = \\dfrac{2\\pi}{3}$."},
+              {"enunciado_md": "Si $\\alpha$ está en el **segundo cuadrante**, ¿qué signos tienen $\\sin(\\alpha)$ y $\\cos(\\alpha)$?",
+               "opciones_md": ["Ambos positivos", "$\\sin > 0$, $\\cos < 0$", "$\\sin < 0$, $\\cos > 0$", "Ambos negativos"],
+               "correcta": "B",
+               "pista_md": "Pensá en las coordenadas $(\\cos, \\sin)$ del círculo unitario en el segundo cuadrante.",
+               "explicacion_md": "En el segundo cuadrante $x < 0$ y $y > 0$, donde $\\cos = x$ y $\\sin = y$. Por lo tanto $\\sin(\\alpha) > 0$ y $\\cos(\\alpha) < 0$."},
+              {"enunciado_md": "¿Cuánto vale $\\cos(\\pi)$?",
+               "opciones_md": ["$0$", "$1$", "$-1$", "$\\sqrt{2}/2$"],
+               "correcta": "C",
+               "pista_md": "$\\pi$ rad equivale a $180°$.",
+               "explicacion_md": "$\\cos(\\pi) = \\cos(180°) = -1$. En el círculo unitario, $\\pi$ corresponde al punto $(-1, 0)$."},
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Mezclar grados y radianes.** Las propiedades en términos de $\\pi$ requieren radianes; en grados, $2\\pi \\to 360°$.",
@@ -560,6 +600,28 @@ def lesson_3_3():
              "Aplicando coseno y la cofunción $\\cos\\!\\left(\\frac{\\pi}{2}-\\beta\\right) = \\sin\\beta$:\n"
              "$\\cos(2\\alpha) = \\sin\\beta \\iff 2\\cos^2\\alpha - 1 = \\sin\\beta \\iff \\cos^2\\alpha = \\frac{1+\\sin\\beta}{2}.$ $\\square$")
         ),
+
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "¿Cuál es la fórmula correcta para $\\sin(2x)$?",
+               "opciones_md": ["$2\\sin(x)$", "$\\sin^2(x)$", "$2\\sin(x)\\cos(x)$", "$\\sin(x) + \\cos(x)$"],
+               "correcta": "C",
+               "pista_md": "Es la identidad del ángulo doble.",
+               "explicacion_md": "$\\sin(2x) = 2\\sin(x)\\cos(x)$. La opción A ($2\\sin x$) es un error muy común: el seno **no es lineal**."},
+              {"enunciado_md": "¿Cuál es el desarrollo correcto de $\\cos(\\alpha - \\beta)$?",
+               "opciones_md": ["$\\cos\\alpha\\cos\\beta - \\sin\\alpha\\sin\\beta$", "$\\cos\\alpha\\cos\\beta + \\sin\\alpha\\sin\\beta$", "$\\sin\\alpha\\cos\\beta - \\cos\\alpha\\sin\\beta$", "$\\sin\\alpha\\cos\\beta + \\cos\\alpha\\sin\\beta$"],
+               "correcta": "B",
+               "pista_md": "Cuidado: el signo dentro de $\\cos$ se invierte en la fórmula.",
+               "explicacion_md": "$\\cos(\\alpha - \\beta) = \\cos\\alpha\\cos\\beta + \\sin\\alpha\\sin\\beta$. El signo $+$ aparece a pesar del $-$ del argumento. La opción A corresponde a $\\cos(\\alpha + \\beta)$."},
+              {"enunciado_md": "Partiendo de $\\sin^2(x) + \\cos^2(x) = 1$, ¿cuál identidad se obtiene al dividir todo por $\\cos^2(x)$?",
+               "opciones_md": ["$\\tan^2(x) + 1 = \\sec^2(x)$", "$1 + \\cot^2(x) = \\csc^2(x)$", "$\\sin^2(x) - \\cos^2(x) = 1$", "$\\tan^2(x) - 1 = \\sec^2(x)$"],
+               "correcta": "A",
+               "pista_md": "$\\sin/\\cos = \\tan$ y $1/\\cos = \\sec$.",
+               "explicacion_md": "Dividiendo entre $\\cos^2(x)$: $\\dfrac{\\sin^2 x}{\\cos^2 x} + 1 = \\dfrac{1}{\\cos^2 x}$, es decir $\\tan^2 x + 1 = \\sec^2 x$. La opción B sale al dividir por $\\sin^2(x)$."},
+          ]),
+
+        fig("Diagrama educativo en español que muestra la identidad pitagórica $\\sin^2 \\alpha + \\cos^2 \\alpha = 1$ en el círculo unitario: un círculo de radio 1 centrado en el origen, un punto sobre el círculo etiquetado $(\\cos\\alpha, \\sin\\alpha)$, los catetos teal #06b6d4 representando $\\cos\\alpha$ horizontal y $\\sin\\alpha$ vertical, hipotenusa ámbar #f59e0b (radio = 1) y el ángulo $\\alpha$ marcado. Etiquetas claras en español, fondo blanco. " + STYLE),
 
         b("errores_comunes",
           items_md=[
@@ -730,6 +792,28 @@ def lesson_3_4():
              "$\\alpha = \\arccos(x)$, es decir, $\\frac{\\pi}{2} - \\arcsin(x) = \\arccos(x)$, lo que da el resultado. $\\square$")
         ),
 
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "¿Cuál es el **rango** de la función $\\arcsin(x)$?",
+               "opciones_md": ["$[0, \\pi]$", "$[-\\pi/2, \\pi/2]$", "$(-\\pi/2, \\pi/2)$", "$\\mathbb{R}$"],
+               "correcta": "B",
+               "pista_md": "Es la rama principal donde $\\sin$ es estrictamente creciente.",
+               "explicacion_md": "$\\arcsin: [-1,1] \\to [-\\pi/2, \\pi/2]$. La opción A es el rango de $\\arccos$. Los extremos $\\pm \\pi/2$ están incluidos porque $\\sin$ los alcanza."},
+              {"enunciado_md": "¿Cuánto vale $\\arcsin(\\sin(3\\pi/4))$?",
+               "opciones_md": ["$3\\pi/4$", "$\\pi/4$", "$-\\pi/4$", "$-3\\pi/4$"],
+               "correcta": "B",
+               "pista_md": "$3\\pi/4$ no está en el rango de $\\arcsin$. Buscá un ángulo en $[-\\pi/2, \\pi/2]$ con el mismo seno.",
+               "explicacion_md": "$\\sin(3\\pi/4) = \\sqrt{2}/2$. Como $\\arcsin$ devuelve valores en $[-\\pi/2, \\pi/2]$ y $\\arcsin(\\sqrt{2}/2) = \\pi/4$, el resultado es $\\pi/4$. La cancelación $\\arcsin(\\sin x) = x$ vale solo si $x$ ya está en el rango principal."},
+              {"enunciado_md": "Para todo $x \\in [-1, 1]$, ¿cuál identidad es cierta?",
+               "opciones_md": ["$\\arcsin(x) + \\arccos(x) = \\pi$", "$\\arcsin(x) + \\arccos(x) = \\pi/2$", "$\\arcsin(x) - \\arccos(x) = \\pi/2$", "$\\arcsin(x) \\cdot \\arccos(x) = 1$"],
+               "correcta": "B",
+               "pista_md": "Pensalo como cofunciones: $\\sin(\\pi/2 - \\theta) = \\cos\\theta$.",
+               "explicacion_md": "$\\arcsin(x) + \\arccos(x) = \\pi/2$ para todo $x \\in [-1,1]$. Surge de la cofunción y de los rangos de cada inversa."},
+          ]),
+
+        fig("Diagrama educativo en español con tres paneles que muestran las gráficas de $\\arcsin(x)$, $\\arccos(x)$ y $\\arctan(x)$ junto con sus dominios y rangos. Cada gráfica con curva en teal #06b6d4 sobre ejes cartesianos, líneas punteadas en ámbar #f59e0b indicando los valores extremos del rango ($\\pm\\pi/2$, $0$ a $\\pi$, $\\pm\\pi/2$). Etiquetas claras de dominio y rango debajo de cada gráfica. Fondo blanco. " + STYLE),
+
         b("errores_comunes",
           items_md=[
               "**Asumir cancelación en cualquier dirección.** $\\sin(\\arcsin x) = x$ siempre que $|x| \\le 1$, pero $\\arcsin(\\sin x) = x$ solo si $x \\in [-\\pi/2, \\pi/2]$.",
@@ -890,6 +974,28 @@ def lesson_3_5():
              "Caso 2: $\\sin x = -1$, $\\alpha = -\\frac{\\pi}{2}$, $S_2 = \\left\\{2k\\pi - \\frac{\\pi}{2} \\mid k \\in \\mathbb{Z}\\right\\} = \\left\\{\\frac{3\\pi}{2} + 2k\\pi \\mid k \\in \\mathbb{Z}\\right\\}$.\n\n"
              "Conjunto total: $S = S_1 \\cup S_2$.")
         ),
+
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "¿Cuál es el conjunto solución completo de $\\sin(x) = \\dfrac{1}{2}$ en $\\mathbb{R}$?",
+               "opciones_md": ["$\\{\\pi/6\\}$", "$\\{\\pi/6, 5\\pi/6\\}$", "$\\{\\pi/6 + 2k\\pi : k \\in \\mathbb{Z}\\}$", "$\\{\\pi/6 + 2k\\pi\\} \\cup \\{5\\pi/6 + 2k\\pi : k \\in \\mathbb{Z}\\}$"],
+               "correcta": "D",
+               "pista_md": "El seno es positivo en cuadrantes I y II.",
+               "explicacion_md": "Las soluciones en un período $[0, 2\\pi)$ son $\\pi/6$ y $5\\pi/6$, pero por periodicidad se repiten cada $2\\pi$. Las opciones B y C pierden infinitas soluciones."},
+              {"enunciado_md": "Al resolver $\\cos(x)\\sin(x) = 0$, ¿cuál es el error si dividís por $\\cos(x)$?",
+               "opciones_md": ["No se puede dividir nunca", "Se pierden las soluciones donde $\\cos(x) = 0$", "Se obtienen soluciones extra", "No hay error: es válido"],
+               "correcta": "B",
+               "pista_md": "Dividir por algo que puede ser cero borra soluciones.",
+               "explicacion_md": "Si $\\cos(x) = 0$ también satisface la ecuación, dividir por $\\cos(x)$ descarta esas raíces. La estrategia correcta es **factorizar**: $\\cos(x)\\sin(x) = 0 \\iff \\cos(x) = 0$ o $\\sin(x) = 0$."},
+              {"enunciado_md": "¿Cuál es el período fundamental de la función $\\tan(x)$?",
+               "opciones_md": ["$\\pi/2$", "$\\pi$", "$2\\pi$", "$4\\pi$"],
+               "correcta": "B",
+               "pista_md": "Tangente repite su valor con menor período que seno o coseno.",
+               "explicacion_md": "$\\tan(x + \\pi) = \\tan(x)$ para todo $x$. Por eso $\\tan$ tiene período $\\pi$, mientras que $\\sin$ y $\\cos$ tienen período $2\\pi$."},
+          ]),
+
+        fig("Diagrama educativo en español que ilustra la resolución gráfica de $\\sin(x) = 1/2$: la curva $y = \\sin(x)$ en teal #06b6d4 dibujada de $-2\\pi$ a $2\\pi$, una línea horizontal $y = 1/2$ en ámbar #f59e0b, y las intersecciones marcadas con puntos resaltados etiquetados $\\pi/6$, $5\\pi/6$, $\\pi/6 + 2\\pi$, etc., mostrando las infinitas soluciones por periodicidad. Ejes con marcas en múltiplos de $\\pi$, fondo blanco. " + STYLE),
 
         b("errores_comunes",
           items_md=[
@@ -1056,6 +1162,26 @@ def lesson_3_6():
              "Despejando: $112\\cos\\gamma = 32 \\iff \\cos\\gamma = \\frac{32}{112} = \\frac{2}{7}$. "
              "Por tanto $\\gamma = \\arccos\\!\\left(\\frac{2}{7}\\right) \\approx 73{,}4°$.")
         ),
+
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "¿Cuál es el enunciado correcto del **Teorema del Coseno** para el lado $c$ opuesto al ángulo $\\gamma$?",
+               "opciones_md": ["$c^2 = a^2 + b^2$", "$c^2 = a^2 + b^2 + 2ab\\cos\\gamma$", "$c^2 = a^2 + b^2 - 2ab\\cos\\gamma$", "$c = a + b - 2ab\\cos\\gamma$"],
+               "correcta": "C",
+               "pista_md": "Generaliza Pitágoras añadiendo un término correctivo.",
+               "explicacion_md": "$c^2 = a^2 + b^2 - 2ab\\cos\\gamma$. Cuando $\\gamma = 90°$, $\\cos\\gamma = 0$ y se recupera Pitágoras. Si el ángulo es agudo ($\\cos\\gamma > 0$), $c$ es menor; si es obtuso, mayor."},
+              {"enunciado_md": "Si tenemos un triángulo con datos AAL (dos ángulos y un lado), ¿qué teorema conviene usar?",
+               "opciones_md": ["Pitágoras", "Teorema del Seno", "Teorema del Coseno", "Cualquiera funciona igual de bien"],
+               "correcta": "B",
+               "pista_md": "El Teorema del Seno relaciona lados con senos de ángulos opuestos.",
+               "explicacion_md": "Con AAL, conocemos un par lado-ángulo opuesto, lo que hace al **Teorema del Seno** $\\dfrac{a}{\\sin\\alpha} = \\dfrac{b}{\\sin\\beta} = \\dfrac{c}{\\sin\\gamma}$ ideal para encontrar los lados restantes."},
+              {"enunciado_md": "En un caso LLA (dos lados y un ángulo no comprendido), el Teorema del Seno puede dar:",
+               "opciones_md": ["Siempre una única solución", "Cero, una o dos soluciones (caso ambiguo)", "Siempre dos soluciones", "Ninguna solución"],
+               "correcta": "B",
+               "pista_md": "Es el famoso «caso ambiguo» (SSA) de la trigonometría.",
+               "explicacion_md": "El caso LLA se llama **caso ambiguo**: dependiendo de los valores puede haber 0, 1 o 2 triángulos compatibles con los datos. Hay que verificar que el seno calculado esté en $[0,1]$ y considerar el ángulo suplementario."},
+          ]),
 
         b("errores_comunes",
           items_md=[

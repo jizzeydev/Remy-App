@@ -229,6 +229,26 @@ def lesson_4_1():
              "Como $a^2 + b^2 > 0$, esto implica $b = 0$ o $a^2 + b^2 = 1$, es decir, $\\operatorname{Im}(z) = 0$ o $|z| = 1$. $\\square$")
         ),
 
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "¿Cuánto vale $i^{27}$?",
+               "opciones_md": ["$1$", "$i$", "$-1$", "$-i$"],
+               "correcta": "D",
+               "pista_md": "Las potencias de $i$ se repiten cada 4: $i, -1, -i, 1, \\ldots$",
+               "explicacion_md": "$27 = 4 \\cdot 6 + 3$, por lo tanto $i^{27} = i^3 = -i$."},
+              {"enunciado_md": "Si $z = 3 + 4i$, ¿cuánto vale $|z|$?",
+               "opciones_md": ["$5$", "$7$", "$\\sqrt{7}$", "$25$"],
+               "correcta": "A",
+               "pista_md": "$|z| = \\sqrt{a^2 + b^2}$.",
+               "explicacion_md": "$|z| = \\sqrt{3^2 + 4^2} = \\sqrt{9 + 16} = \\sqrt{25} = 5$. Es la distancia al origen en el plano de Argand."},
+              {"enunciado_md": "¿Cuál es el resultado de $\\dfrac{1}{2 + i}$?",
+               "opciones_md": ["$\\dfrac{2 + i}{5}$", "$\\dfrac{2 - i}{5}$", "$\\dfrac{2 - i}{3}$", "$2 - i$"],
+               "correcta": "B",
+               "pista_md": "Multiplicá numerador y denominador por el conjugado del denominador.",
+               "explicacion_md": "$\\dfrac{1}{2+i} \\cdot \\dfrac{2-i}{2-i} = \\dfrac{2 - i}{4 - i^2} = \\dfrac{2-i}{5}$. La técnica de racionalizar usando el conjugado es clave para dividir complejos."},
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Suponer $\\sqrt{-a} = -\\sqrt{a}$.** Lo correcto: $\\sqrt{-a} = \\sqrt{a}\\,i$ para $a > 0$.",
@@ -401,6 +421,28 @@ def lesson_4_2():
              "$(\\sqrt{3}+i)^{2n} = 2^{2n}\\,\\text{cis}(2n\\pi/6) = 4^n\\,\\text{cis}(n\\pi/3) = 4^n[\\cos(n\\pi/3) + i\\sin(n\\pi/3)]$. "
              "Para que sea real: $\\sin(n\\pi/3) = 0 \\iff n\\pi/3 = k\\pi$ para algún $k \\in \\mathbb{Z} \\iff n = 3k$. $\\square$")
         ),
+
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "¿Cuál es la forma polar de $z = 1 + i$?",
+               "opciones_md": ["$\\text{cis}(\\pi/4)$", "$\\sqrt{2}\\,\\text{cis}(\\pi/4)$", "$\\sqrt{2}\\,\\text{cis}(\\pi/2)$", "$2\\,\\text{cis}(\\pi/4)$"],
+               "correcta": "B",
+               "pista_md": "$|z| = \\sqrt{1^2 + 1^2}$ y $\\arg(z) = \\arctan(1/1) = \\pi/4$.",
+               "explicacion_md": "$|z| = \\sqrt{2}$ y $\\arg(z) = \\pi/4$ (primer cuadrante). Por lo tanto $z = \\sqrt{2}\\,\\text{cis}(\\pi/4) = \\sqrt{2}(\\cos(\\pi/4) + i\\sin(\\pi/4))$."},
+              {"enunciado_md": "Aplicando el Teorema de De Moivre, ¿cuánto vale $[\\text{cis}(\\theta)]^n$?",
+               "opciones_md": ["$\\text{cis}(\\theta^n)$", "$\\text{cis}(n\\theta)$", "$n \\cdot \\text{cis}(\\theta)$", "$\\text{cis}(\\theta + n)$"],
+               "correcta": "B",
+               "pista_md": "El argumento se multiplica por $n$.",
+               "explicacion_md": "Teorema de De Moivre: $[r\\,\\text{cis}(\\theta)]^n = r^n\\,\\text{cis}(n\\theta)$. El módulo se eleva, el argumento se multiplica."},
+              {"enunciado_md": "Si $z = -1 + i$, ¿en qué cuadrante está su argumento principal?",
+               "opciones_md": ["Cuadrante I", "Cuadrante II", "Cuadrante III", "Cuadrante IV"],
+               "correcta": "B",
+               "pista_md": "Mirá los signos de las partes real e imaginaria.",
+               "explicacion_md": "$\\operatorname{Re}(z) = -1 < 0$ y $\\operatorname{Im}(z) = 1 > 0$, lo que ubica a $z$ en el segundo cuadrante. Aplicar $\\arctan(b/a) = \\arctan(-1) = -\\pi/4$ sin corregir daría un valor erróneo; el argumento correcto es $3\\pi/4$."},
+          ]),
+
+        fig("Diagrama educativo en español que muestra un número complejo $z = a + bi$ representado en el plano de Argand: ejes cartesianos con eje real horizontal y eje imaginario vertical, un vector desde el origen hasta el punto $(a, b)$ en teal #06b6d4, módulo $r = |z|$ etiquetado sobre el vector, ángulo $\\theta = \\arg(z)$ marcado en el origen como un arco ámbar #f59e0b. Etiqueta clara $z = r\\,\\text{cis}(\\theta)$, fondo blanco. " + STYLE),
 
         b("errores_comunes",
           items_md=[
@@ -579,6 +621,26 @@ def lesson_4_3():
              "es decir, $1 + \\omega + \\omega^2 = 0$. $\\square$")
         ),
 
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "¿Cuántas raíces $n$-ésimas distintas tiene un complejo $\\omega \\neq 0$ en $\\mathbb{C}$?",
+               "opciones_md": ["Una", "Dos", "Exactamente $n$", "Infinitas"],
+               "correcta": "C",
+               "pista_md": "El Teorema de las raíces $n$-ésimas garantiza este número.",
+               "explicacion_md": "Todo $\\omega \\neq 0$ tiene exactamente $n$ raíces $n$-ésimas distintas en $\\mathbb{C}$, dadas por $z_k = \\sqrt[n]{r}\\,\\text{cis}\\!\\left(\\frac{\\theta + 2k\\pi}{n}\\right)$ para $k = 0, \\ldots, n-1$."},
+              {"enunciado_md": "Las $n$ raíces $n$-ésimas de un complejo, en el plano de Argand, forman:",
+               "opciones_md": ["Una recta", "Un círculo de radios distintos", "Un polígono regular de $n$ lados", "$n$ puntos al azar"],
+               "correcta": "C",
+               "pista_md": "Todas tienen el mismo módulo y argumentos espaciados uniformemente.",
+               "explicacion_md": "Las raíces tienen módulo $\\sqrt[n]{r}$ y sus argumentos se separan por $2\\pi/n$ uniformemente: forman un **polígono regular de $n$ vértices** inscrito en un círculo de radio $\\sqrt[n]{r}$."},
+              {"enunciado_md": "Si $\\omega$ es una raíz cúbica de la unidad con $\\omega \\neq 1$, ¿cuánto vale $1 + \\omega + \\omega^2$?",
+               "opciones_md": ["$0$", "$1$", "$3$", "$\\omega^3$"],
+               "correcta": "A",
+               "pista_md": "Factorizá $\\omega^3 - 1$.",
+               "explicacion_md": "$\\omega^3 - 1 = (\\omega - 1)(\\omega^2 + \\omega + 1) = 0$. Como $\\omega \\neq 1$, debe ser $1 + \\omega + \\omega^2 = 0$."},
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Olvidar que $z^n = \\omega$ tiene $n$ soluciones, no una.** En $\\mathbb{R}$ hay 0, 1 o 2; en $\\mathbb{C}$ siempre $n$.",
@@ -732,6 +794,26 @@ def lesson_4_4():
              "Como todas las multiplicidades son impares, la gráfica cruza el eje en $x = -1, 0, 3$ alternando signos.")
         ),
 
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "Si $c$ es raíz de $p(x)$ con multiplicidad **par**, la gráfica de $p$ cerca de $x = c$:",
+               "opciones_md": ["Cruza el eje $x$", "Toca el eje $x$ y rebota (no cruza)", "Tiene una asíntota vertical", "Tiene un salto"],
+               "correcta": "B",
+               "pista_md": "Multiplicidad par no cambia el signo del polinomio en $c$.",
+               "explicacion_md": "Cuando la multiplicidad es par, $(x-c)^{2k}$ es siempre $\\geq 0$, así que el polinomio no cambia de signo y la gráfica **rebota** en $x = c$ sin cruzar el eje. Multiplicidad impar sí produce cruce."},
+              {"enunciado_md": "El comportamiento final ($x \\to \\pm\\infty$) de un polinomio queda determinado por:",
+               "opciones_md": ["El término independiente", "El término líder (mayor grado)", "El número de raíces", "La suma de los coeficientes"],
+               "correcta": "B",
+               "pista_md": "Para $|x|$ grande, el término líder domina.",
+               "explicacion_md": "El **término líder** $a_n x^n$ domina cuando $|x| \\to \\infty$. El signo de $a_n$ y la paridad de $n$ deciden los cuatro comportamientos finales posibles."},
+              {"enunciado_md": "¿Cuántos ceros distintos puede tener un polinomio de grado $5$ con coeficientes reales?",
+               "opciones_md": ["Exactamente 5", "Entre 0 y 5", "Entre 1 y 5", "Siempre par"],
+               "correcta": "C",
+               "pista_md": "Un polinomio real de grado impar tiene al menos una raíz real.",
+               "explicacion_md": "Por el TFA tiene 5 raíces complejas contadas con multiplicidad, pero las distintas pueden ser entre 1 y 5. Como el grado es impar, al menos una es real, por lo que el mínimo de ceros reales distintos es $1$."},
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Confundir grado con número de ceros distintos.** Un grado-5 puede tener 2, 3 o 5 ceros distintos según multiplicidades.",
@@ -884,6 +966,28 @@ def lesson_4_5():
              "Las raíces de $(x+1)^2 = 0$ son $x = -1$ con multiplicidad 2. "
              "Soluciones totales: $\\boxed{x_1 = 2 + 3i, \\; x_2 = 2 - 3i, \\; x_3 = x_4 = -1.}$")
         ),
+
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "Para $p(x) = 2x^3 + 3x^2 - 8x + 3$, ¿cuáles son los **candidatos** del Teorema de Raíces Racionales?",
+               "opciones_md": ["$\\pm 1, \\pm 3$", "$\\pm 1, \\pm 2, \\pm 3$", "$\\pm 1, \\pm 3, \\pm 1/2, \\pm 3/2$", "$\\pm 1, \\pm 1/2, \\pm 1/3$"],
+               "correcta": "C",
+               "pista_md": "$p/q$ con $p \\mid a_0$ y $q \\mid a_n$.",
+               "explicacion_md": "$a_0 = 3$ (divisores $\\pm 1, \\pm 3$), $a_n = 2$ (divisores $\\pm 1, \\pm 2$). Los candidatos $p/q$ son $\\pm 1, \\pm 3, \\pm 1/2, \\pm 3/2$."},
+              {"enunciado_md": "Si $2 + i$ es raíz de un polinomio con **coeficientes reales**, ¿cuál afirmación es siempre verdadera?",
+               "opciones_md": ["$-2 - i$ también es raíz", "$2 - i$ también es raíz", "$-2 + i$ también es raíz", "Ninguna otra raíz se sigue automáticamente"],
+               "correcta": "B",
+               "pista_md": "Las raíces complejas de polinomios reales vienen en pares conjugados.",
+               "explicacion_md": "El conjugado $\\overline{2+i} = 2 - i$ debe ser raíz también, por el Teorema de las Raíces Complejas Conjugadas. Esto solo vale si todos los coeficientes son reales."},
+              {"enunciado_md": "Si $\\alpha = 1 + i$ es raíz de un polinomio real, ¿cuál es el factor **cuadrático real** correspondiente?",
+               "opciones_md": ["$x^2 - 2x + 2$", "$x^2 + 2x + 2$", "$x^2 - 2x - 2$", "$x^2 + 2$"],
+               "correcta": "A",
+               "pista_md": "$(x-\\alpha)(x-\\overline{\\alpha}) = x^2 - 2\\operatorname{Re}(\\alpha)x + |\\alpha|^2$.",
+               "explicacion_md": "$\\operatorname{Re}(\\alpha) = 1$, $|\\alpha|^2 = 1^2 + 1^2 = 2$. Por lo tanto $(x-(1+i))(x-(1-i)) = x^2 - 2x + 2$."},
+          ]),
+
+        fig("Diagrama educativo en español que ilustra el Teorema de las Raíces Racionales aplicado a un polinomio $p(x) = 2x^3 + 3x^2 - 8x + 3$. Caja izquierda: lista de divisores de $a_0 = 3$ ($\\pm 1, \\pm 3$) en teal #06b6d4. Caja derecha: divisores de $a_n = 2$ ($\\pm 1, \\pm 2$) en teal. Caja inferior central en ámbar #f59e0b: candidatos $p/q$ enumerados. Flechas conectoras claras, fondo blanco, tipografía matemática nítida en español. " + STYLE),
 
         b("errores_comunes",
           items_md=[
@@ -1057,6 +1161,28 @@ def lesson_4_6():
              "$$\\boxed{Q(x) = x(x + 2)^3 = x^4 + 6x^3 + 12x^2 + 8x.}$$\n\n"
              "**No es única:** cualquier $Q(x) = a \\cdot x(x+2)^3$ con $a \\neq 0$ es válido. La unicidad requeriría una condición extra (por ejemplo, $Q$ en algún punto).")
         ),
+
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "El **Teorema Fundamental del Álgebra** afirma que todo polinomio en $\\mathbb{C}[x]$ de grado $\\geq 1$ tiene:",
+               "opciones_md": ["Al menos una raíz real", "Al menos una raíz compleja", "Exactamente una raíz", "Infinitas raíces"],
+               "correcta": "B",
+               "pista_md": "El teorema vive en $\\mathbb{C}$.",
+               "explicacion_md": "TFA: todo polinomio no constante en $\\mathbb{C}[x]$ tiene al menos una raíz **compleja**. No garantiza raíces reales (ejemplo: $x^2 + 1$ no tiene raíces reales)."},
+              {"enunciado_md": "Un polinomio de grado $n$ con coeficientes complejos tiene **exactamente** cuántas raíces?",
+               "opciones_md": ["$n$ distintas", "$n$ contadas con multiplicidad", "Menos o igual a $n$", "Infinitas"],
+               "correcta": "B",
+               "pista_md": "Una raíz puede repetirse.",
+               "explicacion_md": "Por el TFA y el Teorema de Factorización, un polinomio de grado $n$ tiene exactamente $n$ raíces **contadas con multiplicidad** en $\\mathbb{C}$. Distintas pueden ser menos."},
+              {"enunciado_md": "¿Cuántos polinomios de grado $3$ con coeficiente líder $a_3 = 2$ tienen ceros $\\{1, -1, 3\\}$ (todos simples)?",
+               "opciones_md": ["Ninguno", "Exactamente uno", "Tres", "Infinitos"],
+               "correcta": "B",
+               "pista_md": "Especificar ceros y coeficiente líder determina el polinomio por completo.",
+               "explicacion_md": "$P(x) = 2(x-1)(x+1)(x-3)$ es el único. Sin fijar el coeficiente líder habría infinitos (uno por cada $a \\neq 0$). Con ceros y $a_n$ fijos, el polinomio es único."},
+          ]),
+
+        fig("Diagrama educativo en español que ilustra el Teorema Fundamental del Álgebra: un polinomio $P(x)$ de grado $n$ a la izquierda de una flecha grande, y a la derecha su factorización completa $P(x) = a_n (x - z_1)(x - z_2)\\cdots(x - z_n)$ con las raíces $z_k$ representadas como puntos en el plano complejo (algunas reales sobre el eje horizontal, otras complejas en pares conjugados sobre/bajo el eje real). Acentos teal #06b6d4 para los ejes y ámbar #f59e0b para los puntos raíces. Fondo blanco. " + STYLE),
 
         b("errores_comunes",
           items_md=[

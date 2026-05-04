@@ -394,6 +394,14 @@ def lesson_2_2():
             ),
         ),
 
+        fig(
+            "Curva C en el plano R^2, ejes x y, dibujada en color teal #06b6d4. Sobre la curva se "
+            "levanta una 'cortina' vertical cuya altura en cada punto es f(x,y), formando una "
+            "superficie con sombreado teal degradado (más oscuro arriba, claro abajo). Interpretación "
+            "visual: el área de la cortina equivale a ∫_C f ds. Etiquetas C, f(x,y), ds en ámbar "
+            "#f59e0b. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Olvidar el factor $\\|\\vec{r}'(t)\\|$.** $ds = \\|\\vec{r}'\\| dt$, no $dt$.",
@@ -579,6 +587,14 @@ def lesson_2_3():
                 "$xy = t \\cdot t^2 = t^3$. $x + y = t + t^2$.\n\n"
                 "$\\int_0^1 [t^3 + (t + t^2)(2t)] \\, dt = \\int_0^1 (t^3 + 2t^2 + 2t^3) \\, dt = \\int_0^1 (3t^3 + 2t^2) \\, dt = 3/4 + 2/3 = 17/12$."
             ),
+        ),
+
+        fig(
+            "Plano R^2 con un campo vectorial F representado por flechitas grises distribuidas en "
+            "una grilla suave. Una curva C en color teal #06b6d4 atraviesa el campo. En un punto "
+            "de C, mostrar el vector tangente unitario T en teal grueso, y la proyección F·T "
+            "destacada en ámbar #f59e0b (segmento sobre T). Etiqueta ∫_C F·dr = trabajo en "
+            "tipografía clara. " + STYLE
         ),
 
         b("errores_comunes",
@@ -781,6 +797,13 @@ def lesson_2_4():
                 "$\\oint_C \\vec{F} \\cdot d\\vec{r} = \\int_0^{2\\pi} 1 \\, dt = 2\\pi \\neq 0$.\n\n"
                 "**Por equivalencia (3), no es conservativo.** Verifica con el test: $P_y = -1, Q_x = 1$ — no iguales. ✓"
             ),
+        ),
+
+        fig(
+            "Plano R^2 con dos puntos A y B marcados. Dos caminos distintos los conectan: uno en "
+            "color teal #06b6d4 (curva ondulada) y otro en color ámbar #f59e0b (curva más recta). "
+            "Encima del diagrama, mensaje destacado: 'si F = ∇f, entonces ∫_C F·dr = f(B) - f(A) "
+            "— independiente del camino'. Etiquetas A, B, C₁, C₂ claras. " + STYLE
         ),
 
         b("errores_comunes",
@@ -1172,6 +1195,14 @@ def lesson_2_6():
                 "$3 \\iint_{u^2+v^2 \\leq 1} (4u^2 + 9v^2) \\cdot 6 \\, du \\, dv = 18 \\iint (4u^2 + 9v^2) \\, dA$.\n\n"
                 "En polares ($u = r\\cos\\theta, v = r\\sin\\theta$): $= 18 \\int_0^{2\\pi} \\int_0^1 (4r^2\\cos^2 + 9r^2 \\sin^2) r \\, dr \\, d\\theta = 18 \\cdot \\dfrac{1}{4} \\int_0^{2\\pi}(4\\cos^2\\theta + 9\\sin^2\\theta) \\, d\\theta = \\dfrac{18}{4} \\cdot 13\\pi = \\dfrac{117\\pi}{2}$."
             ),
+        ),
+
+        fig(
+            "Plano R^2 con una región plana D sombreada en teal #06b6d4 claro, encerrada por una "
+            "curva C orientada anti-horario (flecha ámbar #f59e0b sobre la curva indicando el "
+            "sentido). A un lado, fórmula del teorema de Green: ∮_C(P dx + Q dy) = ∬_D(∂Q/∂x - "
+            "∂P/∂y) dA. Etiquetas D, C, n exterior. Equivalencia visual entre la integral de línea "
+            "y la doble integral. " + STYLE
         ),
 
         b("errores_comunes",

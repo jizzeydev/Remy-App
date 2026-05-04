@@ -429,6 +429,14 @@ def lesson_3_2():
             ),
         ),
 
+        fig(
+            "Superficie paramétrica S en R^3, vista isométrica con ejes x, y, z. La superficie está "
+            "dibujada en color teal #06b6d4 semitransparente (estilo malla suave). En un punto de S, "
+            "destacar un parche pequeño dS y el vector normal unitario n saliendo perpendicular en "
+            "color ámbar #f59e0b. Etiqueta de la función f(x,y,z) integrada sobre la superficie. "
+            "Fórmula ∬_S f dS visible. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Olvidar el factor $\\|\\vec{r}_u \\times \\vec{r}_v\\|$.** Sin él, no es la integral correcta.",
@@ -772,6 +780,14 @@ def lesson_3_4():
             ),
         ),
 
+        fig(
+            "Superficie cerrada en R^3 (esfera dibujada en teal #06b6d4 semitransparente, vista "
+            "isométrica). Un campo vectorial F representado por flechas atravesando la superficie: "
+            "flechas saliendo hacia afuera en algunas zonas en color ámbar #f59e0b, flechas "
+            "entrando hacia adentro en otras zonas en color gris. Vector normal n exterior visible. "
+            "Etiqueta Φ = ∬_S F·n dS = flujo. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Olvidar la orientación.** Si la orientación está implícita ('normal exterior', 'hacia arriba'), hay que verificar que el cálculo respeta esa orientación.",
@@ -968,6 +984,14 @@ def lesson_3_5():
                 "$\\Phi = \\iint_S \\vec{q} \\cdot \\vec{n} \\, dS = \\iint_S (-2) \\, dS = -2 \\cdot 4\\pi = -8\\pi$.\n\n"
                 "**Negativo:** indica que el calor fluye **hacia adentro** (de afuera hacia el origen). Tiene sentido porque $T$ es mínima en el origen — el calor 'cae' hacia donde es más frío."
             ),
+        ),
+
+        fig(
+            "Panel dividido en tres ilustraciones lado a lado, cada una con su etiqueta. (a) FLUJO "
+            "DE FLUIDO: superficie teal #06b6d4 con flechas ámbar #f59e0b atravesándola, líneas de "
+            "corriente. (b) LEY DE GAUSS: superficie cerrada encerrando una carga eléctrica "
+            "puntual q en el centro, líneas de campo radiales. (c) TASA DE CALOR: superficie con "
+            "gradiente de temperatura (rojo a azul) y flujo q = -k∇T saliendo. " + STYLE
         ),
 
         b("errores_comunes",
@@ -1167,6 +1191,15 @@ def lesson_3_6():
                 "$\\oint_C \\vec{F} \\cdot d\\vec{r} = \\int_0^{2\\pi} (-4) \\, dt = -8\\pi$.\n\n"
                 "Por Stokes: $\\iint_S (\\nabla \\times \\vec{F}) \\cdot d\\vec{S} = -8\\pi$."
             ),
+        ),
+
+        fig(
+            "Superficie abierta tipo disco curvado (paraguas) en R^3, vista isométrica con ejes "
+            "x, y, z. La superficie S está en color teal #06b6d4 semitransparente. Su borde C es "
+            "una curva cerrada dibujada en color ámbar #f59e0b con flecha de orientación "
+            "(anti-horaria vista desde arriba). Campo F con flechas grises sobre la superficie. "
+            "Mensaje: 'circulación de F en C = flujo del rotor en S'. Fórmula ∮_C F·dr = "
+            "∬_S(∇×F)·n dS. " + STYLE
         ),
 
         b("errores_comunes",
@@ -1372,6 +1405,15 @@ def lesson_3_7():
                 "Despejando: $V(E) = \\dfrac{1}{3}\\oiint \\vec{F} \\cdot d\\vec{S}$.\n\n"
                 "**Volumen como integral de superficie** — análogo 3D al área como integral de línea de Green ($A = \\frac{1}{2}\\oint \\ldots$)."
             ),
+        ),
+
+        fig(
+            "Volumen sólido en R^3 (cubo o esfera) en vista isométrica con ejes x, y, z. La "
+            "superficie cerrada que encierra el volumen está en color teal #06b6d4 semitransparente. "
+            "Flechas del campo F en color ámbar #f59e0b saliendo (componentes en zonas con div>0) "
+            "y flechas grises entrando (zonas con div<0). En el interior del volumen, "
+            "representación visual de la divergencia ∇·F como pequeñas estrellas de expansión. "
+            "Fórmula ∬_S F·n dS = ∭_E(∇·F)dV. " + STYLE
         ),
 
         b("errores_comunes",

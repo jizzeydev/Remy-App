@@ -416,6 +416,16 @@ def lesson_4_2():
             ),
         ),
 
+        fig(
+            "Composición a dos partes. Izquierda: vista 3D isométrica de una superficie ondulada "
+            "z = f(x, y) en color teal #06b6d4 translúcido. En un punto P = (a, b, f(a,b)) sobre "
+            "la superficie, un vector gradiente ∇f en rojo grueso saliendo del punto en el "
+            "plano tangente, etiquetado '∇f = (f_x, f_y)'. Ejes x, y, z claramente marcados. "
+            "Derecha: una cajita rectangular con borde ámbar #f59e0b conteniendo una matriz "
+            "Hessiana 2×2 grande: [[f_xx, f_xy], [f_yx, f_yy]] con etiqueta 'H_f' arriba y nota "
+            "'f_xy = f_yx (Clairaut)'. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Confundir el orden en $\\partial^2 f / \\partial y \\partial x$**: significa primero $x$, luego $y$ (al revés del orden de lectura). Más fácil usar $f_{xy}$.",

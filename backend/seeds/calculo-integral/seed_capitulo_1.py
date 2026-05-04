@@ -442,6 +442,11 @@ def lesson_1_2():
             ),
         ),
 
+        fig(
+            "Plano cartesiano con ejes x e y. Tres curvas paralelas en color teal #06b6d4 que representan la familia de antiderivadas y = F(x) + C: misma forma F(x) (por ejemplo una cúbica suave), desplazadas verticalmente entre sí por valores distintos de C. Una flecha vertical ámbar #f59e0b conecta las tres curvas indicando que se diferencian solo por una constante. Etiqueta 'F(x) + C' y mini-leyenda con C = -1, 0, 2."
+            + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Olvidar la constante $C$.** En la indefinida es obligatoria. La familia de antiderivadas no es una sola función, son infinitas.",
@@ -667,6 +672,11 @@ def lesson_1_3():
                 "$$(1 + \\cos^2 x)(-\\sin x) - (1 + \\sin^2 x)(\\cos x)$$\n\n"
                 "$$= -\\sin x (1 + \\cos^2 x) - \\cos x (1 + \\sin^2 x)$$"
             ),
+        ),
+
+        fig(
+            "Plano cartesiano con curva f(x) suave y positiva en color gris oscuro. Entre los puntos a y b del eje x, el área bajo la curva está sombreada en teal #06b6d4 con la etiqueta grande ∫_a^b f(x) dx. Superpuestos al área se ven rectángulos finos verticales en gris claro que representan una suma de Riemann aproximando el área. Una flecha ámbar #f59e0b apunta hacia los rectángulos con la leyenda 'n → ∞'. Marcas a y b en el eje x."
+            + STYLE
         ),
 
         b("errores_comunes",

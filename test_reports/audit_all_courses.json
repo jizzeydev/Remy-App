@@ -1,0 +1,5141 @@
+{
+  "algebra-lineal": {
+    "chapters": [
+      {
+        "file": "seed_capitulo_1.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_1_1",
+            "id": "lec-al-1-1-vectores",
+            "title": "Vectores",
+            "counts": {
+              "texto": 1,
+              "definicion": 6,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_2",
+            "id": "lec-al-1-2-producto-punto",
+            "title": "Producto punto",
+            "counts": {
+              "texto": 1,
+              "definicion": 5,
+              "teorema": 3,
+              "figura": 1,
+              "ejemplo_resuelto": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_3",
+            "id": "lec-al-1-3-producto-cruz",
+            "title": "Producto cruz",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "intuicion": 3,
+              "ejemplo_resuelto": 3,
+              "teorema": 3,
+              "figura": 1,
+              "ejercicio": 2,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_4",
+            "id": "lec-al-1-4-rectas-y-planos",
+            "title": "Rectas y planos",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "intuicion": 3,
+              "ejemplo_resuelto": 4,
+              "figura": 1,
+              "teorema": 2,
+              "ejercicio": 3,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_2.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_2_1",
+            "id": "lec-al-2-1-matrices",
+            "title": "Matrices",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "ejemplo_resuelto": 5,
+              "figura": 1,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_2",
+            "id": "lec-al-2-2-reduccion-filas",
+            "title": "Reducción por filas",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 5,
+              "teorema": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_3",
+            "id": "lec-al-2-3-independencia-lineal",
+            "title": "Independencia lineal",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "ejemplo_resuelto": 4,
+              "teorema": 3,
+              "verificacion": 1,
+              "ejercicio": 4,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_4",
+            "id": "lec-al-2-4-conjunto-solucion",
+            "title": "Conjunto solución",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "teorema": 3,
+              "ejemplo_resuelto": 4,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_5",
+            "id": "lec-al-2-5-transformaciones-lineales",
+            "title": "Transformaciones lineales",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "teorema": 3,
+              "ejemplo_resuelto": 4,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_3.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_3_1",
+            "id": "lec-al-3-1-operaciones-matrices",
+            "title": "Operaciones de matrices",
+            "counts": {
+              "texto": 1,
+              "definicion": 7,
+              "ejemplo_resuelto": 11,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_2",
+            "id": "lec-al-3-2-inversa",
+            "title": "Inversa",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 6,
+              "teorema": 3,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_3",
+            "id": "lec-al-3-3-matrices-elementales",
+            "title": "Matrices elementales",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 3,
+              "teorema": 4,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_4",
+            "id": "lec-al-3-4-factorizaciones",
+            "title": "Factorizaciones",
+            "counts": {
+              "texto": 1,
+              "intuicion": 2,
+              "definicion": 2,
+              "ejemplo_resuelto": 4,
+              "teorema": 2,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_4.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_4_1",
+            "id": "lec-al-4-1-determinante",
+            "title": "Determinante",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "teorema": 2,
+              "ejemplo_resuelto": 4,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_4_2",
+            "id": "lec-al-4-2-propiedades-determinante",
+            "title": "Propiedades del determinante",
+            "counts": {
+              "texto": 1,
+              "teorema": 3,
+              "ejemplo_resuelto": 4,
+              "definicion": 1,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_4_3",
+            "id": "lec-al-4-3-aplicaciones-determinante",
+            "title": "Aplicaciones del determinante",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "teorema": 4,
+              "ejemplo_resuelto": 5,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_5.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_5_1",
+            "id": "lec-al-5-1-espacios-vectoriales",
+            "title": "Espacios vectoriales",
+            "counts": {
+              "texto": 1,
+              "definicion": 5,
+              "intuicion": 2,
+              "ejemplo_resuelto": 3,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_5_2",
+            "id": "lec-al-5-2-espacios-notables",
+            "title": "Espacios notables",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 5,
+              "teorema": 1,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_5_3",
+            "id": "lec-al-5-3-bases",
+            "title": "Bases",
+            "counts": {
+              "texto": 1,
+              "definicion": 1,
+              "ejemplo_resuelto": 5,
+              "teorema": 2,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_5_4",
+            "id": "lec-al-5-4-coordenadas",
+            "title": "Sistemas de coordenadas",
+            "counts": {
+              "texto": 1,
+              "teorema": 2,
+              "definicion": 2,
+              "ejemplo_resuelto": 5,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_5_5",
+            "id": "lec-al-5-5-dimension-rango",
+            "title": "Dimensión y rango",
+            "counts": {
+              "texto": 1,
+              "teorema": 5,
+              "definicion": 3,
+              "ejemplo_resuelto": 3,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_5_6",
+            "id": "lec-al-5-6-cambio-coordenadas",
+            "title": "Cambio de coordenadas",
+            "counts": {
+              "texto": 1,
+              "ejemplo_resuelto": 3,
+              "definicion": 2,
+              "teorema": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_6.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_6_1",
+            "id": "lec-al-6-1-ecuacion-caracteristica",
+            "title": "Ecuación característica",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "ejemplo_resuelto": 6,
+              "teorema": 3,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_6_2",
+            "id": "lec-al-6-2-diagonalizacion",
+            "title": "Diagonalización",
+            "counts": {
+              "texto": 1,
+              "teorema": 4,
+              "intuicion": 1,
+              "ejemplo_resuelto": 5,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_6_3",
+            "id": "lec-al-6-3-vectores-tl",
+            "title": "Vectores propios y transformaciones lineales",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 3,
+              "teorema": 1,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_6_4",
+            "id": "lec-al-6-4-valores-complejos",
+            "title": "Valores propios complejos",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 3,
+              "teorema": 1,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_7.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_7_1",
+            "id": "lec-al-7-1-subespacios-ortogonales",
+            "title": "Subespacios ortogonales",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "ejemplo_resuelto": 4,
+              "intuicion": 1,
+              "teorema": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_7_2",
+            "id": "lec-al-7-2-conjuntos-ortogonales",
+            "title": "Conjuntos ortogonales",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 4,
+              "teorema": 2,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_7_3",
+            "id": "lec-al-7-3-proyecciones-ortogonales",
+            "title": "Proyecciones ortogonales",
+            "counts": {
+              "texto": 1,
+              "teorema": 3,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_7_4",
+            "id": "lec-al-7-4-gram-schmidt",
+            "title": "Proceso de Gram-Schmidt",
+            "counts": {
+              "texto": 1,
+              "teorema": 2,
+              "ejemplo_resuelto": 3,
+              "definicion": 1,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_7_5",
+            "id": "lec-al-7-5-minimos-cuadrados",
+            "title": "Mínimos cuadrados",
+            "counts": {
+              "texto": 1,
+              "definicion": 1,
+              "teorema": 4,
+              "ejemplo_resuelto": 4,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_7_6",
+            "id": "lec-al-7-6-modelos-lineales",
+            "title": "Modelos lineales",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "teorema": 1,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_8.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_8_1",
+            "id": "lec-al-8-1-diagonalizacion-ortogonal",
+            "title": "Diagonalización ortogonal",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "teorema": 2,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_8_2",
+            "id": "lec-al-8-2-formas-cuadraticas",
+            "title": "Formas cuadráticas",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 5,
+              "teorema": 2,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_8_3",
+            "id": "lec-al-8-3-svd",
+            "title": "Descomposición en valores singulares",
+            "counts": {
+              "texto": 1,
+              "intuicion": 2,
+              "definicion": 1,
+              "ejemplo_resuelto": 3,
+              "teorema": 2,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      }
+    ],
+    "totals": {
+      "lessons": 35,
+      "ok": 35,
+      "missing": 0,
+      "warn": 0
+    }
+  },
+  "calculo-diferencial": {
+    "chapters": [
+      {
+        "file": "seed_capitulo_1.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_1_1",
+            "id": "lec-limites-1-1-introduccion-intuitiva",
+            "title": "Introducción intuitiva al límite",
+            "counts": {
+              "texto": 2,
+              "intuicion": 1,
+              "definicion": 6,
+              "ejemplo_resuelto": 4,
+              "grafico_desmos": 2,
+              "teorema": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_2",
+            "id": "lec-limites-1-2-definicion-formal",
+            "title": "Definición formal del límite ($\\epsilon$-$\\delta$)",
+            "counts": {
+              "texto": 1,
+              "intuicion": 2,
+              "definicion": 1,
+              "grafico_desmos": 1,
+              "ejemplo_resuelto": 3,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_3",
+            "id": "lec-limites-1-3-propiedades",
+            "title": "Propiedades de los límites",
+            "counts": {
+              "texto": 1,
+              "intuicion": 1,
+              "definicion": 2,
+              "teorema": 4,
+              "ejemplo_resuelto": 3,
+              "verificacion": 1,
+              "figura": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_4",
+            "id": "lec-limites-1-4-continuidad",
+            "title": "Continuidad de funciones",
+            "counts": {
+              "texto": 2,
+              "intuicion": 1,
+              "definicion": 6,
+              "ejemplo_resuelto": 3,
+              "figura": 1,
+              "teorema": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_5",
+            "id": "lec-limites-1-5-tvi",
+            "title": "Teorema del Valor Intermedio",
+            "counts": {
+              "texto": 1,
+              "intuicion": 1,
+              "teorema": 1,
+              "grafico_desmos": 1,
+              "ejemplo_resuelto": 2,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_6",
+            "id": "lec-limites-1-6-asintotas",
+            "title": "Asíntotas",
+            "counts": {
+              "texto": 1,
+              "intuicion": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 3,
+              "grafico_desmos": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_7",
+            "id": "lec-limites-1-7-resolver",
+            "title": "Resolver límites: estrategia y técnicas",
+            "counts": {
+              "texto": 1,
+              "intuicion": 1,
+              "definicion": 8,
+              "ejemplo_resuelto": 9,
+              "verificacion": 1,
+              "figura": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_1_mejoras.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": []
+      },
+      {
+        "file": "seed_capitulo_2.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_2_2",
+            "id": "lec-derivadas-2-2-derivabilidad",
+            "title": "Derivabilidad",
+            "counts": {
+              "texto": 1,
+              "intuicion": 2,
+              "definicion": 2,
+              "ejemplo_resuelto": 3,
+              "teorema": 1,
+              "grafico_desmos": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_3",
+            "id": "lec-derivadas-2-3-reglas",
+            "title": "Reglas de derivación",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "intuicion": 1,
+              "ejemplo_resuelto": 4,
+              "verificacion": 1,
+              "figura": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_4",
+            "id": "lec-derivadas-2-4-trigonometricas",
+            "title": "Derivadas trigonométricas",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "teorema": 2,
+              "ejemplo_resuelto": 3,
+              "verificacion": 1,
+              "figura": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_5",
+            "id": "lec-derivadas-2-5-cadena",
+            "title": "Regla de la cadena",
+            "counts": {
+              "texto": 1,
+              "intuicion": 2,
+              "teorema": 1,
+              "ejemplo_resuelto": 5,
+              "verificacion": 1,
+              "figura": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_6",
+            "id": "lec-derivadas-2-6-implicita",
+            "title": "Derivación implícita",
+            "counts": {
+              "texto": 1,
+              "intuicion": 1,
+              "definicion": 1,
+              "ejemplo_resuelto": 4,
+              "verificacion": 1,
+              "figura": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_7",
+            "id": "lec-derivadas-2-7-logaritmica",
+            "title": "Derivación logarítmica",
+            "counts": {
+              "texto": 1,
+              "definicion": 1,
+              "intuicion": 1,
+              "ejemplo_resuelto": 3,
+              "verificacion": 1,
+              "figura": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_8",
+            "id": "lec-derivadas-2-8-inversas",
+            "title": "Derivadas de funciones inversas",
+            "counts": {
+              "texto": 1,
+              "teorema": 1,
+              "intuicion": 1,
+              "ejemplo_resuelto": 3,
+              "definicion": 1,
+              "verificacion": 1,
+              "figura": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_9",
+            "id": "lec-derivadas-2-9-log-exp",
+            "title": "Derivadas de funciones logarítmicas y exponenciales",
+            "counts": {
+              "texto": 1,
+              "definicion": 1,
+              "intuicion": 1,
+              "teorema": 2,
+              "ejemplo_resuelto": 5,
+              "verificacion": 1,
+              "figura": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_10",
+            "id": "lec-derivadas-2-10-lhopital",
+            "title": "Regla de L'Hôpital",
+            "counts": {
+              "texto": 1,
+              "teorema": 1,
+              "intuicion": 1,
+              "ejemplo_resuelto": 5,
+              "definicion": 1,
+              "verificacion": 1,
+              "figura": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_11",
+            "id": "lec-derivadas-2-11-hiperbolicas",
+            "title": "Funciones hiperbólicas",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "intuicion": 2,
+              "teorema": 1,
+              "ejemplo_resuelto": 3,
+              "verificacion": 1,
+              "figura": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_2_mejoras.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": []
+      },
+      {
+        "file": "seed_capitulo_3.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_3_1",
+            "id": "lec-aplicaciones-3-1-razones",
+            "title": "Razones relacionadas",
+            "counts": {
+              "texto": 1,
+              "intuicion": 1,
+              "ejemplo_resuelto": 3,
+              "verificacion": 1,
+              "figura": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_2",
+            "id": "lec-aplicaciones-3-2-aproximaciones",
+            "title": "Aproximaciones lineales y diferenciales",
+            "counts": {
+              "texto": 1,
+              "intuicion": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 3,
+              "verificacion": 1,
+              "figura": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_3",
+            "id": "lec-aplicaciones-3-3-extremos",
+            "title": "Máximos y mínimos",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "teorema": 2,
+              "intuicion": 1,
+              "ejemplo_resuelto": 2,
+              "verificacion": 1,
+              "figura": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_4",
+            "id": "lec-aplicaciones-3-4-tvm",
+            "title": "Teorema del Valor Medio",
+            "counts": {
+              "texto": 1,
+              "teorema": 4,
+              "intuicion": 3,
+              "ejemplo_resuelto": 1,
+              "verificacion": 1,
+              "figura": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_5",
+            "id": "lec-aplicaciones-3-5-forma",
+            "title": "Forma de la gráfica",
+            "counts": {
+              "texto": 1,
+              "teorema": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "verificacion": 1,
+              "figura": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_6",
+            "id": "lec-aplicaciones-3-6-graficar",
+            "title": "Graficar curvas",
+            "counts": {
+              "texto": 1,
+              "definicion": 1,
+              "ejemplo_resuelto": 1,
+              "grafico_desmos": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_7",
+            "id": "lec-aplicaciones-3-7-optimizacion",
+            "title": "Optimización",
+            "counts": {
+              "texto": 1,
+              "definicion": 1,
+              "ejemplo_resuelto": 3,
+              "verificacion": 1,
+              "figura": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_3_mejoras.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": []
+      }
+    ],
+    "totals": {
+      "lessons": 24,
+      "ok": 24,
+      "missing": 0,
+      "warn": 0
+    }
+  },
+  "calculo-integral": {
+    "chapters": [
+      {
+        "file": "seed_capitulo_1.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_1_1",
+            "id": "lec-integrales-1-1-definicion",
+            "title": "Definición de integral",
+            "counts": {
+              "texto": 1,
+              "intuicion": 2,
+              "figura": 1,
+              "definicion": 4,
+              "teorema": 1,
+              "ejemplo_resuelto": 1,
+              "verificacion": 1,
+              "ejercicio": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_2",
+            "id": "lec-integrales-1-2-indefinida",
+            "title": "Integral indefinida",
+            "counts": {
+              "texto": 1,
+              "intuicion": 2,
+              "definicion": 3,
+              "teorema": 2,
+              "ejemplo_resuelto": 2,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_3",
+            "id": "lec-integrales-1-3-definida",
+            "title": "Integral definida",
+            "counts": {
+              "texto": 1,
+              "intuicion": 1,
+              "teorema": 2,
+              "ejemplo_resuelto": 4,
+              "definicion": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_1_desmos.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": []
+      },
+      {
+        "file": "seed_capitulo_2.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_2_1",
+            "id": "lec-metodos-2-1-sustitucion",
+            "title": "Sustitución simple",
+            "counts": {
+              "texto": 1,
+              "intuicion": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 3,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_2",
+            "id": "lec-metodos-2-2-partes",
+            "title": "Integración por partes",
+            "counts": {
+              "texto": 1,
+              "intuicion": 1,
+              "teorema": 1,
+              "definicion": 1,
+              "ejemplo_resuelto": 4,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_3",
+            "id": "lec-metodos-2-3-trigonometricas",
+            "title": "Integrales trigonométricas",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 4,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_4",
+            "id": "lec-metodos-2-4-sustitucion-trig",
+            "title": "Sustitución trigonométrica",
+            "counts": {
+              "texto": 1,
+              "definicion": 1,
+              "intuicion": 1,
+              "ejemplo_resuelto": 3,
+              "verificacion": 1,
+              "ejercicio": 1,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_5",
+            "id": "lec-metodos-2-5-division",
+            "title": "División polinomial",
+            "counts": {
+              "texto": 1,
+              "intuicion": 1,
+              "definicion": 1,
+              "ejemplo_resuelto": 2,
+              "verificacion": 1,
+              "ejercicio": 1,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_6",
+            "id": "lec-metodos-2-6-fracciones-parciales",
+            "title": "Fracciones parciales",
+            "counts": {
+              "texto": 1,
+              "definicion": 1,
+              "ejemplo_resuelto": 3,
+              "verificacion": 1,
+              "ejercicio": 1,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_7",
+            "id": "lec-metodos-2-7-impropias",
+            "title": "Integrales impropias",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 4,
+              "teorema": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_3.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_3_1",
+            "id": "lec-aplicaciones-int-3-1-areas",
+            "title": "Áreas entre curvas",
+            "counts": {
+              "texto": 1,
+              "intuicion": 1,
+              "figura": 1,
+              "definicion": 1,
+              "ejemplo_resuelto": 3,
+              "verificacion": 1,
+              "ejercicio": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_2",
+            "id": "lec-aplicaciones-int-3-2-discos-anillos",
+            "title": "Volúmenes — discos y anillos",
+            "counts": {
+              "texto": 1,
+              "intuicion": 1,
+              "figura": 2,
+              "definicion": 2,
+              "ejemplo_resuelto": 3,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_3",
+            "id": "lec-aplicaciones-int-3-3-cascarones",
+            "title": "Volúmenes — cascarones cilíndricos",
+            "counts": {
+              "texto": 1,
+              "intuicion": 2,
+              "figura": 1,
+              "definicion": 1,
+              "ejemplo_resuelto": 3,
+              "verificacion": 1,
+              "ejercicio": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_4",
+            "id": "lec-aplicaciones-int-3-4-promedio",
+            "title": "Valor promedio",
+            "counts": {
+              "texto": 1,
+              "intuicion": 1,
+              "definicion": 1,
+              "figura": 1,
+              "teorema": 1,
+              "ejemplo_resuelto": 2,
+              "verificacion": 1,
+              "ejercicio": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_5",
+            "id": "lec-aplicaciones-int-3-5-arco",
+            "title": "Longitud de arco",
+            "counts": {
+              "texto": 1,
+              "intuicion": 2,
+              "figura": 1,
+              "definicion": 1,
+              "ejemplo_resuelto": 2,
+              "verificacion": 1,
+              "ejercicio": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_6",
+            "id": "lec-aplicaciones-int-3-6-superficies",
+            "title": "Áreas de superficies de revolución",
+            "counts": {
+              "texto": 1,
+              "intuicion": 1,
+              "figura": 1,
+              "definicion": 1,
+              "ejemplo_resuelto": 2,
+              "verificacion": 1,
+              "ejercicio": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_7",
+            "id": "lec-aplicaciones-int-3-7-fisica",
+            "title": "Aplicaciones en física",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 3,
+              "verificacion": 1,
+              "ejercicio": 1,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_8",
+            "id": "lec-aplicaciones-int-3-8-economia",
+            "title": "Aplicaciones en economía",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 2,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_9",
+            "id": "lec-aplicaciones-int-3-9-biologia",
+            "title": "Aplicaciones en biología",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 3,
+              "verificacion": 1,
+              "ejercicio": 1,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      }
+    ],
+    "totals": {
+      "lessons": 19,
+      "ok": 19,
+      "missing": 0,
+      "warn": 0
+    }
+  },
+  "calculo-multivariable": {
+    "chapters": [
+      {
+        "file": "seed_capitulo_1.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_1_1",
+            "id": "lec-mvar-1-1-sucesiones",
+            "title": "Sucesiones",
+            "counts": {
+              "texto": 1,
+              "intuicion": 1,
+              "definicion": 3,
+              "teorema": 2,
+              "ejemplo_resuelto": 2,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_2",
+            "id": "lec-mvar-1-2-series",
+            "title": "Series",
+            "counts": {
+              "texto": 1,
+              "intuicion": 1,
+              "definicion": 2,
+              "teorema": 3,
+              "ejemplo_resuelto": 4,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_3",
+            "id": "lec-mvar-1-3-pruebas-series",
+            "title": "Pruebas de series",
+            "counts": {
+              "texto": 1,
+              "teorema": 3,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_4",
+            "id": "lec-mvar-1-4-alternantes",
+            "title": "Series alternantes",
+            "counts": {
+              "texto": 1,
+              "teorema": 3,
+              "ejemplo_resuelto": 3,
+              "definicion": 1,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_5",
+            "id": "lec-mvar-1-5-criterios",
+            "title": "Criterios de convergencia",
+            "counts": {
+              "texto": 1,
+              "teorema": 2,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_6",
+            "id": "lec-mvar-1-6-potencias",
+            "title": "Series de potencias",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "teorema": 2,
+              "ejemplo_resuelto": 2,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_7",
+            "id": "lec-mvar-1-7-representacion",
+            "title": "Representación de funciones",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 3,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_8",
+            "id": "lec-mvar-1-8-taylor",
+            "title": "Series de Taylor y Maclaurin",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "intuicion": 1,
+              "ejemplo_resuelto": 4,
+              "teorema": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_1_lesson_0.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_1_0",
+            "id": "lec-mvar-1-0-impropias",
+            "title": "Integrales impropias (prerrequisito)",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 2,
+              "teorema": 1,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 1,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_2.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_2_1",
+            "id": "lec-mvar-2-1-vectores",
+            "title": "Vectores",
+            "counts": {
+              "texto": 1,
+              "intuicion": 1,
+              "definicion": 4,
+              "figura": 2,
+              "ejemplo_resuelto": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_2",
+            "id": "lec-mvar-2-2-producto-punto",
+            "title": "Producto punto",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "teorema": 1,
+              "figura": 2,
+              "ejemplo_resuelto": 2,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_3",
+            "id": "lec-mvar-2-3-producto-cruz",
+            "title": "Producto cruz",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "teorema": 1,
+              "figura": 1,
+              "intuicion": 1,
+              "ejemplo_resuelto": 3,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_4",
+            "id": "lec-mvar-2-4-rectas-planos",
+            "title": "Rectas y planos",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "figura": 2,
+              "ejemplo_resuelto": 4,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_5",
+            "id": "lec-mvar-2-5-cuadricas",
+            "title": "Superficies cuádricas",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "figura": 1,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_3.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_3_1",
+            "id": "lec-mvar-3-1-dominio-rango",
+            "title": "Dominio y rango",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "ejemplo_resuelto": 3,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_2",
+            "id": "lec-mvar-3-2-limites-continuidad",
+            "title": "Límites y continuidad",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "intuicion": 2,
+              "figura": 1,
+              "teorema": 1,
+              "ejemplo_resuelto": 4,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_4.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_4_1",
+            "id": "lec-mvar-4-1-parciales",
+            "title": "Derivadas parciales",
+            "counts": {
+              "texto": 1,
+              "intuicion": 2,
+              "definicion": 2,
+              "figura": 1,
+              "ejemplo_resuelto": 3,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_4_2",
+            "id": "lec-mvar-4-2-orden-superior",
+            "title": "Derivadas de orden superior",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 2,
+              "teorema": 1,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_4_3",
+            "id": "lec-mvar-4-3-diferenciabilidad",
+            "title": "Diferenciabilidad",
+            "counts": {
+              "texto": 1,
+              "intuicion": 1,
+              "definicion": 3,
+              "figura": 1,
+              "teorema": 2,
+              "ejemplo_resuelto": 2,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_4_4",
+            "id": "lec-mvar-4-4-cadena",
+            "title": "Regla de la cadena",
+            "counts": {
+              "texto": 1,
+              "teorema": 2,
+              "figura": 1,
+              "ejemplo_resuelto": 3,
+              "definicion": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_5.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_5_1",
+            "id": "lec-mvar-5-1-planos-tangentes",
+            "title": "Planos tangentes y aproximaciones lineales",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "teorema": 1,
+              "figura": 1,
+              "ejemplo_resuelto": 3,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_5_2",
+            "id": "lec-mvar-5-2-direccionales",
+            "title": "Derivadas direccionales",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "teorema": 2,
+              "figura": 1,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_5_3",
+            "id": "lec-mvar-5-3-extremos",
+            "title": "Valores máximos y mínimos",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "teorema": 1,
+              "ejemplo_resuelto": 3,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_5_4",
+            "id": "lec-mvar-5-4-lagrange",
+            "title": "Multiplicadores de Lagrange",
+            "counts": {
+              "texto": 1,
+              "intuicion": 2,
+              "figura": 1,
+              "teorema": 1,
+              "ejemplo_resuelto": 3,
+              "definicion": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_6.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_6_1",
+            "id": "lec-mvar-6-1-dobles",
+            "title": "Integrales dobles",
+            "counts": {
+              "texto": 1,
+              "intuicion": 2,
+              "figura": 1,
+              "definicion": 2,
+              "teorema": 1,
+              "ejemplo_resuelto": 2,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_6_2",
+            "id": "lec-mvar-6-2-regiones-generales",
+            "title": "Regiones generales",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "figura": 1,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_6_3",
+            "id": "lec-mvar-6-3-polares",
+            "title": "Coordenadas polares",
+            "counts": {
+              "texto": 1,
+              "definicion": 1,
+              "teorema": 1,
+              "figura": 1,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_6_4",
+            "id": "lec-mvar-6-4-triples",
+            "title": "Integrales triples",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "teorema": 1,
+              "ejemplo_resuelto": 2,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_6_5",
+            "id": "lec-mvar-6-5-cilindricas",
+            "title": "Coordenadas cilíndricas",
+            "counts": {
+              "texto": 1,
+              "definicion": 1,
+              "teorema": 1,
+              "figura": 1,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_6_6",
+            "id": "lec-mvar-6-6-esfericas",
+            "title": "Coordenadas esféricas",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "teorema": 1,
+              "figura": 1,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_6_7",
+            "id": "lec-mvar-6-7-cambio-variables",
+            "title": "Cambio de variables",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "teorema": 1,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 1,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_7.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_7_1",
+            "id": "lec-mvar-7-1-centros-masa",
+            "title": "Centros de masa",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "intuicion": 1,
+              "ejemplo_resuelto": 2,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_7_2",
+            "id": "lec-mvar-7-2-momentos-inercia",
+            "title": "Momentos de inercia",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "intuicion": 1,
+              "ejemplo_resuelto": 2,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_7_3",
+            "id": "lec-mvar-7-3-area-superficie",
+            "title": "Área de una superficie",
+            "counts": {
+              "texto": 1,
+              "teorema": 1,
+              "figura": 1,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      }
+    ],
+    "totals": {
+      "lessons": 34,
+      "ok": 34,
+      "missing": 0,
+      "warn": 0
+    }
+  },
+  "calculo-vectorial": {
+    "chapters": [
+      {
+        "file": "seed_capitulo_1.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_1_1",
+            "id": "lec-vec-1-1-parametricas",
+            "title": "Ecuaciones paramétricas",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 3,
+              "figura": 1,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_2",
+            "id": "lec-vec-1-2-polares",
+            "title": "Coordenadas polares",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "figura": 1,
+              "ejemplo_resuelto": 2,
+              "teorema": 2,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_3",
+            "id": "lec-vec-1-3-funciones-vectoriales",
+            "title": "Funciones vectoriales",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "intuicion": 1,
+              "figura": 1,
+              "ejemplo_resuelto": 2,
+              "teorema": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_4",
+            "id": "lec-vec-1-4-longitud",
+            "title": "Longitud de curva",
+            "counts": {
+              "texto": 1,
+              "teorema": 2,
+              "ejemplo_resuelto": 3,
+              "definicion": 2,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_5",
+            "id": "lec-vec-1-5-vectores-curvas",
+            "title": "Vectores de curvas",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "figura": 1,
+              "ejemplo_resuelto": 1,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_6",
+            "id": "lec-vec-1-6-curvatura-torsion",
+            "title": "Curvatura y torsión",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "intuicion": 1,
+              "ejemplo_resuelto": 2,
+              "teorema": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_7",
+            "id": "lec-vec-1-7-frenet-serret",
+            "title": "Frenet-Serret",
+            "counts": {
+              "texto": 1,
+              "teorema": 2,
+              "intuicion": 2,
+              "ejemplo_resuelto": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_2.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_2_1",
+            "id": "lec-vec-2-1-campos",
+            "title": "Campos vectoriales y escalares",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "figura": 1,
+              "ejemplo_resuelto": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_2",
+            "id": "lec-vec-2-2-linea-escalar",
+            "title": "Integral de línea en campo escalar",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "intuicion": 1,
+              "ejemplo_resuelto": 2,
+              "teorema": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_3",
+            "id": "lec-vec-2-3-linea-vectorial",
+            "title": "Integral de línea en campo vectorial",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "intuicion": 1,
+              "ejemplo_resuelto": 2,
+              "teorema": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_4",
+            "id": "lec-vec-2-4-tfc-linea",
+            "title": "Teorema fundamental para integrales de línea",
+            "counts": {
+              "texto": 1,
+              "teorema": 2,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_5",
+            "id": "lec-vec-2-5-green",
+            "title": "Teorema de Green",
+            "counts": {
+              "texto": 1,
+              "teorema": 2,
+              "figura": 1,
+              "definicion": 1,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_6",
+            "id": "lec-vec-2-6-green-vectorial",
+            "title": "Teorema vectorial de Green",
+            "counts": {
+              "texto": 1,
+              "teorema": 2,
+              "intuicion": 2,
+              "ejemplo_resuelto": 2,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_3.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_3_1",
+            "id": "lec-vec-3-1-superficies-parametricas",
+            "title": "Superficies paramétricas",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "figura": 1,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_2",
+            "id": "lec-vec-3-2-integral-superficie",
+            "title": "Integral de superficie",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_3",
+            "id": "lec-vec-3-3-orientadas",
+            "title": "Superficies orientadas",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "intuicion": 1,
+              "figura": 1,
+              "ejemplo_resuelto": 1,
+              "verificacion": 1,
+              "ejercicio": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_4",
+            "id": "lec-vec-3-4-flujo",
+            "title": "Integrales de superficie de campos vectoriales",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "intuicion": 1,
+              "ejemplo_resuelto": 2,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_5",
+            "id": "lec-vec-3-5-aplicaciones",
+            "title": "Aplicaciones",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_6",
+            "id": "lec-vec-3-6-stokes",
+            "title": "Teorema de Stokes",
+            "counts": {
+              "texto": 1,
+              "teorema": 2,
+              "intuicion": 1,
+              "ejemplo_resuelto": 2,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_7",
+            "id": "lec-vec-3-7-divergencia",
+            "title": "Teorema de la divergencia",
+            "counts": {
+              "texto": 1,
+              "teorema": 1,
+              "intuicion": 1,
+              "ejemplo_resuelto": 3,
+              "definicion": 1,
+              "verificacion": 1,
+              "ejercicio": 2,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      }
+    ],
+    "totals": {
+      "lessons": 20,
+      "ok": 20,
+      "missing": 0,
+      "warn": 0
+    }
+  },
+  "ecuaciones-diferenciales": {
+    "chapters": [
+      {
+        "file": "seed_capitulo_1.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_1_1",
+            "id": "lec-ed-1-1-definiciones",
+            "title": "Definiciones",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 2,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_2",
+            "id": "lec-ed-1-2-soluciones-existencia-unicidad",
+            "title": "Soluciones, existencia y unicidad",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 3,
+              "figura": 1,
+              "teorema": 1,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_3",
+            "id": "lec-ed-1-3-separables",
+            "title": "EDO separables",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 4,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_4",
+            "id": "lec-ed-1-4-lineales",
+            "title": "EDO lineales",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 2,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_5",
+            "id": "lec-ed-1-5-sustitucion",
+            "title": "Métodos de sustitución",
+            "counts": {
+              "texto": 1,
+              "ejemplo_resuelto": 3,
+              "definicion": 2,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_6",
+            "id": "lec-ed-1-6-exactas",
+            "title": "EDO exactas",
+            "counts": {
+              "texto": 1,
+              "definicion": 1,
+              "ejemplo_resuelto": 2,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_7",
+            "id": "lec-ed-1-7-reductibles",
+            "title": "EDO reductibles",
+            "counts": {
+              "texto": 1,
+              "teorema": 2,
+              "ejemplo_resuelto": 2,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_8",
+            "id": "lec-ed-1-8-modelos-poblacion",
+            "title": "Modelos de población",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "teorema": 1,
+              "ejemplo_resuelto": 2,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_9",
+            "id": "lec-ed-1-9-estabilidad",
+            "title": "Estabilidad",
+            "counts": {
+              "texto": 1,
+              "definicion": 1,
+              "ejemplo_resuelto": 2,
+              "figura": 1,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_2.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_modelos",
+            "id": "lec-ed-2-1-modelos-existencia-unicidad",
+            "title": "Modelos, existencia y unicidad",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_homogenea_general",
+            "id": "lec-ed-2-2-homogenea-solucion-general",
+            "title": "EDO homogénea: solución general",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_coef_constantes",
+            "id": "lec-ed-2-3-coeficientes-constantes",
+            "title": "Coeficientes constantes",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "intuicion": 1,
+              "ejemplo_resuelto": 3,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_orden_n",
+            "id": "lec-ed-2-4-orden-n",
+            "title": "EDO de orden n",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "intuicion": 1,
+              "ejemplo_resuelto": 2,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_coef_const_orden_n",
+            "id": "lec-ed-2-5-coef-const-orden-superior",
+            "title": "Coeficientes constantes de orden superior",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_vibraciones",
+            "id": "lec-ed-2-6-vibraciones-mecanicas",
+            "title": "Vibraciones mecánicas",
+            "counts": {
+              "texto": 1,
+              "definicion": 5,
+              "ejemplo_resuelto": 3,
+              "figura": 2,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_coef_indeterminados",
+            "id": "lec-ed-2-7-coeficientes-indeterminados",
+            "title": "Coeficientes indeterminados",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 5,
+              "figura": 1,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_variacion_parametros",
+            "id": "lec-ed-2-8-variacion-de-parametros",
+            "title": "Variación de parámetros",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_abel",
+            "id": "lec-ed-2-9-formula-de-abel",
+            "title": "Fórmula de Abel",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_3.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_sistemas_lineales",
+            "id": "lec-ed-3-1-sistemas-lineales",
+            "title": "Sistemas lineales de primer orden",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_soluciones_sl",
+            "id": "lec-ed-3-2-soluciones-sl",
+            "title": "Soluciones de un sistema lineal",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_valores_propios",
+            "id": "lec-ed-3-3-valores-propios",
+            "title": "Método de valores propios",
+            "counts": {
+              "texto": 1,
+              "definicion": 5,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_matriz_fundamental",
+            "id": "lec-ed-3-4-matriz-fundamental",
+            "title": "Matriz fundamental",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_no_homogeneos",
+            "id": "lec-ed-3-5-no-homogeneos",
+            "title": "Sistemas no homogéneos",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_estabilidad",
+            "id": "lec-ed-3-6-estabilidad",
+            "title": "Estabilidad",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "figura": 2,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_4.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_definicion_inversa",
+            "id": "lec-ed-4-1-transformada-inversa",
+            "title": "Transformada de Laplace e inversa",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 5,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_existencia_unicidad",
+            "id": "lec-ed-4-2-existencia-unicidad",
+            "title": "Existencia y unicidad",
+            "counts": {
+              "texto": 1,
+              "definicion": 5,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_edos_con_laplace",
+            "id": "lec-ed-4-3-edos-con-laplace",
+            "title": "Resolución de EDOs con Laplace",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_traslaciones_convolucion",
+            "id": "lec-ed-4-4-traslaciones-convolucion",
+            "title": "Traslaciones y convolución",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "ejemplo_resuelto": 7,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_t_y_periodicas",
+            "id": "lec-ed-4-5-derivacion-transformadas-periodicas",
+            "title": "Multiplicación por t y funciones periódicas",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 4,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_sistemas_y_var",
+            "id": "lec-ed-4-6-sistemas-y-coef-variables",
+            "title": "Sistemas y ecuaciones con coeficientes variables",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      }
+    ],
+    "totals": {
+      "lessons": 30,
+      "ok": 30,
+      "missing": 0,
+      "warn": 0
+    }
+  },
+  "intro-al-algebra": {
+    "chapters": [
+      {
+        "file": "seed_capitulo_1.py",
+        "chapter_id": "ch-ia-lenguaje",
+        "chapter_title": "El Lenguaje Matemático",
+        "lessons": [
+          {
+            "fn": "lesson_1_1",
+            "id": "lec-ia-1-1-conectivos",
+            "title": "Conectivos Lógicos",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 2,
+              "figura": 1,
+              "intuicion": 1,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_2",
+            "id": "lec-ia-1-2-leyes-logica",
+            "title": "Leyes de la Lógica",
+            "counts": {
+              "texto": 1,
+              "definicion": 1,
+              "teorema": 2,
+              "intuicion": 2,
+              "ejemplo_resuelto": 2,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_3",
+            "id": "lec-ia-1-3-inferencia",
+            "title": "Reglas de Inferencia",
+            "counts": {
+              "texto": 1,
+              "definicion": 1,
+              "teorema": 4,
+              "intuicion": 2,
+              "ejemplo_resuelto": 1,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_4",
+            "id": "lec-ia-1-4-demostracion",
+            "title": "Técnicas de Demostración",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "teorema": 1,
+              "ejemplo_resuelto": 4,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_5",
+            "id": "lec-ia-1-5-conjuntos",
+            "title": "Conjuntos y Operaciones",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "ejemplo_resuelto": 2,
+              "figura": 1,
+              "teorema": 1,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_6",
+            "id": "lec-ia-1-6-cuantificadores",
+            "title": "Cuantificadores",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "intuicion": 1,
+              "ejemplo_resuelto": 3,
+              "teorema": 2,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_2.py",
+        "chapter_id": "ch-ia-naturales",
+        "chapter_title": "Números Naturales",
+        "lessons": [
+          {
+            "fn": "lesson_2_1",
+            "id": "lec-ia-2-1-induccion",
+            "title": "Inducción Matemática",
+            "counts": {
+              "texto": 1,
+              "teorema": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "definicion": 1,
+              "ejemplo_resuelto": 3,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_2",
+            "id": "lec-ia-2-2-sucesiones",
+            "title": "Sucesiones",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_3",
+            "id": "lec-ia-2-3-sumas-finitas",
+            "title": "Sumas Finitas",
+            "counts": {
+              "texto": 1,
+              "teorema": 3,
+              "ejemplo_resuelto": 4,
+              "definicion": 1,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_4",
+            "id": "lec-ia-2-4-binomio",
+            "title": "Teorema del Binomio",
+            "counts": {
+              "texto": 2,
+              "definicion": 1,
+              "teorema": 3,
+              "figura": 1,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_3.py",
+        "chapter_id": "ch-ia-trigonometria",
+        "chapter_title": "Trigonometría",
+        "lessons": [
+          {
+            "fn": "lesson_3_1",
+            "id": "lec-ia-3-1-razones",
+            "title": "Razones Trigonométricas",
+            "counts": {
+              "texto": 1,
+              "definicion": 1,
+              "figura": 1,
+              "teorema": 2,
+              "ejemplo_resuelto": 2,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_2",
+            "id": "lec-ia-3-2-funciones",
+            "title": "Funciones Trigonométricas",
+            "counts": {
+              "texto": 2,
+              "definicion": 4,
+              "figura": 2,
+              "teorema": 1,
+              "ejemplo_resuelto": 2,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_3",
+            "id": "lec-ia-3-3-identidades",
+            "title": "Identidades Trigonométricas",
+            "counts": {
+              "texto": 1,
+              "teorema": 5,
+              "ejemplo_resuelto": 3,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_4",
+            "id": "lec-ia-3-4-inversas",
+            "title": "Funciones Trigonométricas Inversas",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "teorema": 1,
+              "ejemplo_resuelto": 4,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_5",
+            "id": "lec-ia-3-5-ecuaciones",
+            "title": "Ecuaciones Trigonométricas",
+            "counts": {
+              "texto": 1,
+              "teorema": 1,
+              "intuicion": 1,
+              "ejemplo_resuelto": 3,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_6",
+            "id": "lec-ia-3-6-seno-coseno",
+            "title": "Teoremas del Seno y del Coseno",
+            "counts": {
+              "texto": 1,
+              "teorema": 3,
+              "figura": 1,
+              "definicion": 1,
+              "ejemplo_resuelto": 2,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_4.py",
+        "chapter_id": "ch-ia-polinomios",
+        "chapter_title": "Polinomios",
+        "lessons": [
+          {
+            "fn": "lesson_4_1",
+            "id": "lec-ia-4-1-complejos",
+            "title": "Números Complejos",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 3,
+              "figura": 1,
+              "teorema": 1,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_4_2",
+            "id": "lec-ia-4-2-forma-polar",
+            "title": "Forma Polar",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 3,
+              "teorema": 2,
+              "intuicion": 1,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_4_3",
+            "id": "lec-ia-4-3-raices-nesimas",
+            "title": "Raíces $n$-ésimas",
+            "counts": {
+              "texto": 1,
+              "definicion": 1,
+              "teorema": 3,
+              "figura": 1,
+              "ejemplo_resuelto": 3,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_4_4",
+            "id": "lec-ia-4-4-graficas",
+            "title": "Gráficas de Polinomios",
+            "counts": {
+              "texto": 1,
+              "teorema": 2,
+              "definicion": 1,
+              "ejemplo_resuelto": 2,
+              "figura": 1,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_4_5",
+            "id": "lec-ia-4-5-raices-racionales",
+            "title": "Raíces Racionales y Complejas",
+            "counts": {
+              "texto": 1,
+              "definicion": 1,
+              "teorema": 2,
+              "ejemplo_resuelto": 3,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_4_6",
+            "id": "lec-ia-4-6-tfa",
+            "title": "Teorema Fundamental del Álgebra",
+            "counts": {
+              "texto": 1,
+              "teorema": 3,
+              "intuicion": 1,
+              "ejemplo_resuelto": 3,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_5.py",
+        "chapter_id": "ch-ia-geometria-analitica",
+        "chapter_title": "Geometría Analítica",
+        "lessons": [
+          {
+            "fn": "lesson_5_1",
+            "id": "lec-ia-5-1-rectas",
+            "title": "Rectas y Distancia",
+            "counts": {
+              "texto": 1,
+              "definicion": 5,
+              "figura": 3,
+              "ejemplo_resuelto": 9,
+              "teorema": 5,
+              "ejercicio": 4,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_5_2",
+            "id": "lec-ia-5-2-circunferencias",
+            "title": "Circunferencias",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "figura": 1,
+              "teorema": 4,
+              "ejemplo_resuelto": 6,
+              "ejercicio": 4,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_5_3",
+            "id": "lec-ia-5-3-parabolas",
+            "title": "Parábolas",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "figura": 1,
+              "teorema": 3,
+              "ejemplo_resuelto": 8,
+              "ejercicio": 4,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_5_4",
+            "id": "lec-ia-5-4-elipses",
+            "title": "Elipses",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "figura": 1,
+              "teorema": 3,
+              "ejemplo_resuelto": 7,
+              "ejercicio": 4,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_5_5",
+            "id": "lec-ia-5-5-hiperbolas",
+            "title": "Hipérbolas",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "figura": 1,
+              "teorema": 4,
+              "ejemplo_resuelto": 4,
+              "ejercicio": 4,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_5_6",
+            "id": "lec-ia-5-6-rotacion",
+            "title": "Rotación de Ejes",
+            "counts": {
+              "texto": 1,
+              "definicion": 1,
+              "teorema": 4,
+              "figura": 1,
+              "ejemplo_resuelto": 3,
+              "ejercicio": 4,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_5_7",
+            "id": "lec-ia-5-7-rotaciones-traslaciones",
+            "title": "Rotaciones y Traslaciones",
+            "counts": {
+              "texto": 2,
+              "definicion": 1,
+              "teorema": 4,
+              "ejemplo_resuelto": 3,
+              "ejercicio": 4,
+              "verificacion": 1,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_5_8",
+            "id": "lec-ia-5-8-identificacion",
+            "title": "Identificación de una Cónica",
+            "counts": {
+              "texto": 2,
+              "definicion": 1,
+              "teorema": 4,
+              "ejemplo_resuelto": 3,
+              "ejercicio": 4,
+              "verificacion": 1,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      }
+    ],
+    "totals": {
+      "lessons": 30,
+      "ok": 30,
+      "missing": 0,
+      "warn": 0
+    }
+  },
+  "intro-calculo": {
+    "chapters": [
+      {
+        "file": "seed_capitulo_1.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_1_1",
+            "id": "lec-ic-1-1-algoritmo-division",
+            "title": "Algoritmo de la división",
+            "counts": {
+              "texto": 1,
+              "definicion": 1,
+              "ejemplo_resuelto": 7,
+              "figura": 2,
+              "teorema": 2,
+              "intuicion": 1,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_1_2",
+            "id": "lec-ic-1-2-factor-resto",
+            "title": "Teorema del factor y resto",
+            "counts": {
+              "texto": 1,
+              "intuicion": 1,
+              "teorema": 2,
+              "figura": 2,
+              "ejemplo_resuelto": 8,
+              "definicion": 3,
+              "ejercicio": 2,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_2.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_2_1",
+            "id": "lec-ic-2-1-axiomas-orden",
+            "title": "Axiomas de orden",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "teorema": 4,
+              "ejemplo_resuelto": 5,
+              "ejercicio": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_2",
+            "id": "lec-ic-2-2-valor-absoluto",
+            "title": "Valor absoluto",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "teorema": 1,
+              "ejemplo_resuelto": 7,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_3",
+            "id": "lec-ic-2-3-intervalos-inecuaciones",
+            "title": "Intervalos e inecuaciones",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "figura": 2,
+              "teorema": 2,
+              "intuicion": 1,
+              "ejemplo_resuelto": 2,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_4",
+            "id": "lec-ic-2-4-inecuaciones-racionales",
+            "title": "Inecuaciones racionales",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "intuicion": 1,
+              "figura": 1,
+              "ejemplo_resuelto": 3,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_5",
+            "id": "lec-ic-2-5-inecuaciones-valor-absoluto",
+            "title": "Inecuaciones con valor absoluto",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 4,
+              "intuicion": 1,
+              "ejercicio": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_2_6",
+            "id": "lec-ic-2-6-inecuaciones-raices",
+            "title": "Inecuaciones con raíces",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "intuicion": 1,
+              "figura": 1,
+              "ejemplo_resuelto": 2,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_3.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_3_1",
+            "id": "lec-ic-3-1-funciones-reales",
+            "title": "Funciones reales",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "ejemplo_resuelto": 3,
+              "ejercicio": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_2",
+            "id": "lec-ic-3-2-graficas-funciones",
+            "title": "Gráficas de funciones",
+            "counts": {
+              "texto": 1,
+              "definicion": 5,
+              "teorema": 2,
+              "figura": 1,
+              "ejemplo_resuelto": 2,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_3",
+            "id": "lec-ic-3-3-transformaciones",
+            "title": "Transformaciones de funciones",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "teorema": 1,
+              "intuicion": 1,
+              "figura": 1,
+              "ejemplo_resuelto": 1,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_4",
+            "id": "lec-ic-3-4-funciones-racionales",
+            "title": "Funciones racionales",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "teorema": 1,
+              "ejemplo_resuelto": 3,
+              "ejercicio": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_5",
+            "id": "lec-ic-3-5-funciones-biyectivas",
+            "title": "Funciones biyectivas",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "teorema": 1,
+              "figura": 1,
+              "ejemplo_resuelto": 3,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_6",
+            "id": "lec-ic-3-6-algebra-funciones",
+            "title": "Álgebra de funciones",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 3,
+              "teorema": 1,
+              "intuicion": 1,
+              "ejercicio": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_3_7",
+            "id": "lec-ic-3-7-funcion-inversa",
+            "title": "Función inversa",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "teorema": 2,
+              "ejemplo_resuelto": 4,
+              "figura": 1,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_4.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_4_1",
+            "id": "lec-ic-4-1-limites-convergencia",
+            "title": "Límites y convergencia",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "figura": 1,
+              "teorema": 3,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_4_2",
+            "id": "lec-ic-4-2-operaciones-limites",
+            "title": "Operaciones con límites",
+            "counts": {
+              "texto": 1,
+              "teorema": 3,
+              "ejemplo_resuelto": 4,
+              "definicion": 1,
+              "ejercicio": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_4_3",
+            "id": "lec-ic-4-3-teorema-sandwich",
+            "title": "Teorema del Sandwich",
+            "counts": {
+              "texto": 1,
+              "teorema": 4,
+              "intuicion": 1,
+              "figura": 1,
+              "ejemplo_resuelto": 3,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_4_4",
+            "id": "lec-ic-4-4-monotonas-acotadas",
+            "title": "Sucesiones monótonas y acotadas",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "teorema": 1,
+              "figura": 1,
+              "ejemplo_resuelto": 2,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_4_5",
+            "id": "lec-ic-4-5-limites-relevantes",
+            "title": "Límites relevantes",
+            "counts": {
+              "texto": 1,
+              "teorema": 2,
+              "definicion": 1,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "ejercicio": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_4_6",
+            "id": "lec-ic-4-6-limites-infinitos",
+            "title": "Límites infinitos",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "teorema": 3,
+              "intuicion": 1,
+              "ejemplo_resuelto": 4,
+              "ejercicio": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_5.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_5_1",
+            "id": "lec-ic-5-1-funcion-exponencial",
+            "title": "Función exponencial",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "teorema": 4,
+              "intuicion": 2,
+              "figura": 1,
+              "ejemplo_resuelto": 2,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_5_2",
+            "id": "lec-ic-5-2-funcion-logaritmica",
+            "title": "Función logarítmica",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "teorema": 3,
+              "figura": 1,
+              "ejemplo_resuelto": 4,
+              "intuicion": 1,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_5_3",
+            "id": "lec-ic-5-3-ecuaciones-exp-log",
+            "title": "Ecuaciones exponenciales y logarítmicas",
+            "counts": {
+              "texto": 1,
+              "figura": 1,
+              "definicion": 5,
+              "ejemplo_resuelto": 6,
+              "intuicion": 1,
+              "ejercicio": 1,
+              "verificacion": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      }
+    ],
+    "totals": {
+      "lessons": 24,
+      "ok": 24,
+      "missing": 0,
+      "warn": 0
+    }
+  },
+  "precalculo": {
+    "chapters": [
+      {
+        "file": "seed_capitulo_1.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_numeros_reales",
+            "id": "lec-prec-1-1-numeros-reales",
+            "title": "Números reales",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 1,
+              "figura": 1,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_conjuntos_intervalos",
+            "id": "lec-prec-1-2-conjuntos-intervalos",
+            "title": "Conjuntos e intervalos",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 2,
+              "figura": 1,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_potencias_raices",
+            "id": "lec-prec-1-3-potencias-raices",
+            "title": "Potencias y raíces",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_expresiones_algebraicas",
+            "id": "lec-prec-1-4-expresiones-algebraicas",
+            "title": "Expresiones algebraicas",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_factorizacion",
+            "id": "lec-prec-1-5-factorizacion",
+            "title": "Factorización",
+            "counts": {
+              "texto": 1,
+              "definicion": 5,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_expresiones_racionales",
+            "id": "lec-prec-1-6-expresiones-racionales",
+            "title": "Expresiones racionales",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "figura": 1,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_ecuaciones",
+            "id": "lec-prec-1-7-ecuaciones",
+            "title": "Ecuaciones",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_inecuaciones",
+            "id": "lec-prec-1-8-inecuaciones",
+            "title": "Inecuaciones",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 4,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_2.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_definicion_dominio_rango",
+            "id": "lec-prec-2-1-definicion-dominio-rango",
+            "title": "Definición, dominio y rango",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 1,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_graficas",
+            "id": "lec-prec-2-2-graficas",
+            "title": "Gráficas",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 2,
+              "figura": 1,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_rapidez_de_cambio",
+            "id": "lec-prec-2-3-rapidez-de-cambio",
+            "title": "Rapidez de cambio",
+            "counts": {
+              "texto": 1,
+              "definicion": 1,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_transformaciones",
+            "id": "lec-prec-2-4-transformaciones",
+            "title": "Transformaciones de funciones",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_algebra_funciones",
+            "id": "lec-prec-2-5-algebra-de-funciones",
+            "title": "Álgebra de funciones",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_funciones_inversas",
+            "id": "lec-prec-2-6-funciones-inversas",
+            "title": "Funciones inversas",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_3.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_funcion_cuadratica",
+            "id": "lec-prec-3-1-funcion-cuadratica",
+            "title": "Función cuadrática",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_funciones_polinomiales",
+            "id": "lec-prec-3-2-funciones-polinomiales",
+            "title": "Funciones polinomiales",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "ejemplo_resuelto": 1,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_division_polinomios",
+            "id": "lec-prec-3-3-division-polinomios",
+            "title": "División de polinomios",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_funciones_racionales",
+            "id": "lec-prec-3-4-funciones-racionales",
+            "title": "Funciones racionales",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_4.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_funciones_exponenciales",
+            "id": "lec-prec-4-1-funciones-exponenciales",
+            "title": "Funciones exponenciales",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_funciones_logaritmicas",
+            "id": "lec-prec-4-2-funciones-logaritmicas",
+            "title": "Funciones logarítmicas",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_ecuaciones_exp_log",
+            "id": "lec-prec-4-3-ecuaciones-exp-log",
+            "title": "Ecuaciones exponenciales y logarítmicas",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 5,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_5.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_angulos_medidas",
+            "id": "lec-prec-5-1-angulos-medidas",
+            "title": "Ángulos y medidas",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_triangulos",
+            "id": "lec-prec-5-2-triangulos",
+            "title": "Triángulos",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 2,
+              "figura": 1,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_circulo_unitario",
+            "id": "lec-prec-5-3-circulo-unitario",
+            "title": "Círculo unitario",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "ejemplo_resuelto": 2,
+              "figura": 1,
+              "intuicion": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_funciones_trigonometricas",
+            "id": "lec-prec-5-4-funciones-trigonometricas",
+            "title": "Funciones trigonométricas",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_graficas_trigonometricas",
+            "id": "lec-prec-5-5-graficas-trigonometricas",
+            "title": "Gráficas trigonométricas",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_funciones_inversas",
+            "id": "lec-prec-5-6-funciones-trigonometricas-inversas",
+            "title": "Funciones trigonométricas inversas",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_leyes_trigonometricas",
+            "id": "lec-prec-5-7-leyes-trigonometricas",
+            "title": "Leyes trigonométricas",
+            "counts": {
+              "texto": 1,
+              "definicion": 5,
+              "ejemplo_resuelto": 4,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_6.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_identidades",
+            "id": "lec-prec-6-1-identidades",
+            "title": "Identidades trigonométricas",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_formulas",
+            "id": "lec-prec-6-2-formulas",
+            "title": "Fórmulas trigonométricas",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_ecuaciones_trig",
+            "id": "lec-prec-6-3-ecuaciones-trigonometricas",
+            "title": "Ecuaciones trigonométricas",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 5,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_coordenadas_polares",
+            "id": "lec-prec-6-4-coordenadas-polares",
+            "title": "Coordenadas polares",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_curvas_polares",
+            "id": "lec-prec-6-5-curvas-polares",
+            "title": "Curvas en coordenadas polares",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_7.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_definicion_complejos",
+            "id": "lec-prec-7-1-definicion-complejos",
+            "title": "Definición y forma estándar",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_operaciones_complejos",
+            "id": "lec-prec-7-2-operaciones-complejos",
+            "title": "Operaciones con complejos",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "ejemplo_resuelto": 2,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_forma_polar",
+            "id": "lec-prec-7-3-forma-polar-exponencial",
+            "title": "Forma polar y exponencial",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_moivre_raices",
+            "id": "lec-prec-7-4-moivre-raices",
+            "title": "Teorema de De Moivre y raíces",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      },
+      {
+        "file": "seed_capitulo_8.py",
+        "chapter_id": null,
+        "chapter_title": null,
+        "lessons": [
+          {
+            "fn": "lesson_sucesiones",
+            "id": "lec-prec-8-1-sucesiones",
+            "title": "Sucesiones",
+            "counts": {
+              "texto": 1,
+              "definicion": 3,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_tipos_sucesiones",
+            "id": "lec-prec-8-2-tipos-sucesiones",
+            "title": "Tipos de sucesiones",
+            "counts": {
+              "texto": 1,
+              "definicion": 2,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_series",
+            "id": "lec-prec-8-3-series",
+            "title": "Series",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "ejemplo_resuelto": 4,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_induccion",
+            "id": "lec-prec-8-4-induccion",
+            "title": "Inducción matemática",
+            "counts": {
+              "texto": 1,
+              "definicion": 1,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          },
+          {
+            "fn": "lesson_binomio",
+            "id": "lec-prec-8-5-binomio",
+            "title": "Teorema del binomio",
+            "counts": {
+              "texto": 1,
+              "definicion": 4,
+              "ejemplo_resuelto": 3,
+              "intuicion": 1,
+              "figura": 1,
+              "verificacion": 1,
+              "ejercicio": 3,
+              "errores_comunes": 1,
+              "resumen": 1
+            },
+            "missing_buckets": [],
+            "quality_issues": []
+          }
+        ]
+      }
+    ],
+    "totals": {
+      "lessons": 42,
+      "ok": 42,
+      "missing": 0,
+      "warn": 0
+    }
+  }
+}

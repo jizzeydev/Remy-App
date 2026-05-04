@@ -223,6 +223,41 @@ def lesson_4_1():
             ),
         ),
 
+        b("verificacion",
+          intro_md="Verifica la definición de límite y convergencia:",
+          preguntas=[
+              {"enunciado_md": "En la definición $\\forall \\varepsilon > 0,\\ \\exists N \\in \\mathbb{N},\\ \\forall n \\geq N: |a_n - L| < \\varepsilon$, ¿de qué depende $N$?",
+               "opciones_md": [
+                   "Solo de $L$",
+                   "Solo de la sucesión",
+                   "De $\\varepsilon$ (cuanto menor $\\varepsilon$, mayor $N$)",
+                   "Es independiente de todo",
+               ],
+               "correcta": "C",
+               "pista_md": "El orden de los cuantificadores importa.",
+               "explicacion_md": "$N$ depende de $\\varepsilon$ porque cuanto más estricta la cota, más términos se necesitan para 'caer' dentro."},
+              {"enunciado_md": "¿La sucesión $a_n = (-1)^n$ es convergente?",
+               "opciones_md": [
+                   "Sí, converge a $0$",
+                   "Sí, converge a $1$",
+                   "No, oscila entre $1$ y $-1$",
+                   "Sí, converge a $\\pm 1$",
+               ],
+               "correcta": "C",
+               "pista_md": "Tiene dos puntos de acumulación distintos.",
+               "explicacion_md": "Es acotada (entre $-1$ y $1$) pero NO convergente: $|a_n - L| < \\varepsilon$ no puede cumplirse para ningún $L$ con $\\varepsilon < 1$."},
+              {"enunciado_md": "¿Qué relación hay entre 'sucesión convergente' y 'sucesión acotada'?",
+               "opciones_md": [
+                   "Convergente $\\Rightarrow$ acotada, pero no al revés",
+                   "Acotada $\\Rightarrow$ convergente, pero no al revés",
+                   "Son equivalentes",
+                   "No hay relación",
+               ],
+               "correcta": "A",
+               "pista_md": "Pensa en $(-1)^n$: acotada pero no converge.",
+               "explicacion_md": "Toda sucesión convergente es acotada (teorema). El recíproco es FALSO: $(-1)^n$ es acotada y no converge."},
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Confundir el orden de cuantificadores:** la definición es $\\forall \\varepsilon (\\exists N (\\ldots))$, NO $\\exists N (\\forall \\varepsilon (\\ldots))$. El $N$ depende de $\\varepsilon$.",
@@ -402,6 +437,40 @@ def lesson_4_2():
                 "Cuando $n \\to \\infty$, el denominador crece sin cota, por tanto: $\\boxed{\\lim = 0}$."
             ),
         ),
+
+        fig(
+            "Diagrama-resumen de las reglas de álgebra de límites de sucesiones. Cuatro paneles en "
+            "cuadrícula 2x2 sobre fondo blanco. Panel 1: 'Suma' con la fórmula 'lim(a_n + b_n) = "
+            "L + M' destacada en teal #06b6d4. Panel 2: 'Producto' con 'lim(a_n * b_n) = L * M'. "
+            "Panel 3: 'Cociente' con 'lim(a_n / b_n) = L / M' y aviso ámbar #f59e0b 'requiere M != 0'. "
+            "Panel 4: indeterminaciones, listando 'inf - inf', '0 * inf', 'inf/inf', '0/0' en cuadro "
+            "ámbar 'NO aplicar reglas: indeterminadas'. Tipografía clara, jerarquía visual. " + STYLE
+        ),
+
+        b("verificacion",
+          intro_md="Verifica las operaciones con límites:",
+          preguntas=[
+              {"enunciado_md": "Si $\\lim a_n = 3$ y $\\lim b_n = 0$, ¿qué se puede decir de $\\lim (a_n / b_n)$?",
+               "opciones_md": [
+                   "Es $3$",
+                   "Es $0$",
+                   "El álgebra de límites no aplica directamente — depende del signo y comportamiento de $b_n$",
+                   "Siempre $+\\infty$",
+               ],
+               "correcta": "C",
+               "pista_md": "El cociente requiere denominador con límite distinto de $0$.",
+               "explicacion_md": "El álgebra de límites exige $\\lim b_n \\neq 0$ para el cociente. Si $b_n \\to 0$ desde arriba, podría dar $+\\infty$; desde abajo, $-\\infty$; si oscila, indefinido."},
+              {"enunciado_md": "Calcula $\\lim_{n \\to \\infty} \\dfrac{3n^2 + 5}{2n^2 - n}$.",
+               "opciones_md": ["$0$", "$\\tfrac{3}{2}$", "$\\infty$", "$1$"],
+               "correcta": "B",
+               "pista_md": "Dividí numerador y denominador por $n^2$.",
+               "explicacion_md": "$\\dfrac{3 + 5/n^2}{2 - 1/n} \\to \\dfrac{3 + 0}{2 - 0} = \\dfrac{3}{2}$. Cuando los grados son iguales, el límite es el cociente de coeficientes líderes."},
+              {"enunciado_md": "¿Cuál de las siguientes formas es indeterminada?",
+               "opciones_md": ["$5 + \\infty$", "$\\infty - \\infty$", "$0 \\cdot 5$", "$1/\\infty$"],
+               "correcta": "B",
+               "pista_md": "Indeterminado = puede dar cualquier valor según las sucesiones.",
+               "explicacion_md": "$\\infty - \\infty$ es indeterminado: $(n + 1) - n \\to 1$, pero $(2n) - n \\to \\infty$. Hay que reescribir antes de evaluar."},
+          ]),
 
         b("errores_comunes",
           items_md=[
@@ -586,6 +655,36 @@ def lesson_4_3():
                 "Ambas cotas $\\to 0$, por Sandwich $\\boxed{\\lim = 0}$."
             ),
         ),
+
+        b("verificacion",
+          intro_md="Verifica el Teorema del Sandwich:",
+          preguntas=[
+              {"enunciado_md": "¿Cuáles son las hipótesis del Teorema del Sandwich?",
+               "opciones_md": [
+                   "$a_n \\leq c_n$ y $\\lim a_n = \\lim c_n$",
+                   "$a_n \\leq b_n \\leq c_n$ a partir de algún $n_0$, y $\\lim a_n = \\lim c_n = L$",
+                   "$a_n \\leq b_n \\leq c_n$ para todo $n$, sin requerir límites",
+                   "Solo $\\lim b_n$ existe",
+               ],
+               "correcta": "B",
+               "pista_md": "Necesitas DOS cotas (arriba y abajo) Y que tengan el MISMO límite.",
+               "explicacion_md": "El Sandwich requiere acotar $b_n$ entre dos sucesiones con el mismo límite $L$. La conclusión es $\\lim b_n = L$."},
+              {"enunciado_md": "¿Cuál es $\\lim_{n \\to \\infty} \\dfrac{\\sin n}{n}$?",
+               "opciones_md": ["$0$", "$1$", "Oscila", "No existe"],
+               "correcta": "A",
+               "pista_md": "Acotá usando $-1 \\leq \\sin n \\leq 1$ y dividí por $n$.",
+               "explicacion_md": "$-\\tfrac{1}{n} \\leq \\tfrac{\\sin n}{n} \\leq \\tfrac{1}{n}$. Como ambas cotas tienden a $0$, por Sandwich $\\lim \\tfrac{\\sin n}{n} = 0$."},
+              {"enunciado_md": "Si $a_n \\to 2$ y $c_n \\to 3$ con $a_n \\leq b_n \\leq c_n$, ¿qué concluye el Sandwich?",
+               "opciones_md": [
+                   "$b_n \\to 2.5$",
+                   "$b_n \\to 2$",
+                   "$b_n \\to 3$",
+                   "El Sandwich NO aplica (límites distintos)",
+               ],
+               "correcta": "D",
+               "pista_md": "El Sandwich exige límites iguales en las cotas.",
+               "explicacion_md": "Si $\\lim a_n \\neq \\lim c_n$, el Sandwich no concluye nada sobre $b_n$. Solo se sabe que está entre ambos en el límite."},
+          ]),
 
         b("errores_comunes",
           items_md=[
@@ -774,6 +873,41 @@ def lesson_4_4():
             ),
         ),
 
+        b("verificacion",
+          intro_md="Verifica el teorema de sucesiones monótonas y acotadas:",
+          preguntas=[
+              {"enunciado_md": "¿Cuáles son las hipótesis del teorema 'toda sucesión monótona y acotada converge'?",
+               "opciones_md": [
+                   "Solo monotonía",
+                   "Solo acotación",
+                   "Monotonía Y acotación (en el sentido apropiado)",
+                   "Que sea positiva",
+               ],
+               "correcta": "C",
+               "pista_md": "Una sin la otra no garantiza convergencia.",
+               "explicacion_md": "Hay que tener AMBAS: monótona (creciente o decreciente) y acotada (sup. o inf., respectivamente). Cada una sola NO basta."},
+              {"enunciado_md": "$a_n = n$ es monótona pero NO acotada. ¿Converge?",
+               "opciones_md": [
+                   "Sí, converge a $\\infty$",
+                   "No, diverge a $+\\infty$",
+                   "Sí, converge a $1$",
+                   "No, oscila",
+               ],
+               "correcta": "B",
+               "pista_md": "Convergencia exige límite finito.",
+               "explicacion_md": "Crece sin cota, así que diverge a $+\\infty$. La monotonía sin acotación no implica convergencia (la convergencia exige límite real finito)."},
+              {"enunciado_md": "Si $a_n$ es decreciente y acotada inferiormente por $0$, ¿qué se concluye?",
+               "opciones_md": [
+                   "$a_n \\to 0$",
+                   "$a_n$ converge a algún $L \\geq 0$",
+                   "$a_n$ diverge",
+                   "$a_n$ es constante",
+               ],
+               "correcta": "B",
+               "pista_md": "El teorema asegura existencia del límite, pero no su valor.",
+               "explicacion_md": "El teorema garantiza convergencia a un $L \\geq 0$ (el ínfimo del recorrido), pero $L$ no necesariamente es $0$."},
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Aplicar el teorema sin verificar ambas hipótesis:** monotonía Y acotación.",
@@ -941,6 +1075,35 @@ def lesson_4_5():
                 "Aunque el polinomio tiene grado $100$, el exponencial $2^n$ crece más rápido eventualmente."
             ),
         ),
+
+        fig(
+            "Diagrama tipo 'jerarquía de crecimientos' mostrando, en una escala vertical de izquierda a "
+            "derecha, las velocidades asintóticas: log(n) (más lento, base) en gris, n^k (polinómico) "
+            "en teal #06b6d4, a^n con a > 1 (exponencial) en ámbar #f59e0b, n! (factorial) en ámbar más "
+            "saturado, n^n (más rápido) en rojo. Cada caja conecta a la siguiente con flecha rotulada "
+            "'<<' indicando que cada función crece estrictamente más rápido. Pequeño grafico al lado "
+            "comparando n^100 vs 2^n: para n grande la exponencial domina. Fondo blanco. " + STYLE
+        ),
+
+        b("verificacion",
+          intro_md="Verifica los límites relevantes:",
+          preguntas=[
+              {"enunciado_md": "¿Cuál es $\\lim_{n \\to \\infty} \\dfrac{n^{100}}{2^n}$?",
+               "opciones_md": ["$+\\infty$", "$0$", "$1$", "$100$"],
+               "correcta": "B",
+               "pista_md": "Las exponenciales con base $>1$ vencen a TODA potencia de $n$.",
+               "explicacion_md": "Asintóticamente $2^n$ supera a cualquier $n^k$. Para $n$ pequeño $n^{100}$ es enorme, pero el exponencial finalmente domina y el cociente tiende a $0$."},
+              {"enunciado_md": "¿Cuál es $\\lim_{n \\to \\infty} \\sqrt[n]{n}$?",
+               "opciones_md": ["$0$", "$1$", "$\\infty$", "$e$"],
+               "correcta": "B",
+               "pista_md": "Es un límite clásico: la raíz $n$-ésima de $n$.",
+               "explicacion_md": "$\\sqrt[n]{n} \\to 1$. Aunque $n \\to \\infty$, la raíz $n$-ésima 'aplana' el crecimiento y el límite es $1$."},
+              {"enunciado_md": "Si $|a| < 1$, ¿cuál es $\\lim_{n \\to \\infty} a^n$?",
+               "opciones_md": ["$1$", "$0$", "$\\infty$", "Oscila"],
+               "correcta": "B",
+               "pista_md": "Multiplicar repetidamente por algo con valor absoluto menor a $1$ tiende a $0$.",
+               "explicacion_md": "$|a^n| = |a|^n \\to 0$ si $|a| < 1$. Por ejemplo $(1/2)^n \\to 0$, también $(-0.5)^n \\to 0$ alternando signo."},
+          ]),
 
         b("errores_comunes",
           items_md=[
@@ -1152,6 +1315,50 @@ def lesson_4_6():
                 "(c) $(-1)^n n$: pares $\\to +\\infty$, impares $\\to -\\infty$. **No tiene límite** (ni finito ni infinito)."
             ),
         ),
+
+        fig(
+            "Diagrama mostrando los tipos de divergencia y formas indeterminadas. Eje horizontal con n "
+            "creciente. Tres curvas: (1) a_n = n en teal #06b6d4 ascendente, etiquetada 'a_n -> +infinito'; "
+            "(2) a_n = -n en gris descendente, etiquetada 'a_n -> -infinito'; (3) a_n = (-1)^n * n "
+            "oscilante con amplitud creciente en ámbar #f59e0b, etiquetada 'NO acotada y NO divergente "
+            "a +inf ni -inf'. A la derecha caja con formas indeterminadas listadas: 'inf - inf', "
+            "'0 * inf', 'inf/inf', '1^inf'. Texto: 'reescribir antes de evaluar'. Fondo blanco. " + STYLE
+        ),
+
+        b("verificacion",
+          intro_md="Verifica el manejo de límites infinitos:",
+          preguntas=[
+              {"enunciado_md": "Si $a_n \\to +\\infty$ y $b_n \\to -\\infty$, ¿cuánto vale $\\lim (a_n + b_n)$?",
+               "opciones_md": [
+                   "$0$ (se compensan)",
+                   "Es indeterminado: depende de las velocidades",
+                   "$+\\infty$",
+                   "$-\\infty$",
+               ],
+               "correcta": "B",
+               "pista_md": "$\\infty - \\infty$ es una forma indeterminada.",
+               "explicacion_md": "$\\infty - \\infty$ no es $0$. Por ejemplo $(n + 1) - n = 1$, pero $(2n) - n = n \\to \\infty$. Se requiere reescribir antes."},
+              {"enunciado_md": "¿Toda sucesión NO acotada superiormente diverge a $+\\infty$?",
+               "opciones_md": [
+                   "Sí, no acotada implica divergente a $+\\infty$",
+                   "No, podría oscilar como $(-1)^n n$",
+                   "Sí, siempre",
+                   "Solo si es positiva",
+               ],
+               "correcta": "B",
+               "pista_md": "$(-1)^n n$ es no acotada pero NO diverge a $+\\infty$.",
+               "explicacion_md": "No acotada superiormente NO implica $a_n \\to +\\infty$: $(-1)^n n$ alterna entre $+\\infty$ y $-\\infty$, no tiene límite."},
+              {"enunciado_md": "Si $a_n \\to 0$ con $a_n > 0$ para todo $n$, ¿qué se concluye sobre $1/a_n$?",
+               "opciones_md": [
+                   "$1/a_n \\to 0$",
+                   "$1/a_n \\to +\\infty$",
+                   "$1/a_n \\to 1$",
+                   "Indeterminado",
+               ],
+               "correcta": "B",
+               "pista_md": "Reciproco de algo positivo y muy chico es muy grande.",
+               "explicacion_md": "Si $a_n \\to 0^+$ (siempre positivo), $1/a_n \\to +\\infty$. CUIDADO: si el signo de $a_n$ alternara, el recíproco no divergiría a un solo lado."},
+          ]),
 
         b("errores_comunes",
           items_md=[

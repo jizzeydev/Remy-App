@@ -151,6 +151,16 @@ def lesson_1_1():
               "**El span es siempre un subespacio** — algo que estudiaremos en detalle en el cap. 5. Por ahora, basta retener: combinar linealmente unos pocos vectores genera 'una región plana' que pasa por el origen."
           )),
 
+        fig(
+            "Plano cartesiano R^2 con origen marcado. Dos vectores no colineales saliendo del origen: "
+            "v1 (color teal #06b6d4) apuntando a (2, 1) y v2 (color ámbar #f59e0b) apuntando a (-1, 2). "
+            "Mostrar también tres combinaciones lineales como flechas más finas y semi-transparentes: "
+            "1.5*v1, -0.5*v2, y v1+v2 (con etiqueta). Retícula clara con líneas grises tenues, ejes x e y "
+            "con flechas y etiquetas. A la derecha, una recta tenue gris claro pasando por el origen "
+            "etiquetada 'Span{v} = recta' con un único vector v sobre ella, ilustrando el caso 1D del span. "
+            "Sin perspectiva 3D — solo 2D plano. " + STYLE
+        ),
+
         b("definicion",
           titulo="Norma (magnitud) y vector unitario",
           body_md=(
@@ -774,6 +784,56 @@ def lesson_1_3():
             ),
         ),
 
+        b("verificacion",
+          intro_md="Antes del cierre, verifica que dominas las propiedades clave:",
+          preguntas=[
+              {
+                  "enunciado_md": "Si $\\vec{u} \\times \\vec{v} = \\vec{0}$ con $\\vec{u}, \\vec{v} \\neq \\vec{0}$, entonces:",
+                  "opciones_md": [
+                      "$\\vec{u}$ y $\\vec{v}$ son ortogonales",
+                      "$\\vec{u}$ y $\\vec{v}$ son linealmente dependientes (paralelos)",
+                      "$\\vec{u} = \\vec{v}$",
+                      "Es imposible: el producto cruz nunca es cero",
+                  ],
+                  "correcta": "B",
+                  "pista_md": "$\\|\\vec{u} \\times \\vec{v}\\| = \\|\\vec{u}\\|\\|\\vec{v}\\|\\sin\\theta$. ¿Cuándo es cero?",
+                  "explicacion_md": (
+                      "Como $\\|\\vec{u}\\|, \\|\\vec{v}\\| > 0$, la única forma de que $\\|\\vec{u}\\times\\vec{v}\\| = 0$ "
+                      "es $\\sin\\theta = 0$, es decir $\\theta = 0$ o $\\theta = \\pi$ — los vectores son **paralelos**."
+                  ),
+              },
+              {
+                  "enunciado_md": "$\\vec{u} \\times \\vec{v}$ es:",
+                  "opciones_md": [
+                      "Un escalar",
+                      "Un vector ortogonal a $\\vec{u}$ y a $\\vec{v}$",
+                      "Un vector paralelo a $\\vec{u}$",
+                      "Un vector que está en el plano de $\\vec{u}$ y $\\vec{v}$",
+                  ],
+                  "correcta": "B",
+                  "pista_md": "Por construcción, ¿qué relación tiene con los dos factores?",
+                  "explicacion_md": (
+                      "El producto cruz produce un vector **ortogonal** tanto a $\\vec{u}$ como a $\\vec{v}$ "
+                      "(propiedad fundamental). El producto **punto** sí es un escalar — no confundir."
+                  ),
+              },
+              {
+                  "enunciado_md": "Si $[\\vec{u}, \\vec{v}, \\vec{w}] = \\vec{u}\\cdot(\\vec{v}\\times\\vec{w}) = 0$, entonces los tres vectores:",
+                  "opciones_md": [
+                      "Son ortogonales entre sí",
+                      "Son coplanares (linealmente dependientes)",
+                      "Forman una base de $\\mathbb{R}^3$",
+                      "Son todos iguales",
+                  ],
+                  "correcta": "B",
+                  "pista_md": "El producto triple escalar mide el **volumen** del paralelepípedo.",
+                  "explicacion_md": (
+                      "Volumen cero significa que el paralelepípedo está aplastado: los tres vectores caben en "
+                      "un mismo plano por el origen — son **linealmente dependientes**. Es el test estándar de coplanaridad."
+                  ),
+              },
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Pensar que el producto cruz existe en $\\mathbb{R}^n$ general.** Solo en $\\mathbb{R}^3$ (con esta fórmula). En $\\mathbb{R}^2$ se usa una versión 'pseudo-escalar' $u_1 v_2 - u_2 v_1$, pero no es un vector.",
@@ -895,6 +955,17 @@ def lesson_1_4():
                "justificacion_md": "Forma punto–normal: $\\vec{n}\\cdot(\\vec{r} - A) = 0 \\iff \\vec{n}\\cdot\\vec{r} = \\vec{n}\\cdot A$.",
                "es_resultado": True},
           ]),
+
+        fig(
+            "Diagrama 3D en perspectiva isométrica suave. Sistema de coordenadas (x, y, z) con flechas. "
+            "Un plano semitransparente teal #06b6d4 inclinado, etiquetado 'Plano: n·r = d'. "
+            "Sobre el plano, dos vectores no paralelos u y v en color gris oscuro saliendo de un punto base "
+            "p0 (marcado con un punto negro etiquetado), ilustrando la forma paramétrica r = p0 + s·u + t·v. "
+            "Saliendo de p0 perpendicular al plano, un vector normal n en ámbar #f59e0b con la etiqueta 'n = u × v'. "
+            "También una recta L atravesando el plano: una flecha morada con vector director v_L y punto de "
+            "intersección destacado. Cuadrícula tenue para dar sensación de profundidad. Sin sombras dramáticas. "
+            + STYLE
+        ),
 
         b("definicion",
           titulo="Hiperplano en $\\mathbb{R}^n$",
@@ -1090,6 +1161,52 @@ def lesson_1_4():
                 "$\\text{dist}(L_1, L_2) = \\sqrt{14}/\\sqrt{3} = \\sqrt{42}/3$."
             ),
         ),
+
+        b("verificacion",
+          intro_md="Antes del cierre, verifica que dominas la geometría afín:",
+          preguntas=[
+              {
+                  "enunciado_md": "El plano $2x - y + 3z = 7$ tiene como vector normal:",
+                  "opciones_md": [
+                      "$(2, -1, 3)^T$",
+                      "$(2, 1, 3)^T$",
+                      "$(7, 0, 0)^T$",
+                      "$(-2, 1, -3)^T$",
+                  ],
+                  "correcta": "A",
+                  "pista_md": "En $ax + by + cz = d$ los coeficientes son las componentes de $\\vec{n}$.",
+                  "explicacion_md": (
+                      "La ecuación $ax + by + cz = d$ es exactamente $\\vec{n}\\cdot\\vec{r} = d$ con $\\vec{n} = (a, b, c)^T$. "
+                      "Por eso los coeficientes del lado izquierdo **son** las componentes del normal."
+                  ),
+              },
+              {
+                  "enunciado_md": "Dos rectas en $\\mathbb{R}^3$ con directores no paralelos:",
+                  "opciones_md": [
+                      "Siempre se cortan en un punto",
+                      "Pueden cortarse o ser cruzadas (skew)",
+                      "Siempre son paralelas",
+                      "Siempre son coincidentes",
+                  ],
+                  "correcta": "B",
+                  "pista_md": "En $\\mathbb{R}^2$ siempre se cortan, pero $\\mathbb{R}^3$ tiene más espacio.",
+                  "explicacion_md": (
+                      "En $\\mathbb{R}^3$ existen rectas **cruzadas** (skew): no paralelas y no se cortan. "
+                      "El test es $[\\vec{v}_1, \\vec{v}_2, \\vec{p}_2 - \\vec{p}_1] \\neq 0 \\Rightarrow$ cruzadas. "
+                      "En $\\mathbb{R}^2$ esto es imposible — solo hay paralelas o secantes."
+                  ),
+              },
+              {
+                  "enunciado_md": "¿Cuántas ecuaciones lineales se necesitan para describir una recta como intersección de hiperplanos en $\\mathbb{R}^4$?",
+                  "opciones_md": ["1", "2", "3", "4"],
+                  "correcta": "C",
+                  "pista_md": "Cada ecuación independiente baja la dimensión en 1. Una recta tiene dimensión 1.",
+                  "explicacion_md": (
+                      "Cada ecuación lineal define un hiperplano (dimensión $n - 1 = 3$). $k$ ecuaciones independientes "
+                      "dan dimensión $n - k$. Para llegar de $4$ a una recta (dim 1), necesitamos $4 - 1 = 3$ ecuaciones."
+                  ),
+              },
+          ]),
 
         b("errores_comunes",
           items_md=[

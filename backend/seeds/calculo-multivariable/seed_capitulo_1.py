@@ -226,6 +226,16 @@ def lesson_1_1():
             ),
         ),
 
+        fig(
+            "Diagrama de dispersión con tres mini-paneles lado a lado, eje horizontal n (entero, "
+            "1 a 12), eje vertical a_n. Panel 1 'Convergente': puntos en color teal #06b6d4 que "
+            "se acercan a una recta horizontal teal punteada en y = L con etiqueta 'a_n → L'. "
+            "Panel 2 'Divergente': puntos en color ámbar #f59e0b creciendo sin cota con flecha "
+            "hacia arriba y etiqueta 'a_n → ∞'. Panel 3 'Oscilante': puntos en gris alternando "
+            "entre dos niveles (+1 y -1) con etiqueta 'sin límite'. Cada panel con su título "
+            "claro arriba. Ejes con marcas. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Confundir 'sucesión acotada' con 'sucesión convergente'.** Acotada no implica convergente: $a_n = (-1)^n$ es acotada pero diverge.",
@@ -455,6 +465,16 @@ def lesson_1_2():
             ),
         ),
 
+        fig(
+            "Dos paneles lado a lado. Panel izquierdo (a) 'Sumas parciales': eje horizontal n, "
+            "eje vertical S_n. Puntos en color teal #06b6d4 que se acercan a una recta horizontal "
+            "teal punteada en y = S, con etiqueta 'S_n → S'. Panel derecho (b) 'Serie geométrica "
+            "como áreas': un cuadrado grande de lado 1 dividido en regiones; la mitad inferior "
+            "sombreada en teal (área 1/2), arriba la mitad de esa mitad en ámbar #f59e0b (1/4), "
+            "luego 1/8 en teal claro, 1/16 en ámbar claro, etc. Etiqueta '1/2 + 1/4 + 1/8 + ⋯ = 1'. "
+            + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Confundir 'serie' con 'sucesión'.** La sucesión es la lista de términos $(a_n)$; la serie es la suma $\\sum a_n$.",
@@ -651,6 +671,16 @@ def lesson_1_3():
                 "$$\\lim_{n \\to \\infty} \\dfrac{1/\\sqrt{n^3+2n}}{1/n^{3/2}} = \\lim \\dfrac{n^{3/2}}{\\sqrt{n^3 + 2n}} = \\lim \\dfrac{1}{\\sqrt{1 + 2/n^2}} = 1$$\n\n"
                 "$c = 1 > 0$ y $\\sum 1/n^{3/2}$ converge ($p > 1$), así **la serie converge**."
             ),
+        ),
+
+        fig(
+            "Árbol de decisión horizontal para elegir prueba de convergencia de series. Nodo "
+            "raíz teal #06b6d4 con etiqueta '∑ a_n con a_n ≥ 0'. Cuatro ramas hacia la derecha "
+            "etiquetadas: (1) 'Test de divergencia (a_n → 0?)' con mini-ejemplo '∑ n/(n+1) "
+            "diverge'. (2) 'Test de la integral' en ámbar #f59e0b con mini-ejemplo '∑ 1/n ↔ "
+            "∫ 1/x dx'. (3) 'Comparación directa' con '∑ 1/(n²+1) ≤ ∑ 1/n²'. (4) 'Comparación "
+            "al límite' con '∑ 1/√(n³+2n) ~ ∑ 1/n^(3/2)'. Cada hoja en cajita redondeada. "
+            + STYLE
         ),
 
         b("errores_comunes",
@@ -855,6 +885,15 @@ def lesson_1_4():
             ),
         ),
 
+        fig(
+            "Gráfico de las sumas parciales S_n de una serie alternante. Eje horizontal n (1 a "
+            "10), eje vertical S_n. Recta horizontal punteada teal #06b6d4 en y = L marcando el "
+            "límite. Los puntos S_n oscilan alrededor de L, con S_1 lejos arriba, S_2 abajo, "
+            "S_3 más cerca arriba, etc., acercándose a L. Dos líneas horizontales tenues "
+            "ámbar #f59e0b en y = L + a_(n+1) y y = L - a_(n+1) marcando la cota del error, "
+            "con flecha doble vertical etiquetada '|S − S_n| ≤ a_(n+1)'. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Aplicar Leibniz sin verificar que $a_n$ sea decreciente.** Si oscila, Leibniz no aplica.",
@@ -1040,6 +1079,15 @@ def lesson_1_5():
             ),
         ),
 
+        fig(
+            "Tabla visual con dos columnas: 'Criterio de la razón' (L = lim |a_(n+1)/a_n|) y "
+            "'Criterio de la raíz n-ésima' (L = lim |a_n|^(1/n)). Bajo cada columna, tres filas "
+            "horizontales por rangos de L: fila superior teal #06b6d4 'L < 1 → CONVERGE' con "
+            "ejemplo '∑ 2^n/n!'; fila central gris 'L = 1 → NO CONCLUYE' con ejemplo '∑ 1/n²'; "
+            "fila inferior ámbar #f59e0b 'L > 1 → DIVERGE' con ejemplo '∑ n!/2^n'. Encabezados "
+            "claros, separadores de fila visibles, tipografía matemática. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Aplicar razón con $L = 1$ y concluir.** Es inconcluso — hay que cambiar de método.",
@@ -1221,6 +1269,16 @@ def lesson_1_6():
             ),
         ),
 
+        fig(
+            "Recta numérica horizontal con un punto central marcado 'c' (centro de la serie de "
+            "potencias). Dos segmentos teal #06b6d4 sólidos extendiéndose a ambos lados desde c "
+            "hasta c−R y c+R, etiquetados como 'zona de convergencia, |x−c| < R'. Más allá de "
+            "c−R y c+R, segmentos grises etiquetados 'diverge'. La distancia R marcada con doble "
+            "flecha ámbar #f59e0b a cada lado, con etiqueta 'R = radio'. Marcadores '?' ámbar "
+            "exactamente en x = c−R y x = c+R con etiqueta 'extremos: analizar caso a caso'. "
+            + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Olvidar verificar los bordes.** El criterio de la razón da convergencia **estrictamente** dentro de $|x-a| < R$. Los bordes $x = a \\pm R$ requieren análisis aparte.",
@@ -1393,6 +1451,17 @@ def lesson_1_7():
                 "$\\arctan(x^2) = \\sum_{n=0}^\\infty (-1)^n \\dfrac{(x^2)^{2n+1}}{2n+1} = \\sum_{n=0}^\\infty (-1)^n \\dfrac{x^{4n+2}}{2n+1}$.\n\n"
                 "**Convergencia:** $|x^2| \\leq 1 \\iff |x| \\leq 1$."
             ),
+        ),
+
+        fig(
+            "Gráfico cartesiano. Eje x desde -1.5 a 1.5, eje y desde -1 a 5. La función "
+            "f(x) = 1/(1−x) trazada en azul oscuro grueso, con asíntota vertical punteada en "
+            "x = 1. Las aproximaciones polinomiales sucesivas superpuestas en tonos teal "
+            "#06b6d4 cada vez más oscuros: P_0(x) = 1 (recta horizontal), P_1(x) = 1 + x, "
+            "P_2(x) = 1 + x + x², P_3(x) = 1 + x + x² + x³. Dentro del intervalo (−1, 1) las "
+            "polinomiales se acercan a la curva azul; fuera (a la derecha de 1 o izquierda de "
+            "−1) se alejan en ámbar #f59e0b. Líneas verticales punteadas ámbar en x = ±1. "
+            + STYLE
         ),
 
         b("errores_comunes",
@@ -1604,6 +1673,16 @@ def lesson_1_8():
                 "**Error** $\\leq |(0.1)^5/120| = 10^{-5}/120 \\approx 8 \\times 10^{-8}$.\n\n"
                 "Valor real: $\\sin(0.1) \\approx 0.09983341\\ldots$. Diferencia $\\approx 7 \\times 10^{-8}$. ✓"
             ),
+        ),
+
+        fig(
+            "Gráfico cartesiano. Eje x desde -2π a 2π, eje y desde -1.5 a 1.5. La función "
+            "sin(x) trazada en negro grueso. Cuatro aproximaciones de Taylor centradas en 0, "
+            "superpuestas en tonos teal degradados (de claro a oscuro): T_1(x) = x (teal muy "
+            "claro), T_3(x) = x − x³/6 (teal claro), T_5(x) = x − x³/6 + x⁵/120 (teal medio), "
+            "T_7(x) = x − x³/6 + x⁵/120 − x⁷/5040 (teal oscuro #06b6d4). Cada una se ajusta a "
+            "sin(x) en un rango cada vez más amplio cerca del origen. Punto ámbar #f59e0b en "
+            "x = 0 marcando el centro de Maclaurin. Leyenda con grados. " + STYLE
         ),
 
         b("errores_comunes",

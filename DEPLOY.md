@@ -120,6 +120,77 @@ backend/venv/Scripts/python.exe scripts/migrate_to_atlas.py "mongodb+srv://USER:
 Lee `MONGO_URL` y `DB_NAME` desde `backend/.env` como source. Idempotente: dropea cada
 collection en target antes de re-insertar.
 
+### Sync de contenido (curso/lección/preguntas) sin perder imágenes
+
+`scripts/sync_content_to_atlas.py` empuja solo las colecciones de **contenido**
+(`courses`, `chapters`, `lessons`, `questions`, `library_universities`,
+`formulas`, `pricing_config`, `app_settings`) a Atlas, preservando las
+de **usuarios** (`users`, `subscriptions`, `quiz_attempts`,
+`lesson_progress`, `payments`, etc.). Es el script que usás cada vez que
+agregás o editás cursos en local.
+
+⚠️ **Caveat clave**: hace `drop()` de la colección **entera** `lessons` en
+Atlas y la repuebla con la copia local — no es un sync diferencial por curso.
+Si subiste imágenes vía `/admin` en producción y después corrés
+`sync_content_to_atlas.py --confirm` con un local que tiene `image_url=""`,
+**borrás todas las imágenes**, también las de cursos que no tocaste.
+
+Para evitarlo, el flujo correcto cada vez que vas a hacer un nuevo deploy
+de contenido es:
+
+```bash
+# 1. Traer desde Atlas todos los image_url ya cargados → Mongo local
+backend/venv/Scripts/python.exe scripts/pull_image_urls_from_atlas.py            # dry-run
+backend/venv/Scripts/python.exe scripts/pull_image_urls_from_atlas.py --confirm  # aplica
+
+# 2. Aplicar el seed nuevo (solo toca las lecciones de ese capítulo en local)
+backend/venv/Scripts/python.exe scripts/run_seed.py "backend/seeds/<curso>/seed_capitulo_<N>.py"
+
+# 3. Auditar estructura de las lecciones tocadas (opcional pero recomendado)
+backend/venv/Scripts/python.exe scripts/audit_lesson_structure.py <curso>
+# o auditar todos los cursos:
+backend/venv/Scripts/python.exe scripts/audit_all_courses.py > test_reports/audit_all_courses.json
+
+# 4. Dry-run del sync para ver qué se va a escribir
+backend/venv/Scripts/python.exe scripts/sync_content_to_atlas.py
+
+# 5. Push real a producción
+backend/venv/Scripts/python.exe scripts/sync_content_to_atlas.py --confirm
+```
+
+El paso 1 lee Atlas, y por cada bloque `figura` con `image_url` no vacío
+busca el bloque correspondiente en local (mismo `lesson.id` + mismo
+`block.id`) y le copia la URL. Es idempotente y respeta cualquier URL que
+local ya tenga distinta (no la pisa). Después del paso 5, Atlas queda con
+exactamente las mismas imágenes que tenía + las modificaciones del nuevo seed.
+
+**Recomendación de dónde generar imágenes**: directo en producción
+(`/admin` en `remy.seremonta.store`). Las imágenes viven en Cloudinary,
+solo el `image_url` se guarda en Atlas. Generar en local obliga a un
+re-sync, que es un extra paso destructivo. Generar en prod escribe el URL
+quirúrgicamente sin tocar otras colecciones.
+
+### Auditar estructura pedagógica de los cursos
+
+Estándar mínimo por lección:
+**Contenido** (texto/definición/teorema/intuición) →
+**Ejemplos** (`ejemplo_resuelto`) →
+**Verificaciones** (`verificacion`: MCQ con pista + explicación) →
+**Ejercicios de desarrollo** (`ejercicio` con `pistas_md` + `solucion_md`) →
+**Figura o gráfico** (`figura` con `prompt_image_md` listo para ChatGPT
+Images, o `grafico_desmos`).
+
+```bash
+# Un curso
+backend/venv/Scripts/python.exe scripts/audit_lesson_structure.py <slug>
+
+# Todos los cursos generales (JSON estructurado)
+backend/venv/Scripts/python.exe scripts/audit_all_courses.py > test_reports/audit_all_courses.json
+```
+
+Ambos scripts importan los seeds y verifican bucket por bucket.
+**No tocan Mongo** — son lectura pura del código fuente.
+
 ### Rotar password de Atlas
 
 1. Atlas → Database Access → user `remy_app` → Edit Password → Autogenerate → Save.

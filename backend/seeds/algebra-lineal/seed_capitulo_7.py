@@ -273,6 +273,13 @@ def lesson_7_1():
             ),
         ),
 
+        fig(
+            "Diagrama 3D en R^3 con ejes x, y, z. Un plano W teal #06b6d4 semitransparente pasando por el origen, "
+            "con un vector u teal apoyado sobre él. Una recta W^perp en ámbar #f59e0b ortogonal al plano, también "
+            "pasando por el origen, con un vector v ámbar a lo largo de ella. Pequeña marca de ángulo recto entre "
+            "el plano y la recta. Etiqueta inferior: 'u·v = 0 para todo u en W, v en W^perp'. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Pensar que ortogonal = paralelo.** Son opuestos: $\\vec{u}\\cdot\\vec{v} = 0 \\Rightarrow$ perpendiculares; paralelos $\\iff$ uno es múltiplo del otro.",
@@ -534,6 +541,13 @@ def lesson_7_2():
             ),
         ),
 
+        fig(
+            "Dos paneles lado a lado en R^3. Panel izquierdo: tres vectores ortogonales saliendo del origen, u1 "
+            "teal #06b6d4, u2 ámbar #f59e0b y u3 púrpura, formando ángulos rectos entre sí dos a dos. Pequeñas "
+            "marcas de ángulo recto entre cada par. Panel derecho: los mismos tres vectores ya unitarios (norma 1) "
+            "más cortos, etiquetados con sombrero û1, û2, û3. Título: 'Ortogonal vs Ortonormal'. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Olvidar verificar que los $\\vec{u}_i \\neq \\vec{0}$ para concluir LI.** Un conjunto que contiene a $\\vec{0}$ es LD aunque sea trivialmente 'ortogonal'.",
@@ -738,6 +752,13 @@ def lesson_7_3():
                 "$P = \\dfrac{1}{3}\\begin{bmatrix} 1 \\\\ 1 \\\\ 1 \\end{bmatrix}\\begin{bmatrix} 1 & 1 & 1 \\end{bmatrix} = \\dfrac{1}{3}\\begin{bmatrix} 1 & 1 & 1 \\\\ 1 & 1 & 1 \\\\ 1 & 1 & 1 \\end{bmatrix}.$\n\n"
                 "$P^2 = \\dfrac{1}{9}\\begin{bmatrix} 1 & 1 & 1 \\\\ 1 & 1 & 1 \\\\ 1 & 1 & 1 \\end{bmatrix}\\begin{bmatrix} 1 & 1 & 1 \\\\ 1 & 1 & 1 \\\\ 1 & 1 & 1 \\end{bmatrix} = \\dfrac{1}{9}\\begin{bmatrix} 3 & 3 & 3 \\\\ 3 & 3 & 3 \\\\ 3 & 3 & 3 \\end{bmatrix} = P$ ✓ (idempotente)."
             ),
+        ),
+
+        fig(
+            "Diagrama 3D con un plano W teal #06b6d4 semitransparente pasando por el origen. Vector v gris saliendo "
+            "del origen, hacia arriba, fuera del plano. Su proyección proy_W(v) teal cae sobre el plano. Vector z "
+            "ámbar #f59e0b perpendicular al plano va desde la punta de proy_W(v) hasta la punta de v. Triángulo "
+            "rectángulo destacado con marca de ángulo recto. Etiqueta: 'v = proy_W(v) + z'. " + STYLE
         ),
 
         b("errores_comunes",
@@ -981,6 +1002,13 @@ def lesson_7_4():
                 "Normas: $\\|\\vec{v}_1\\| = \\sqrt{3}$, $\\|(-1,-7,8)\\| = \\sqrt{114}$.\n\n"
                 "$Q = \\begin{bmatrix} 1/\\sqrt{3} & -1/\\sqrt{114} \\\\ 1/\\sqrt{3} & -7/\\sqrt{114} \\\\ 1/\\sqrt{3} & 8/\\sqrt{114} \\end{bmatrix}$, $R = Q^T A = \\begin{bmatrix} \\sqrt{3} & 4/\\sqrt{3} \\\\ 0 & \\sqrt{114}/3 \\end{bmatrix}$."
             ),
+        ),
+
+        fig(
+            "Tres paneles secuenciales en R^3 mostrando Gram-Schmidt. Panel 1: vectores v1, v2, v3 grises no "
+            "ortogonales y u1=v1 teal #06b6d4. Panel 2: agrega u2 = v2 - proy_{u1}(v2) ámbar #f59e0b, con la "
+            "resta dibujada y u1 perpendicular a u2. Panel 3: agrega u3 púrpura ortogonal al plano de u1, u2, "
+            "con marcas de ángulo recto. Flechas entre paneles. " + STYLE
         ),
 
         b("errores_comunes",
@@ -1257,6 +1285,13 @@ def lesson_7_5():
             ),
         ),
 
+        fig(
+            "Diagrama 2D con ejes x, y. Nube de puntos negros dispersos siguiendo una tendencia lineal aproximada. "
+            "Recta de mejor ajuste teal #06b6d4 atravesando la nube. Desde cada punto, una línea vertical "
+            "punteada ámbar #f59e0b conecta el punto con la recta, representando los residuos ε_i. Etiqueta "
+            "destacada: 'minimiza Σ ε_i^2'. Título: 'Mínimos cuadrados'. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Pensar que mínimos cuadrados resuelve el sistema $A\\vec{x} = \\vec{b}$ exactamente.** Solo si es **consistente**; si no, da la mejor aproximación.",
@@ -1480,6 +1515,13 @@ def lesson_7_6():
                 "De la 1ª y 3ª: $\\beta_2 = 1$. De la 2ª: $\\beta_0 = 0$. De la 1ª: $\\beta_1 = 2$.\n\n"
                 "**Modelo:** $y = 2x_1 + x_2$."
             ),
+        ),
+
+        fig(
+            "Tres paneles lado a lado, cada uno con la misma nube de puntos negros sobre ejes x, y. Panel 1: "
+            "ajuste lineal y = ax + b en teal #06b6d4, con etiqueta 'Lineal' debajo. Panel 2: ajuste cuadrático "
+            "y = ax² + bx + c en ámbar #f59e0b, con etiqueta 'Cuadrático' debajo. Panel 3: ajuste exponencial "
+            "linealizado log(y) = ax + b en púrpura, con etiqueta 'Exponencial' debajo. " + STYLE
         ),
 
         b("errores_comunes",

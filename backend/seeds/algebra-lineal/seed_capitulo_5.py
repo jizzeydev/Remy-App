@@ -303,6 +303,12 @@ def lesson_5_1():
             ),
         ),
 
+        fig(
+            "Diagrama de conjuntos: cuatro cajas teal #06b6d4 con ejemplos de espacios vectoriales — R^n con vector "
+            "(x1,x2,x3)^T, M_{2x2} con matriz 2x2, P_3 con polinomio a0+a1 t+a2 t^2+a3 t^3, C[a,b] con curva continua. "
+            "Flechas ámbar #f59e0b apuntan a un rótulo central: 'todos satisfacen los 8 axiomas'. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Olvidar verificar $\\vec{0} \\in H$.** Es la primera condición y la más fácil de chequear: si falla, ya sabemos que no es subespacio.",
@@ -595,6 +601,13 @@ def lesson_5_2():
             ),
         ),
 
+        fig(
+            "Matriz A de 3x4 al centro con tres subespacios alrededor. Izquierda: Col A teal #06b6d4 como plano en "
+            "R^3 ('columnas, vive en R^3'). Arriba derecha: Nul A ámbar #f59e0b como recta en R^4 ('soluciones de "
+            "Ax=0, vive en R^4'). Abajo derecha: Row A púrpura como plano en R^4 ('filas, vive en R^4'). Flechas "
+            "finas conectan cada subespacio con A. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Confundir el espacio ambiente.** $\\text{Nul}\\,A \\subseteq \\mathbb{R}^n$, $\\text{Col}\\,A \\subseteq \\mathbb{R}^m$.",
@@ -871,6 +884,13 @@ def lesson_5_3():
                 "$x_1 = -2x_2 + x_4$, $x_3 = -2x_4$. $\\vec{x} = x_2(-2, 1, 0, 0)^T + x_4(1, 0, -2, 1)^T$.\n\n"
                 "**Base de $\\text{Nul}\\,A$:** $\\{(-2, 1, 0, 0)^T,\\ (1, 0, -2, 1)^T\\}$."
             ),
+        ),
+
+        fig(
+            "Dos paneles en R^2 mostrando bases distintas. Izquierdo: cuadrícula ortogonal gris con base canónica "
+            "e1=(1,0), e2=(0,1) y punto P=(3,2) etiquetado '[P]_E=(3,2)'. Derecho: cuadrícula oblicua teal #06b6d4 "
+            "con base v1=(2,1), v2=(-1,1) y mismo punto P etiquetado en ámbar #f59e0b '[P]_B=(a,b)'. Líneas "
+            "punteadas muestran la descomposición. " + STYLE
         ),
 
         b("errores_comunes",
@@ -1151,6 +1171,13 @@ def lesson_5_4():
             ),
         ),
 
+        fig(
+            "Mismo punto p en R^2 con dos sistemas de coordenadas. Cuadrícula gris ortogonal de fondo (base "
+            "canónica) con etiqueta gris '(3,2) base canónica'. Superpuesta, cuadrícula oblicua teal #06b6d4 "
+            "con vectores v1=(2,2), v2=(0,4) como flechas teal desde el origen. Mismo p etiquetado en ámbar "
+            "#f59e0b '(1.5, 0.5) en base v1,v2'. Líneas punteadas ámbar: p = 1.5 v1 + 0.5 v2. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Confundir $\\vec{x}$ con $[\\vec{x}]_{\\mathcal{B}}$.** Son **objetos distintos**: $\\vec{x} \\in V$ (abstracto), $[\\vec{x}]_{\\mathcal{B}} \\in \\mathbb{R}^n$ (siempre).",
@@ -1420,6 +1447,13 @@ def lesson_5_5():
             ),
         ),
 
+        fig(
+            "Matriz A de 4x5 al centro con dos subespacios destacados. Izquierda: Col A como volumen 3D en ejes "
+            "R^4, sombreado teal #06b6d4 translúcido, etiqueta 'Col A ⊂ R^4, dim = rango = 3'. Derecha: Nul A "
+            "como plano 2D en ejes R^5, sombreado ámbar #f59e0b translúcido, etiqueta 'Nul A ⊂ R^5, nulidad = 2'. "
+            "Banner inferior: 'rango + nulidad = n = 5'. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Pensar que la dimensión depende de la base.** No: por el teorema, **toda base tiene el mismo número de vectores**.",
@@ -1658,6 +1692,13 @@ def lesson_5_6():
                 "$P_{\\mathcal{C}\\leftarrow\\mathcal{B}} = \\begin{bmatrix} 1 & 1 & 1 \\\\ 0 & 1 & 1 \\\\ 0 & 0 & 1 \\end{bmatrix}$ (los $\\vec{b}_i$ como columnas, ya están en coordenadas estándar).\n\n"
                 "$P_{\\mathcal{B}\\leftarrow\\mathcal{C}} = (P_{\\mathcal{C}\\leftarrow\\mathcal{B}})^{-1} = \\begin{bmatrix} 1 & -1 & 0 \\\\ 0 & 1 & -1 \\\\ 0 & 0 & 1 \\end{bmatrix}$ (inversa de triangular superior unitaria, fácil de calcular)."
             ),
+        ),
+
+        fig(
+            "Cambio de coordenadas en R^2: dos paneles con el mismo vector v en ámbar #f59e0b. Izquierdo: "
+            "cuadrícula gris ortogonal de la base B1, con descomposición '[v]_B1 = (a,b)'. Derecho: cuadrícula "
+            "oblicua teal #06b6d4 de la base B2, con '[v]_B2 = (a',b')'. Entre ambos, flecha curva ámbar gruesa "
+            "del panel B2 al B1 etiquetada 'P_{B1←B2}'. Rótulo: 'mismo vector, distintas coordenadas'. " + STYLE
         ),
 
         b("errores_comunes",

@@ -294,6 +294,14 @@ def lesson_4_1():
             ),
         ),
 
+        fig(
+            "Diagrama matemático con dos paneles. Panel izquierdo: plano cartesiano R^2 con un paralelogramo "
+            "generado por los vectores columna (a,c) y (b,d) de una matriz 2x2, sombreado en teal #06b6d4 "
+            "translúcido, vectores en ámbar #f59e0b con flechas, etiqueta 'Área = |det A| = |ad - bc|'. "
+            "Panel derecho: paralelepípedo 3D en perspectiva isométrica generado por tres vectores columna, "
+            "caras teal translúcidas, aristas ámbar, etiqueta '|det A| = volumen'. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Olvidar el signo $(-1)^{i+j}$ en el cofactor.** $C_{ij}$ no es solo $\\det(A_{ij})$, lleva el signo del patrón.",
@@ -573,6 +581,15 @@ def lesson_4_2():
                 "Factor 4 fuera de $F_1$: $\\det A = 4 \\det\\begin{bmatrix} 1 & 2 & 3 \\\\ 1 & -1 & 2 \\\\ 0 & 3 & 5 \\end{bmatrix}$.\n\n"
                 "$F_2 \\leftarrow F_2 - F_1$: $4 \\det\\begin{bmatrix} 1 & 2 & 3 \\\\ 0 & -3 & -1 \\\\ 0 & 3 & 5 \\end{bmatrix}$. $F_3 \\leftarrow F_3 + F_2$: $4 \\det\\begin{bmatrix} 1 & 2 & 3 \\\\ 0 & -3 & -1 \\\\ 0 & 0 & 4 \\end{bmatrix} = 4 \\cdot 1 \\cdot (-3) \\cdot 4 = -48$."
             ),
+        ),
+
+        fig(
+            "Diagrama matemático con tres mini paneles lado a lado mostrando cómo las operaciones elementales "
+            "afectan el determinante. Panel 1 (intercambio de filas): dos paralelogramos espejados en R^2, "
+            "mismo área teal #06b6d4, flecha ámbar #f59e0b entre ellos con etiqueta 'det cambia de signo'. "
+            "Panel 2 (escalar fila por k): paralelogramo original teal pequeño y otro estirado k veces, "
+            "etiqueta 'det se multiplica por k'. Panel 3 (suma de múltiplo de fila): dos paralelogramos "
+            "idénticos en teal, etiqueta 'det no cambia'. " + STYLE
         ),
 
         b("errores_comunes",
@@ -896,6 +913,14 @@ def lesson_4_3():
                 "$A = \\begin{bmatrix} 3 & 1 \\\\ 1 & 5 \\end{bmatrix}$, $|\\det A| = |15 - 1| = 14$.\n\n"
                 "**Área $= 14$.**"
             ),
+        ),
+
+        fig(
+            "Diagrama matemático de la regla de Cramer con tres paralelogramos en R^2 lado a lado. "
+            "Primero: paralelogramo generado por columnas a1 (ámbar #f59e0b) y a2 (ámbar) de la matriz A, "
+            "sombreado teal #06b6d4, etiqueta 'det(A)'. Segundo: a1 reemplazada por b (en azul oscuro), a2 ámbar, "
+            "etiqueta 'det(A_1)'. Tercero: a1 ámbar, a2 reemplazada por b (azul oscuro), etiqueta 'det(A_2)'. "
+            "Debajo, fórmulas 'x1 = det(A_1)/det(A)' y 'x2 = det(A_2)/det(A)'. " + STYLE
         ),
 
         b("errores_comunes",

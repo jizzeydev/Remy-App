@@ -25,6 +25,10 @@ def b(type_, **fields):
     return {"id": str(uuid.uuid4()), "type": type_, **fields}
 
 
+def fig(prompt):
+    return b("figura", image_url="", caption_md="", prompt_image_md=prompt)
+
+
 def ej(titulo, enunciado, pistas, solucion):
     return b("ejercicio", titulo=titulo, enunciado_md=enunciado,
              pistas_md=pistas, solucion_md=solucion)
@@ -32,6 +36,14 @@ def ej(titulo, enunciado, pistas, solucion):
 
 def now():
     return datetime.now(timezone.utc).isoformat()
+
+
+STYLE = (
+    "Estilo: diagrama matemático educativo limpio, fondo blanco, líneas claras, "
+    "etiquetas en español, notación matemática con buena tipografía. Acentos teal "
+    "#06b6d4 y ámbar #f59e0b. Sin sombras dramáticas, sin texturas. Apto para "
+    "libro universitario."
+)
 
 
 def lesson_1_0():
@@ -148,6 +160,17 @@ def lesson_1_0():
                 "$\\int_1^t x^{-3} \\, dx = \\left[\\dfrac{x^{-2}}{-2}\\right]_1^t = -\\dfrac{1}{2t^2} + \\dfrac{1}{2}$.\n\n"
                 "$\\lim_{t \\to \\infty}\\left(\\dfrac{1}{2} - \\dfrac{1}{2t^2}\\right) = \\dfrac{1}{2}$. **Converge a $1/2$.**"
             ),
+        ),
+
+        fig(
+            "Dos paneles lado a lado ilustrando los dos tipos de integrales impropias. "
+            "Panel izquierdo (a): la curva y = 1/x^2 en color teal #06b6d4 sobre el eje x desde "
+            "x = 1 hacia la derecha. El área bajo la curva está sombreada en teal translúcido y "
+            "se extiende hasta el infinito, con una flecha hacia la derecha y etiqueta "
+            "'∫_1^∞ 1/x² dx = 1 (converge)'. Panel derecho (b): la curva y = 1/√x con asíntota "
+            "vertical en x = 0 marcada con línea ámbar #f59e0b discontinua. El área entre x = 0 "
+            "y x = 1 sombreada en teal translúcido, etiqueta '∫_0^1 1/√x dx = 2 (converge)'. "
+            "Ejes con marcas claras. " + STYLE
         ),
 
         b("errores_comunes",

@@ -610,6 +610,15 @@ def lesson_2_2():
             ),
         ),
 
+        fig(
+            "Diagrama horizontal con tres etapas de reducción por filas de una matriz aumentada 3x4, conectadas por flechas grandes. "
+            "Etapa 1 (izquierda): matriz original con todos los coeficientes visibles. "
+            "Etapa 2 (centro): forma escalonada (REF) con ceros debajo de la diagonal y los pivotes destacados como círculos rellenos en color ámbar #f59e0b. "
+            "Etapa 3 (derecha): forma escalonada reducida (RREF) con pivotes anclados a 1 y ceros tanto arriba como abajo. "
+            "Sobre cada flecha, anotaciones de la operación aplicada en color teal #06b6d4: 'F2 ← F2 - 2F1' y 'F3 ← F3 + F2'. "
+            "Etiqueta inferior: 'REF → RREF'. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Multiplicar una fila por $0$.** Está prohibido — eliminaría la información de esa ecuación.",
@@ -903,6 +912,13 @@ def lesson_2_3():
             ),
         ),
 
+        fig(
+            "Dos paneles lado a lado en el plano cartesiano R^2 ilustrando independencia versus dependencia lineal. "
+            "Panel izquierdo (LI): tres vectores en color teal #06b6d4 partiendo del origen, apuntando en direcciones claramente distintas y no colineales, con una nube de puntos de fondo sugiriendo que sus combinaciones lineales llenan todo el plano. Etiqueta: 'Linealmente independientes — generan R^2'. "
+            "Panel derecho (LD): tres vectores colineales sobre una misma recta diagonal; dos en teal #06b6d4 y uno destacado en color ámbar #f59e0b marcado como 'redundante = 2v1 + v2'. Etiqueta: 'Linealmente dependientes'. "
+            "Ejes simples con flechas y notación $\\vec{v}_1, \\vec{v}_2, \\vec{v}_3$. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Decir 'LD' cuando no se ha encontrado relación.** No es suficiente sospechar — hay que **probar** que existe una relación no trivial (vía reducción).",
@@ -1183,6 +1199,14 @@ def lesson_2_4():
                 "Resolviendo el sistema: $x_1 - x_2 = 3$ y $2x_1 + x_2 = 1$. Sumando $2 \\times$ (1ª) a la (2ª) $\\Rightarrow$ $4x_1 - x_2 + x_2 = 7 \\Rightarrow$ ... mejor por sustitución directa: $x_1 = \\tfrac{4}{3}, x_2 = -\\tfrac{5}{3}$.\n\n"
                 "$\\mathcal{N}(A) = \\{\\vec{0}\\}$: solo la solución trivial."
             ),
+        ),
+
+        fig(
+            "Tres paneles en perspectiva 3D ilustrando los tipos de conjunto solución de un sistema $A\\vec{x} = \\vec{b}$ en R^3. "
+            "Panel izquierdo: tres planos en tonos teal #06b6d4 que se intersectan en un único punto, destacado como un círculo grande en ámbar #f59e0b. Etiqueta inferior: 'Solución única'. "
+            "Panel central: dos planos casi coincidentes y un tercero que los corta a lo largo de una recta resaltada en ámbar #f59e0b. Etiqueta: 'Infinitas (1 parámetro) — recta'. "
+            "Panel derecho: tres planos coincidentes (el mismo plano dibujado con triple borde) en teal #06b6d4 con sombreado ámbar #f59e0b sobre toda la superficie. Etiqueta: 'Infinitas (2 parámetros) — plano'. "
+            "Ejes $x_1, x_2, x_3$ visibles en cada panel. " + STYLE
         ),
 
         b("errores_comunes",
@@ -1479,6 +1503,13 @@ def lesson_2_5():
                 "$T_2(3, 2) = (-2, 3)$ (rotación $90°$ antihoraria: $(x, y) \\to (-y, x)$).\n\n"
                 "$T(\\vec{u}) = (-2, 3)$. La matriz $A_T$ se obtiene aplicando $T$ a $\\vec{e}_1$ y $\\vec{e}_2$: $T(\\vec{e}_1) = T_2(1, 0) = (0, 1)$ y $T(\\vec{e}_2) = T_2(0, -1) = (1, 0)$, así que $A_T = \\begin{bmatrix} 0 & 1 \\\\ 1 & 0 \\end{bmatrix}$ — ¡es la **reflexión respecto de $x_2 = x_1$**!"
             ),
+        ),
+
+        fig(
+            "Dos planos cartesianos lado a lado mostrando el efecto de una transformación lineal $T : \\mathbb{R}^2 \\to \\mathbb{R}^2$ que combina rotación y estiramiento. "
+            "Panel izquierdo (dominio): cuadrícula regular en color gris claro con los vectores canónicos $\\vec{e}_1$ y $\\vec{e}_2$ partiendo del origen en color ámbar #f59e0b. Etiqueta: 'Antes de T'. "
+            "Panel derecho (codominio): cuadrícula transformada en color teal #06b6d4 cuyas celdas siguen siendo paralelogramos (no curvos), inclinados y estirados respecto al original. Sobre la cuadrícula transformada, las imágenes $T(\\vec{e}_1)$ y $T(\\vec{e}_2)$ destacadas en ámbar #f59e0b. Etiqueta: 'Después de T'. "
+            "Una flecha curva grande conecta ambos paneles con la inscripción $T$. " + STYLE
         ),
 
         b("errores_comunes",

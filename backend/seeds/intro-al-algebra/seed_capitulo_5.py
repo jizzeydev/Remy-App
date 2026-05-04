@@ -400,6 +400,26 @@ def lesson_5_1():
             ("$d = \\dfrac{|3(0) - 4(0) + 25|}{\\sqrt{9 + 16}} = \\dfrac{25}{5} = \\boxed{5}.$")
         ),
 
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "¿Cuál es la pendiente de la recta que pasa por $(2, 3)$ y $(5, 9)$?",
+               "opciones_md": ["$1$", "$2$", "$3$", "$\\dfrac{2}{3}$"],
+               "correcta": "B",
+               "pista_md": "$m = \\dfrac{y_2 - y_1}{x_2 - x_1}$.",
+               "explicacion_md": "$m = \\dfrac{9 - 3}{5 - 2} = \\dfrac{6}{3} = 2$. Mantenete consistente con el orden de los puntos en numerador y denominador."},
+              {"enunciado_md": "Dos rectas $L_1$ y $L_2$ con pendientes $m_1 = 2/3$ y $m_2 = -3/2$ son:",
+               "opciones_md": ["Paralelas", "Perpendiculares", "Coincidentes", "Oblicuas (sin relación especial)"],
+               "correcta": "B",
+               "pista_md": "$m_1 \\cdot m_2 = -1$ caracteriza rectas perpendiculares.",
+               "explicacion_md": "$\\dfrac{2}{3} \\cdot \\left(-\\dfrac{3}{2}\\right) = -1$, por lo tanto las rectas son perpendiculares."},
+              {"enunciado_md": "¿Cuál es la distancia desde el punto $(1, 2)$ a la recta $3x + 4y - 5 = 0$?",
+               "opciones_md": ["$0$", "$1$", "$\\dfrac{6}{5}$", "$5$"],
+               "correcta": "C",
+               "pista_md": "$d = \\dfrac{|ax_0 + by_0 + c|}{\\sqrt{a^2+b^2}}$.",
+               "explicacion_md": "$d = \\dfrac{|3(1) + 4(2) - 5|}{\\sqrt{9 + 16}} = \\dfrac{|3 + 8 - 5|}{5} = \\dfrac{6}{5}$."},
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Confundir pendiente con inclinación.** $m = \\tan\\theta$, no $\\theta$ directamente.",
@@ -686,6 +706,26 @@ def lesson_5_2():
              "Como $d = r_1 + r_2$, las circunferencias son **tangentes exteriormente**.")
         ),
 
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "¿Cuál es el centro y el radio de la circunferencia $(x-3)^2 + (y+2)^2 = 25$?",
+               "opciones_md": ["Centro $(3, -2)$, radio $5$", "Centro $(3, -2)$, radio $25$", "Centro $(-3, 2)$, radio $5$", "Centro $(3, 2)$, radio $5$"],
+               "correcta": "A",
+               "pista_md": "La canónica es $(x-h)^2 + (y-k)^2 = r^2$.",
+               "explicacion_md": "$h = 3$, $k = -2$ (cuidado con el signo: $(y+2)^2 = (y-(-2))^2$). $r^2 = 25 \\Rightarrow r = 5$."},
+              {"enunciado_md": "Para que $x^2 + y^2 + Dx + Ey + F = 0$ represente una **circunferencia real** (no un punto ni vacío), debe cumplirse:",
+               "opciones_md": ["$D^2 + E^2 - 4F > 0$", "$D^2 + E^2 - 4F < 0$", "$D = E = 0$", "$F > 0$"],
+               "correcta": "A",
+               "pista_md": "El radio al cuadrado debe ser positivo.",
+               "explicacion_md": "Completando cuadrados: $r^2 = \\dfrac{D^2 + E^2 - 4F}{4}$. Si es $0$ es un punto, si es $< 0$ no representa nada real, si es $> 0$ es una circunferencia."},
+              {"enunciado_md": "Dos circunferencias con centros separados por $d$ y radios $r_1, r_2$ son **tangentes exteriores** cuando:",
+               "opciones_md": ["$d < r_1 + r_2$", "$d = r_1 + r_2$", "$d = |r_1 - r_2|$", "$d > r_1 + r_2$"],
+               "correcta": "B",
+               "pista_md": "Tangentes exteriores se tocan en un único punto sin solaparse.",
+               "explicacion_md": "Tangencia exterior: $d = r_1 + r_2$ (un único punto de contacto, círculos disjuntos por dentro). Tangencia interior: $d = |r_1 - r_2|$. Secantes: $|r_1 - r_2| < d < r_1 + r_2$."},
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Confundir centro y radio al leer la canónica.** En $(x - h)^2 + (y - k)^2 = r^2$, el centro es $(h, k)$ y el radio es $r$, no $r^2.$",
@@ -967,6 +1007,26 @@ def lesson_5_3():
              "Como $p < 0$ y el eje es vertical, la parábola se abre **hacia abajo**.")
         ),
 
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "Para la parábola $y^2 = 12x$, ¿cuál es la distancia del vértice al foco?",
+               "opciones_md": ["$3$", "$6$", "$12$", "$1.5$"],
+               "correcta": "A",
+               "pista_md": "Comparar con $y^2 = 4px$: $4p = 12$.",
+               "explicacion_md": "$4p = 12 \\Rightarrow p = 3$. La distancia del vértice al foco es $|p| = 3$. El foco está en $(3, 0)$ y la directriz es $x = -3$."},
+              {"enunciado_md": "La parábola $(x - 2)^2 = -8(y - 1)$ se abre hacia:",
+               "opciones_md": ["Arriba", "Abajo", "Derecha", "Izquierda"],
+               "correcta": "B",
+               "pista_md": "El eje cuadrático es $x$ y el coeficiente es negativo.",
+               "explicacion_md": "Como $x$ es la variable cuadrática, el eje de simetría es vertical. $4p = -8 \\Rightarrow p < 0$, por lo que se abre hacia **abajo**."},
+              {"enunciado_md": "El **lado recto** de una parábola con $4p = 16$ vale:",
+               "opciones_md": ["$4$", "$8$", "$16$", "$32$"],
+               "correcta": "C",
+               "pista_md": "El lado recto es $|4p|$.",
+               "explicacion_md": "El lado recto (longitud de la cuerda focal perpendicular al eje) es $\\ell = |4p| = 16$. Mide cuán abierta es la parábola."},
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Confundir $4p$ con $p.$** En $y^2 = 4px$, el coeficiente es $4p$, no $p$; el foco está a distancia $|p|$ del vértice, no $|4p|.$",
@@ -1227,6 +1287,26 @@ def lesson_5_4():
              "**Focos:** $(1 \\pm \\sqrt 5, -2).$")
         ),
 
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "Para la elipse $\\dfrac{x^2}{25} + \\dfrac{y^2}{16} = 1$, ¿cuál es la distancia entre los focos?",
+               "opciones_md": ["$3$", "$6$", "$8$", "$10$"],
+               "correcta": "B",
+               "pista_md": "$c^2 = a^2 - b^2$, distancia entre focos $= 2c$.",
+               "explicacion_md": "$a^2 = 25$, $b^2 = 16$, $c^2 = 25 - 16 = 9$, $c = 3$. La distancia entre los dos focos es $2c = 6$."},
+              {"enunciado_md": "¿Cuál es la relación correcta entre $a$, $b$ y $c$ en la elipse?",
+               "opciones_md": ["$c^2 = a^2 + b^2$", "$c^2 = a^2 - b^2$ con $a > b$", "$a^2 = b^2 + c^2$ con $b > a$", "$b^2 = a^2 + c^2$"],
+               "correcta": "B",
+               "pista_md": "En la elipse $a$ es el semieje mayor.",
+               "explicacion_md": "$c^2 = a^2 - b^2$, donde $a$ es el semieje mayor y $b$ el menor. La opción A corresponde a la hipérbola."},
+              {"enunciado_md": "La excentricidad de una elipse satisface:",
+               "opciones_md": ["$e < 0$", "$e = 0$", "$0 \\leq e < 1$", "$e > 1$"],
+               "correcta": "C",
+               "pista_md": "$e = c/a$ y en la elipse $c < a$.",
+               "explicacion_md": "$e = c/a$ con $0 \\leq c < a$, por lo tanto $0 \\leq e < 1$. Cuando $e = 0$ la elipse degenera en circunferencia; $e = 1$ daría parábola; $e > 1$ daría hipérbola."},
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Confundir $a$ y $b.$** $a$ es siempre el semieje **mayor** y $a^2$ va bajo la variable cuyo eje contiene a los focos.",
@@ -1486,6 +1566,26 @@ def lesson_5_5():
              "(c) $C = 0$ y $A \\ne 0$: **parábola**.")
         ),
 
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "Para la hipérbola $\\dfrac{x^2}{9} - \\dfrac{y^2}{16} = 1$, ¿cuáles son las asíntotas?",
+               "opciones_md": ["$y = \\pm \\dfrac{3}{4}x$", "$y = \\pm \\dfrac{4}{3}x$", "$y = \\pm \\dfrac{16}{9}x$", "$y = \\pm 5x$"],
+               "correcta": "B",
+               "pista_md": "Para hipérbola horizontal $\\tfrac{x^2}{a^2} - \\tfrac{y^2}{b^2} = 1$ las asíntotas son $y = \\pm \\tfrac{b}{a}x$.",
+               "explicacion_md": "$a = 3$, $b = 4$, asíntotas $y = \\pm \\dfrac{b}{a}x = \\pm \\dfrac{4}{3}x$."},
+              {"enunciado_md": "¿Cuál es la relación entre $a$, $b$ y $c$ en la hipérbola?",
+               "opciones_md": ["$c^2 = a^2 + b^2$", "$c^2 = a^2 - b^2$", "$b^2 = a^2 + c^2$", "$a^2 = b^2 + c^2$"],
+               "correcta": "A",
+               "pista_md": "En la hipérbola $c$ es el mayor de los tres.",
+               "explicacion_md": "Hipérbola: $c^2 = a^2 + b^2$. Es la diferencia clave con la elipse, donde $c^2 = a^2 - b^2$. La excentricidad cumple $e = c/a > 1$."},
+              {"enunciado_md": "En $4x^2 - 9y^2 + \\ldots = 0$, ¿qué tipo de cónica es (no degenerada)?",
+               "opciones_md": ["Elipse", "Parábola", "Hipérbola", "Circunferencia"],
+               "correcta": "C",
+               "pista_md": "El producto de los coeficientes de $x^2$ e $y^2$ es negativo.",
+               "explicacion_md": "$AC = 4 \\cdot (-9) < 0$, por lo que es una **hipérbola**. Si $AC > 0$ sería elipse (o circunferencia si $A=C$), si uno es cero, parábola."},
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Confundir $b^2 = c^2 - a^2$ (hipérbola) con $b^2 = a^2 - c^2$ (elipse).** Es la fuente de error más común al pasar de una cónica a otra.",
@@ -1723,6 +1823,26 @@ def lesson_5_6():
             ["$x = X\\cos\\phi - Y\\sin\\phi$, $y = X\\sin\\phi + Y\\cos\\phi.$"],
             ("$x = \\dfrac{4X - 3Y}{5}$, $y = \\dfrac{3X + 4Y}{5}.$")
         ),
+
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "Para eliminar el término cruzado $Bxy$ rotando los ejes un ángulo $\\phi$, ¿qué fórmula se usa?",
+               "opciones_md": ["$\\tan\\phi = \\dfrac{B}{A - C}$", "$\\cot(2\\phi) = \\dfrac{A - C}{B}$", "$\\tan(2\\phi) = \\dfrac{A - C}{B}$", "$\\sin(2\\phi) = B$"],
+               "correcta": "B",
+               "pista_md": "El ángulo correcto se obtiene de $2\\phi$, no de $\\phi$ directo.",
+               "explicacion_md": "$\\cot(2\\phi) = \\dfrac{A - C}{B}$ (equivalentemente $\\tan(2\\phi) = \\dfrac{B}{A - C}$). Es la condición que anula el coeficiente del término cruzado tras la rotación."},
+              {"enunciado_md": "Si $A = C$ en $Ax^2 + Bxy + Cy^2 + \\ldots = 0$ con $B \\neq 0$, ¿qué ángulo de rotación elimina el término cruzado?",
+               "opciones_md": ["$\\phi = 0$", "$\\phi = \\pi/6$", "$\\phi = \\pi/4$", "$\\phi = \\pi/2$"],
+               "correcta": "C",
+               "pista_md": "Cuando $A - C = 0$, $\\cot(2\\phi) = 0$.",
+               "explicacion_md": "$A = C \\Rightarrow A - C = 0 \\Rightarrow \\cot(2\\phi) = 0 \\Rightarrow 2\\phi = \\pi/2 \\Rightarrow \\phi = \\pi/4$."},
+              {"enunciado_md": "El **discriminante** de una cónica $Ax^2 + Bxy + Cy^2 + \\ldots = 0$ es $\\delta = B^2 - 4AC$. ¿Qué representa $\\delta < 0$?",
+               "opciones_md": ["Hipérbola", "Parábola", "Elipse (o circunferencia)", "Recta"],
+               "correcta": "C",
+               "pista_md": "El discriminante es invariante bajo rotaciones.",
+               "explicacion_md": "$\\delta < 0$: elipse (o circunferencia si además $A = C$ y $B = 0$). $\\delta = 0$: parábola. $\\delta > 0$: hipérbola. El discriminante es invariante por rotaciones."},
+          ]),
 
         b("errores_comunes",
           items_md=[
@@ -1977,6 +2097,28 @@ def lesson_5_7():
              "es decir, $\\phi = \\arctan(1/2) \\approx 26{,}57°.$")
         ),
 
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "Si en la ecuación general $Ax^2 + Bxy + Cy^2 + Dx + Ey + F = 0$ se tiene $B = 0$, ¿qué transformación basta para llegar a la forma canónica?",
+               "opciones_md": ["Solo rotación", "Solo traslación (completar cuadrados)", "Rotación seguida de traslación", "Ninguna basta"],
+               "correcta": "B",
+               "pista_md": "El término cruzado $Bxy$ es el que requiere rotación.",
+               "explicacion_md": "Cuando $B = 0$ no hay término cruzado y los ejes ya están alineados con los de la cónica; basta una **traslación** (completar cuadrados) para centrarla en el vértice o centro."},
+              {"enunciado_md": "Si la cónica está rotada **y** desplazada, ¿en qué orden se aplican las transformaciones?",
+               "opciones_md": ["Primero traslación, luego rotación", "Primero rotación, luego traslación", "El orden no importa", "Solo se aplica una transformación"],
+               "correcta": "B",
+               "pista_md": "Primero hay que eliminar el término cruzado; luego mover el centro.",
+               "explicacion_md": "La estrategia estándar es **rotar primero** para eliminar $Bxy$ y obtener una cónica con ejes paralelos a los nuevos ejes; luego **trasladar** completando cuadrados para centrarla en su vértice/centro."},
+              {"enunciado_md": "El discriminante $\\delta = B^2 - 4AC$ permite clasificar una cónica **sin transformar**, pero no informa sobre:",
+               "opciones_md": ["El tipo (elipse/parábola/hipérbola)", "Si la cónica es degenerada (recta, punto, vacío)", "El signo de $A$", "La presencia de $xy$"],
+               "correcta": "B",
+               "pista_md": "El discriminante predice el tipo pero no la degeneración.",
+               "explicacion_md": "$\\delta$ identifica el tipo, pero hay que examinar la ecuación tras transformar para detectar **casos degenerados** (par de rectas, un punto o el vacío)."},
+          ]),
+
+        fig("Diagrama educativo en español que ilustra la estrategia rotación + traslación: tres paneles consecutivos. Panel 1: una cónica rotada y desplazada en el plano $XY$ original. Panel 2: tras rotación, la cónica con sus ejes paralelos a los ejes coordenados pero desplazada del origen. Panel 3: tras traslación final, la cónica en posición canónica con su centro/vértice en el origen. Flechas ámbar #f59e0b entre paneles indicando \"rotar $\\phi$\" y \"trasladar\". Cónicas en teal #06b6d4. Fondo blanco. " + STYLE),
+
         b("errores_comunes",
           items_md=[
               "**Aplicar rotación cuando $B = 0.$** Si no hay término cruzado, la cónica ya está en posición estándar; basta completar cuadrados (traslación) para llevarla a forma canónica.",
@@ -2217,6 +2359,28 @@ def lesson_5_8():
             ("$x^2 - y^2 = (x - y)(x + y) = 0.$ La gráfica son las **dos rectas** $y = x$ e $y = -x$ "
              "(hipérbola degenerada en su par de asíntotas).")
         ),
+
+        b("verificacion",
+          intro_md="Verifica tu comprensión:",
+          preguntas=[
+              {"enunciado_md": "Si $\\delta = B^2 - 4AC = -7$ para una cónica no degenerada, ¿qué tipo es?",
+               "opciones_md": ["Hipérbola", "Parábola", "Elipse (o circunferencia)", "Recta"],
+               "correcta": "C",
+               "pista_md": "$\\delta < 0$ corresponde a la cónica acotada.",
+               "explicacion_md": "$\\delta < 0$: **elipse** (o circunferencia si además $A = C$ y $B = 0$). $\\delta = 0$: parábola. $\\delta > 0$: hipérbola."},
+              {"enunciado_md": "Para clasificar la cónica $3x^2 - 4xy + 8y^2 - 12 = 0$, ¿cuánto vale $\\delta$ y qué tipo es?",
+               "opciones_md": ["$\\delta = 16 - 96 = -80$, elipse", "$\\delta = 16 - 24 = -8$, elipse", "$\\delta = 16 + 96 = 112$, hipérbola", "$\\delta = -4 \\cdot 3 \\cdot 8 = -96$, parábola"],
+               "correcta": "A",
+               "pista_md": "$A = 3$, $B = -4$, $C = 8$. $\\delta = B^2 - 4AC$.",
+               "explicacion_md": "$\\delta = (-4)^2 - 4 \\cdot 3 \\cdot 8 = 16 - 96 = -80 < 0$, por lo tanto es una **elipse** (rotada porque $B \\neq 0$)."},
+              {"enunciado_md": "Si $\\delta > 0$ pero $\\det(M) = 0$ (matriz extendida de la cónica), ¿qué tenemos?",
+               "opciones_md": ["Hipérbola no degenerada", "Par de rectas secantes (hipérbola degenerada)", "Elipse degenerada (un punto)", "Parábola"],
+               "correcta": "B",
+               "pista_md": "$\\det(M) = 0$ siempre indica degeneración.",
+               "explicacion_md": "$\\delta > 0$ marca el tipo \"hipérbola\", pero si $\\det(M) = 0$ la cónica es degenerada: una hipérbola degenera en su **par de asíntotas** (dos rectas secantes)."},
+          ]),
+
+        fig("Diagrama educativo en español que clasifica cónicas según el discriminante $\\delta = B^2 - 4AC$ con tres regiones bien diferenciadas: a la izquierda una elipse en teal #06b6d4 con etiqueta \"$\\delta < 0$\", en el centro una parábola en ámbar #f59e0b con etiqueta \"$\\delta = 0$\", a la derecha una hipérbola en teal con etiqueta \"$\\delta > 0$\". Línea numérica horizontal abajo mostrando el signo del discriminante. Tipografía clara, fondo blanco. " + STYLE),
 
         b("errores_comunes",
           items_md=[

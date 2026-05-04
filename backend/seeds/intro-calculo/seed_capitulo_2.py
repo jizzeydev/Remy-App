@@ -288,6 +288,40 @@ def lesson_2_1():
             ),
         ),
 
+        fig(
+            "Diagrama de la recta real numérica horizontal con cero al centro, mostrando los axiomas "
+            "de orden. Línea recta con marcas en -3, -2, -1, 0, 1, 2, 3. La parte derecha del 0 "
+            "sombreada en teal #06b6d4 con etiqueta 'R+ (positivos): cerrado bajo suma y producto'. "
+            "La parte izquierda en gris claro con etiqueta 'R- (negativos)'. "
+            "Sobre la recta dos flechas curvas ámbar #f59e0b: una entre -2 y 1 marcada 'a < b' y otra "
+            "ilustrando 'multiplicar por c < 0 invierte: ac > bc'. Tipografía clara, fondo blanco. " + STYLE
+        ),
+
+        b("verificacion",
+          intro_md="Verifica los axiomas de orden:",
+          preguntas=[
+              {"enunciado_md": "Si $a < b$ y $c < 0$, ¿qué se concluye sobre $ac$ y $bc$?",
+               "opciones_md": ["$ac < bc$", "$ac > bc$", "$ac = bc$", "Nada se puede concluir"],
+               "correcta": "B",
+               "pista_md": "Multiplicar por un negativo invierte el sentido de la desigualdad.",
+               "explicacion_md": "Al multiplicar ambos lados por $c < 0$ la desigualdad se invierte: $ac > bc$."},
+              {"enunciado_md": "Si $0 < a < b$, ¿cuál de las siguientes es siempre verdadera?",
+               "opciones_md": ["$\\tfrac{1}{a} < \\tfrac{1}{b}$", "$\\tfrac{1}{a} > \\tfrac{1}{b}$", "$a^2 > b^2$", "$a - b > 0$"],
+               "correcta": "B",
+               "pista_md": "Tomar inversos en positivos invierte el orden.",
+               "explicacion_md": "Como $a$ y $b$ son positivos y $a < b$, al tomar recíprocos el orden se invierte: $1/a > 1/b$."},
+              {"enunciado_md": "¿Cuál de estas afirmaciones es FALSA?",
+               "opciones_md": [
+                   "$\\mathbb{R}^+$ es cerrado bajo suma",
+                   "$\\mathbb{R}^+$ es cerrado bajo producto",
+                   "$\\mathbb{R}^+$ es cerrado bajo resta",
+                   "Si $a, b > 0$ entonces $a + b > 0$",
+               ],
+               "correcta": "C",
+               "pista_md": "Pensa un contraejemplo con dos positivos cuya resta sea negativa.",
+               "explicacion_md": "$3, 5 \\in \\mathbb{R}^+$ pero $3 - 5 = -2 \\notin \\mathbb{R}^+$. La resta no preserva positividad."},
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Olvidar invertir el sentido al multiplicar por negativo:** $a < b$ y $c < 0$ NO implica $ac < bc$ — lo correcto es $ac > bc$.",
@@ -566,6 +600,31 @@ def lesson_2_2():
             ),
         ),
 
+        b("verificacion",
+          intro_md="Verifica tu comprensión del valor absoluto:",
+          preguntas=[
+              {"enunciado_md": "¿Cuál es la solución de $|2x - 3| = 5$?",
+               "opciones_md": ["$x = 4$ solamente", "$x = 4$ o $x = -1$", "$x = -4$ o $x = 1$", "$x = 1$ solamente"],
+               "correcta": "B",
+               "pista_md": "$|f| = a$ con $a \\geq 0$ se separa en $f = a$ o $f = -a$.",
+               "explicacion_md": "$2x - 3 = 5 \\Rightarrow x = 4$, o $2x - 3 = -5 \\Rightarrow x = -1$. Ambas soluciones son válidas."},
+              {"enunciado_md": "¿Cuál de las siguientes es la desigualdad triangular correctamente aplicada?",
+               "opciones_md": [
+                   "$|x + y| = |x| + |y|$ siempre",
+                   "$|x + y| \\leq |x| + |y|$",
+                   "$|x + y| \\geq |x| + |y|$",
+                   "$|x - y| = |x| - |y|$",
+               ],
+               "correcta": "B",
+               "pista_md": "La desigualdad triangular es siempre $\\leq$, con igualdad solo si $x, y$ tienen el mismo signo.",
+               "explicacion_md": "$|x + y| \\leq |x| + |y|$ es la desigualdad triangular. La igualdad solo se da si $x$ y $y$ tienen el mismo signo (o uno es $0$)."},
+              {"enunciado_md": "¿Cuántas soluciones tiene la ecuación $|3x + 1| = -2$?",
+               "opciones_md": ["Infinitas", "Dos", "Una", "Ninguna"],
+               "correcta": "D",
+               "pista_md": "El valor absoluto siempre es $\\geq 0$.",
+               "explicacion_md": "$|f(x)| \\geq 0$ siempre, así que nunca puede igualar a un número negativo. $S = \\emptyset$."},
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Pensar que $|-x| = -|x|$:** lo correcto es $|-x| = |x|$ (el valor absoluto siempre es no negativo).",
@@ -774,6 +833,31 @@ def lesson_2_3():
                 "$$\\boxed{S = [-1, 4].}$$"
             ),
         ),
+
+        b("verificacion",
+          intro_md="Verifica tu manejo de intervalos e inecuaciones:",
+          preguntas=[
+              {"enunciado_md": "¿Cuál es el conjunto solución de $-3x + 6 \\leq 12$?",
+               "opciones_md": ["$x \\leq -2$, es decir $(-\\infty, -2]$", "$x \\geq -2$, es decir $[-2, +\\infty)$", "$x \\leq 2$, es decir $(-\\infty, 2]$", "$x \\geq 2$, es decir $[2, +\\infty)$"],
+               "correcta": "B",
+               "pista_md": "Al dividir por $-3$ se invierte el sentido.",
+               "explicacion_md": "$-3x \\leq 6 \\Rightarrow x \\geq -2$ (al dividir por $-3 < 0$ se invierte el $\\leq$ a $\\geq$)."},
+              {"enunciado_md": "¿Cuál es la solución de $x^2 - 4 < 0$?",
+               "opciones_md": ["$(-2, 2)$", "$[-2, 2]$", "$(-\\infty, -2) \\cup (2, +\\infty)$", "$(-\\infty, -2] \\cup [2, +\\infty)$"],
+               "correcta": "A",
+               "pista_md": "Factorizá $(x - 2)(x + 2)$ y analizá signos.",
+               "explicacion_md": "$x^2 < 4 \\iff |x| < 2 \\iff -2 < x < 2$. Como la desigualdad es estricta, los extremos no se incluyen."},
+              {"enunciado_md": "¿Por qué $(-\\infty, 5]$ se escribe con paréntesis en $-\\infty$ y corchete en $5$?",
+               "opciones_md": [
+                   "Porque $-\\infty$ es un número real pero excluido",
+                   "Porque $-\\infty$ no es un número real, mientras que $5$ sí está incluido",
+                   "Porque las convenciones de notación son arbitrarias",
+                   "Porque $5$ siempre se excluye en intervalos",
+               ],
+               "correcta": "B",
+               "pista_md": "$\\pm\\infty$ son símbolos, no reales — siempre se les pone paréntesis.",
+               "explicacion_md": "$\\pm\\infty$ no pertenece a $\\mathbb{R}$, así que nunca puede 'incluirse'; $5$ está incluido por la igualdad del $\\leq$."},
+          ]),
 
         b("errores_comunes",
           items_md=[
@@ -1017,6 +1101,36 @@ def lesson_2_4():
             ),
         ),
 
+        b("verificacion",
+          intro_md="Verifica tu técnica para inecuaciones racionales:",
+          preguntas=[
+              {"enunciado_md": "¿Por qué NO conviene multiplicar ambos lados de $\\dfrac{x - 1}{x + 2} > 0$ por $(x + 2)$ directamente?",
+               "opciones_md": [
+                   "Porque desaparece el denominador y el grado cambia",
+                   "Porque el signo de $(x + 2)$ depende de $x$, e invierte la desigualdad si es negativo",
+                   "Porque el resultado siempre es trivial",
+                   "Porque se pierden raíces complejas",
+               ],
+               "correcta": "B",
+               "pista_md": "Multiplicar por algo de signo desconocido es inseguro en inecuaciones.",
+               "explicacion_md": "Si $x + 2 < 0$ se invierte el sentido; si $x + 2 > 0$ no. Como no se sabe a priori, hay que usar tabla de signos."},
+              {"enunciado_md": "¿Cuál es el conjunto solución de $\\dfrac{x - 1}{x + 2} \\leq 0$?",
+               "opciones_md": ["$[-2, 1]$", "$(-2, 1]$", "$(-\\infty, -2) \\cup [1, +\\infty)$", "$[1, +\\infty)$"],
+               "correcta": "B",
+               "pista_md": "El cociente es $\\leq 0$ entre los puntos críticos, pero $x = -2$ está EXCLUIDO siempre.",
+               "explicacion_md": "Entre $-2$ y $1$ el numerador y denominador tienen signos opuestos. $x = 1$ se incluye (numerador $0$), pero $x = -2$ NUNCA (denominador indefinido)."},
+              {"enunciado_md": "El factor $(x - 3)^2$ aparece en una tabla de signos. ¿Cuál es su comportamiento?",
+               "opciones_md": [
+                   "Cambia de signo en $x = 3$",
+                   "Es siempre $\\geq 0$ y se anula solo en $x = 3$",
+                   "Es siempre negativo",
+                   "Es indefinido en $x = 3$",
+               ],
+               "correcta": "B",
+               "pista_md": "Una potencia par no cambia signo al cruzar la raíz.",
+               "explicacion_md": "$(x - 3)^2 \\geq 0$ para todo real, vale $0$ solo en $x = 3$. No cambia de signo al cruzarlo."},
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Multiplicar ambos lados por $Q(x)$ sin conocer su signo:** error #1 en inecuaciones racionales. Si $Q(x) < 0$ se invierte el sentido. El método de tabla de signos lo evita.",
@@ -1251,6 +1365,40 @@ def lesson_2_5():
             ),
         ),
 
+        fig(
+            "Diagrama en dos paneles que ilustra inecuaciones con valor absoluto sobre la recta real. "
+            "Panel izquierdo: 'Caso |x - c| < r' — recta horizontal con un punto central c marcado en "
+            "ámbar #f59e0b, y el intervalo abierto (c - r, c + r) sombreado en teal #06b6d4 con bordes "
+            "punteados; etiqueta 'distancia a c menor que r'. Panel derecho: 'Caso |x - c| > r' — misma "
+            "recta con dos rayos sombreados teal a la izquierda de c - r y a la derecha de c + r, "
+            "punto c en ámbar; etiqueta 'distancia a c mayor que r'. Ambos paneles con marcas y números. " + STYLE
+        ),
+
+        b("verificacion",
+          intro_md="Verifica las inecuaciones con valor absoluto:",
+          preguntas=[
+              {"enunciado_md": "¿Cuál es la solución de $|x - 4| < 3$?",
+               "opciones_md": ["$x < 1$ o $x > 7$", "$1 < x < 7$", "$-3 < x < 3$", "$x < -3$ o $x > 3$"],
+               "correcta": "B",
+               "pista_md": "$|x - c| < r \\iff c - r < x < c + r$.",
+               "explicacion_md": "Por la propiedad 1: $-3 < x - 4 < 3$, es decir $1 < x < 7$. Es un entorno de centro $4$ y radio $3$."},
+              {"enunciado_md": "¿Cuál es la solución de $|2x + 1| \\geq 5$?",
+               "opciones_md": [
+                   "$-3 \\leq x \\leq 2$",
+                   "$x \\leq -3$ o $x \\geq 2$",
+                   "$-2 \\leq x \\leq 3$",
+                   "$x \\leq -2$ o $x \\geq 3$",
+               ],
+               "correcta": "B",
+               "pista_md": "$|f| \\geq a \\iff f \\leq -a$ o $f \\geq a$.",
+               "explicacion_md": "$2x + 1 \\leq -5 \\Rightarrow x \\leq -3$, o $2x + 1 \\geq 5 \\Rightarrow x \\geq 2$. La solución son las dos colas."},
+              {"enunciado_md": "¿Cuál es la solución de $|x + 2| < -1$?",
+               "opciones_md": ["$\\mathbb{R}$", "$\\emptyset$", "$x = -2$", "$x < -3$"],
+               "correcta": "B",
+               "pista_md": "El valor absoluto siempre es $\\geq 0$.",
+               "explicacion_md": "Como $|x + 2| \\geq 0 > -1$ para todo $x$, ningún real cumple la inecuación. $S = \\emptyset$."},
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Aplicar la Propiedad 1 a $|f(x)| > a$:** la propiedad correcta es la 3 (o 4). $|x| > 5$ NO es $-5 < x < 5$ (es lo opuesto).",
@@ -1475,6 +1623,36 @@ def lesson_2_6():
                 "$$\\boxed{\\text{Dom}(f) = (-\\infty, 1) \\cup (2, +\\infty).}$$"
             ),
         ),
+
+        b("verificacion",
+          intro_md="Verifica las inecuaciones con raíces:",
+          preguntas=[
+              {"enunciado_md": "¿Cuál es el dominio (restricción) para resolver $\\sqrt{x - 5} \\geq 2$?",
+               "opciones_md": ["$x \\geq 0$", "$x \\geq 5$", "$x \\geq 2$", "Todo $\\mathbb{R}$"],
+               "correcta": "B",
+               "pista_md": "Para que $\\sqrt{f(x)}$ exista (índice par), $f(x) \\geq 0$.",
+               "explicacion_md": "El radicando debe ser $\\geq 0$: $x - 5 \\geq 0 \\iff x \\geq 5$. Cualquier solución debe estar en este dominio."},
+              {"enunciado_md": "¿Por qué al resolver $h(x) > \\sqrt{g(x)}$ es válido elevar al cuadrado solo si $h(x) > 0$?",
+               "opciones_md": [
+                   "Porque la raíz tiene dominio restringido",
+                   "Porque $A > B \\iff A^2 > B^2$ vale solo si ambos lados son no negativos",
+                   "Porque elevar al cuadrado siempre invierte la desigualdad",
+                   "Porque el cuadrado pierde información del signo",
+               ],
+               "correcta": "B",
+               "pista_md": "Si $h(x) < 0$, ya $h(x) < \\sqrt{g(x)} \\geq 0$, así que se descarta de antemano.",
+               "explicacion_md": "Elevar al cuadrado preserva el orden solo entre cantidades no negativas. Si $h(x) < 0$ no puede superar a una raíz."},
+              {"enunciado_md": "¿Por qué las raíces de índice impar (como $\\sqrt[3]{x}$) NO requieren restricciones de dominio?",
+               "opciones_md": [
+                   "Porque son siempre positivas",
+                   "Porque están definidas para todo $x \\in \\mathbb{R}$",
+                   "Porque no se pueden elevar al cubo",
+                   "Porque siempre dan resultado entero",
+               ],
+               "correcta": "B",
+               "pista_md": "$\\sqrt[3]{-8} = -2$ es válido en $\\mathbb{R}$.",
+               "explicacion_md": "Las raíces de índice impar admiten radicandos negativos, así que están definidas en todo $\\mathbb{R}$ y se puede elevar a la potencia impar sin perder soluciones."},
+          ]),
 
         b("errores_comunes",
           items_md=[

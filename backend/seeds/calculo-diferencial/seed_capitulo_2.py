@@ -34,6 +34,24 @@ def now():
     return datetime.now(timezone.utc).isoformat()
 
 
+# ============ helpers para ejercicios y figuras ============
+STYLE = (
+    "Estilo: diagrama educativo limpio, fondo blanco, lineas claras, etiquetas "
+    "en espanol, notacion matematica renderizada con buena tipografia. Acentos "
+    "de color suaves (teal #06b6d4 y ambar #f59e0b). Sin sombras dramaticas, "
+    "sin texturas. Apto para libro universitario."
+)
+
+
+def ej(titulo, enunciado, pistas, solucion):
+    return b("ejercicio", titulo=titulo, enunciado_md=enunciado,
+             pistas_md=pistas, solucion_md=solucion)
+
+
+def fig(prompt):
+    return b("figura", image_url="", caption_md="", prompt_image_md=prompt)
+
+
 # =====================================================================
 # LECCIÓN 2.2 — Derivabilidad
 # =====================================================================
@@ -193,6 +211,25 @@ def lesson_2_2():
                   ),
               },
           ]),
+
+        ej(
+            "Derivada por definición en un punto",
+            "Calcula $f'(2)$ usando la definición $f'(a) = \\lim_{h \\to 0} \\dfrac{f(a+h) - f(a)}{h}$ para $f(x) = x^2 - 3x$.",
+            [
+                "Calcula $f(2+h)$ y $f(2)$ por separado y simplifica el cociente incremental.",
+                "Cancela el factor $h$ del denominador antes de tomar el límite.",
+            ],
+            "**Paso 1 — Evaluar.** $f(2) = 4 - 6 = -2$ y $f(2+h) = (2+h)^2 - 3(2+h) = 4 + 4h + h^2 - 6 - 3h = -2 + h + h^2$.\n\n**Paso 2 — Cociente incremental.** $\\dfrac{f(2+h) - f(2)}{h} = \\dfrac{-2 + h + h^2 - (-2)}{h} = \\dfrac{h + h^2}{h} = 1 + h$ (con $h \\neq 0$).\n\n**Paso 3 — Tomar límite.** $f'(2) = \\lim_{h \\to 0}(1 + h) = 1$.\n\n**Verificación con regla:** $f'(x) = 2x - 3$, así $f'(2) = 1$. ✓",
+        ),
+        ej(
+            "Continuidad y derivabilidad de una función con valor absoluto",
+            "Sea $f(x) = x|x - 1|$. Estudia la continuidad y derivabilidad de $f$ en $x = 1$.",
+            [
+                "Reescribe $f$ por tramos abriendo el valor absoluto en $x = 1$.",
+                "En el punto $x = 1$ usa los cocientes incrementales laterales para decidir derivabilidad.",
+            ],
+            "**Paso 1 — Función por tramos.** $f(x) = \\begin{cases} x(1 - x) = x - x^2 & x < 1 \\\\ x(x - 1) = x^2 - x & x \\geq 1 \\end{cases}$.\n\n**Paso 2 — Continuidad en 1.** $\\lim_{x \\to 1^-}(x - x^2) = 0$ y $\\lim_{x \\to 1^+}(x^2 - x) = 0$, y $f(1) = 0$. **Continua en $x = 1$**.\n\n**Paso 3 — Derivabilidad lateral.**\n- Por izquierda: derivada de $x - x^2$ en $1$ es $1 - 2(1) = -1$.\n- Por derecha: derivada de $x^2 - x$ en $1$ es $2(1) - 1 = 1$.\n\nComo $-1 \\neq 1$, los cocientes incrementales laterales no coinciden: **$f$ no es derivable en $x = 1$** (esquina).",
+        ),
 
         b("errores_comunes",
           items_md=[
@@ -357,6 +394,33 @@ def lesson_2_3():
               },
           ]),
 
+        fig(
+            "Tabla-resumen visual de las reglas basicas de derivacion en formato afiche educativo. "
+            "Cinco filas con borde teal #06b6d4 a la izquierda mostrando: (1) Constante d/dx[c]=0, (2) "
+            "Potencia d/dx[x^n]=n x^(n-1), (3) Suma d/dx[f+g]=f'+g', (4) Producto d/dx[f.g]=f'g+fg', "
+            "(5) Cociente d/dx[f/g]=(f'g-fg')/g^2. Cada fila con la formula grande y un mini ejemplo en "
+            "ambar #f59e0b a la derecha. Tipografia matematica clara, fondo blanco, sin sombras. "
+            + STYLE
+        ),
+        ej(
+            "Derivar combinando suma, producto y potencia",
+            "Calcula $f'(x)$ para $f(x) = (3x^2 + 1)(x^3 - 2x)$. No expandas el producto antes de derivar.",
+            [
+                "Aplica la regla del producto: $(uv)' = u'v + uv'$ con $u = 3x^2 + 1$, $v = x^3 - 2x$.",
+                "Calcula $u'$ y $v'$ por separado usando potencia y suma; al final puedes simplificar.",
+            ],
+            "**Identificar factores:** $u(x) = 3x^2 + 1$, $v(x) = x^3 - 2x$.\n\n**Derivadas individuales:** $u'(x) = 6x$, $v'(x) = 3x^2 - 2$.\n\n**Regla del producto:**\n\n$$f'(x) = u'v + uv' = 6x(x^3 - 2x) + (3x^2 + 1)(3x^2 - 2).$$\n\n**Expandir y simplificar:**\n\n$6x \\cdot x^3 - 6x \\cdot 2x = 6x^4 - 12x^2$.\n\n$(3x^2 + 1)(3x^2 - 2) = 9x^4 - 6x^2 + 3x^2 - 2 = 9x^4 - 3x^2 - 2$.\n\n$$f'(x) = 6x^4 - 12x^2 + 9x^4 - 3x^2 - 2 = 15x^4 - 15x^2 - 2.$$",
+        ),
+        ej(
+            "Regla del cociente",
+            "Calcula la derivada de $g(x) = \\dfrac{x^2 - 1}{x^2 + 1}$.",
+            [
+                "Aplica la regla del cociente $(f/h)' = (f'h - fh')/h^2$ con $f = x^2 - 1$ y $h = x^2 + 1$.",
+                "Después de expandir el numerador, varios términos se cancelan.",
+            ],
+            "**Identificar:** $f(x) = x^2 - 1 \\Rightarrow f'(x) = 2x$; $h(x) = x^2 + 1 \\Rightarrow h'(x) = 2x$.\n\n**Regla del cociente:**\n\n$$g'(x) = \\dfrac{f'h - f h'}{h^2} = \\dfrac{2x(x^2 + 1) - (x^2 - 1)(2x)}{(x^2 + 1)^2}.$$\n\n**Numerador:** $2x[(x^2 + 1) - (x^2 - 1)] = 2x \\cdot 2 = 4x$.\n\n**Resultado:**\n\n$$g'(x) = \\dfrac{4x}{(x^2 + 1)^2}.$$",
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Pensar que $(fg)' = f'g'$.** Es el error más típico. La regla correcta es $f'g + fg'$.",
@@ -500,6 +564,32 @@ def lesson_2_4():
                   ),
               },
           ]),
+
+        fig(
+            "Tabla-resumen visual de las seis derivadas trigonometricas en formato tarjeta. Tres columnas "
+            "y dos filas. Columna 1: (sen x)' = cos x | (cos x)' = -sen x. Columna 2: (tan x)' = sec^2 x "
+            "| (cot x)' = -csc^2 x. Columna 3: (sec x)' = sec x tan x | (csc x)' = -csc x cot x. Las "
+            "funciones 'co-' destacadas en ambar #f59e0b con flecha indicando 'signo negativo'. Las otras "
+            "en teal #06b6d4. Tipografia matematica clara, fondo blanco. " + STYLE
+        ),
+        ej(
+            "Derivar funciones trigonométricas combinadas",
+            "Calcula la derivada de $f(x) = x \\sin x + \\cos x$.",
+            [
+                "Aplica suma y producto: $(x \\sin x)' = (x)' \\sin x + x (\\sin x)'$.",
+                "Recuerda que $(\\cos x)' = -\\sin x$.",
+            ],
+            "**Primer término** (regla del producto): $(x \\sin x)' = 1 \\cdot \\sin x + x \\cdot \\cos x = \\sin x + x \\cos x$.\n\n**Segundo término:** $(\\cos x)' = -\\sin x$.\n\n**Suma:** $f'(x) = \\sin x + x \\cos x - \\sin x = x \\cos x$.\n\n**Resultado:** $f'(x) = x \\cos x$. (El término $\\sin x$ se cancela.)",
+        ),
+        ej(
+            "Recta tangente a una curva trigonométrica",
+            "Encuentra la ecuación de la recta tangente a $y = \\tan x$ en el punto $x_0 = \\pi/4$.",
+            [
+                "Calcula $y_0 = \\tan(\\pi/4) = 1$ y $y'(\\pi/4) = \\sec^2(\\pi/4)$.",
+                "Recuerda que $\\sec(\\pi/4) = \\sqrt{2}$.",
+            ],
+            "**Punto de tangencia:** $y_0 = \\tan(\\pi/4) = 1$, así que el punto es $(\\pi/4,\\ 1)$.\n\n**Pendiente:** $y' = \\sec^2 x$. En $\\pi/4$: $\\sec(\\pi/4) = 1/\\cos(\\pi/4) = \\sqrt{2}$, luego $y'(\\pi/4) = (\\sqrt{2})^2 = 2$.\n\n**Ecuación punto-pendiente:**\n\n$$y - 1 = 2\\left(x - \\dfrac{\\pi}{4}\\right) \\quad\\Longleftrightarrow\\quad y = 2x - \\dfrac{\\pi}{2} + 1.$$",
+        ),
 
         b("errores_comunes",
           items_md=[
@@ -678,6 +768,32 @@ def lesson_2_5():
               },
           ]),
 
+        fig(
+            "Diagrama esquematico de la regla de la cadena: tres engranajes interconectados representando "
+            "una composicion f(g(x)). Engranaje exterior grande etiquetado 'derivada exterior f prima' en "
+            "teal #06b6d4, engranaje interno mediano 'evaluado en g(x)', engranaje pequeno 'derivada "
+            "interior g prima de x' en ambar #f59e0b. Flechas indicando multiplicacion. Texto al pie: "
+            "'(f compuesto g)' = f'(g(x)) . g'(x)'. Estilo limpio, fondo blanco. " + STYLE
+        ),
+        ej(
+            "Cadena con dos niveles",
+            "Calcula $f'(x)$ para $f(x) = \\sin(3x^2 + 1)$.",
+            [
+                "Identifica función exterior $\\sin u$ con $u(x) = 3x^2 + 1$.",
+                "Aplica $(f \\circ g)'(x) = f'(g(x)) \\cdot g'(x)$.",
+            ],
+            "**Identificación:** exterior $\\sin u$, interior $u(x) = 3x^2 + 1$.\n\n**Derivadas:** $(\\sin u)' = \\cos u$ y $u'(x) = 6x$.\n\n**Aplicar la cadena:**\n\n$$f'(x) = \\cos(3x^2 + 1) \\cdot 6x = 6x \\cos(3x^2 + 1).$$",
+        ),
+        ej(
+            "Cadena con tres niveles anidados",
+            "Calcula $g'(x)$ para $g(x) = \\sqrt{1 + \\sin^2 x}$.",
+            [
+                "Tienes tres funciones anidadas: raíz, cuadrado y seno. Aplica la cadena dos veces.",
+                "Recuerda que $\\sin^2 x = (\\sin x)^2$.",
+            ],
+            "**Identificación:** $g(x) = (1 + \\sin^2 x)^{1/2}$. Capa exterior: $u^{1/2}$, intermedia $u(v) = 1 + v^2$ con $v = \\sin x$.\n\n**Capa exterior:** derivada de $u^{1/2}$ respecto a $u$ es $\\dfrac{1}{2}u^{-1/2} = \\dfrac{1}{2\\sqrt{1 + \\sin^2 x}}$.\n\n**Capa intermedia:** derivada de $1 + v^2$ respecto a $v$ es $2v = 2\\sin x$.\n\n**Capa interior:** $(\\sin x)' = \\cos x$.\n\n**Producto (regla de la cadena triple):**\n\n$$g'(x) = \\dfrac{1}{2\\sqrt{1 + \\sin^2 x}} \\cdot 2\\sin x \\cdot \\cos x = \\dfrac{\\sin x \\cos x}{\\sqrt{1 + \\sin^2 x}}.$$\n\nEquivalentemente, usando $2 \\sin x \\cos x = \\sin(2x)$: $g'(x) = \\dfrac{\\sin(2x)}{2\\sqrt{1 + \\sin^2 x}}$.",
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Olvidar multiplicar por la derivada de la función interior.** El error más común: escribir $(\\sin(2x))' = \\cos(2x)$ en lugar de $2\\cos(2x)$.",
@@ -839,6 +955,32 @@ def lesson_2_6():
               },
           ]),
 
+        fig(
+            "Diagrama de una elipse en el plano cartesiano (x^2/9 + y^2/4 = 1) en linea teal #06b6d4. "
+            "Marca un punto P en el primer cuadrante con coordenadas (2, y0) y dibuja la recta tangente "
+            "en ese punto en color ambar #f59e0b. Etiquetas: ecuacion de la elipse arriba, formula de la "
+            "tangente abajo. Ejes con flechas y graduacion. Muestra como la derivacion implicita encuentra "
+            "la pendiente sin despejar y. Estilo limpio educativo. " + STYLE
+        ),
+        ej(
+            "Derivada implícita en una circunferencia",
+            "Calcula $\\dfrac{dy}{dx}$ para la curva $x^2 + y^2 = 25$ y encuentra la pendiente de la tangente en el punto $(3, 4)$.",
+            [
+                "Deriva ambos lados respecto a $x$, recordando que $y$ depende de $x$ y por tanto $\\dfrac{d}{dx}[y^2] = 2y \\cdot y'$.",
+                "Despeja $y'$ y evalúa en $(3, 4)$.",
+            ],
+            "**Paso 1 — Derivar implícitamente.** Aplicando $\\dfrac{d}{dx}$ a ambos lados:\n\n$$2x + 2y \\cdot y' = 0.$$\n\n**Paso 2 — Despejar.** $y' = -\\dfrac{x}{y}$.\n\n**Paso 3 — Evaluar.** En $(3, 4)$: $y' = -\\dfrac{3}{4}$.\n\n**Interpretación geométrica:** la pendiente de la tangente al círculo $x^2 + y^2 = 25$ en $(3, 4)$ es $-\\dfrac{3}{4}$. (Coincide con la pendiente perpendicular al radio $(0,0)$-$(3,4)$, que tiene pendiente $4/3$.)",
+        ),
+        ej(
+            "Folium de Descartes",
+            "Para la curva $x^3 + y^3 = 6xy$ (folium de Descartes), encuentra $\\dfrac{dy}{dx}$ y la ecuación de la recta tangente en el punto $(3, 3)$.",
+            [
+                "Aplica $\\dfrac{d}{dx}$ término a término. Para $6xy$ usa la regla del producto.",
+                "Después de despejar $y'$, sustituye $(x, y) = (3, 3)$.",
+            ],
+            "**Paso 1 — Derivar implícitamente.**\n\n$\\dfrac{d}{dx}[x^3] = 3x^2$, $\\dfrac{d}{dx}[y^3] = 3y^2 \\cdot y'$, $\\dfrac{d}{dx}[6xy] = 6y + 6x\\,y'$ (producto).\n\n$$3x^2 + 3y^2 y' = 6y + 6x y'.$$\n\n**Paso 2 — Despejar $y'$.** Agrupar términos con $y'$:\n\n$$3y^2 y' - 6x y' = 6y - 3x^2 \\;\\Rightarrow\\; y'(3y^2 - 6x) = 6y - 3x^2 \\;\\Rightarrow\\; y' = \\dfrac{2y - x^2}{y^2 - 2x}.$$\n\n**Paso 3 — Evaluar en $(3, 3)$.** $y' = \\dfrac{2(3) - 9}{9 - 6} = \\dfrac{-3}{3} = -1$.\n\n**Recta tangente:** $y - 3 = -1(x - 3) \\Rightarrow y = -x + 6$.",
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Olvidar el factor $y'$ al derivar términos con $y$.** $\\dfrac{d}{dx}[y^n] = n y^{n-1} y'$, no $n y^{n-1}$.",
@@ -980,6 +1122,32 @@ def lesson_2_7():
               },
           ]),
 
+        fig(
+            "Esquema procedimental en cuatro pasos para derivacion logaritmica, en formato infografia "
+            "vertical. Paso 1 (teal #06b6d4): 'Aplicar ln a ambos lados: ln y = ln f(x)'. Paso 2: 'Usar "
+            "propiedades del logaritmo: convertir productos en sumas, exponentes en multiplicaciones'. "
+            "Paso 3 (ambar #f59e0b): 'Derivar implicitamente: (1/y) y' = (lado derecho)'. Paso 4: "
+            "'Multiplicar por y para despejar y prima'. Numeros encerrados en circulos teal. " + STYLE
+        ),
+        ej(
+            "Derivada logarítmica de un producto complicado",
+            "Calcula $f'(x)$ usando derivación logarítmica para $f(x) = \\dfrac{(x+1)^3 \\sqrt{x-2}}{(x^2+5)^2}$ (asume $x > 2$).",
+            [
+                "Toma logaritmo natural y usa $\\ln(ab/c) = \\ln a + \\ln b - \\ln c$ y $\\ln(a^n) = n \\ln a$.",
+                "Después de derivar implícitamente, multiplica por $f(x)$ para obtener $f'(x)$.",
+            ],
+            "**Paso 1 — Aplicar $\\ln$.**\n\n$$\\ln f(x) = 3\\ln(x+1) + \\tfrac{1}{2}\\ln(x-2) - 2\\ln(x^2 + 5).$$\n\n**Paso 2 — Derivar implícitamente.**\n\n$$\\dfrac{f'(x)}{f(x)} = \\dfrac{3}{x+1} + \\dfrac{1}{2(x-2)} - \\dfrac{4x}{x^2+5}.$$\n\n**Paso 3 — Despejar.**\n\n$$f'(x) = \\dfrac{(x+1)^3 \\sqrt{x-2}}{(x^2+5)^2}\\left[\\dfrac{3}{x+1} + \\dfrac{1}{2(x-2)} - \\dfrac{4x}{x^2+5}\\right].$$",
+        ),
+        ej(
+            "Función de la forma $f(x)^{g(x)}$",
+            "Calcula la derivada de $y = x^{\\ln x}$ con $x > 0$.",
+            [
+                "Toma $\\ln$: $\\ln y = \\ln x \\cdot \\ln x = (\\ln x)^2$.",
+                "Deriva implícitamente: $y'/y = 2 \\ln x \\cdot (1/x)$.",
+            ],
+            "**Paso 1 — Aplicar $\\ln$.** $\\ln y = (\\ln x)(\\ln x) = (\\ln x)^2$.\n\n**Paso 2 — Derivar.** Lado izquierdo: $\\dfrac{y'}{y}$. Lado derecho (cadena): $2 \\ln x \\cdot \\dfrac{1}{x} = \\dfrac{2 \\ln x}{x}$.\n\n**Paso 3 — Despejar.**\n\n$$y' = y \\cdot \\dfrac{2 \\ln x}{x} = x^{\\ln x} \\cdot \\dfrac{2 \\ln x}{x} = \\dfrac{2 \\ln x \\cdot x^{\\ln x}}{x}.$$\n\nO equivalentemente $y' = 2 \\ln x \\cdot x^{\\ln x - 1}$.",
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Aplicar la regla de la potencia $(x^n)' = n x^{n-1}$ a $f(x)^{g(x)}$.** Esa regla solo vale cuando el exponente es **constante**.",
@@ -1120,6 +1288,32 @@ def lesson_2_8():
                   ),
               },
           ]),
+
+        fig(
+            "Esquema visual del teorema de la funcion inversa: dos curvas en el plano, y = f(x) en teal "
+            "#06b6d4 y la inversa y = f-1(x) en ambar #f59e0b, simetricas respecto a la recta y = x "
+            "(linea punteada gris). Marca dos puntos: P=(a, b) en f y Q=(b, a) en f-1. En cada punto "
+            "dibuja la tangente con su pendiente: en P pendiente m, en Q pendiente 1/m. Anotacion: "
+            "'(f-1)'(b) = 1/f'(a)'. Ejes etiquetados, fondo blanco. " + STYLE
+        ),
+        ej(
+            "Aplicar la fórmula $(f^{-1})'(b) = 1/f'(a)$",
+            "Sea $f(x) = x^3 + 2x + 1$. Sin calcular la inversa explícitamente, calcula $(f^{-1})'(4)$.",
+            [
+                "Encuentra $a$ tal que $f(a) = 4$ por inspección.",
+                "Calcula $f'(a)$ y aplica la fórmula del teorema de la función inversa.",
+            ],
+            "**Paso 1 — Encontrar $a$ tal que $f(a) = 4$.** Probamos $a = 1$: $1 + 2 + 1 = 4$. ✓ Así que $f(1) = 4$, lo que implica $f^{-1}(4) = 1$.\n\n**Paso 2 — Verificar que $f$ es invertible localmente.** $f'(x) = 3x^2 + 2 > 0$ para todo $x$, así $f$ es estrictamente creciente — invertible.\n\n**Paso 3 — Calcular $f'(1)$.** $f'(1) = 3(1)^2 + 2 = 5$.\n\n**Paso 4 — Aplicar la fórmula.** $(f^{-1})'(4) = \\dfrac{1}{f'(1)} = \\dfrac{1}{5}$.",
+        ),
+        ej(
+            "Recta tangente a la inversa",
+            "Sea $f(x) = x + \\ln x$ (con $x > 0$). Sabiendo que $f(1) = 1$, encuentra la ecuación de la recta tangente a $y = f^{-1}(x)$ en el punto $(1, 1)$.",
+            [
+                "La pendiente buscada es $(f^{-1})'(1) = 1/f'(1)$.",
+                "Calcula $f'(x) = 1 + 1/x$.",
+            ],
+            "**Paso 1 — Punto de tangencia.** $f(1) = 1 + \\ln 1 = 1$, así $f^{-1}(1) = 1$. El punto en la curva inversa es $(1, 1)$.\n\n**Paso 2 — Derivada.** $f'(x) = 1 + \\dfrac{1}{x}$. En $x = 1$: $f'(1) = 1 + 1 = 2$.\n\n**Paso 3 — Pendiente de la inversa.** $(f^{-1})'(1) = \\dfrac{1}{f'(1)} = \\dfrac{1}{2}$.\n\n**Paso 4 — Recta tangente.** $y - 1 = \\dfrac{1}{2}(x - 1) \\Rightarrow y = \\dfrac{x}{2} + \\dfrac{1}{2}$.",
+        ),
 
         b("errores_comunes",
           items_md=[
@@ -1268,6 +1462,32 @@ def lesson_2_9():
                   ),
               },
           ]),
+
+        fig(
+            "Tabla-resumen visual con cuatro reglas de derivacion logaritmico-exponencial. Filas con "
+            "borde teal #06b6d4 a la izquierda: (1) (e^x)' = e^x con nota 'caso especial', (2) (a^x)' = "
+            "a^x ln a en ambar #f59e0b destacando 'ln a', (3) (ln x)' = 1/x para x>0, (4) (log_a x)' = "
+            "1/(x ln a). Cada formula con un ejemplo numerico breve a la derecha. Tipografia matematica, "
+            "fondo blanco, formato de tarjeta limpia. " + STYLE
+        ),
+        ej(
+            "Derivar combinando exponencial y cadena",
+            "Calcula $f'(x)$ para $f(x) = e^{2x} \\ln(x^2 + 1)$.",
+            [
+                "Aplica regla del producto y luego cadena en cada factor.",
+                "Recuerda $(\\ln u)' = u'/u$ y $(e^{u})' = e^{u} \\cdot u'$.",
+            ],
+            "**Identificación:** producto de $u = e^{2x}$ y $v = \\ln(x^2 + 1)$.\n\n**Derivada de $u$:** cadena con interior $2x$ → $u' = e^{2x} \\cdot 2 = 2 e^{2x}$.\n\n**Derivada de $v$:** $v' = \\dfrac{(x^2 + 1)'}{x^2 + 1} = \\dfrac{2x}{x^2 + 1}$.\n\n**Regla del producto:**\n\n$$f'(x) = 2 e^{2x} \\ln(x^2 + 1) + e^{2x} \\cdot \\dfrac{2x}{x^2+1} = 2 e^{2x}\\!\\left[\\ln(x^2+1) + \\dfrac{x}{x^2+1}\\right].$$",
+        ),
+        ej(
+            "Crecimiento exponencial — interpretación",
+            "La población de una colonia de bacterias crece según $N(t) = 500 \\cdot e^{0{,}3 t}$ (con $t$ en horas). Calcula la **tasa de crecimiento instantánea** a las $t = 4$ horas e interpreta el resultado.",
+            [
+                "Calcula $N'(t)$ usando la cadena con $u = 0{,}3 t$.",
+                "Evalúa $N'(4)$ y reporta unidades adecuadas (bacterias/hora).",
+            ],
+            "**Paso 1 — Derivada.** $N'(t) = 500 \\cdot e^{0{,}3 t} \\cdot 0{,}3 = 150\\, e^{0{,}3 t}$.\n\n**Paso 2 — Evaluar en $t = 4$.** $N'(4) = 150 \\cdot e^{1{,}2} \\approx 150 \\cdot 3{,}3201 \\approx 498$ bacterias/hora.\n\n**Interpretación:** a las $4$ horas, la colonia crece aproximadamente a $498$ bacterias por hora. Observa que $N'(t) = 0{,}3 \\cdot N(t)$, es decir, la tasa de crecimiento es proporcional a la población actual — característica del crecimiento exponencial.",
+        ),
 
         b("errores_comunes",
           items_md=[
@@ -1432,6 +1652,32 @@ def lesson_2_10():
               },
           ]),
 
+        fig(
+            "Diagrama de flujo en formato infografia para resolver limites con la regla de L Hopital. "
+            "Caja inicial (teal #06b6d4): 'Sustitucion directa'. Decision: '?Es indeterminado?'. Si no, "
+            "FIN. Si si, otra decision: '?Cual forma?'. Tres ramas en ambar #f59e0b: '0/0 o inf/inf' -> "
+            "'Aplicar L Hopital: lim f'/g'', '0 . inf' -> 'Reescribir como cociente', '1^inf, 0^0, inf^0' "
+            "-> 'Tomar logaritmo: y = lim, ln y = ...'. Cajas redondeadas, fondo blanco. " + STYLE
+        ),
+        ej(
+            "L'Hôpital con forma $0/0$",
+            "Calcula $\\displaystyle\\lim_{x \\to 0} \\dfrac{e^x - 1 - x}{x^2}$.",
+            [
+                "Verifica que el límite es $0/0$. Aplica L'Hôpital una vez y observa si sigue indeterminado.",
+                "Si sigue $0/0$, aplica L'Hôpital nuevamente.",
+            ],
+            "**Sustitución directa:** numerador $= 1 - 1 - 0 = 0$; denominador $= 0$. Forma $0/0$.\n\n**L'Hôpital (1ª vez):** derivamos numerador y denominador por separado:\n\n$$\\lim_{x \\to 0} \\dfrac{(e^x - 1 - x)'}{(x^2)'} = \\lim_{x \\to 0} \\dfrac{e^x - 1}{2x}.$$\n\nSustituyendo: $\\dfrac{0}{0}$, sigue indeterminado.\n\n**L'Hôpital (2ª vez):**\n\n$$\\lim_{x \\to 0} \\dfrac{(e^x - 1)'}{(2x)'} = \\lim_{x \\to 0} \\dfrac{e^x}{2} = \\dfrac{1}{2}.$$\n\n**Resultado:** $\\boxed{\\dfrac{1}{2}}$.",
+        ),
+        ej(
+            "Indeterminación $1^\\infty$ con logaritmo",
+            "Calcula $\\displaystyle\\lim_{x \\to \\infty} \\left(1 + \\dfrac{3}{x}\\right)^{x}$.",
+            [
+                "La forma $1^\\infty$ es indeterminada. Llama $L$ al límite y toma logaritmo.",
+                "Reescribe $\\ln L = \\lim x \\ln(1 + 3/x)$ y conviértelo en un cociente $0/0$.",
+            ],
+            "**Paso 1 — Tomar logaritmo.** Sea $L = \\lim_{x \\to \\infty}(1 + 3/x)^x$. Entonces $\\ln L = \\lim_{x \\to \\infty} x \\ln(1 + 3/x)$.\n\n**Paso 2 — Reescribir como cociente.**\n\n$$\\ln L = \\lim_{x \\to \\infty} \\dfrac{\\ln(1 + 3/x)}{1/x} \\quad (\\text{forma } 0/0).$$\n\n**Paso 3 — L'Hôpital.** Numerador derivado: $\\dfrac{1}{1 + 3/x} \\cdot \\left(-\\dfrac{3}{x^2}\\right) = -\\dfrac{3}{x^2 + 3x}$.\n\nDenominador derivado: $-\\dfrac{1}{x^2}$.\n\n$$\\ln L = \\lim_{x \\to \\infty} \\dfrac{-3/(x^2 + 3x)}{-1/x^2} = \\lim_{x \\to \\infty} \\dfrac{3 x^2}{x^2 + 3x} = 3.$$\n\n**Paso 4 — Despejar $L$.** $L = e^3$.\n\n**Resultado:** $\\boxed{e^3}$.",
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Aplicar L'Hôpital sin verificar la indeterminación.** La regla solo aplica si el cociente es $0/0$ o $\\infty/\\infty$. Si no, el resultado puede ser falso.",
@@ -1593,6 +1839,32 @@ def lesson_2_11():
                   ),
               },
           ]),
+
+        fig(
+            "Grafica de las dos funciones hiperbolicas basicas en un mismo plano cartesiano: y = cosh(x) "
+            "en teal #06b6d4 (curva tipo cadena, simetrica, con minimo en (0,1)) y y = sinh(x) en ambar "
+            "#f59e0b (curva impar que pasa por el origen). Ejes con flechas, escala simetrica, etiquetas "
+            "claras. Anotacion: 'cosh^2(x) - sinh^2(x) = 1 (identidad fundamental)'. Linea punteada "
+            "horizontal y=1 marcando el minimo de cosh. Fondo blanco, estilo educativo. " + STYLE
+        ),
+        ej(
+            "Derivar una función hiperbólica compuesta",
+            "Calcula $f'(x)$ para $f(x) = \\sinh(x^2 + 1) + \\cosh^2 x$.",
+            [
+                "Aplica regla de la cadena: $(\\sinh u)' = \\cosh(u) \\cdot u'$ y $(\\cosh u)' = \\sinh(u) \\cdot u'$.",
+                "Para $\\cosh^2 x = (\\cosh x)^2$, combina potencia y cadena.",
+            ],
+            "**Primer término:** $\\sinh(x^2 + 1)$. Cadena: $\\cosh(x^2 + 1) \\cdot 2x$.\n\n**Segundo término:** $\\cosh^2 x = (\\cosh x)^2$. Potencia + cadena: $2 \\cosh x \\cdot \\sinh x$.\n\n(Por identidad: $2 \\cosh x \\sinh x = \\sinh(2x)$.)\n\n**Resultado:**\n\n$$f'(x) = 2x \\cosh(x^2 + 1) + \\sinh(2x).$$",
+        ),
+        ej(
+            "Verificar la identidad fundamental por derivación",
+            "Demuestra usando derivadas que la función $g(x) = \\cosh^2 x - \\sinh^2 x$ es **constante** en $\\mathbb{R}$.",
+            [
+                "Calcula $g'(x)$ aplicando la regla de la cadena en cada término.",
+                "Si $g'(x) = 0$ para todo $x$, $g$ es constante; evalúa en $x = 0$ para identificar el valor.",
+            ],
+            "**Paso 1 — Derivar.**\n\n$g'(x) = 2 \\cosh x \\cdot (\\cosh x)' - 2 \\sinh x \\cdot (\\sinh x)' = 2 \\cosh x \\sinh x - 2 \\sinh x \\cosh x = 0.$\n\n**Paso 2 — Conclusión.** Como $g'(x) = 0$ para todo $x \\in \\mathbb{R}$, $g$ es constante.\n\n**Paso 3 — Identificar la constante.** Evaluamos en $x = 0$: $g(0) = \\cosh^2(0) - \\sinh^2(0) = 1^2 - 0^2 = 1$.\n\n**Conclusión:** $\\cosh^2 x - \\sinh^2 x = 1$ para todo $x$, la identidad fundamental hiperbólica. $\\square$",
+        ),
 
         b("errores_comunes",
           items_md=[

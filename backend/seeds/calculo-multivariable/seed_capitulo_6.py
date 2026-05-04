@@ -843,6 +843,16 @@ def lesson_6_4():
             ),
         ),
 
+        fig(
+            "Vista 3D isométrica de una región sólida E en forma de caja rectangular en color "
+            "teal #06b6d4 translúcido, con ejes x, y, z claramente marcados. En el interior de "
+            "la caja, un cubo pequeño destacado en color ámbar #f59e0b sólido, etiquetado "
+            "'dV = dx dy dz' como elemento diferencial de volumen. Tres flechas curvas saliendo "
+            "del cubo, cada una de un color distinto (gris claro), indicando los tres órdenes "
+            "posibles de integración: 'dz dy dx', 'dy dz dx', 'dx dy dz'. Etiqueta superior "
+            "'∭_E f(x,y,z) dV'. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Olvidar el orden de integración** en regiones generales — los límites cambian dependiendo del orden.",
@@ -1426,6 +1436,16 @@ def lesson_6_7():
                 "Por simetría, $\\int_0^2 (u^2 - v^2) \\, dv = (8/3 - 8/3)... $ Calcula: $\\int_0^2 \\int_0^2 u^2 du dv = (8/3)(2) = 16/3$. Igual para $v^2$. Diferencia: $0$.\n\n"
                 "**Resultado: $0$.** (Por simetría: $xy$ es impar en la diagonal $y = -x$ del paralelogramo simétrico.)"
             ),
+        ),
+
+        fig(
+            "Dos planos coordenados lado a lado conectados por una flecha curva grande "
+            "etiquetada 'T: (u,v) → (x,y)'. Plano izquierdo (uv-plano): cuadrícula simple con "
+            "ejes u, v y una región rectangular R' resaltada en color teal #06b6d4 claro. "
+            "Plano derecho (xy-plano): mismos ejes x, y, pero la región R aparece como una "
+            "forma curva (transformada) en teal #06b6d4 más oscuro, mostrando deformación. "
+            "Debajo, fórmula grande del Jacobiano: 'J = ∂(x,y)/∂(u,v)' en color ámbar #f59e0b "
+            "con etiqueta 'factor de escalamiento de área'. " + STYLE
         ),
 
         b("errores_comunes",

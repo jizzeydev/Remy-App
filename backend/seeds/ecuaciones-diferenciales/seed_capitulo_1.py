@@ -252,6 +252,14 @@ def lesson_1_1():
             ),
         ),
 
+        fig(
+            "Campo de pendientes (slope field) de una EDO de orden 1 y'=f(x,y) en el plano (x,y). "
+            "Grilla de flechitas grises con la pendiente dy/dx en cada punto. Sobre el campo, dos curvas integrales solución en teal #06b6d4, tangentes a las flechitas. "
+            "Una curva marcada como solución particular pasa por un punto (x0,y0) destacado en ámbar #f59e0b. "
+            "Etiquetas: 'EDO de orden 1', 'campo de pendientes', 'solución particular'. "
+            + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Confundir EDO con EDP.** EDO: una variable independiente. EDP: dos o más, con derivadas parciales.",
@@ -747,6 +755,14 @@ def lesson_1_3():
             ),
         ),
 
+        fig(
+            "Diagrama de EDO separables en dos paneles. "
+            "Izquierda: ecuación dy/g(y) = f(x) dx con dos signos de integral grandes a cada lado y flechas curvas ámbar #f59e0b indicando 'integrar ambos lados'. "
+            "Derecha: plano (x, y) con familia de curvas solución y = F(x, C) en teal #06b6d4 para varios C; una curva destacada en ámbar #f59e0b pasa por un punto inicial (x0, y0). "
+            "Etiquetas 'familia de soluciones' y 'solución particular'. "
+            + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Olvidar dividir por $h(y)$ correctamente** o perder soluciones donde $h(y) = 0$.",
@@ -960,6 +976,14 @@ def lesson_1_4():
                 "$i(0) = 0 \\Rightarrow C = -E/R$. $i(t) = (E/R)(1 - e^{-Rt/L})$.\n\n"
                 "**Interpretación:** la corriente crece exponencialmente hacia el valor estacionario $E/R$ (Ley de Ohm)."
             ),
+        ),
+
+        fig(
+            "Diagrama del factor integrante para EDO lineales de primer orden. "
+            "Arriba: ecuación original y' + P(x) y = Q(x). Flecha curva grande ámbar #f59e0b con la etiqueta 'multiplicar por μ(x) = e^∫P(x)dx' baja al paso siguiente. "
+            "Abajo: la ecuación transformada en (μ y)' = μ Q, con el lado izquierdo resaltado en teal #06b6d4 como derivada exacta de un producto. "
+            "Pequeño recuadro lateral con la fórmula del factor integrante. "
+            + STYLE
         ),
 
         b("errores_comunes",
@@ -1181,6 +1205,15 @@ def lesson_1_5():
             ),
         ),
 
+        fig(
+            "Diagrama del cambio de variable v = y/x para EDOs homogéneas, en dos paneles. "
+            "Izquierda: plano (x, y) con curva solución y(x) en teal #06b6d4 y rectas radiales grises desde el origen marcando la razón y/x. "
+            "Flecha curva ámbar #f59e0b 'sustituir v = y/x' apunta al panel derecho. "
+            "Derecha: plano (x, v) con la EDO transformada, ahora separable, y curvas solución en teal #06b6d4. "
+            "Pie: 'la sustitución vuelve la EDO separable'. "
+            + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**No reconocer el patrón antes de sustituir.** Tomarse tiempo para identificar la forma de la EDO.",
@@ -1371,6 +1404,14 @@ def lesson_1_6():
             ),
         ),
 
+        fig(
+            "Diagrama de EDO exactas en el plano (x, y). Campo vectorial F = (M, N) representado por flechitas grises en una grilla, apuntando en la dirección del gradiente. "
+            "Superpuestas, curvas de nivel F(x, y) = C de la función potencial en teal #06b6d4, cada una con su valor de C; las flechitas son perpendiculares a las curvas. "
+            "Una curva solución particular destacada en ámbar #f59e0b. "
+            "Pie: 'M dx + N dy = dF cuando ∂M/∂y = ∂N/∂x'. "
+            + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Olvidar verificar exactitud.** El método de construcción de $F$ requiere que la EDO **sea** exacta.",
@@ -1555,6 +1596,15 @@ def lesson_1_7():
                 "$y = x^3/3 + C_2$. $y(0) = 1 \\Rightarrow C_2 = 1$.\n\n"
                 "**$y(x) = x^3/3 + 1$.**"
             ),
+        ),
+
+        fig(
+            "Tres mini-paneles horizontales con los tipos de EDO reductibles. "
+            "1 — Bernoulli: arriba y' + P(x)y = Q(x) y^n; flecha ámbar #f59e0b 'v = y^(1-n)' lleva abajo a una EDO lineal en v en teal #06b6d4. "
+            "2 — Homogénea: EDO original y, tras v = y/x, EDO separable en v. "
+            "3 — Reducción de orden: EDO de orden 2; tras p = y', EDO de orden 1 en p. "
+            "Cada panel con título corto y flecha de transformación ámbar. "
+            + STYLE
         ),
 
         b("errores_comunes",
@@ -1777,6 +1827,15 @@ def lesson_1_8():
                 "$\\lim_{t\\to\\infty}P(t) = M = 1000$, sin importar el valor exacto de $k$ (mientras $k > 0$).\n\n"
                 "**Razonamiento:** $M$ es el equilibrio estable. Cualquier $P_0 > 0$ se acerca a él."
             ),
+        ),
+
+        fig(
+            "Comparación de tres modelos de población en un plano (t, P). "
+            "Curva 1 — exponencial puro P = P0 e^(kt) en gris, subiendo sin techo. "
+            "Curva 2 — logística en teal #06b6d4 con forma de S que se aplana al acercarse a la capacidad de carga K, trazada como línea horizontal punteada en ámbar #f59e0b. "
+            "Curva 3 — modelo con cosecha P' = rP(1 - P/K) - h, en teal con un punto de equilibrio destacado. "
+            "Leyenda con los tres modelos. "
+            + STYLE
         ),
 
         b("errores_comunes",

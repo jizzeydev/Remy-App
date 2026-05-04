@@ -828,6 +828,14 @@ def lesson_1_4():
             ),
         ),
 
+        fig(
+            "Curva paramétrica suave r(t) en el espacio R^3, dibujada en color teal grueso, con "
+            "ejes x, y, z. La curva está particionada en pequeños segmentos rectos consecutivos "
+            "(líneas grises finas que aproximan la curva, estilo poligonal). Uno de esos segmentos "
+            "está destacado en color ámbar #f59e0b, con etiqueta |r'(t)| dt indicando la longitud "
+            "infinitesimal. Abajo, fórmula L = ∫|r'(t)|dt en tipografía clara. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Olvidar la raíz** en $\\|\\vec{r}'\\|$. La rapidez es la magnitud, no el cuadrado.",
@@ -1220,6 +1228,14 @@ def lesson_1_6():
             ),
         ),
 
+        fig(
+            "Curva 3D suave en color teal #06b6d4, vista isométrica con ejes x, y, z. En un punto P "
+            "de la curva, dibujar el círculo osculador en color ámbar #f59e0b mostrando el radio "
+            "1/κ con flecha y etiqueta. Desde P sale el vector binormal B (línea púrpura punteada) "
+            "perpendicular al plano del círculo. En otro punto distinto, etiquetas κ (curvatura) y "
+            "τ (torsión) marcadas claramente. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Confundir $\\kappa$ con $|\\vec{r}''|$.** $\\kappa$ involucra **norma del producto cruz**, no segunda derivada directa.",
@@ -1394,6 +1410,14 @@ def lesson_1_7():
                 "$\\vec{\\omega} = \\dfrac{1}{2\\sqrt{2}}[(-\\sin t + \\sin t, \\cos t - \\cos t, 1 + 1)] = \\dfrac{1}{\\sqrt{2}}(0, 0, 1) = \\dfrac{1}{\\sqrt{2}} \\vec{k}$.\n\n"
                 "**Constante en dirección $\\vec{k}$** — el triedro rota alrededor del eje $z$, lo cual tiene sentido geométrico para una hélice."
             ),
+        ),
+
+        fig(
+            "Curva 3D en color gris suave con ejes x, y, z. En un punto P sobre la curva, dibujar "
+            "el triedro de Frenet-Serret: vector tangente T en teal #06b6d4, vector normal N en "
+            "ámbar #f59e0b, y vector binormal B en púrpura — los tres mutuamente perpendiculares "
+            "con marcas claras de ángulo recto entre ellos. Plano osculador semitransparente "
+            "conteniendo T y N. Etiquetas T, N, B nítidas. " + STYLE
         ),
 
         b("errores_comunes",

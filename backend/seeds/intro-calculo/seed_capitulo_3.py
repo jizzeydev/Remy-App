@@ -230,6 +230,46 @@ def lesson_3_1():
             ),
         ),
 
+        fig(
+            "Diagrama conceptual de una función real f: A -> B representada como una caja teal #06b6d4 "
+            "etiquetada 'f' con flechas entrantes desde un conjunto A (óvalo a la izquierda con puntos "
+            "etiquetados 'dominio') y salientes hacia un conjunto B (óvalo a la derecha, etiquetado "
+            "'codominio'). Dentro de B, sombrear con ámbar #f59e0b la región alcanzada con etiqueta "
+            "'imagen Im(f)'. Cada elemento del dominio tiene exactamente UNA flecha (resaltar regla de "
+            "asignación única). Tipografía clara, fondo blanco, ejemplo f(x) = x^2 con dominio R y "
+            "codominio R, imagen [0, +inf). " + STYLE
+        ),
+
+        b("verificacion",
+          intro_md="Verifica conceptos clave de funciones reales:",
+          preguntas=[
+              {"enunciado_md": "¿Cuál es el dominio máximo de $f(x) = \\dfrac{1}{\\sqrt{x - 2}}$?",
+               "opciones_md": ["$x \\geq 2$", "$x > 2$", "$x \\geq 0$", "$x \\neq 2$"],
+               "correcta": "B",
+               "pista_md": "El radicando $\\geq 0$, pero como está en denominador, $> 0$.",
+               "explicacion_md": "Se necesita $x - 2 > 0$ (estrictamente, pues está en el denominador). Dominio: $(2, +\\infty)$."},
+              {"enunciado_md": "¿Por qué $f(x) = \\dfrac{(x-1)(x+2)}{x-1}$ y $g(x) = x + 2$ NO son la misma función?",
+               "opciones_md": [
+                   "Tienen distinta regla algebraica",
+                   "Tienen distintos dominios: $f$ excluye $x = 1$ y $g$ no",
+                   "$g$ tiene un punto extra",
+                   "$f$ es discontinua",
+               ],
+               "correcta": "B",
+               "pista_md": "Una función es regla + dominio + codominio.",
+               "explicacion_md": "Aunque la simplificación da $x + 2$, el dominio de $f$ excluye $x = 1$. Funciones con distinto dominio NO son iguales."},
+              {"enunciado_md": "Diferencia entre dominio e imagen de una función:",
+               "opciones_md": [
+                   "Son sinónimos",
+                   "Dominio: valores de salida; imagen: valores de entrada",
+                   "Dominio: valores de entrada; imagen: valores que efectivamente toma la función",
+                   "Dominio = codominio siempre",
+               ],
+               "correcta": "C",
+               "pista_md": "El dominio es 'desde dónde'; la imagen es 'qué se alcanza'.",
+               "explicacion_md": "Dominio = entradas válidas. Imagen = $\\{f(x) : x \\in \\text{Dom}(f)\\}$, los valores efectivamente alcanzados (puede ser subconjunto estricto del codominio)."},
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Identificar función con fórmula:** $f(x) = \\dfrac{(x-1)(x+2)}{x-1}$ y $g(x) = x+2$ NO son iguales como funciones (dominios distintos).",
@@ -430,6 +470,36 @@ def lesson_3_2():
             ),
         ),
 
+        b("verificacion",
+          intro_md="Verifica tu lectura de gráficas:",
+          preguntas=[
+              {"enunciado_md": "¿Cuál es el criterio de la recta vertical?",
+               "opciones_md": [
+                   "Una curva es gráfica de función si toda recta horizontal la corta a lo más una vez",
+                   "Una curva es gráfica de función si toda recta vertical la corta a lo más una vez",
+                   "Una curva es gráfica de función si pasa por el origen",
+                   "Una curva es gráfica de función si es continua",
+               ],
+               "correcta": "B",
+               "pista_md": "A cada $x$ debe corresponder a lo más una $y = f(x)$.",
+               "explicacion_md": "Una curva es gráfica de función si y solo si toda recta vertical la corta en a lo más un punto: garantiza unicidad de $f(x)$ por cada $x$."},
+              {"enunciado_md": "¿La circunferencia $x^2 + y^2 = 4$ representa una función $y = f(x)$?",
+               "opciones_md": [
+                   "Sí, su dominio es $[-2, 2]$",
+                   "No, falla el criterio de la recta vertical",
+                   "Sí, si se restringe el codominio",
+                   "Solo si se elimina el origen",
+               ],
+               "correcta": "B",
+               "pista_md": "Para cada $x \\in (-2, 2)$ hay dos valores de $y$.",
+               "explicacion_md": "Para $x = 0$, $y = 2$ y $y = -2$ pertenecen a la curva: hay dos valores de $y$ para un mismo $x$, así que NO es función."},
+              {"enunciado_md": "Si una función por partes está definida con un círculo abierto en $(2, 3)$ y uno cerrado en $(2, 5)$, ¿cuánto vale $f(2)$?",
+               "opciones_md": ["$3$", "$5$", "Ambos", "Indefinido"],
+               "correcta": "B",
+               "pista_md": "El círculo cerrado indica el valor incluido.",
+               "explicacion_md": "El círculo cerrado señala el valor que toma la función; el abierto muestra el límite no incluido. $f(2) = 5$."},
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Pensar que toda curva es el gráfico de una función:** la circunferencia completa $x^2+y^2=4$ NO lo es (falla criterio recta vertical).",
@@ -598,6 +668,41 @@ def lesson_3_3():
                 "$\\boxed{\\text{Dom}(g) = \\mathbb{R}, \\quad \\text{Rec}(g) = [-3, +\\infty), \\quad \\text{vértice} = (1, -3).}$"
             ),
         ),
+
+        b("verificacion",
+          intro_md="Verifica las transformaciones de funciones:",
+          preguntas=[
+              {"enunciado_md": "Si $g(x) = f(x - 3)$, ¿cómo se transforma la gráfica de $f$?",
+               "opciones_md": [
+                   "Se traslada $3$ unidades a la izquierda",
+                   "Se traslada $3$ unidades a la derecha",
+                   "Se traslada $3$ unidades hacia abajo",
+                   "Se refleja sobre el eje $y$",
+               ],
+               "correcta": "B",
+               "pista_md": "Restar dentro del argumento traslada en sentido positivo (derecha).",
+               "explicacion_md": "$f(x - h)$ traslada $h$ a la derecha. El signo es 'engañoso': $-3$ dentro = derecha por $3$."},
+              {"enunciado_md": "¿Cuál es el efecto de $g(x) = f(2x)$ comparado con $f(x)$?",
+               "opciones_md": [
+                   "Estira horizontalmente por factor $2$",
+                   "Comprime horizontalmente por factor $2$",
+                   "Estira verticalmente por factor $2$",
+                   "Comprime verticalmente por factor $2$",
+               ],
+               "correcta": "B",
+               "pista_md": "Cambios horizontales con $\\omega > 1$ comprimen.",
+               "explicacion_md": "$f(\\omega x)$ con $\\omega > 1$ comprime horizontalmente; con $0 < \\omega < 1$ estira. La gráfica de $f(2x)$ alcanza los mismos $y$ en la mitad del $x$."},
+              {"enunciado_md": "¿Cuál es la gráfica de $g(x) = -f(x) + 2$ a partir de $f(x)$?",
+               "opciones_md": [
+                   "Reflejar sobre eje $x$ y trasladar $2$ hacia arriba",
+                   "Reflejar sobre eje $y$ y trasladar $2$ hacia arriba",
+                   "Reflejar sobre eje $x$ y trasladar $2$ hacia abajo",
+                   "Solo trasladar $2$ hacia arriba",
+               ],
+               "correcta": "A",
+               "pista_md": "$-f(x)$ refleja sobre el eje $x$; $+2$ es traslación vertical hacia arriba.",
+               "explicacion_md": "$-f(x)$ refleja respecto al eje $x$ (cambia signo de $y$); luego $+2$ traslada hacia arriba."},
+          ]),
 
         b("errores_comunes",
           items_md=[
@@ -793,6 +898,45 @@ def lesson_3_4():
                 "(función racional lineal sobre lineal): $\\text{Rec}(f) = \\mathbb{R} \\setminus \\{2\\}$."
             ),
         ),
+
+        fig(
+            "Diagrama mostrando una función racional f(x) = (x^2 - 1) / (x - 1) graficada en sistema "
+            "cartesiano. Curva visible es la recta y = x + 1 (porque (x^2 - 1)/(x - 1) = x + 1) pero "
+            "con un círculo abierto en (1, 2) marcado en ámbar #f59e0b con etiqueta 'hoyo en x = 1: "
+            "factor cancelable'. Al lado, segunda función g(x) = 1/(x - 2) en panel adyacente con su "
+            "asíntota vertical x = 2 dibujada como línea punteada teal #06b6d4 y etiqueta 'asíntota "
+            "vertical: factor NO cancelable'. Ejes claros, contraste entre 'hoyo' y 'asíntota'. " + STYLE
+        ),
+
+        b("verificacion",
+          intro_md="Verifica el análisis de funciones racionales:",
+          preguntas=[
+              {"enunciado_md": "¿Cuál es el dominio de $f(x) = \\dfrac{x + 3}{x^2 - 4}$?",
+               "opciones_md": [
+                   "$\\mathbb{R}$",
+                   "$\\mathbb{R} \\setminus \\{2, -2\\}$",
+                   "$\\mathbb{R} \\setminus \\{-3\\}$",
+                   "$\\mathbb{R} \\setminus \\{4\\}$",
+               ],
+               "correcta": "B",
+               "pista_md": "Buscá las raíces del denominador.",
+               "explicacion_md": "$x^2 - 4 = 0 \\iff x = \\pm 2$. Esos valores anulan el denominador y deben excluirse."},
+              {"enunciado_md": "En $f(x) = \\dfrac{(x - 1)(x + 2)}{(x - 1)(x - 3)}$, ¿qué hay en $x = 1$?",
+               "opciones_md": [
+                   "Asíntota vertical",
+                   "Hoyo (discontinuidad evitable)",
+                   "Cero de la función",
+                   "Asíntota horizontal",
+               ],
+               "correcta": "B",
+               "pista_md": "El factor $(x - 1)$ se cancela arriba y abajo.",
+               "explicacion_md": "Cuando un factor cancela arriba y abajo, hay HOYO en ese $x$, no asíntota. La asíntota vertical aparece solo si el factor del denominador NO se cancela."},
+              {"enunciado_md": "Para $f(x) = \\dfrac{2x^2 + 1}{x^2 - 5}$, ¿cuál es la asíntota horizontal?",
+               "opciones_md": ["$y = 0$", "$y = 1$", "$y = 2$", "No tiene"],
+               "correcta": "C",
+               "pista_md": "Comparar grados: si son iguales, la asíntota es el cociente de coeficientes líderes.",
+               "explicacion_md": "$\\text{grad}(P) = \\text{grad}(Q) = 2$, asíntota horizontal $y = a_n / b_m = 2/1 = 2$."},
+          ]),
 
         b("errores_comunes",
           items_md=[
@@ -995,6 +1139,41 @@ def lesson_3_5():
             ),
         ),
 
+        b("verificacion",
+          intro_md="Verifica inyectividad, sobreyectividad y biyectividad:",
+          preguntas=[
+              {"enunciado_md": "¿$f: \\mathbb{R} \\to \\mathbb{R}$, $f(x) = x^2$ es inyectiva?",
+               "opciones_md": [
+                   "Sí, porque es función",
+                   "No, porque $f(2) = f(-2) = 4$",
+                   "Sí, porque es continua",
+                   "Solo si $x \\geq 0$",
+               ],
+               "correcta": "B",
+               "pista_md": "Buscá dos puntos distintos con misma imagen.",
+               "explicacion_md": "$f(2) = f(-2) = 4$ pero $2 \\neq -2$, así que falla la inyectividad. NOTA: si se restringe a $[0, +\\infty)$ sí es inyectiva."},
+              {"enunciado_md": "¿$f: \\mathbb{R} \\to \\mathbb{R}$, $f(x) = x^3$ es sobreyectiva?",
+               "opciones_md": [
+                   "No, no alcanza valores negativos",
+                   "Sí, todo real $y$ tiene preimagen $\\sqrt[3]{y}$",
+                   "Solo en $[0, +\\infty)$",
+                   "No, solo es inyectiva",
+               ],
+               "correcta": "B",
+               "pista_md": "Toda raíz cúbica está bien definida en $\\mathbb{R}$.",
+               "explicacion_md": "Para todo $y \\in \\mathbb{R}$ existe $x = \\sqrt[3]{y}$ tal que $x^3 = y$. La función $x^3$ es biyectiva en $\\mathbb{R}$."},
+              {"enunciado_md": "Una función $f: A \\to B$ es biyectiva si y solo si:",
+               "opciones_md": [
+                   "Es inyectiva",
+                   "Es sobreyectiva",
+                   "Es inyectiva Y sobreyectiva",
+                   "Tiene gráfica continua",
+               ],
+               "correcta": "C",
+               "pista_md": "Biyección = uno-a-uno + cubre todo $B$.",
+               "explicacion_md": "Biyectiva $\\iff$ inyectiva (uno-a-uno) AND sobreyectiva (alcanza todo el codominio). Las dos propiedades son INDEPENDIENTES."},
+          ]),
+
         b("errores_comunes",
           items_md=[
               "**Olvidar que la inyectividad depende del dominio:** $f(x) = x^2$ no es inyectiva en $\\mathbb{R}$, pero **sí** en $[0, +\\infty)$.",
@@ -1179,6 +1358,45 @@ def lesson_3_6():
                 "**$g \\circ f$:** $\\text{Dom}(g \\circ f) = \\text{Dom}(f) = [2, +\\infty)$. Regla: $(g \\circ f)(x) = x - 2 + 1 = x - 1$."
             ),
         ),
+
+        fig(
+            "Diagrama del álgebra y composición de funciones. Lado izquierdo: dos cajas teal #06b6d4 "
+            "rotuladas 'f' y 'g' con sus dominios solapados, indicando 'suma (f+g)(x) = f(x)+g(x)' y "
+            "'producto (fg)(x) = f(x)g(x)' con el dominio común sombreado en ámbar #f59e0b. "
+            "Lado derecho: cadena de composición g circ f mostrada como 'x -> f -> f(x) -> g -> g(f(x))' "
+            "con flechas y dos cajas conectadas. Etiquetas: dominio inicial de f, condición f(x) en "
+            "Dom(g), salida final. Tipografía clara, fondo blanco. " + STYLE
+        ),
+
+        b("verificacion",
+          intro_md="Verifica el álgebra de funciones:",
+          preguntas=[
+              {"enunciado_md": "¿$f \\circ g = g \\circ f$ siempre?",
+               "opciones_md": [
+                   "Sí, la composición es conmutativa",
+                   "No, en general $f \\circ g \\neq g \\circ f$",
+                   "Sí, cuando $f$ y $g$ son polinomios",
+                   "No, salvo si una es constante",
+               ],
+               "correcta": "B",
+               "pista_md": "Probá con $f(x) = x + 1$ y $g(x) = x^2$.",
+               "explicacion_md": "$f(g(x)) = x^2 + 1$, $g(f(x)) = (x + 1)^2 = x^2 + 2x + 1$. Distintas: la composición NO es conmutativa."},
+              {"enunciado_md": "Si $f(x) = \\sqrt{x}$ y $g(x) = x - 4$, ¿cuál es el dominio de $f \\circ g$?",
+               "opciones_md": ["$\\mathbb{R}$", "$x \\geq 0$", "$x \\geq 4$", "$x \\neq 4$"],
+               "correcta": "C",
+               "pista_md": "Necesitás $g(x) \\in \\text{Dom}(f) = [0, +\\infty)$.",
+               "explicacion_md": "$(f \\circ g)(x) = \\sqrt{x - 4}$, exige $x - 4 \\geq 0$, es decir $x \\geq 4$. Hay que mirar el dominio del compuesto, no solo el de $g$."},
+              {"enunciado_md": "Si $\\text{Dom}(f) = [0, 5]$ y $\\text{Dom}(g) = [-2, 3]$, ¿cuál es el dominio de $(f + g)$?",
+               "opciones_md": [
+                   "$[-2, 5]$ (unión)",
+                   "$[0, 3]$ (intersección)",
+                   "$[0, 5]$ (de $f$)",
+                   "$\\mathbb{R}$",
+               ],
+               "correcta": "B",
+               "pista_md": "Para sumar valores, ambas funciones tienen que estar definidas.",
+               "explicacion_md": "$\\text{Dom}(f + g) = \\text{Dom}(f) \\cap \\text{Dom}(g) = [0, 3]$. La intersección es lo común."},
+          ]),
 
         b("errores_comunes",
           items_md=[
@@ -1382,6 +1600,36 @@ def lesson_3_7():
                 "Intercambiando: $\\boxed{f^{-1}(x) = \\sqrt{x - 4}, \\quad x \\geq 4.}$"
             ),
         ),
+
+        b("verificacion",
+          intro_md="Verifica el concepto de función inversa:",
+          preguntas=[
+              {"enunciado_md": "¿$f^{-1}(x)$ es lo mismo que $\\dfrac{1}{f(x)}$?",
+               "opciones_md": [
+                   "Sí, son notaciones equivalentes",
+                   "No, $f^{-1}$ es la inversa funcional, $1/f$ es el recíproco",
+                   "Sí, si $f$ es lineal",
+                   "Sí, si $f$ es polinomio",
+               ],
+               "correcta": "B",
+               "pista_md": "$f^{-1}$ deshace lo que hace $f$.",
+               "explicacion_md": "$f^{-1}(y)$ devuelve la $x$ tal que $f(x) = y$. $1/f(x)$ es solo el recíproco. Son objetos completamente distintos."},
+              {"enunciado_md": "Si $f: \\mathbb{R} \\to [0, +\\infty)$, $f(x) = x^2$, ¿tiene inversa?",
+               "opciones_md": [
+                   "Sí, $f^{-1}(y) = \\sqrt{y}$",
+                   "No, porque $f$ no es inyectiva en $\\mathbb{R}$",
+                   "Sí, $f^{-1}(y) = -\\sqrt{y}$",
+                   "Sí, en todo $\\mathbb{R}$",
+               ],
+               "correcta": "B",
+               "pista_md": "Solo las funciones biyectivas tienen inversa.",
+               "explicacion_md": "$f$ no es inyectiva ($f(2) = f(-2) = 4$), por lo que no tiene inversa global. Habría que restringir el dominio a $[0, +\\infty)$ primero."},
+              {"enunciado_md": "Si $f$ es biyectiva con $\\text{Dom}(f) = [0, 4]$ y $\\text{Rec}(f) = [-1, 5]$, ¿cuál es $\\text{Dom}(f^{-1})$?",
+               "opciones_md": ["$[0, 4]$", "$[-1, 5]$", "$\\mathbb{R}$", "$[0, 5]$"],
+               "correcta": "B",
+               "pista_md": "$\\text{Dom}(f^{-1}) = \\text{Rec}(f)$.",
+               "explicacion_md": "El dominio de $f^{-1}$ son los valores que ALCANZA $f$, es decir su recorrido. $\\text{Dom}(f^{-1}) = [-1, 5]$."},
+          ]),
 
         b("errores_comunes",
           items_md=[

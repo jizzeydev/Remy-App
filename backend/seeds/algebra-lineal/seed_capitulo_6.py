@@ -367,6 +367,14 @@ def lesson_6_1():
             ),
         ),
 
+        fig(
+            "Diagrama matemático con dos paneles lado a lado. Panel izquierdo: cuadrícula 2D antes de aplicar A, "
+            "con varios vectores grises desde el origen apuntando en distintas direcciones. Resaltar dos vectores "
+            "especiales: v1 en teal #06b6d4 y v2 en ámbar #f59e0b. Panel derecho: la misma cuadrícula deformada "
+            "por A. Los vectores grises ahora cambiaron de dirección, pero v1 y v2 siguen sobre las mismas rectas "
+            "originales, solo estirados por factores λ1 y λ2. Etiquetas 'Av1 = λ1 v1' y 'Av2 = λ2 v2'. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Considerar $\\vec{v} = \\vec{0}$ como vector propio.** Por definición, los vectores propios son **no nulos**.",
@@ -680,6 +688,15 @@ def lesson_6_2():
             ),
         ),
 
+        fig(
+            "Diagrama de pipeline horizontal con tres cuadrículas 2D conectadas por flechas etiquetadas, "
+            "ilustrando A = P D P^-1. Primera cuadrícula (izquierda) en base canónica con un vector ámbar "
+            "#f59e0b. Flecha hacia la derecha rotulada 'P^-1: cambia a base de autovectores'. Segunda "
+            "cuadrícula con ejes en teal #06b6d4 (los autovectores). Flecha 'D: estira por λ1 y λ2'. "
+            "Tercera cuadrícula con el mismo vector estirado a lo largo de los ejes teal. Flecha final "
+            "'P: vuelve a base canónica'. Cuarta cuadrícula con el resultado A·x. " + STYLE
+        ),
+
         b("errores_comunes",
           items_md=[
               "**Pensar que toda matriz es diagonalizable.** Solo si tiene $n$ vectores propios LI.",
@@ -918,6 +935,16 @@ def lesson_6_3():
                 "$[T]_{\\mathcal{B}} = \\begin{bmatrix} 0 & 1 & -1 \\\\ 0 & 0 & 2 \\\\ 0 & 0 & 0 \\end{bmatrix}$.\n\n"
                 "Distinta apariencia que en la base estándar, pero misma transformación abstracta."
             ),
+        ),
+
+        fig(
+            "Diagrama matemático con dos paneles lado a lado mostrando la misma transformación T en dos bases. "
+            "Panel izquierdo: cuadrícula canónica con ejes negros, vector x deformado por una matriz 'fea' A "
+            "con entradas mezcladas; arriba el rótulo '[T]_canónica = A' y la matriz 2x2 con cuatro entradas "
+            "no nulas. Panel derecho: cuadrícula con ejes oblicuos teal #06b6d4 y ámbar #f59e0b (los "
+            "autovectores v1, v2); el mismo vector se estira solo a lo largo de esos ejes; arriba "
+            "'[T]_B = D' con la matriz diagonal diag(λ1, λ2). Mensaje inferior centrado: 'la base correcta "
+            "diagonaliza T'. " + STYLE
         ),
 
         b("errores_comunes",
@@ -1165,6 +1192,15 @@ def lesson_6_4():
                 "$|\\lambda| = \\sqrt{3/4 + 1/4} = 1$. $\\arg(\\lambda) = \\arctan(\\tfrac{1/2}{\\sqrt{3}/2}) = \\arctan(\\tfrac{1}{\\sqrt{3}}) = 30°$.\n\n"
                 "**$A$ es similar a una rotación pura de $30°$** (sin escala, ya que $|\\lambda| = 1$). Las iteraciones $\\vec{x}_{t+1} = A\\vec{x}_t$ describen órbitas elípticas alrededor del origen."
             ),
+        ),
+
+        fig(
+            "Diagrama matemático con dos paneles. Panel izquierdo: cuadrícula 2D bajo una matriz de rotación "
+            "2x2 sin autovectores reales; un punto inicial x0 y su órbita {x0, A x0, A^2 x0, ...} dibujada "
+            "como espiral en teal #06b6d4 girando alrededor del origen, sin estabilizarse en ninguna "
+            "dirección. Etiqueta 'sin direcciones invariantes reales'. Panel derecho: plano complejo con "
+            "ejes Re e Im, y dos puntos conjugados λ = a + bi y λ = a - bi marcados como círculos ámbar "
+            "#f59e0b, simétricos respecto al eje real, unidos por una línea punteada. " + STYLE
         ),
 
         b("errores_comunes",
