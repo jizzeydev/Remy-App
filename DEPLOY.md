@@ -120,33 +120,38 @@ backend/venv/Scripts/python.exe scripts/migrate_to_atlas.py "mongodb+srv://USER:
 Lee `MONGO_URL` y `DB_NAME` desde `backend/.env` como source. Idempotente: dropea cada
 collection en target antes de re-insertar.
 
-### Sync de contenido (curso/lección/preguntas) sin perder imágenes
+### Sync de contenido (cursos / lecciones / preguntas) preservando ediciones de admin
 
 `scripts/sync_content_to_atlas.py` empuja solo las colecciones de **contenido**
 (`courses`, `chapters`, `lessons`, `questions`, `library_universities`,
 `formulas`, `pricing_config`, `app_settings`) a Atlas, preservando las
 de **usuarios** (`users`, `subscriptions`, `quiz_attempts`,
-`lesson_progress`, `payments`, etc.). Es el script que usás cada vez que
-agregás o editás cursos en local.
+`lesson_progress`, `payments`, etc.).
 
-⚠️ **Caveat clave**: hace `drop()` de la colección **entera** `lessons` en
-Atlas y la repuebla con la copia local — no es un sync diferencial por curso.
-Si subiste imágenes vía `/admin` en producción y después corrés
-`sync_content_to_atlas.py --confirm` con un local que tiene `image_url=""`,
-**borrás todas las imágenes**, también las de cursos que no tocaste.
+⚠️ **Caveat clave**: hace `drop()` sobre cada colección de contenido entera
+en Atlas y la repuebla con la copia local — no es un sync diferencial. Si
+edités algo desde `/admin` en prod (image_url subido a Cloudinary, gráfico
+Desmos, body_md de un texto, opciones de una pregunta, etc.) y después
+corrés `sync_content_to_atlas.py --confirm` sin "chupar" antes esos
+cambios a local, **los perdés**.
 
-Para evitarlo, el flujo correcto cada vez que vas a hacer un nuevo deploy
-de contenido es:
+**Modelo conceptual** del workflow:
+- **Seed** = autoridad sobre QUÉ documentos existen (estructura: cursos,
+  capítulos, lecciones, qué bloques están en cada lección, en qué orden).
+- **Atlas / admin** = autoridad sobre el CONTENIDO de cada documento
+  (texto, image_url, expresiones de Desmos, opciones de pregunta).
+
+El flujo correcto cada vez que vas a hacer un deploy de contenido es:
 
 ```bash
-# 1. Traer desde Atlas todos los image_url ya cargados → Mongo local
-backend/venv/Scripts/python.exe scripts/pull_image_urls_from_atlas.py            # dry-run
-backend/venv/Scripts/python.exe scripts/pull_image_urls_from_atlas.py --confirm  # aplica
+# 1. Traer desde Atlas todo lo que admin haya editado → Mongo local
+backend/venv/Scripts/python.exe scripts/pull_content_from_atlas.py            # dry-run
+backend/venv/Scripts/python.exe scripts/pull_content_from_atlas.py --confirm  # aplica
 
 # 2. Aplicar el seed nuevo (solo toca las lecciones de ese capítulo en local)
 backend/venv/Scripts/python.exe scripts/run_seed.py "backend/seeds/<curso>/seed_capitulo_<N>.py"
 
-# 3. Auditar estructura de las lecciones tocadas (opcional pero recomendado)
+# 3. Auditar estructura (opcional pero recomendado)
 backend/venv/Scripts/python.exe scripts/audit_lesson_structure.py <curso>
 # o auditar todos los cursos:
 backend/venv/Scripts/python.exe scripts/audit_all_courses.py > test_reports/audit_all_courses.json
@@ -158,17 +163,25 @@ backend/venv/Scripts/python.exe scripts/sync_content_to_atlas.py
 backend/venv/Scripts/python.exe scripts/sync_content_to_atlas.py --confirm
 ```
 
-El paso 1 lee Atlas, y por cada bloque `figura` con `image_url` no vacío
-busca el bloque correspondiente en local (mismo `lesson.id` + mismo
-`block.id`) y le copia la URL. Es idempotente y respeta cualquier URL que
-local ya tenga distinta (no la pisa). Después del paso 5, Atlas queda con
-exactamente las mismas imágenes que tenía + las modificaciones del nuevo seed.
+El paso 1 mirror-ea Atlas → local: por cada doc de contenido en Atlas hace
+upsert sobre local (matched por `id`). Lecciones, bloques Desmos, image_urls,
+preguntas, descripciones — todo lo editado en admin queda en local. Lo que
+existe solo en local (un seed nuevo aún no sync-eado) se preserva tal cual.
+
+**Implicancia importante**: una vez que un documento existe en Atlas, **el
+seed deja de ser autoridad sobre su contenido textual**. Si querés cambiar
+el `body_md` de una lección que ya está en Atlas:
+- **(a) Editá vía admin de prod (recomendado)** — directo y sobrevive sync.
+- (b) Editá el seed Y borrá el doc en Atlas (vía admin → "Eliminar lección")
+  para que el seed lo recree con el contenido nuevo.
+- (c) Bypass: corré sync sin pull antes — Atlas se sobrescribe con local.
+  Cuidado: pierde TODAS las ediciones de admin desde el último sync.
 
 **Recomendación de dónde generar imágenes**: directo en producción
 (`/admin` en `remy.seremonta.store`). Las imágenes viven en Cloudinary,
-solo el `image_url` se guarda en Atlas. Generar en local obliga a un
-re-sync, que es un extra paso destructivo. Generar en prod escribe el URL
-quirúrgicamente sin tocar otras colecciones.
+solo el `image_url` se guarda en Atlas. Generar en prod escribe el URL
+quirúrgicamente sin tocar otras colecciones, y el siguiente `pull_content`
+las trae a local automáticamente.
 
 ### Auditar estructura pedagógica de los cursos
 
