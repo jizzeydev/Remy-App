@@ -531,7 +531,10 @@ async def get_lessons_by_ids(ids: str = ""):
 
 
 @api_router.get("/lessons/{lesson_id}/context")
-async def get_lesson_context(lesson_id: str):
+async def get_lesson_context(
+    lesson_id: str,
+    _user: dict = Depends(auth_routes.require_content_access),
+):
     """
     Returns everything LessonViewer needs in one shot:
       - lesson, chapter, course
@@ -2406,7 +2409,11 @@ async def get_public_course_chapters(course_id: str):
 
 @api_router.get("/chapters/{chapter_id}/lessons")
 async def get_public_chapter_lessons(chapter_id: str):
-    """Public lesson list — same linkage rules as the admin endpoint."""
+    """Lista pública de lecciones del capítulo. NO devuelve `blocks` (el
+    contenido está gateado por `/lessons/{id}` y `/lessons/{id}/context`);
+    acá solo títulos/duración/orden para que los previews de Biblioteca
+    sigan funcionando para usuarios sin acceso pago.
+    """
     chapter = await db.chapters.find_one({"id": chapter_id}, {"_id": 0})
     if not chapter:
         return []
@@ -2414,10 +2421,15 @@ async def get_public_chapter_lessons(chapter_id: str):
     for lesson in lessons:
         if isinstance(lesson.get('created_at'), str):
             lesson['created_at'] = datetime.fromisoformat(lesson['created_at'])
+        # Strip block content — listado solo expone metadata.
+        lesson.pop('blocks', None)
     return lessons
 
 @api_router.get("/lessons/{lesson_id}")
-async def get_lesson(lesson_id: str):
+async def get_lesson(
+    lesson_id: str,
+    _user: dict = Depends(auth_routes.require_content_access),
+):
     lesson = await db.lessons.find_one({"id": lesson_id}, {"_id": 0})
     if not lesson:
         raise HTTPException(status_code=404, detail="Lección no encontrada")

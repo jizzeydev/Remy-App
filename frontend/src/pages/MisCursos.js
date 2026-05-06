@@ -19,10 +19,21 @@ const MisCursos = () => {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ enrolled_count: 0, limit: null, can_enroll_more: true });
 
+  // Gate de acceso al contenido pago: trial vigente o suscripción activa.
+  // Sin esto, alumnos con trial vencido seguían viendo Mis Cursos y pinchando
+  // lecciones (que el backend ahora también bloquea con 403 TRIAL_EXPIRED).
   useEffect(() => {
+    if (!user) return;
+    if (user.has_content_access === false) {
+      navigate('/subscribe', { replace: true });
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    if (user && user.has_content_access === false) return;
     fetchEnrolledCourses();
     fetchEnrollmentStats();
-  }, []);
+  }, [user]);
 
   const fetchEnrolledCourses = async () => {
     try {

@@ -1,5 +1,5 @@
 """Authentication routes for Remy platform - Google OAuth Only"""
-from fastapi import APIRouter, HTTPException, status, Response, Request, Cookie
+from fastapi import APIRouter, Depends, HTTPException, status, Response, Request, Cookie
 from pydantic import BaseModel, EmailStr
 from motor.motor_asyncio import AsyncIOMotorClient
 from datetime import datetime, timezone, timedelta
@@ -127,16 +127,43 @@ def set_session_cookie(response: Response, session_token: str, expires_at: datet
     )
 
 
+def has_content_access(user: dict) -> bool:
+    """¿El usuario tiene acceso al contenido pago (lecciones de cursos)?
+
+    Acceso = suscripción activa, o trial gratuito vigente.
+
+    Nota: este chequeo es de SOLO LECTURA (no muta `trial_active` aunque
+    detecte que venció). Para mutar el flag, usá los endpoints que ya lo
+    hacen on-demand (auth.py:248, server.py:811, etc).
+    """
+    if user.get("subscription_status") == "active":
+        return True
+    if not user.get("trial_active"):
+        return False
+    trial_end = user.get("trial_end_date")
+    if not trial_end:
+        return False
+    try:
+        end_dt = trial_end if isinstance(trial_end, datetime) else datetime.fromisoformat(
+            trial_end.replace("Z", "+00:00") if isinstance(trial_end, str) else trial_end
+        )
+        if end_dt.tzinfo is None:
+            end_dt = end_dt.replace(tzinfo=timezone.utc)
+        return end_dt > datetime.now(timezone.utc)
+    except (ValueError, AttributeError):
+        return False
+
+
 def user_to_response(user: dict) -> dict:
     """Convert user document to response format"""
     sub_end = user.get("subscription_end")
     if sub_end and isinstance(sub_end, datetime):
         sub_end = sub_end.isoformat()
-    
+
     trial_end = user.get("trial_end_date")
     if trial_end and isinstance(trial_end, datetime):
         trial_end = trial_end.isoformat()
-    
+
     return {
         "user_id": user["user_id"],
         "email": user["email"],
@@ -150,7 +177,9 @@ def user_to_response(user: dict) -> dict:
         "trial_active": user.get("trial_active", False),
         "trial_end_date": trial_end,
         "trial_simulations_used": user.get("trial_simulations_used", 0),
-        "trial_simulations_limit": user.get("trial_simulations_limit", 10)
+        "trial_simulations_limit": user.get("trial_simulations_limit", 10),
+        # Acceso a contenido pago — derivado, no se persiste.
+        "has_content_access": has_content_access(user),
     }
 
 
@@ -423,6 +452,23 @@ async def get_current_user_dependency(
         )
     
     return user
+
+
+async def require_content_access(
+    user: dict = Depends(get_current_user_dependency)
+) -> dict:
+    """FastAPI dependency: requiere subscription activa o trial vigente.
+
+    Devuelve el doc de user para que el endpoint lo use; lanza 403
+    "TRIAL_EXPIRED" cuando ya no hay trial ni sub válida — el frontend usa
+    ese código para redirigir a /subscribe.
+    """
+    if has_content_access(user):
+        return user
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="TRIAL_EXPIRED",
+    )
 
 
 async def require_active_subscription(user: dict) -> dict:

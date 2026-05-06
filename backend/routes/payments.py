@@ -542,56 +542,113 @@ async def mercadopago_webhook(request: Request):
                 logger.info(f"Webhook received - Request ID: {x_request_id}")
         
         payload = await request.json()
-        
+
         action = payload.get("action", payload.get("type", ""))
         data = payload.get("data", {})
-        
-        logger.info(f"Mercado Pago webhook: {action}")
-        
+
+        logger.info(f"Mercado Pago webhook: action={action!r} data={data!r}")
+
         # Handle payment notifications
         if "payment" in action:
             payment_id = data.get("id")
-            payment_status = data.get("status")
-            
-            # Get subscription by payment external reference
-            external_ref = data.get("external_reference", "")
-            
-            if payment_status == "approved":
-                # Find subscription and activate
+            if not payment_id:
+                logger.warning(f"Payment webhook sin id: payload={payload}")
+                return {"status": "ignored", "reason": "no_payment_id"}
+
+            # MP solo envía data.id en el webhook — hay que ir a buscar
+            # status / external_reference / preapproval_id a la API.
+            try:
+                payment = mp_service.get_payment(payment_id)
+            except Exception as e:
+                logger.error(f"No pude traer payment {payment_id}: {e}")
+                return {"status": "error_fetch_payment", "payment_id": payment_id}
+
+            payment_status = payment.get("status")
+            payment_status_detail = payment.get("status_detail")
+            external_ref = payment.get("external_reference") or ""
+            preapproval_id_from_payment = payment.get("preapproval_id") or ""
+
+            logger.info(
+                f"Payment {payment_id}: status={payment_status} detail={payment_status_detail} "
+                f"ext_ref={external_ref!r} preapproval_id={preapproval_id_from_payment!r}"
+            )
+
+            # Localizar la subscription: primero por preapproval_id (más fiable),
+            # después fallback a external_reference (regex match parcial).
+            subscription = None
+            if preapproval_id_from_payment:
                 subscription = await db.subscriptions.find_one(
-                    {"mercadopago_id": {"$regex": external_ref}},
-                    {"_id": 0}
+                    {"mercadopago_id": preapproval_id_from_payment}, {"_id": 0}
                 )
-                
-                if subscription:
-                    # Activate user subscription
-                    await db.users.update_one(
+            if not subscription and external_ref:
+                subscription = await db.subscriptions.find_one(
+                    {"mercadopago_id": {"$regex": external_ref}}, {"_id": 0}
+                )
+
+            if not subscription:
+                logger.warning(
+                    f"Payment {payment_id} sin subscription matcheable "
+                    f"(preapproval_id={preapproval_id_from_payment!r}, ext_ref={external_ref!r})"
+                )
+                return {"status": "ignored", "reason": "no_subscription_match"}
+
+            # Mapeo: status del payment → estado local.
+            #  - approved: cobro exitoso → subscription activa.
+            #  - rejected / cancelled / refunded / charged_back: cobro inválido
+            #    → desactivar (fix optimista: el preapproval activó la sub al
+            #    crearse; si después MP no logra cobrar, revertimos acá).
+            #  - in_process / pending / authorized: cobro en curso, no tocar.
+            user_status_target = None
+            sub_status_target = None
+            if payment_status == "approved":
+                user_status_target = "active"
+                sub_status_target = "active"
+            elif payment_status in ("rejected", "cancelled", "refunded", "charged_back"):
+                user_status_target = "inactive"
+                sub_status_target = payment_status
+
+            if user_status_target is None:
+                logger.info(
+                    f"Payment {payment_id} status={payment_status} no requiere cambio local "
+                    f"(user={subscription['user_email']})"
+                )
+                return {"status": "received", "noop": True}
+
+            await db.users.update_one(
+                {"user_id": subscription["user_id"]},
+                {"$set": {"subscription_status": user_status_target}}
+            )
+            await db.subscriptions.update_one(
+                {"id": subscription["id"]},
+                {"$set": {
+                    "status": sub_status_target,
+                    "last_payment_id": str(payment_id),
+                    "last_payment_status": payment_status,
+                    "last_payment_status_detail": payment_status_detail,
+                    "last_payment_at": datetime.now(timezone.utc).isoformat(),
+                }}
+            )
+            logger.info(
+                f"Subscription {subscription['id']} → user_status={user_status_target} "
+                f"sub_status={sub_status_target} (payment {payment_id} {payment_status})"
+            )
+
+            # Email solo en activación nueva por approved.
+            if payment_status == "approved":
+                try:
+                    user = await db.users.find_one(
                         {"user_id": subscription["user_id"]},
-                        {"$set": {"subscription_status": "active"}}
+                        {"_id": 0, "email": 1, "name": 1}
                     )
-                    
-                    await db.subscriptions.update_one(
-                        {"id": subscription["id"]},
-                        {"$set": {"status": "active"}}
-                    )
-                    
-                    logger.info(f"Subscription activated via webhook: {subscription['user_email']}")
-                    
-                    # Send email notification
-                    try:
-                        user = await db.users.find_one(
-                            {"user_id": subscription["user_id"]},
-                            {"_id": 0, "email": 1, "name": 1}
-                        )
-                        if user and notify_subscription_started:
-                            asyncio.create_task(notify_subscription_started(
-                                user.get("email", subscription["user_email"]),
-                                user.get("name", "Usuario"),
-                                subscription.get("plan", "monthly"),
-                                subscription.get("amount", 0)
-                            ))
-                    except Exception as e:
-                        logger.error(f"Failed to send subscription email: {e}")
+                    if user and notify_subscription_started:
+                        asyncio.create_task(notify_subscription_started(
+                            user.get("email", subscription["user_email"]),
+                            user.get("name", "Usuario"),
+                            subscription.get("plan", "monthly"),
+                            subscription.get("amount", 0)
+                        ))
+                except Exception as e:
+                    logger.error(f"Failed to send subscription email: {e}")
         
         # Handle subscription notifications
         elif "subscription" in action or "preapproval" in action:

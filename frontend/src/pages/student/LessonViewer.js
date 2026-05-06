@@ -61,9 +61,16 @@ const LessonViewer = () => {
     setLoading(true);
     setCheckingEnrollment(true);
     try {
+      const token = localStorage.getItem('remy_session_token');
+      const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
+
       // One backend call returns lesson + chapter + course + ordered sibling
       // lessons. Replaces the previous O(courses × chapters × lessons) walk.
-      const ctxRes = await axios.get(`${API}/lessons/${lessonId}/context`);
+      // Backend gatea por trial/suscripción: si vence, devuelve 403
+      // detail="TRIAL_EXPIRED" y redirigimos a /subscribe.
+      const ctxRes = await axios.get(`${API}/lessons/${lessonId}/context`, {
+        headers: authHeaders,
+      });
       const ctx = ctxRes.data;
 
       setLesson(ctx.lesson);
@@ -80,12 +87,11 @@ const LessonViewer = () => {
       setCurrentIndex(typeof ctx.lesson_index === 'number' ? ctx.lesson_index : -1);
 
       // Enrollment check (separate, requires auth header).
-      const token = localStorage.getItem('remy_session_token');
       if (token && ctx.course?.id) {
         try {
           const enrollmentRes = await axios.get(
             `${API}/enrollments/check/${ctx.course.id}`,
-            { headers: { Authorization: `Bearer ${token}` } }
+            { headers: authHeaders }
           );
           setIsEnrolled(enrollmentRes.data.enrolled);
         } catch (e) {
@@ -96,6 +102,16 @@ const LessonViewer = () => {
       }
     } catch (error) {
       console.error('Error fetching lesson:', error);
+      const detail = error?.response?.data?.detail;
+      if (error?.response?.status === 403 && detail === 'TRIAL_EXPIRED') {
+        toast.info('Tu período de prueba terminó. Suscríbete para seguir.');
+        navigate('/subscribe', { replace: true });
+        return;
+      }
+      if (error?.response?.status === 401) {
+        navigate('/auth', { replace: true });
+        return;
+      }
       toast.error('Error al cargar la lección');
     } finally {
       setLoading(false);

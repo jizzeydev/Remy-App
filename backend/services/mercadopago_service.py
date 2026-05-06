@@ -123,18 +123,36 @@ class MercadoPagoService:
         """Get subscription status from Mercado Pago"""
         if not self.sdk:
             raise Exception("Mercado Pago SDK not configured")
-        
+
         try:
             result = self.sdk.preapproval().get(preapproval_id)
-            
+
             if result["status"] == 200:
                 return result["response"]
             else:
                 logger.error(f"Failed to get preapproval: {result}")
                 raise Exception(f"Failed to retrieve subscription: {result}")
-                
+
         except Exception as e:
             logger.error(f"Error getting preapproval: {str(e)}")
+            raise
+
+    def get_payment(self, payment_id) -> dict:
+        """Trae los detalles de un pago por su id (lo que el webhook necesita).
+
+        El webhook de MP envía `data.id` solamente; para saber `status`,
+        `external_reference` o `preapproval_id` hay que pegarle a la API.
+        """
+        if not self.sdk:
+            raise Exception("Mercado Pago SDK not configured")
+        try:
+            result = self.sdk.payment().get(str(payment_id))
+            if result["status"] == 200:
+                return result["response"]
+            logger.error(f"Failed to get payment {payment_id}: {result}")
+            raise Exception(f"Failed to retrieve payment: {result}")
+        except Exception as e:
+            logger.error(f"Error getting payment {payment_id}: {e}")
             raise
     
     def cancel_preapproval(self, preapproval_id: str) -> dict:
