@@ -21,3 +21,22 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# ---- Capacitor / Android ----
+# La carpeta `android/` SÍ se commitea (manifest, build.gradle, recursos),
+# pero los outputs del build de Gradle/Studio no.
+android/app/build/
+android/build/
+android/.gradle/
+android/captures/
+android/local.properties
+android/.idea/
+# Assets generados por `cap sync` desde frontend/build/
+android/app/src/main/assets/public/
+android/app/src/main/assets/capacitor.config.json
+android/app/src/main/assets/capacitor.plugins.json
+# Archivos firmados / privados — keystore va por separado, no en repo.
+*.apk
+*.aab
+*.keystore
+!debug.keystore

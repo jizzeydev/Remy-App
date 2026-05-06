@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Remy</string>
+    <string name="title_activity_main">Remy</string>
+    <string name="package_name">cl.seremonta.remy</string>
+    <string name="custom_url_scheme">cl.seremonta.remy</string>
+</resources>

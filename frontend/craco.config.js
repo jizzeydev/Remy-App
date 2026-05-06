@@ -1,6 +1,25 @@
 // craco.config.js
 const path = require("path");
-require("dotenv").config();
+
+// Cargar .env files en el ORDEN correcto de CRA (mayor → menor prioridad):
+//   .env.<NODE_ENV>.local  >  .env.local  >  .env.<NODE_ENV>  >  .env
+// Antes había `require("dotenv").config()` solo, que cargaba `.env` primero
+// y dejaba el localhost en process.env. Cuando CRA después intenta cargar
+// `.env.production`, dotenv (sin `override`) ve la var ya seteada y la salta
+// → el build de production tenía REACT_APP_BACKEND_URL=http://localhost:8001
+// embebido, rompiendo todo deployment fuera de dev (Vercel y Capacitor).
+const dotenv = require("dotenv");
+const NODE_ENV = process.env.NODE_ENV || "development";
+[
+  `.env.${NODE_ENV}.local`,
+  ".env.local",
+  `.env.${NODE_ENV}`,
+  ".env",
+].forEach((f) => {
+  // dotenv NO sobrescribe vars existentes — el primero gana. Por eso
+  // iteramos del más específico (mayor prioridad) al genérico.
+  dotenv.config({ path: path.resolve(__dirname, f) });
+});
 
 // Environment variable overrides
 const config = {

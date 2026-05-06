@@ -6,14 +6,18 @@ Operativa de despliegue post-migración Emergent (abril 2026). Stack:
 Cloudflare DNS (seremonta.store)
     │
     ├─→ remy.seremonta.store      → Vercel  (frontend React)
+    │                                  │
+    │                                  └─→ Capacitor wrap → APK (Play Store)
+    │
     └─→ api.remy.seremonta.store  → Render  (FastAPI backend)
                                        │
                                        ↓
                                   MongoDB Atlas (cluster remy-prod, M0)
 ```
 
-Imágenes en Cloudinary (no en Atlas). Pagos en Mercado Pago Chile (PROD).
-Auth con Google Identity Services (sin Emergent).
+Imágenes en Cloudinary (no en Atlas). Pagos en Mercado Pago Chile (PROD)
+para web; Google Play Billing (Android) y StoreKit (iOS) para mobile —
+en integración (F2). Auth con Google Identity Services (sin Emergent).
 
 ---
 
@@ -203,6 +207,90 @@ backend/venv/Scripts/python.exe scripts/audit_all_courses.py > test_reports/audi
 
 Ambos scripts importan los seeds y verifican bucket por bucket.
 **No tocan Mongo** — son lectura pura del código fuente.
+
+### Mobile: build y release de Android (Capacitor)
+
+Stack mobile: la app móvil es la **misma React app** (`frontend/`) wrappada
+con Capacitor. Los assets se embeben locales (no carga desde la web), y solo
+la API apunta a `https://api.remy.seremonta.store`. Misma DB Atlas que web.
+
+**Roadmap de fases** (estado al 2026-05-06):
+
+| Fase | Estado | Qué |
+|---|---|---|
+| F0 — Setup Capacitor + APK debug | ✅ done | `frontend/android/`, scripts `yarn android:*`, sideload APK funciona. |
+| F1 — Auth nativa (Google Sign-In) | pendiente | Plugin nativo + client ID Android en Google Cloud. |
+| F2 — Google Play Billing | pendiente | Suscripción IAP, validación server-side, webhook RTDN. |
+| F3 — Polish (icons, splash, deep links, listing) | pendiente | Iconos finales, screenshots Play Console, política privacidad. |
+| F4 — Closed testing → producción | pendiente | Cuenta organizacional Se Remonta SpA (zafa los 14 días). |
+
+**Setup local (una vez)**:
+1. Instalar **Android Studio** (Hedgehog o más nuevo): https://developer.android.com/studio
+2. Abrir Android Studio → SDK Manager → instalar:
+   - Android SDK Platform 36 (Capacitor 8 usa compileSdk/targetSdk = 36, minSdk = 24)
+   - Android SDK Build-Tools 36
+   - Android Emulator (opcional, para correr sin device físico)
+3. Setear `ANDROID_HOME` env var apuntando al SDK (típicamente
+   `%LOCALAPPDATA%\Android\Sdk` en Windows).
+4. **Java 17+** (Android Studio lo incluye, pero si usás CLI fuera de
+   Studio: `JAVA_HOME` debe apuntar a la JDK 17).
+
+**Workflow de build**:
+
+```bash
+cd frontend
+
+# Compila React + sincroniza assets a android/app/src/main/assets/public/
+yarn android:sync
+
+# Abre Android Studio en frontend/android/ — el IDE hace build/run con un device USB
+# o emulador. Más cómodo para iterar y debuggear logs nativos.
+yarn android:open
+
+# Alternativa CLI: build + run en device USB (necesita adb en el PATH).
+yarn android:run
+```
+
+**Generar APK debug para sideload** (manda por WhatsApp a un tester):
+
+```bash
+cd frontend/android
+./gradlew assembleDebug         # bash
+.\gradlew.bat assembleDebug     # cmd
+```
+
+El APK queda en `android/app/build/outputs/apk/debug/app-debug.apk`. Está
+firmado con la `debug.keystore` autogenerada (NO es válida para Play Store —
+ese release usa otra keystore). Para instalar en device: USB debugging
+activado → `adb install -r app-debug.apk` o pasar el archivo y abrir desde
+el explorador del teléfono.
+
+**Producción** (release firmado, F3+):
+
+1. Generar keystore de release (UNA vez, **guardar fuera del repo**):
+   ```bash
+   keytool -genkey -v -keystore remy-release.keystore -alias remy \
+     -keyalg RSA -keysize 2048 -validity 10000
+   ```
+   Backup en lugar seguro (1Password, Bitwarden) — si la perdés **no podés
+   actualizar la app en Play Store** y hay que crear una nueva.
+2. Configurar `android/app/build.gradle` `signingConfigs.release` apuntando
+   a la keystore (lee passwords desde env vars, no hardcodeadas).
+3. `./gradlew bundleRelease` → AAB en `android/app/build/outputs/bundle/release/`.
+4. Subir AAB a Google Play Console → Internal testing → Closed testing
+   (saltarse si cuenta de organización con DUNS) → Production.
+
+**Estado de F0 sin auth nativa**: el login con Google Sign-In Web SDK NO
+funciona dentro de la WebView de Capacitor (origin `https://app.remy.local`
+no está autorizado en el OAuth client). En F1 integramos
+`@codetrix-studio/capacitor-google-auth` o similar y agregamos un Android
+OAuth client en Google Cloud Console.
+
+**Suscripciones en mobile**: la pantalla `/subscribe` se reemplaza por
+`MobileSubscribeBlock.js` cuando corre dentro de Capacitor — muestra
+"Suscríbete desde la web" y abre el browser del sistema. Esto evita
+violaciones de la policy 4.5 de Google Play hasta que F2 integre Play
+Billing nativo.
 
 ### Rotar password de Atlas
 

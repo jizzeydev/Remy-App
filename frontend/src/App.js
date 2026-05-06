@@ -6,6 +6,7 @@ import { Loader2 } from 'lucide-react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { PricingProvider } from './hooks/usePricing';
+import { isNative } from './lib/platform';
 
 // ----- Eagerly loaded (first paint / common nav) -----
 import Layout from './components/Layout';
@@ -30,6 +31,11 @@ const Logros = lazy(() => import('./pages/Logros'));
 const LessonViewer = lazy(() => import('./pages/student/LessonViewer'));
 // Mercado Pago SDK only loads when the user actually enters checkout.
 const SubscribePage = lazy(() => import('./pages/SubscribePage'));
+// Bloqueo en mobile (F0): la app móvil no puede cobrar por MP sin violar
+// la política de Google Play. Cuando F2 integre Play Billing, este import
+// se reemplaza por un SubscribePage que detecta plataforma y usa el flow
+// nativo (Play Billing en Android, StoreKit en iOS).
+const MobileSubscribeBlock = lazy(() => import('./pages/MobileSubscribeBlock'));
 // Admin: most users never visit any of these — keep them off the student
 // bundle entirely. Each admin page becomes its own chunk.
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
@@ -105,7 +111,11 @@ function AppRouter() {
         {/* Public Routes */}
         <Route path="/" element={<Landing />} />
         <Route path="/auth" element={<AuthPage />} />
-        <Route path="/subscribe" element={<StudentProtectedRoute><SubscribePage /></StudentProtectedRoute>} />
+        <Route path="/subscribe" element={
+          <StudentProtectedRoute>
+            {isNative() ? <MobileSubscribeBlock /> : <SubscribePage />}
+          </StudentProtectedRoute>
+        } />
         <Route path="/mi-suscripcion" element={<StudentProtectedRoute><MiSuscripcion /></StudentProtectedRoute>} />
 
         {/* Student App - Protected */}
