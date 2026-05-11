@@ -12,6 +12,59 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap" rel="stylesheet" />
         <title>Remy | Tu plataforma de estudio</title>
         <script>window.addEventListener("error",function(e){if(e.error instanceof DOMException&&e.error.name==="DataCloneError"&&e.message&&e.message.includes("PerformanceServerTiming")){e.stopImmediatePropagation();e.preventDefault()}},true);</script>
+
+        <!-- Meta Pixel (Facebook / Instagram Ads).
+             El ID se inyecta vía REACT_APP_META_PIXEL_ID en build-time.
+             Si no hay PIXEL_ID, fbq queda como no-op y no se carga el script externo. -->
+        <script>
+            !(function (f, b, e, v, n, t, s) {
+                if (f.fbq) return;
+                n = f.fbq = function () {
+                    n.callMethod
+                        ? n.callMethod.apply(n, arguments)
+                        : n.queue.push(arguments);
+                };
+                if (!f._fbq) f._fbq = n;
+                n.push = n;
+                n.loaded = !0;
+                n.version = "2.0";
+                n.queue = [];
+                t = b.createElement(e);
+                t.async = !0;
+                t.src = v;
+                s = b.getElementsByTagName(e)[0];
+                s.parentNode.insertBefore(t, s);
+            })(
+                window,
+                document,
+                "script",
+                "https://connect.facebook.net/en_US/fbevents.js",
+            );
+        </script>
+        <script>
+            (function () {
+                var pixelId = "%REACT_APP_META_PIXEL_ID%";
+                if (
+                    pixelId &&
+                    pixelId !== "%REACT_APP_META_PIXEL_ID%" &&
+                    window.fbq
+                ) {
+                    window.fbq("init", pixelId);
+                    window.fbq("track", "PageView");
+                    window.__REMY_META_PIXEL_ID__ = pixelId;
+                }
+            })();
+        </script>
+        <noscript>
+            <img
+                height="1"
+                width="1"
+                style="display: none"
+                alt=""
+                src="https://www.facebook.com/tr?id=%REACT_APP_META_PIXEL_ID%&ev=PageView&noscript=1"
+            />
+        </noscript>
+        <!-- End Meta Pixel -->
     </head>
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>

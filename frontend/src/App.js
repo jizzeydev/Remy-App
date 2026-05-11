@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { PricingProvider } from './hooks/usePricing';
 import { isNative } from './lib/platform';
+import { trackPageView } from './lib/metaPixel';
 
 // ----- Eagerly loaded (first paint / common nav) -----
 import Layout from './components/Layout';
@@ -103,10 +104,21 @@ function StudentProtectedRoute({ children }) {
   return children;
 }
 
+// Dispara Meta PageView en cada cambio de ruta. El primer PageView (load)
+// lo dispara fbq init en index.html — acá cubrimos las navegaciones SPA.
+function MetaPixelRouteTracker() {
+  const location = useLocation();
+  useEffect(() => {
+    trackPageView();
+  }, [location.pathname]);
+  return null;
+}
+
 // App Router
 function AppRouter() {
   return (
     <Suspense fallback={<ChunkFallback />}>
+      <MetaPixelRouteTracker />
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Landing />} />

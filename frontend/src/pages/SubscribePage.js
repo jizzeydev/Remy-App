@@ -10,6 +10,7 @@ import {
   Check, CreditCard, Lock, ArrowLeft, Loader2, ShieldCheck, Sparkles
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { trackMetaEvent } from '../lib/metaPixel';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -93,6 +94,26 @@ const SubscribePage = () => {
       navigate('/biblioteca');
     }
   }, [user, navigate]);
+
+  // InitiateCheckout: el usuario ya tiene un plan seleccionado y el form de
+  // pago a la vista. Lo disparamos cuando el plan se materializa para no
+  // duplicar en re-renders.
+  useEffect(() => {
+    if (!selectedPlan || !user) return;
+    trackMetaEvent('InitiateCheckout', {
+      customData: {
+        currency: selectedPlan.currency || 'CLP',
+        value: selectedPlan.amount,
+        content_ids: [selectedPlan.id],
+        content_name: selectedPlan.name,
+        content_category: 'subscription',
+      },
+      userData: {
+        email: user.email,
+        external_id: user.user_id,
+      },
+    });
+  }, [selectedPlan?.id, user?.user_id]);
 
   const formatCardNumber = (value) => {
     const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
