@@ -25,6 +25,7 @@ from routes import admin_users as admin_users_routes
 from routes import admin_analytics as admin_analytics_routes
 from routes import images as images_routes
 from routes import achievements as achievements_routes
+from routes import meta_pixel as meta_pixel_routes
 from services.image_storage import init_image_storage
 from services import achievements as ach_service
 
@@ -44,6 +45,7 @@ payments_routes.set_db(db)
 admin_users_routes.set_db(db)
 admin_analytics_routes.set_db(db)
 achievements_routes.set_db(db)
+meta_pixel_routes.set_db(db)
 
 # Initialize image storage with GridFS
 init_image_storage(db)
@@ -2608,6 +2610,7 @@ app.include_router(admin_users_routes.router)
 app.include_router(admin_analytics_routes.router)
 app.include_router(images_routes.router)
 app.include_router(achievements_routes.router, prefix="/api")
+app.include_router(meta_pixel_routes.router)
 
 # Import and include new routers
 from routes import library_universities as library_universities_routes

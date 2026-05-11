@@ -8,6 +8,7 @@ import os
 import asyncio
 
 from services.mercadopago_service import MercadoPagoService, PLANS
+from services.meta_pixel_service import meta_pixel_service
 from routes.auth import get_current_user_dependency
 
 logger = logging.getLogger(__name__)
@@ -649,6 +650,61 @@ async def mercadopago_webhook(request: Request):
                         ))
                 except Exception as e:
                     logger.error(f"Failed to send subscription email: {e}")
+
+                # Meta Conversions API: Subscribe + Purchase (autoritativos,
+                # server-side desde el webhook — no dependen del browser).
+                # Idempotente: usamos payment_id como event_id para que Meta
+                # deduplique si el webhook se reenvía.
+                try:
+                    user_doc = await db.users.find_one(
+                        {"user_id": subscription["user_id"]},
+                        {"_id": 0, "email": 1, "name": 1, "user_id": 1}
+                    ) or {}
+                    customer_email = user_doc.get("email") or subscription.get("user_email")
+                    first_name = (user_doc.get("name") or "").split(" ")[0] if user_doc.get("name") else None
+                    amount = float(subscription.get("amount") or 0)
+                    plan_id = subscription.get("plan", "monthly")
+                    currency = subscription.get("currency", "CLP")
+
+                    async def _send_meta_purchase():
+                        if not meta_pixel_service.enabled:
+                            return
+                        common = {
+                            "email": customer_email,
+                            "external_id": subscription.get("user_id"),
+                            "first_name": first_name,
+                            "action_source": "system_generated",
+                        }
+                        await meta_pixel_service.send_event(
+                            event_name="Subscribe",
+                            event_id=f"mp_sub_{payment_id}",
+                            custom_data={
+                                "currency": currency,
+                                "value": amount,
+                                "predicted_ltv": amount,
+                                "content_ids": [plan_id],
+                                "content_name": plan_id,
+                                "content_category": "subscription",
+                            },
+                            **common,
+                        )
+                        await meta_pixel_service.send_event(
+                            event_name="Purchase",
+                            event_id=f"mp_pur_{payment_id}",
+                            custom_data={
+                                "currency": currency,
+                                "value": amount,
+                                "content_ids": [plan_id],
+                                "content_name": plan_id,
+                                "content_category": "subscription",
+                                "content_type": "product",
+                            },
+                            **common,
+                        )
+
+                    asyncio.create_task(_send_meta_purchase())
+                except Exception as e:
+                    logger.error(f"Failed to schedule Meta purchase events: {e}")
         
         # Handle subscription notifications
         elif "subscription" in action or "preapproval" in action:

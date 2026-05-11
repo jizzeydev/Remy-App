@@ -11,6 +11,8 @@ import os
 import logging
 import asyncio
 
+from services.meta_pixel_service import meta_pixel_service
+
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
@@ -228,6 +230,52 @@ def verify_google_id_token(credential: str) -> dict:
     return claims
 
 
+def _client_ip(request: Request) -> Optional[str]:
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    if request.client:
+        return request.client.host
+    return None
+
+
+async def _fire_signup_meta_events(
+    *,
+    user: dict,
+    trial_enabled: bool,
+    request: Request,
+) -> None:
+    """Lead + CompleteRegistration + (opcional) StartTrial via Conversions API.
+
+    Server-side y autoritativo: no depende del browser ni de ad-blockers.
+    Fire-and-forget; nunca rompe el flow de registro si CAPI falla.
+    """
+    if not meta_pixel_service.enabled:
+        return
+
+    common = {
+        "email": user.get("email"),
+        "external_id": user.get("user_id"),
+        "first_name": (user.get("name") or "").split(" ")[0] if user.get("name") else None,
+        "client_ip": _client_ip(request),
+        "client_user_agent": request.headers.get("user-agent"),
+        "event_source_url": str(request.headers.get("referer") or ""),
+        "action_source": "website",
+    }
+
+    try:
+        await meta_pixel_service.send_event(event_name="Lead", **common)
+        await meta_pixel_service.send_event(event_name="CompleteRegistration", **common)
+        if trial_enabled:
+            await meta_pixel_service.send_event(
+                event_name="StartTrial",
+                custom_data={"currency": "CLP", "value": 0, "predicted_ltv": 4990},
+                **common,
+            )
+    except Exception as e:
+        logger.warning("Meta CAPI signup events fallaron: %s", e)
+
+
 @router.post("/google")
 async def process_google_credential(request: Request, response: Response):
     """
@@ -339,6 +387,17 @@ async def process_google_credential(request: Request, response: Response):
             asyncio.create_task(send_welcome(email, name))
         except Exception as e:
             logger.error(f"Failed to send registration emails: {e}")
+
+        # Meta Conversions API: Lead + CompleteRegistration (+ StartTrial si aplica).
+        # Server-side, no bloquea la respuesta de auth.
+        try:
+            asyncio.create_task(_fire_signup_meta_events(
+                user=user,
+                trial_enabled=trial_enabled,
+                request=request,
+            ))
+        except Exception as e:
+            logger.error(f"Failed to schedule Meta signup events: {e}")
     
     # Create our own session
     session_token, expires_at = await create_session(user_id)
