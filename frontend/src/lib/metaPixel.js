@@ -100,4 +100,8 @@ export const trackMetaEvent = (eventName, options = {}) => {
   return eventId;
 };
 
-export const trackPageView = () => trackMetaEvent('PageView');
+/**
+ * Shortcut para PageView. Si pasás userData, se incluye email/external_id
+ * en el evento server-side (sube el match quality cuando el user está logueado).
+ */
+export const trackPageView = (userData) => trackMetaEvent('PageView', { userData });

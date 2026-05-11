@@ -104,15 +104,17 @@ function StudentProtectedRoute({ children }) {
   return children;
 }
 
-// Dispara Meta PageView en cada cambio de ruta + se asegura de que fbq esté
-// inicializado. initMetaPixel es idempotente, así que correrlo una vez por
-// cambio de ruta es seguro (en la práctica solo ejecuta al primer mount).
+// Dispara Meta PageView en cada cambio de ruta. El init real corre desde
+// index.js antes del primer render (para que _fbp esté disponible cuanto antes);
+// acá solo re-aseguramos por idempotencia. Si el usuario está logueado,
+// pasamos email + user_id al evento server-side → mejor match quality en Meta.
 function MetaPixelRouteTracker() {
   const location = useLocation();
+  const { user } = useAuth();
   useEffect(() => {
     initMetaPixel();
-    trackPageView();
-  }, [location.pathname]);
+    trackPageView(user ? { email: user.email, external_id: user.user_id } : undefined);
+  }, [location.pathname, user?.user_id]);
   return null;
 }
 
