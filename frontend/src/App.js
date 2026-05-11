@@ -7,7 +7,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { PricingProvider } from './hooks/usePricing';
 import { isNative } from './lib/platform';
-import { trackPageView } from './lib/metaPixel';
+import { initMetaPixel, trackPageView } from './lib/metaPixel';
 
 // ----- Eagerly loaded (first paint / common nav) -----
 import Layout from './components/Layout';
@@ -104,11 +104,13 @@ function StudentProtectedRoute({ children }) {
   return children;
 }
 
-// Dispara Meta PageView en cada cambio de ruta. El primer PageView (load)
-// lo dispara fbq init en index.html — acá cubrimos las navegaciones SPA.
+// Dispara Meta PageView en cada cambio de ruta + se asegura de que fbq esté
+// inicializado. initMetaPixel es idempotente, así que correrlo una vez por
+// cambio de ruta es seguro (en la práctica solo ejecuta al primer mount).
 function MetaPixelRouteTracker() {
   const location = useLocation();
   useEffect(() => {
+    initMetaPixel();
     trackPageView();
   }, [location.pathname]);
   return null;

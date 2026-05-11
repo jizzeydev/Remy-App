@@ -13,9 +13,11 @@
         <title>Remy | Tu plataforma de estudio</title>
         <script>window.addEventListener("error",function(e){if(e.error instanceof DOMException&&e.error.name==="DataCloneError"&&e.message&&e.message.includes("PerformanceServerTiming")){e.stopImmediatePropagation();e.preventDefault()}},true);</script>
 
-        <!-- Meta Pixel (Facebook / Instagram Ads).
-             El ID se inyecta vía REACT_APP_META_PIXEL_ID en build-time.
-             Si no hay PIXEL_ID, fbq queda como no-op y no se carga el script externo. -->
+        <!-- Meta Pixel bootstrap (Facebook / Instagram Ads).
+             Solo carga el loader de fbq; el `init` se hace en JS (App.js →
+             initMetaPixel) leyendo process.env.REACT_APP_META_PIXEL_ID.
+             Razón: el minify HTML de CRA elimina como dead-code condicionales
+             sobre %REACT_APP_META_PIXEL_ID% si las hacés en <script> inline. -->
         <script>
             !(function (f, b, e, v, n, t, s) {
                 if (f.fbq) return;
@@ -41,20 +43,6 @@
                 "https://connect.facebook.net/en_US/fbevents.js",
             );
         </script>
-        <script>
-            (function () {
-                var pixelId = "%REACT_APP_META_PIXEL_ID%";
-                if (
-                    pixelId &&
-                    pixelId !== "%REACT_APP_META_PIXEL_ID%" &&
-                    window.fbq
-                ) {
-                    window.fbq("init", pixelId);
-                    window.fbq("track", "PageView");
-                    window.__REMY_META_PIXEL_ID__ = pixelId;
-                }
-            })();
-        </script>
         <noscript>
             <img
                 height="1"
@@ -64,7 +52,7 @@
                 src="https://www.facebook.com/tr?id=%REACT_APP_META_PIXEL_ID%&ev=PageView&noscript=1"
             />
         </noscript>
-        <!-- End Meta Pixel -->
+        <!-- End Meta Pixel bootstrap -->
     </head>
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>

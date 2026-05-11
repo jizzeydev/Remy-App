@@ -15,11 +15,24 @@ import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
-const PIXEL_ID =
-  process.env.REACT_APP_META_PIXEL_ID ||
-  (typeof window !== 'undefined' ? window.__REMY_META_PIXEL_ID__ : '');
+const PIXEL_ID = process.env.REACT_APP_META_PIXEL_ID || '';
 
 export const isMetaPixelEnabled = () => !!PIXEL_ID && typeof window !== 'undefined' && !!window.fbq;
+
+/**
+ * Inicializa fbq con el Pixel ID. Idempotente: solo corre una vez por carga.
+ *
+ * Se llama desde App.js al primer render. El bootstrap loader de fbq vive en
+ * index.html, pero el `init` debe hacerse desde JS porque el HTML minifier de
+ * CRA elimina condicionales sobre %REACT_APP_META_PIXEL_ID% como dead code.
+ */
+export const initMetaPixel = () => {
+  if (typeof window === 'undefined' || !window.fbq) return;
+  if (window.__REMY_META_PIXEL_INITED__) return;
+  if (!PIXEL_ID) return;
+  window.fbq('init', PIXEL_ID);
+  window.__REMY_META_PIXEL_INITED__ = true;
+};
 
 const genEventId = () => {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
