@@ -82,6 +82,17 @@ class Course(BaseModel):
     cover_image_url: Optional[str] = None
     summary: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    # Split metadata — only present in derived university courses.
+    # Source of truth: docs/splits-remy.md + apps/ops/data/splits in se-remonta-ops.
+    code: Optional[str] = None                          # e.g. "MA1102", "MATE20"
+    semester: Optional[int] = None
+    prereq_course_ids: List[str] = Field(default_factory=list)
+    base_course_ids: List[str] = Field(default_factory=list)  # General-course slugs the split inherits from
+    match_level: Optional[str] = None                   # "alto" | "medio"
+    source: Optional[str] = None                        # "split" | "new"
+    coverage_status: Optional[str] = None               # "complete" | "partial" — derived; "partial" if match_level=="medio"
+    notes: Optional[str] = None
+    alt_slugs: List[str] = Field(default_factory=list)  # Other doc slugs that map to this same course (cross-career convalidación)
 
 class Chapter(BaseModel):
     """A chapter belongs to a course and groups lessons.
@@ -2615,10 +2626,13 @@ app.include_router(meta_pixel_routes.router)
 # Import and include new routers
 from routes import library_universities as library_universities_routes
 from routes import enrollments as enrollments_routes
+from routes import splits as splits_routes
 library_universities_routes.set_db(db)
 enrollments_routes.set_db(db)
+splits_routes.set_db(db)
 app.include_router(library_universities_routes.router, prefix="/api")
 app.include_router(enrollments_routes.router, prefix="/api")
+app.include_router(splits_routes.router, prefix="/api")
 
 # CORS configuration - allow all origins since we use Bearer tokens (not cookies)
 app.add_middleware(
