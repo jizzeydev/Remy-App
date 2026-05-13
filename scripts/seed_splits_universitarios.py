@@ -4,9 +4,19 @@ Carga las 5 universidades (UAI, UANDES, UCH, UDD, UTFSM) y todos sus ramos
 matemáticos del documento docs/splits-remy.md como `courses` con
 `university_id`, reutilizando los cursos base de Remy via chapter linking.
 
-Idempotente: re-ejecutar no duplica. Las universidades pendientes (USACH,
-UdeC, PUCV, UDP, UNAB, USS, UMayor) NO se cargan acá — el schema queda listo
-y se agregarán cuando Cowork entregue su investigación.
+**Create-only / safe-for-prod**:
+  - Cursos: si el `id` ya existe en la DB, se SKIPEA por completo (no se
+    tocan campos, ni chapters linkeados, ni axes). El admin manda en lo ya
+    creado.
+  - Universidades: si ya existen, sólo se añade `tier` cuando está vacío.
+    Logo, nombre, is_active y demás campos no se tocan.
+  - Cursos base generales (precalculo, calculo-diferencial, etc.) NUNCA se
+    escriben — sólo se leen para conocer sus chapter IDs y hacer link.
+
+Idempotente: re-ejecutar no duplica ni pisa lo curado por el admin.
+Las universidades pendientes (USACH, UdeC, PUCV, UDP, UNAB, USS, UMayor)
+NO se cargan acá — el schema queda listo y se agregarán cuando Cowork
+entregue su investigación.
 
 Convención de slugs: los IDs del doc son el identificador estable que cruza
 con el dashboard de splits (apps/ops/data/splits en se-remonta-ops). Cuando
@@ -1388,16 +1398,22 @@ def now_iso():
 
 
 async def upsert_university(db, uni_spec):
+    """Create-only por seguridad en prod:
+    - Si la universidad ya existe (por short_name), NO la toca, salvo añadir
+      `tier` si está vacío (campo nuevo del schema). Nombre, logo, is_active,
+      etc. se respetan tal cual los dejó el admin.
+    - Si no existe, la crea con tier y is_active=True.
+    Devuelve (id, created)."""
     short = uni_spec["short_name"]
     existing = await db.library_universities.find_one({"short_name": short}, {"_id": 0})
     if existing:
-        update = {"tier": uni_spec["tier"]}
-        # Sólo actualizamos `name` si está vacío para no pisar ediciones del admin.
-        if not existing.get("name"):
-            update["name"] = uni_spec["name"]
-        if "is_active" not in existing:
-            update["is_active"] = True
-        await db.library_universities.update_one({"id": existing["id"]}, {"$set": update})
+        # Sólo backfill de tier cuando falta — nunca pisamos un tier ya
+        # configurado por el admin.
+        if existing.get("tier") is None:
+            await db.library_universities.update_one(
+                {"id": existing["id"]},
+                {"$set": {"tier": uni_spec["tier"]}},
+            )
         return existing["id"], False
     doc = {
         "id": str(uuid.uuid4()),
@@ -1472,8 +1488,11 @@ async def link_chapters_to_course(db, course_id: str, template_chapter_ids: list
     return created
 
 
-async def upsert_course_axes(db, course_id: str, axes: list[str]):
-    """Reemplaza los axes del curso por la lista nueva. Idempotente."""
+async def insert_course_axes(db, course_id: str, axes: list[str]):
+    """Inserta los ejes textuales del syllabus. Sólo se llama cuando el curso
+    se acaba de crear, así que nunca pisa axes ya editados por el admin.
+    Idempotente dentro del run: limpia primero los axes huérfanos del curso
+    nuevo (no deberían existir si el curso es nuevo) y luego inserta."""
     await db.course_axes.delete_many({"course_id": course_id})
     if not axes:
         return
@@ -1491,14 +1510,25 @@ async def upsert_course_axes(db, course_id: str, axes: list[str]):
 
 
 async def upsert_ramo(db, ramo: dict, uni_id_by_short: dict) -> tuple[bool, int, int]:
-    """Devuelve (created, linked_chapters_count, axes_count)."""
+    """Create-only: si el curso ya existe, SE SKIPEA por completo y no se le
+    tocan campos, chapters ni axes. Esto protege el contenido que el admin ya
+    está curando en producción (DESMOS, imágenes, ediciones de chapters/lessons,
+    etc.). Sólo crea ramos cuyo slug NO existe aún.
+    Devuelve (created, linked_chapters_count, axes_count)."""
     course_id = ramo["id"]
+    existing = await db.courses.find_one({"id": course_id}, {"_id": 0, "id": 1})
+    if existing:
+        # SKIP completo. No actualizamos campos, no linkeamos chapters
+        # adicionales, no tocamos axes. El admin manda en lo ya creado.
+        return False, 0, 0
+
     uni_id = uni_id_by_short[ramo["uni"]]
     match = ramo["match"]
     assert match in ("alto", "medio"), f"match_level inválido en {course_id}: {match}"
     coverage = "complete" if match == "alto" else "partial"
 
     payload = {
+        "id": course_id,
         "title": ramo["title"],
         "description": ramo.get("description") or ramo["title"],
         "category": "Matemáticas",
@@ -1517,18 +1547,12 @@ async def upsert_ramo(db, ramo: dict, uni_id_by_short: dict) -> tuple[bool, int,
         "notes": ramo.get("notes"),
         "alt_slugs": ramo.get("alt_slugs", []),
         "visible_to_students": True,
+        "created_at": now_iso(),
     }
+    await db.courses.insert_one(payload)
 
-    existing = await db.courses.find_one({"id": course_id}, {"_id": 0})
-    if existing:
-        await db.courses.update_one({"id": course_id}, {"$set": payload})
-        created = False
-    else:
-        payload.update({"id": course_id, "created_at": now_iso()})
-        await db.courses.insert_one(payload)
-        created = True
-
-    # Linkear chapters de cada base (los chapters template del curso base).
+    # Linkear chapters base — sólo cuando el curso es nuevo. Si ya existía,
+    # nunca llegamos acá (return arriba).
     linked = 0
     base_chapter_ids: list[str] = []
     for base_id in ramo.get("base", []):
@@ -1536,11 +1560,11 @@ async def upsert_ramo(db, ramo: dict, uni_id_by_short: dict) -> tuple[bool, int,
     if base_chapter_ids:
         linked = await link_chapters_to_course(db, course_id, base_chapter_ids)
 
-    # Axes (syllabus textual)
+    # Axes (syllabus textual) — sólo cuando el curso es nuevo.
     axes = ramo.get("axes") or []
-    await upsert_course_axes(db, course_id, axes)
+    await insert_course_axes(db, course_id, axes)
 
-    return created, linked, len(axes)
+    return True, linked, len(axes)
 
 
 async def main():
@@ -1562,7 +1586,7 @@ async def main():
 
     # 2) Ramos
     print(f"\n== Ramos ({len(RAMOS)} total) ==")
-    by_uni: dict[str, dict] = {u["short_name"]: {"created": 0, "updated": 0, "complete": 0, "partial": 0, "axes": 0, "linked_chapters": 0} for u in UNIVERSITIES}
+    by_uni: dict[str, dict] = {u["short_name"]: {"created": 0, "skipped": 0, "complete": 0, "partial": 0, "axes": 0, "linked_chapters": 0} for u in UNIVERSITIES}
     bases_missing: set[str] = set()
     duplicates_ids = set()
     seen = set()
@@ -1583,31 +1607,33 @@ async def main():
         bucket = by_uni[ramo["uni"]]
         if created:
             bucket["created"] += 1
+            if ramo["match"] == "alto":
+                bucket["complete"] += 1
+            else:
+                bucket["partial"] += 1
+            bucket["axes"] += axes
+            bucket["linked_chapters"] += linked
+            marker = "+"
+            print(f"  {marker} {ramo['id']:80s}  match={ramo['match']:5s}  +{linked} ch  {axes} ejes")
         else:
-            bucket["updated"] += 1
-        if ramo["match"] == "alto":
-            bucket["complete"] += 1
-        else:
-            bucket["partial"] += 1
-        bucket["axes"] += axes
-        bucket["linked_chapters"] += linked
-        marker = "+" if created else "="
-        print(f"  {marker} {ramo['id']:80s}  match={ramo['match']:5s}  +{linked} ch  {axes} ejes")
+            bucket["skipped"] += 1
+            marker = "."
+            print(f"  {marker} {ramo['id']:80s}  ya existe, no se toca")
 
     # 3) Reporte final
-    print("\n== Resumen ==")
+    print("\n== Resumen (create-only) ==")
     print(f"  Universidades nuevas: {created_unis} / {len(UNIVERSITIES)} total")
-    tot = {"created": 0, "updated": 0, "complete": 0, "partial": 0, "axes": 0, "linked_chapters": 0}
+    tot = {"created": 0, "skipped": 0, "complete": 0, "partial": 0, "axes": 0, "linked_chapters": 0}
     for short, b in by_uni.items():
         for k in tot:
             tot[k] += b[k]
         print(
-            f"  {short:7s}  created={b['created']:3d}  updated={b['updated']:3d}  "
+            f"  {short:7s}  created={b['created']:3d}  skipped={b['skipped']:3d}  "
             f"complete={b['complete']:3d}  partial={b['partial']:3d}  "
             f"axes={b['axes']:4d}  linked_chapters={b['linked_chapters']:4d}"
         )
     print(
-        f"  TOTAL    created={tot['created']:3d}  updated={tot['updated']:3d}  "
+        f"  TOTAL    created={tot['created']:3d}  skipped={tot['skipped']:3d}  "
         f"complete={tot['complete']:3d}  partial={tot['partial']:3d}  "
         f"axes={tot['axes']:4d}  linked_chapters={tot['linked_chapters']:4d}"
     )
