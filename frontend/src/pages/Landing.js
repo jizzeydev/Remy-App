@@ -60,7 +60,7 @@ const StickyNav = ({ trialEnabled }) => {
 
   const links = [
     { href: '#features', label: 'Funcionalidades' },
-    { href: '#courses', label: 'Cursos' },
+    { href: '#ramo-finder', label: 'Cursos' },
     { href: '#pricing', label: 'Precios' },
     { href: '#faq', label: 'Preguntas' }
   ];
@@ -1433,7 +1433,7 @@ const Footer = () => {
             <a href="#features" className="hover:text-cyan-400 transition-colors">
               Funcionalidades
             </a>
-            <a href="#courses" className="hover:text-cyan-400 transition-colors">
+            <a href="#ramo-finder" className="hover:text-cyan-400 transition-colors">
               Cursos
             </a>
             <a href="#pricing" className="hover:text-cyan-400 transition-colors">
@@ -1543,7 +1543,6 @@ const Landing = () => {
           <SocialProofSection />
           <ProblemSection />
           <FeaturesSection />
-          <CoursesSection />
           <RamoFinderSection />
           <SimulationSection />
           <PricingSection trialEnabled={trialEnabled} trialDays={trialDays} />
