@@ -13,6 +13,7 @@ import { usePricing } from '../hooks/usePricing';
 import TrialBanner from '../components/TrialBanner';
 import { toast } from 'sonner';
 import InlineMd from '@/components/course/InlineMd';
+import CourseCover from '@/components/course/CourseCover';
 import { showAchievementToasts } from '@/lib/achievementToast';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -301,20 +302,7 @@ const Biblioteca = () => {
                         </div>
                       </div>
                     )}
-                    <div className="aspect-video bg-gradient-to-br from-cyan-400 via-cyan-500 to-blue-600 rounded-lg mb-4 flex items-center justify-center relative overflow-hidden">
-                      {course.university?.logo_url ? (
-                        <img
-                          src={course.university.logo_url}
-                          alt=""
-                          className="absolute inset-0 w-full h-full object-cover opacity-20"
-                        />
-                      ) : null}
-                      {/* Decorative gloss */}
-                      <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/20 pointer-events-none" aria-hidden="true" />
-                      <span className="text-white text-4xl font-bold relative z-10 tracking-tight group-hover:scale-105 transition-transform duration-300">
-                        {course.title.charAt(0)}
-                      </span>
-                    </div>
+                    <CourseCover course={course} size="hero" className="mb-4 group-hover:scale-[1.01] transition-transform duration-300" />
                   <div className="flex items-center gap-2 flex-wrap mb-2">
                     <Badge className={getLevelColor(course.level)}>
                       {course.level}

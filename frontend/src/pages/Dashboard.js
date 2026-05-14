@@ -12,6 +12,7 @@ import { Progress } from '@/components/ui/progress';
 import { useAuth } from '../contexts/AuthContext';
 import SubscriptionRequired from '../components/SubscriptionRequired';
 import TrialBanner from '../components/TrialBanner';
+import CourseCover from '@/components/course/CourseCover';
 import TrialCountdown from '../components/TrialCountdown';
 import { getStudentId } from '@/lib/studentId';
 
@@ -175,9 +176,7 @@ const Dashboard = () => {
                         data-testid={`course-item-${index}`}
                         onClick={() => navigate(`/course/${course.id}`)}
                       >
-                        <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-primary to-primary/70 rounded-xl flex items-center justify-center text-primary-foreground font-bold text-xl">
-                          {course.title.charAt(0)}
-                        </div>
+                        <CourseCover course={course} size="thumb" className="flex-shrink-0" />
                         <div className="flex-1 min-w-0">
                           <h4 className="font-semibold truncate text-foreground">{course.title}</h4>
                           <p className="text-sm text-muted-foreground">
