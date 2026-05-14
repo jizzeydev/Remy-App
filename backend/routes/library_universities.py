@@ -29,18 +29,21 @@ class LibraryUniversity(BaseModel):
     short_name: str  # Sigla (PUC, UChile, etc.)
     logo_url: Optional[str] = None
     is_active: bool = True
+    tier: Optional[int] = None  # 1 = top tier (UCh, UAI, UANDES), 2 = mid tier (UDD, UTFSM), etc.
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class CreateUniversityRequest(BaseModel):
     name: str
     short_name: str
     logo_url: Optional[str] = None
+    tier: Optional[int] = None
 
 class UpdateUniversityRequest(BaseModel):
     name: Optional[str] = None
     short_name: Optional[str] = None
     logo_url: Optional[str] = None
     is_active: Optional[bool] = None
+    tier: Optional[int] = None
 
 # Auth helper
 async def verify_admin_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
@@ -88,7 +91,8 @@ async def create_library_university(
     university = LibraryUniversity(
         name=request.name,
         short_name=request.short_name.upper(),
-        logo_url=request.logo_url
+        logo_url=request.logo_url,
+        tier=request.tier,
     )
     
     await db.library_universities.insert_one(university.model_dump())
