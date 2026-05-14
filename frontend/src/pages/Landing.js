@@ -437,18 +437,27 @@ const RamoFinderSection = () => {
       .finally(() => setLoading(false));
   }, []);
 
+  // Normaliza para que "calculo" matchee "Cálculo", "algebra" matchee "Álgebra",
+  // etc. Decompone los caracteres (NFD) y quita las marcas combinantes (acentos,
+  // tildes, diéresis). También hace lowercase.
+  const norm = (s) =>
+    (s || '')
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .toLowerCase();
+
   const filtered = (() => {
-    const q = query.trim().toLowerCase();
+    const q = norm(query.trim());
     let rows = courses;
     if (uniFilter !== 'all') {
       rows = rows.filter((r) => r.university_short_name === uniFilter);
     }
     if (q) {
       rows = rows.filter((r) =>
-        (r.title || '').toLowerCase().includes(q) ||
-        (r.code || '').toLowerCase().includes(q) ||
-        (r.university_short_name || '').toLowerCase().includes(q) ||
-        (r.base_course_titles || []).some((t) => (t || '').toLowerCase().includes(q))
+        norm(r.title).includes(q) ||
+        norm(r.code).includes(q) ||
+        norm(r.university_short_name).includes(q) ||
+        (r.base_course_titles || []).some((t) => norm(t).includes(q))
       );
     }
     return rows;
