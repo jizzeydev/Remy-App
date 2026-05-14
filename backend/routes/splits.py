@@ -139,6 +139,80 @@ async def get_course_syllabus(course_id: str):
     }
 
 
+@router.get("/landing/courses-index")
+async def landing_courses_index():
+    """Endpoint público optimizado para la landing page.
+
+    Devuelve:
+      - universidades activas con logo (para grid de logos en hero/social-proof).
+      - lista plana de cursos universitarios + generales con info mínima
+        (id, title, code, semester, university_short_name, base_titles)
+        para alimentar el buscador "¿Está tu ramo en Remy?".
+
+    Sin paginación: el volumen actual (~200 cursos) cabe en un solo response.
+    Cacheable a nivel HTTP en futuro si crece.
+    """
+    unis = await db.library_universities.find(
+        {"is_active": True},
+        {"_id": 0, "id": 1, "short_name": 1, "name": 1, "tier": 1, "logo_url": 1},
+    ).sort([("tier", 1), ("short_name", 1)]).to_list(100)
+    uni_by_id = {u["id"]: u for u in unis}
+
+    base_titles: dict[str, str] = {}
+    async for b in db.courses.find(
+        {"$or": [{"university_id": None}, {"university_id": {"$exists": False}}]},
+        {"_id": 0, "id": 1, "title": 1},
+    ):
+        base_titles[b["id"]] = b["title"]
+
+    courses = await db.courses.find(
+        {"visible_to_students": {"$ne": False}},
+        {
+            "_id": 0, "id": 1, "title": 1, "code": 1, "semester": 1,
+            "university_id": 1, "base_course_ids": 1,
+        },
+    ).to_list(1000)
+
+    rows = []
+    for c in courses:
+        uni = uni_by_id.get(c.get("university_id")) if c.get("university_id") else None
+        rows.append({
+            "id": c["id"],
+            "title": c.get("title") or "",
+            "code": c.get("code"),
+            "semester": c.get("semester"),
+            "university_short_name": uni["short_name"] if uni else None,
+            "university_logo_url": uni.get("logo_url") if uni else None,
+            "university_tier": uni.get("tier") if uni else None,
+            "base_course_ids": c.get("base_course_ids") or [],
+            "base_course_titles": [base_titles.get(b, b) for b in (c.get("base_course_ids") or [])],
+        })
+
+    uni_summary = []
+    for u in unis:
+        n = sum(1 for r in rows if r["university_short_name"] == u["short_name"])
+        if n == 0:
+            continue
+        uni_summary.append({
+            "short_name": u["short_name"],
+            "name": u["name"],
+            "tier": u.get("tier"),
+            "logo_url": u.get("logo_url"),
+            "courses_count": n,
+        })
+
+    return {
+        "universities": uni_summary,
+        "courses": rows,
+        "totals": {
+            "courses": len(rows),
+            "universities": len(uni_summary),
+            "with_university": sum(1 for r in rows if r["university_short_name"]),
+            "general": sum(1 for r in rows if not r["university_short_name"]),
+        },
+    }
+
+
 # ==================== ADMIN ====================
 
 @router.get("/admin/splits-coverage")

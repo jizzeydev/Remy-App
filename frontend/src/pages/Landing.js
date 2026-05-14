@@ -328,13 +328,19 @@ const HeroSection = ({ trialEnabled = true, trialDays = 7 }) => {
 };
 
 // ==================== SOCIAL PROOF SECTION ====================
+// Muestra grid de logos de universidades cubiertas + 3 trust badges.
+// Datos del endpoint público /api/landing/courses-index (cacheable, ~200 cursos).
 const SocialProofSection = () => {
   const [universities, setUniversities] = useState([]);
+  const [totals, setTotals] = useState({ courses: 0, universities: 0 });
 
   useEffect(() => {
     axios
-      .get(`${API}/library-universities`)
-      .then((r) => setUniversities(r.data || []))
+      .get(`${API}/landing/courses-index`)
+      .then((r) => {
+        setUniversities(r.data?.universities || []);
+        setTotals(r.data?.totals || {});
+      })
       .catch(() => {});
   }, []);
 
@@ -345,35 +351,49 @@ const SocialProofSection = () => {
   ];
 
   return (
-    <section className="py-12 md:py-16 relative">
+    <section className="py-12 md:py-20 relative">
       <div className="max-w-6xl mx-auto px-6">
-        <motion.p
-          {...fadeIn}
-          className="text-center text-sm uppercase tracking-wider text-slate-400 mb-6"
-        >
-          Cubrimos cursos de matemática para
-        </motion.p>
+        <motion.div {...fadeUp} className="text-center mb-8 md:mb-10">
+          <p className="text-sm uppercase tracking-wider text-slate-400 mb-3">
+            Cobertura nacional
+          </p>
+          <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+            Cursos para las <span className="text-cyan-400">{totals.universities || 13} universidades</span> más relevantes de Chile
+          </h2>
+          {totals.courses > 0 && (
+            <p className="text-slate-400 mt-3 text-sm md:text-base">
+              {totals.courses} ramos universitarios cubiertos · derivados de los cursos base de Remy
+            </p>
+          )}
+        </motion.div>
 
         {universities.length > 0 ? (
           <motion.div
             {...fadeUp}
-            className="flex flex-wrap items-center justify-center gap-2 md:gap-3 mb-10"
+            className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-3 md:gap-4 mb-10 max-w-5xl mx-auto"
           >
-            {universities.slice(0, 12).map((uni) => (
-              <span
-                key={uni.id}
-                className="px-3 py-1.5 rounded-full border border-white/10 bg-white/5 text-slate-200 text-sm font-semibold"
-                title={uni.name}
+            {universities.map((uni) => (
+              <div
+                key={uni.short_name}
+                title={`${uni.name} · ${uni.courses_count} ramos`}
+                className="aspect-square rounded-xl bg-white/95 border border-white/10 flex items-center justify-center p-3 md:p-4 hover:scale-105 hover:bg-white transition-all"
               >
-                {uni.short_name}
-              </span>
+                {uni.logo_url ? (
+                  <img
+                    src={uni.logo_url}
+                    alt={uni.short_name}
+                    className="max-h-full max-w-full object-contain"
+                  />
+                ) : (
+                  <span className="text-slate-800 text-sm md:text-base font-bold tracking-tight text-center">
+                    {uni.short_name}
+                  </span>
+                )}
+              </div>
             ))}
-            <span className="px-3 py-1.5 rounded-full bg-cyan-500/15 border border-cyan-400/30 text-cyan-200 text-sm font-semibold">
-              y más
-            </span>
           </motion.div>
         ) : (
-          <div className="h-10 mb-10" />
+          <div className="h-32 mb-10" />
         )}
 
         <motion.div
@@ -391,6 +411,181 @@ const SocialProofSection = () => {
             </motion.div>
           ))}
         </motion.div>
+      </div>
+    </section>
+  );
+};
+
+// ==================== RAMO FINDER SECTION ====================
+// "¿Está tu ramo en Remy?" — buscador público con todos los cursos.
+const RamoFinderSection = () => {
+  const [courses, setCourses] = useState([]);
+  const [universities, setUniversities] = useState([]);
+  const [query, setQuery] = useState('');
+  const [uniFilter, setUniFilter] = useState('all');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    axios
+      .get(`${API}/landing/courses-index`)
+      .then((r) => {
+        setCourses(r.data?.courses || []);
+        setUniversities(r.data?.universities || []);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const filtered = (() => {
+    const q = query.trim().toLowerCase();
+    let rows = courses;
+    if (uniFilter !== 'all') {
+      rows = rows.filter((r) => r.university_short_name === uniFilter);
+    }
+    if (q) {
+      rows = rows.filter((r) =>
+        (r.title || '').toLowerCase().includes(q) ||
+        (r.code || '').toLowerCase().includes(q) ||
+        (r.university_short_name || '').toLowerCase().includes(q) ||
+        (r.base_course_titles || []).some((t) => (t || '').toLowerCase().includes(q))
+      );
+    }
+    return rows;
+  })();
+
+  const showResults = query.trim().length > 0 || uniFilter !== 'all';
+  const visible = filtered.slice(0, 30);
+
+  return (
+    <section id="ramo-finder" className="py-20 md:py-28 relative">
+      <div className="max-w-4xl mx-auto px-6">
+        <motion.div {...fadeUp} className="text-center mb-8 md:mb-12">
+          <Badge className="mb-4 bg-cyan-500/15 text-cyan-200 hover:bg-cyan-500/15 border border-cyan-400/30">
+            Encuentra tu ramo
+          </Badge>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 tracking-tight">
+            ¿Está tu ramo <span className="text-cyan-400">en Remy?</span>
+          </h2>
+          <p className="text-lg text-slate-300 max-w-2xl mx-auto">
+            Buscá tu ramo por nombre, código (ej. MA1102, MAT1610) o universidad.
+            Cubrimos los ramos matemáticos de las 13 universidades más relevantes de Chile.
+          </p>
+        </motion.div>
+
+        <motion.div
+          {...fadeUp}
+          className="flex flex-col sm:flex-row gap-3 mb-6"
+        >
+          <div className="relative flex-1">
+            <Search
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              size={18}
+              aria-hidden="true"
+            />
+            <label htmlFor="ramo-search" className="sr-only">Buscar ramo</label>
+            <input
+              id="ramo-search"
+              type="text"
+              placeholder="Ej: Álgebra Lineal, MA1102, Cálculo III..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 border border-white/10 bg-white/5 rounded-lg text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent"
+              autoComplete="off"
+            />
+          </div>
+          <label htmlFor="ramo-uni" className="sr-only">Universidad</label>
+          <select
+            id="ramo-uni"
+            value={uniFilter}
+            onChange={(e) => setUniFilter(e.target.value)}
+            className="w-full sm:w-56 px-4 py-3 border border-white/10 bg-white/5 rounded-lg text-slate-100 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+          >
+            <option value="all" className="bg-slate-900">Todas las U</option>
+            {universities.map((u) => (
+              <option key={u.short_name} value={u.short_name} className="bg-slate-900">
+                {u.short_name} — {u.courses_count} ramos
+              </option>
+            ))}
+          </select>
+        </motion.div>
+
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin w-8 h-8 border-4 border-cyan-400 border-t-transparent rounded-full mx-auto" />
+          </div>
+        ) : !showResults ? (
+          <motion.div {...fadeUp} className="text-center py-10">
+            <p className="text-slate-400 text-sm">
+              Escribí algo arriba o seleccioná una universidad para ver los ramos cubiertos.
+            </p>
+            <p className="text-slate-500 text-xs mt-2">
+              <strong className="text-cyan-300">{courses.length}</strong> ramos disponibles en total.
+            </p>
+          </motion.div>
+        ) : visible.length === 0 ? (
+          <motion.div {...fadeUp} className="text-center py-10 bg-white/5 border border-white/10 rounded-xl">
+            <GraduationCap className="mx-auto mb-3 text-slate-500" size={40} aria-hidden="true" />
+            <p className="text-slate-300 font-medium">No encontramos tu ramo todavía.</p>
+            <p className="text-slate-400 text-sm mt-2 max-w-md mx-auto">
+              Estamos sumando ramos constantemente. Escribinos por Instagram <a href="https://instagram.com/seremonta.cl" className="text-cyan-300 hover:underline">@seremonta.cl</a> y lo agregamos.
+            </p>
+          </motion.div>
+        ) : (
+          <motion.div {...fadeUp} className="space-y-2">
+            {visible.map((r) => (
+              <div
+                key={r.id}
+                className="flex items-center gap-3 p-3 md:p-4 bg-white/5 border border-white/10 rounded-lg hover:border-cyan-400/30 hover:bg-white/[0.07] transition-colors"
+              >
+                <div className="flex-shrink-0 w-12 h-12 md:w-14 md:h-14 rounded-lg bg-white/95 flex items-center justify-center p-1.5 border border-white/10">
+                  {r.university_logo_url ? (
+                    <img
+                      src={r.university_logo_url}
+                      alt={r.university_short_name || ''}
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  ) : r.university_short_name ? (
+                    <span className="text-slate-800 text-[10px] md:text-xs font-bold tracking-tight text-center">
+                      {r.university_short_name}
+                    </span>
+                  ) : (
+                    <BookOpen size={20} className="text-slate-600" aria-hidden="true" />
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-baseline gap-2 flex-wrap">
+                    {r.code && (
+                      <span className="text-xs text-cyan-300 font-mono tabular-nums">{r.code}</span>
+                    )}
+                    <span className="text-white font-medium truncate">{r.title}</span>
+                  </div>
+                  <div className="text-xs text-slate-400 mt-0.5">
+                    {r.semester ? `Semestre ${r.semester} · ` : ''}
+                    {(r.base_course_titles || []).join(' + ') || 'Curso base de Remy'}
+                  </div>
+                </div>
+              </div>
+            ))}
+            {filtered.length > visible.length && (
+              <p className="text-center text-slate-400 text-sm pt-2">
+                +{filtered.length - visible.length} ramos más coincidentes. Afiná tu búsqueda.
+              </p>
+            )}
+            <div className="text-center pt-4">
+              <Button
+                className="bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold rounded-full"
+                onClick={() =>
+                  document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })
+                }
+                data-testid="ramo-finder-subscribe"
+              >
+                <Lock className="mr-2" size={18} />
+                Suscríbete para acceder
+              </Button>
+            </div>
+          </motion.div>
+        )}
       </div>
     </section>
   );
@@ -1349,6 +1544,7 @@ const Landing = () => {
           <ProblemSection />
           <FeaturesSection />
           <CoursesSection />
+          <RamoFinderSection />
           <SimulationSection />
           <PricingSection trialEnabled={trialEnabled} trialDays={trialDays} />
           <FAQSection trialEnabled={trialEnabled} trialDays={trialDays} />
