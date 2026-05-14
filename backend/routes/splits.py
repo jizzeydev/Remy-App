@@ -181,3 +181,117 @@ async def splits_coverage(_: str = Depends(verify_admin_token)):
         totals["pending_axes"] += pending_axes
 
     return {"rows": rows, "totals": totals}
+
+
+@router.get("/admin/splits-courses")
+async def splits_courses(_: str = Depends(verify_admin_token)):
+    """Tabla plana de cursos universitarios con sus campos clave para el
+    dashboard `/admin/splits`. Incluye listas auxiliares para los filtros
+    (universidades, cursos base) en un solo round-trip."""
+    # Cursos universitarios
+    courses = await db.courses.find(
+        {"university_id": {"$ne": None}},
+        {
+            "_id": 0,
+            "id": 1, "title": 1, "code": 1, "semester": 1, "university_id": 1,
+            "match_level": 1, "coverage_status": 1, "base_course_ids": 1,
+            "alt_slugs": 1, "notes": 1, "product_slug": 1,
+            "published_at_seremonta_store": 1, "visible_to_students": 1,
+        },
+    ).to_list(1000)
+
+    # Map de universidades (id → short_name, tier)
+    unis = await db.library_universities.find(
+        {}, {"_id": 0, "id": 1, "short_name": 1, "name": 1, "tier": 1, "logo_url": 1}
+    ).sort([("tier", 1), ("short_name", 1)]).to_list(100)
+    uni_by_id = {u["id"]: u for u in unis}
+
+    # Map de cursos base (id → title) para mostrar legible
+    bases = await db.courses.find(
+        {"$or": [{"university_id": None}, {"university_id": {"$exists": False}}]},
+        {"_id": 0, "id": 1, "title": 1},
+    ).to_list(50)
+    base_by_id = {b["id"]: b["title"] for b in bases}
+
+    # Conteos por curso (axes, chapters)
+    course_ids = [c["id"] for c in courses]
+    axes_count: dict[str, int] = {}
+    pipeline = [
+        {"$match": {"course_id": {"$in": course_ids}}},
+        {"$group": {"_id": "$course_id", "n": {"$sum": 1}}},
+    ]
+    async for row in db.course_axes.aggregate(pipeline):
+        axes_count[row["_id"]] = row["n"]
+
+    chapters_count: dict[str, int] = {}
+    pipeline = [
+        {"$match": {"course_id": {"$in": course_ids}}},
+        {"$group": {"_id": "$course_id", "n": {"$sum": 1}}},
+    ]
+    async for row in db.chapters.aggregate(pipeline):
+        chapters_count[row["_id"]] = row["n"]
+
+    # Construir filas planas
+    rows = []
+    for c in courses:
+        u = uni_by_id.get(c.get("university_id"), {})
+        bases_for_course = c.get("base_course_ids", []) or []
+        rows.append({
+            "id": c["id"],
+            "title": c.get("title"),
+            "code": c.get("code"),
+            "semester": c.get("semester"),
+            "university_short_name": u.get("short_name"),
+            "university_name": u.get("name"),
+            "university_tier": u.get("tier"),
+            "match_level": c.get("match_level"),
+            "coverage_status": c.get("coverage_status") or "complete",
+            "base_course_ids": bases_for_course,
+            "base_course_titles": [base_by_id.get(b, b) for b in bases_for_course],
+            "axes_count": axes_count.get(c["id"], 0),
+            "chapters_count": chapters_count.get(c["id"], 0),
+            "alt_slugs_count": len(c.get("alt_slugs") or []),
+            "product_slug": c.get("product_slug"),
+            "published_at_seremonta_store": c.get("published_at_seremonta_store") or False,
+            "visible_to_students": c.get("visible_to_students", True),
+            "notes": c.get("notes"),
+        })
+    # Orden por U, semestre, código, título
+    rows.sort(key=lambda r: (
+        r["university_tier"] or 99,
+        r["university_short_name"] or "",
+        r["semester"] or 99,
+        r["code"] or "",
+        r["title"] or "",
+    ))
+
+    # Listas auxiliares para los filtros del frontend
+    universities = [{
+        "short_name": u["short_name"],
+        "name": u["name"],
+        "tier": u.get("tier"),
+        "logo_url": u.get("logo_url"),
+        "courses_count": sum(1 for r in rows if r["university_short_name"] == u["short_name"]),
+    } for u in unis]
+    universities = [u for u in universities if u["courses_count"] > 0]
+
+    base_courses = [{
+        "id": bid,
+        "title": base_by_id[bid],
+        "courses_count": sum(1 for r in rows if bid in r["base_course_ids"]),
+    } for bid in base_by_id]
+    base_courses = [b for b in base_courses if b["courses_count"] > 0]
+    base_courses.sort(key=lambda b: b["title"])
+
+    return {
+        "courses": rows,
+        "universities": universities,
+        "base_courses": base_courses,
+        "totals": {
+            "courses": len(rows),
+            "complete": sum(1 for r in rows if r["coverage_status"] == "complete"),
+            "partial": sum(1 for r in rows if r["coverage_status"] == "partial"),
+            "alto": sum(1 for r in rows if r["match_level"] == "alto"),
+            "medio": sum(1 for r in rows if r["match_level"] == "medio"),
+        },
+    }

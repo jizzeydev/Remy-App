@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { PricingProvider } from './hooks/usePricing';
 import { isNative } from './lib/platform';
+import { initGoogleAuthNative } from './lib/googleAuthNative';
 import { initMetaPixel, trackPageView } from './lib/metaPixel';
 
 // ----- Eagerly loaded (first paint / common nav) -----
@@ -45,6 +46,7 @@ const AdminQuestions = lazy(() => import('./pages/admin/AdminQuestions'));
 const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
 const AdminPricing = lazy(() => import('./pages/admin/AdminPricing'));
 const AdminLibraryUniversities = lazy(() => import('./pages/admin/AdminLibraryUniversities'));
+const AdminSplits = lazy(() => import('./pages/admin/AdminSplits'));
 const CourseContentEditor = lazy(() => import('./pages/admin/CourseContentEditor'));
 const AdminTrash = lazy(() => import('./pages/admin/AdminTrash'));
 
@@ -158,6 +160,7 @@ function AppRouter() {
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/pricing" element={<AdminPricing />} />
           <Route path="/admin/library-universities" element={<AdminLibraryUniversities />} />
+          <Route path="/admin/splits" element={<AdminSplits />} />
           <Route path="/admin/papelera" element={<AdminTrash />} />
         </Route>
       </Routes>
@@ -168,6 +171,17 @@ function AppRouter() {
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || '';
 
 function App() {
+  // En mobile, el plugin nativo de Google Auth debe inicializarse antes
+  // del primer signIn. Lo arrancamos lo más temprano posible para que esté
+  // listo cuando el usuario llegue a AuthPage. En web es un no-op.
+  useEffect(() => {
+    if (isNative()) {
+      initGoogleAuthNative().catch((err) =>
+        console.error('initGoogleAuthNative failed:', err)
+      );
+    }
+  }, []);
+
   return (
     <div className="App">
       <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
