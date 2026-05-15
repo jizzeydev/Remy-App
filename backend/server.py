@@ -26,7 +26,21 @@ from routes import admin_analytics as admin_analytics_routes
 from routes import images as images_routes
 from routes import achievements as achievements_routes
 from routes import meta_pixel as meta_pixel_routes
+from routes import admin_llm_usage as admin_llm_usage_routes
+from routes import pdfs as pdfs_routes
+from routes import summaries as summaries_routes
+from routes import flashcards as flashcards_routes
+from routes import exercises as exercises_routes
+from routes import quizzes as quizzes_routes
+from routes import chat_tutor as chat_tutor_routes
 from services.image_storage import init_image_storage
+from services.spend_tracker import init_spend_tracker
+from services.pdf_ingest import init_pdf_ingest
+from services.summaries import init_summaries
+from services.flashcards import init_flashcards
+from services.exercises import init_exercises
+from services.quizzes import init_quizzes
+from services.chat_tutor import init_chat_tutor
 from services import achievements as ach_service
 
 ROOT_DIR = Path(__file__).parent
@@ -49,6 +63,19 @@ meta_pixel_routes.set_db(db)
 
 # Initialize image storage with GridFS
 init_image_storage(db)
+
+# Initialize LLM SpendTracker (cap invisible por usuario/mes)
+init_spend_tracker(db)
+
+# Initialize AI feature services. ORDEN IMPORTA: pdf_ingest primero porque los
+# servicios derivados (summaries, flashcards, exercises, quizzes) registran
+# hooks de cleanup en pdf_ingest a través de register_delete_hook().
+init_pdf_ingest(db)
+init_summaries(db)
+init_flashcards(db)
+init_exercises(db)
+init_quizzes(db)
+init_chat_tutor(db)
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
@@ -1252,6 +1279,48 @@ async def verify_admin(username: str = Depends(verify_admin_token)):
     return {"username": username, "verified": True}
 
 # Get all courses for admin (including hidden ones)
+@admin_router.get("/courses-stats")
+async def admin_courses_stats(_: str = Depends(verify_admin_token)):
+    """Stats agregados (chapters + lessons) por curso, en 2 queries.
+
+    Reemplaza el patrón viejo del frontend que hacía 1+N+M requests
+    secuenciales por cada curso (1 cursos + N chapters + M lessons). Para
+    185 cursos eso eran ~1900 round-trips que congelaban el browser.
+    """
+    # 1 query: chapters agrupados por course_id
+    chapter_counts: dict = {}
+    chapter_ids_by_course: dict = {}
+    async for ch in db.chapters.find({}, {"_id": 0, "id": 1, "course_id": 1, "template_chapter_id": 1}):
+        # Para chapters linkeados (template_chapter_id seteado), los chapters
+        # cuentan en el curso destino — su `course_id` ya apunta al destino.
+        # Los chapters base "viven" en el curso general.
+        cid = ch.get("course_id")
+        if not cid: continue
+        chapter_counts[cid] = chapter_counts.get(cid, 0) + 1
+        chapter_ids_by_course.setdefault(cid, []).append(ch["id"])
+
+    # Para contar lessons necesitamos saber, por cada curso, qué chapters mira.
+    # Para chapters linkeados (template_chapter_id), las lessons viven en el
+    # template — hay que seguir el link. Para no complicar acá, contamos las
+    # lessons cuyo chapter_id está en chapters_id_by_course directamente
+    # (sirve para cursos base). Para cursos universitarios, los chapters
+    # linkeados también heredan lessons del template, pero esa info se ve
+    # cuando el admin entra al editor.
+    all_chapter_ids = [cid for ids in chapter_ids_by_course.values() for cid in ids]
+    lesson_by_chapter: dict = {}
+    if all_chapter_ids:
+        async for l in db.lessons.find({"chapter_id": {"$in": all_chapter_ids}}, {"_id": 0, "chapter_id": 1}):
+            cid = l.get("chapter_id")
+            lesson_by_chapter[cid] = lesson_by_chapter.get(cid, 0) + 1
+
+    out: dict = {}
+    for course_id, chids in chapter_ids_by_course.items():
+        lessons = sum(lesson_by_chapter.get(cid, 0) for cid in chids)
+        out[course_id] = {"chapters": chapter_counts.get(course_id, 0), "lessons": lessons}
+
+    return out
+
+
 @admin_router.get("/courses")
 async def admin_get_courses(
     university_id: Optional[str] = None,
@@ -1272,27 +1341,31 @@ async def admin_get_courses(
     if search:
         query["title"] = {"$regex": search, "$options": "i"}
     
-    courses = await db.courses.find(query, {"_id": 0}).to_list(500)
-    
-    # Add university info to each course
+    courses = await db.courses.find(query, {"_id": 0}).to_list(1000)
+
+    # Batch-fetch universities en UNA sola query — antes hacíamos find_one por
+    # cada course (~185 round-trips), causando que el endpoint tarde mucho y el
+    # browser cortara la request silenciosamente.
+    uni_ids = list({c.get("university_id") for c in courses if c.get("university_id")})
+    uni_by_id: dict = {}
+    if uni_ids:
+        async for u in db.library_universities.find(
+            {"id": {"$in": uni_ids}},
+            {"_id": 0, "id": 1, "name": 1, "short_name": 1, "logo_url": 1},
+        ):
+            uni_by_id[u["id"]] = {"name": u.get("name"), "short_name": u.get("short_name"), "logo_url": u.get("logo_url")}
+
     for course in courses:
-        if isinstance(course.get('created_at'), str):
-            course['created_at'] = course['created_at']
-        # Add visibility field if not present
-        if 'visible_to_students' not in course:
-            course['visible_to_students'] = True
-        
-        # Add university info
-        uni_id = course.get('university_id')
-        if uni_id:
-            uni = await db.library_universities.find_one(
-                {"id": uni_id},
-                {"_id": 0, "name": 1, "short_name": 1, "logo_url": 1}
-            )
-            course['university'] = uni
+        # visibility default = True para cursos viejos sin el campo.
+        if "visible_to_students" not in course:
+            course["visible_to_students"] = True
+
+        uni_id = course.get("university_id")
+        if uni_id and uni_id in uni_by_id:
+            course["university"] = uni_by_id[uni_id]
         else:
-            course['university'] = {"name": "General", "short_name": "GEN"}
-    
+            course["university"] = {"name": "General", "short_name": "GEN"}
+
     return courses
 
 @admin_router.post("/courses", response_model=Course)
@@ -2622,6 +2695,13 @@ app.include_router(admin_analytics_routes.router)
 app.include_router(images_routes.router)
 app.include_router(achievements_routes.router, prefix="/api")
 app.include_router(meta_pixel_routes.router)
+app.include_router(admin_llm_usage_routes.router)
+app.include_router(pdfs_routes.router)
+app.include_router(summaries_routes.router)
+app.include_router(flashcards_routes.router)
+app.include_router(exercises_routes.router)
+app.include_router(quizzes_routes.router)
+app.include_router(chat_tutor_routes.router)
 
 # Import and include new routers
 from routes import library_universities as library_universities_routes

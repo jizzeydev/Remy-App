@@ -89,37 +89,21 @@ const AdminCourses = () => {
   const fetchCourses = async () => {
     try {
       const token = localStorage.getItem('admin_token');
-      const response = await axios.get(`${ADMIN_API}/courses`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const auth = { headers: { Authorization: `Bearer ${token}` } };
+      // Cargar cursos primero — la UI ya puede pintar la tabla.
+      const response = await axios.get(`${ADMIN_API}/courses`, auth);
       setCourses(response.data);
-      
-      // Fetch stats for each course
-      const stats = {};
-      for (const course of response.data) {
-        try {
-          const chaptersRes = await axios.get(`${API}/courses/${course.id}/chapters`);
-          const chapters = chaptersRes.data;
-          let totalLessons = 0;
-          
-          for (const chapter of chapters) {
-            try {
-              const lessonsRes = await axios.get(`${API}/chapters/${chapter.id}/lessons`);
-              totalLessons += lessonsRes.data.length;
-            } catch (e) {
-              console.error('Error fetching lessons:', e);
-            }
-          }
-          
-          stats[course.id] = {
-            chapters: chapters.length,
-            lessons: totalLessons
-          };
-        } catch (e) {
-          stats[course.id] = { chapters: 0, lessons: 0 };
-        }
+
+      // Stats en una sola request bulk al backend. Antes hacíamos
+      // 1+N+M requests secuenciales (~1900 round-trips para 185 cursos)
+      // que freezeaban el navegador. Ahora 1 request → ~200ms.
+      try {
+        const statsRes = await axios.get(`${ADMIN_API}/courses-stats`, auth);
+        setCoursesStats(statsRes.data || {});
+      } catch (e) {
+        console.error('Error fetching course stats:', e);
+        setCoursesStats({});
       }
-      setCoursesStats(stats);
     } catch (error) {
       console.error('Error fetching courses:', error);
       toast.error('Error al cargar cursos');
