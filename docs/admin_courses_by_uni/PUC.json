@@ -1,0 +1,383 @@
+[
+  {
+    "id": "puc-mat1000-precalculo",
+    "title": "Precálculo (PUC MAT1000)",
+    "code": "MAT1000",
+    "semester": null,
+    "university_name": "Pontificia Universidad Católica de Chile",
+    "axes": [],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      }
+    ],
+    "base_course_ids": []
+  },
+  {
+    "id": "puc-mat1100-calculo1-servicios",
+    "title": "Cálculo I (PUC MAT1100)",
+    "code": "MAT1100",
+    "semester": null,
+    "university_name": "Pontificia Universidad Católica de Chile",
+    "axes": [],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      },
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": []
+  },
+  {
+    "id": "puc-mat1610-calculo1",
+    "title": "Cálculo I (PUC MAT1610)",
+    "code": "MAT1610",
+    "semester": null,
+    "university_name": "Pontificia Universidad Católica de Chile",
+    "axes": [],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      },
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": []
+  },
+  {
+    "id": "puc-mat1620-calculo2",
+    "title": "Cálculo II (PUC MAT1620)",
+    "code": "MAT1620",
+    "semester": null,
+    "university_name": "Pontificia Universidad Católica de Chile",
+    "axes": [],
+    "chapters": [
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      }
+    ],
+    "base_course_ids": []
+  },
+  {
+    "id": "puc-mat1630-calculo3",
+    "title": "Cálculo III (PUC MAT1630)",
+    "code": "MAT1630",
+    "semester": null,
+    "university_name": "Pontificia Universidad Católica de Chile",
+    "axes": [],
+    "chapters": [
+      {
+        "title": "Curvas",
+        "from": "calculo-vectorial: Curvas"
+      },
+      {
+        "title": "Integrales de Línea",
+        "from": "calculo-vectorial: Integrales de Línea"
+      },
+      {
+        "title": "Integrales de Superficie",
+        "from": "calculo-vectorial: Integrales de Superficie"
+      }
+    ],
+    "base_course_ids": []
+  },
+  {
+    "id": "puc-mat1640-ecuaciones-diferenciales",
+    "title": "Ecuaciones Diferenciales (PUC MAT1640)",
+    "code": "MAT1640",
+    "semester": null,
+    "university_name": "Pontificia Universidad Católica de Chile",
+    "axes": [],
+    "chapters": [
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      }
+    ],
+    "base_course_ids": []
+  },
+  {
+    "id": "puc-mat1203-algebra-lineal",
+    "title": "Álgebra Lineal (PUC MAT1203)",
+    "code": "MAT1203",
+    "semester": null,
+    "university_name": "Pontificia Universidad Católica de Chile",
+    "axes": [],
+    "chapters": [
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": []
+  },
+  {
+    "id": "puc-mat1220-calculo2-servicios",
+    "title": "Cálculo II (PUC MAT1220)",
+    "code": "MAT1220",
+    "semester": null,
+    "university_name": "Pontificia Universidad Católica de Chile",
+    "axes": [],
+    "chapters": [
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      }
+    ],
+    "base_course_ids": []
+  },
+  {
+    "id": "puc-mat1279-algebra-lineal-servicios",
+    "title": "Álgebra Lineal (PUC MAT1279)",
+    "code": "MAT1279",
+    "semester": null,
+    "university_name": "Pontificia Universidad Católica de Chile",
+    "axes": [],
+    "chapters": [
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      }
+    ],
+    "base_course_ids": []
+  },
+  {
+    "id": "puc-mat1107-intro-calculo",
+    "title": "Introducción al Cálculo (PUC MAT1107)",
+    "code": "MAT1107",
+    "semester": null,
+    "university_name": "Pontificia Universidad Católica de Chile",
+    "axes": [],
+    "chapters": [
+      {
+        "title": "Polinomios",
+        "from": "intro-calculo: Polinomios"
+      },
+      {
+        "title": "Desigualdades",
+        "from": "intro-calculo: Desigualdades"
+      },
+      {
+        "title": "Funciones Reales",
+        "from": "intro-calculo: Funciones Reales"
+      },
+      {
+        "title": "Sucesiones",
+        "from": "intro-calculo: Sucesiones"
+      },
+      {
+        "title": "Funciones Exponencial y Logarítmica",
+        "from": "intro-calculo: Funciones Exponencial y Logarítmica"
+      }
+    ],
+    "base_course_ids": []
+  },
+  {
+    "id": "puc-mat1207-intro-algebra-geometria",
+    "title": "Introducción al Álgebra y Geometría (PUC MAT1207)",
+    "code": "MAT1207",
+    "semester": null,
+    "university_name": "Pontificia Universidad Católica de Chile",
+    "axes": [],
+    "chapters": [
+      {
+        "title": "El Lenguaje Matemático",
+        "from": "intro-al-algebra: El Lenguaje Matemático"
+      },
+      {
+        "title": "Números Naturales",
+        "from": "intro-al-algebra: Números Naturales"
+      },
+      {
+        "title": "Trigonometría",
+        "from": "intro-al-algebra: Trigonometría"
+      },
+      {
+        "title": "Polinomios",
+        "from": "intro-al-algebra: Polinomios"
+      },
+      {
+        "title": "Geometría Analítica",
+        "from": "intro-al-algebra: Geometría Analítica"
+      }
+    ],
+    "base_course_ids": []
+  }
+]

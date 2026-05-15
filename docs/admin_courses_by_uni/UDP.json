@@ -1,0 +1,628 @@
+[
+  {
+    "id": "udp-plan-comun-ing-civil-introduccion-al-algebra",
+    "title": "Introducción al Álgebra (UDP CBM1100)",
+    "code": "CBM1100",
+    "semester": 1,
+    "university_name": "Universidad Diego Portales",
+    "axes": [
+      "Teoría de conjuntos y lógica: pertenencia, contención, operatoria, diagramas de Venn; proposiciones simples y compuestas, conectores lógicos (conjunción, disyunción, negación, condicional, bicondicional), tablas de verdad, equivalencias, cuantificadores universal y existencial; cardinalidad y problemas de conteo",
+      "Números complejos y polinomios: forma binomial, gráfica y polar (exponencial); operaciones (suma, producto, conjugado, módulo, división); potencias y teorema de De Moivre; ecuaciones polinomiales: factorización, raíces reales y complejas, multiplicidad",
+      "Sumatorias e inducción: sumatorias finitas y propiedades; sumas notables (aritméticas, geométricas, cuadráticas, telescópicas); inducción matemática; teorema del binomio",
+      "Trigonometría plana: ángulos y mediciones; círculo unitario y funciones trigonométricas; fórmulas de adición y variantes; ecuaciones trigonométricas; leyes del seno y coseno para resolución de triángulos"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      },
+      {
+        "title": "El Lenguaje Matemático",
+        "from": "intro-al-algebra: El Lenguaje Matemático"
+      },
+      {
+        "title": "Números Naturales",
+        "from": "intro-al-algebra: Números Naturales"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo",
+      "intro-al-algebra"
+    ]
+  },
+  {
+    "id": "udp-plan-comun-ing-civil-introduccion-al-calculo",
+    "title": "Introducción al Cálculo (UDP CBM1101)",
+    "code": "CBM1101",
+    "semester": 1,
+    "university_name": "Universidad Diego Portales",
+    "axes": [
+      "Números reales: operaciones algebraicas (factorización, simplificación, racionalización); potencias, raíces, fracciones algebraicas; ecuaciones lineales, cuadráticas, racionales, irracionales, exponenciales; gráfica de y=mx+n y y=ax²+bx+c; orden en R, intervalos, inecuaciones lineales y cuadráticas",
+      "Funciones reales de una variable: dominio, codominio, imagen; funciones polinomiales, racionales, irracionales, por tramos, valor absoluto; funciones trigonométricas (definición, identidades básicas, gráficas sinusoidales); funciones exponenciales y logarítmicas; operatoria con funciones (suma, producto, composición)",
+      "Límites: concepto intuitivo y definición formal; cálculo de límites, formas indeterminadas, racionalización, factorización; límites notables y cambios de variable; continuidad",
+      "Derivadas: definición, interpretación geométrica y física; reglas de derivación; problemas de variación o razón de cambio"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      },
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo",
+      "calculo-diferencial"
+    ]
+  },
+  {
+    "id": "udp-plan-comun-ing-civil-algebra-lineal",
+    "title": "Álgebra Lineal (UDP CBM1102)",
+    "code": "CBM1102",
+    "semester": 2,
+    "university_name": "Universidad Diego Portales",
+    "axes": [
+      "Espacios vectoriales y sistemas de ecuaciones lineales: R^n (foco n=2,3); suma, resta y ponderación; combinaciones lineales; subespacios como rectas y planos; sistemas homogéneos y no homogéneos; operaciones elementales por fila; rango; dependencia/independencia lineal; bases",
+      "R^n con producto punto: producto escalar, propiedades, norma, distancia, ortogonalidad; proyecciones ortogonales; ortogonalización de Gram-Schmidt; proyección sobre subespacios y distancia",
+      "Operatoria con matrices, determinantes y matriz inversa: suma, producto, transposición; determinantes (cálculo y propiedades); regla de Cramer; matriz inversa; cálculo usando operaciones elementales",
+      "Transformaciones lineales: definición, propiedades; matriz asociada; kernel e imagen; isomorfismos",
+      "Valores y vectores propios: diagonalización de matrices; cónicas y matrices simétricas"
+    ],
+    "chapters": [
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": [
+      "algebra-lineal"
+    ]
+  },
+  {
+    "id": "udp-plan-comun-ing-civil-calculo-diferencial-e-integral",
+    "title": "Cálculo Diferencial e Integral (UDP CBM1103)",
+    "code": "CBM1103",
+    "semester": 2,
+    "university_name": "Universidad Diego Portales",
+    "axes": [
+      "Máximos, mínimos y optimización: propiedades de funciones (crecimiento, decrecimiento, concavidad, puntos de inflexión); análisis gráfico; problemas de optimización con variables, restricciones y objetivo; funciones costos, ingresos y utilidad",
+      "Integración: integración indefinida y primitivas; métodos de integración (sustitución simple, por partes, sustitución trigonométrica, fracciones parciales); integral definida y propiedades; área bajo la curva; teorema fundamental del cálculo",
+      "Integrales impropias: tipo I y tipo II; criterios de convergencia (prueba de comparación, p-integral)",
+      "Series: definición, propiedades; series geométrica y telescópica; criterios de convergencia (razón, raíz); series de potencias (radio de convergencia); series de Taylor (aproximaciones locales); series de Fourier para funciones continuas y periódicas"
+    ],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      },
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-diferencial",
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "udp-ing-civil-industrial-ecuaciones-diferenciales",
+    "title": "Ecuaciones Diferenciales (UDP CBM-1005 / CBM1105)",
+    "code": "CBM-1005 / CBM1105",
+    "semester": 3,
+    "university_name": "Universidad Diego Portales",
+    "axes": [
+      "EDOs de primer orden: métodos de solución (separación de variables, factor integrante); aplicaciones (crecimiento exponencial, modelo logístico, mezclas, Ley de Newton de enfriamiento, trayectorias ortogonales)",
+      "EDOs lineales de orden n (segundo orden y mayores): homogéneas y no homogéneas; coeficientes constantes; método de variación de parámetros; aplicaciones a oscilaciones mecánicas, circuitos RLC, vibraciones",
+      "Transformada de Laplace: propiedades; aplicación a EDOs lineales con condiciones iniciales o de borde; transformada inversa",
+      "Sistemas lineales de primer orden y análisis cualitativo de sistemas no lineales",
+      "Series de Fourier para funciones periódicas; ecuaciones diferenciales parciales por separación de variables (versión Industrial completa)"
+    ],
+    "chapters": [
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      }
+    ],
+    "base_course_ids": [
+      "ecuaciones-diferenciales"
+    ]
+  },
+  {
+    "id": "udp-ing-civil-industrial-calculo-iii",
+    "title": "Cálculo III (UDP CBM-1006 / CBM1106)",
+    "code": "CBM-1006 / CBM1106",
+    "semester": 3,
+    "university_name": "Universidad Diego Portales",
+    "axes": [
+      "Funciones vectoriales y curvas en el espacio: longitud de arco, curvatura",
+      "Funciones reales de varias variables: derivadas parciales, derivadas direccionales; planos tangentes; regla de la cadena",
+      "Optimización multivariable: máximos y mínimos locales y absolutos; extremos condicionados; multiplicadores de Lagrange",
+      "Integración múltiple: integrales dobles (coordenadas polares); integrales triples (cilíndricas y esféricas); aplicaciones a volúmenes, áreas, centros de gravedad, momentos de inercia",
+      "Cálculo vectorial: gradiente, divergencia, rotacional, Laplaciano; integrales de línea; teorema de Green"
+    ],
+    "chapters": [
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      },
+      {
+        "title": "Curvas",
+        "from": "calculo-vectorial: Curvas"
+      },
+      {
+        "title": "Integrales de Línea",
+        "from": "calculo-vectorial: Integrales de Línea"
+      },
+      {
+        "title": "Integrales de Superficie",
+        "from": "calculo-vectorial: Integrales de Superficie"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-multivariable",
+      "calculo-vectorial"
+    ]
+  },
+  {
+    "id": "udp-ing-civil-informatica-telecomunicaciones-ecuaciones-diferenciales",
+    "title": "Ecuaciones Diferenciales (UDP CBM1105)",
+    "code": "CBM1105",
+    "semester": 3,
+    "university_name": "Universidad Diego Portales",
+    "axes": [
+      "EDOs de primer orden: definición, clasificación (lineales y no lineales), orden y grado; métodos de resolución (separación de variables, factor integrante, integración directa); ecuaciones lineales de primer orden",
+      "Modelado: modelo de Malthus, ley de enfriamiento de Newton, problema de mezclas, modelo logístico, trayectorias ortogonales",
+      "EDOs lineales de segundo orden: homogéneas con coeficientes constantes; método de variación de parámetros para no homogéneas; aplicaciones a oscilaciones mecánicas, circuitos RLC, vibraciones en estructuras",
+      "Transformada de Laplace: propiedades; aplicación a EDOs lineales con condiciones iniciales o de borde; transformada inversa"
+    ],
+    "chapters": [
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      }
+    ],
+    "base_course_ids": [
+      "ecuaciones-diferenciales"
+    ]
+  },
+  {
+    "id": "udp-ing-civil-ciencia-datos-ia-calculo-en-varias-variables",
+    "title": "Cálculo en Varias Variables (UDP CBM1106)",
+    "code": "CBM1106",
+    "semester": 3,
+    "university_name": "Universidad Diego Portales",
+    "axes": [
+      "Funciones reales de varias variables: dominio, recorrido, curvas y superficies de nivel; derivadas parciales; planos tangentes; regla de la cadena",
+      "Optimización multivariable: máximos, mínimos, puntos de silla; multiplicadores de Lagrange",
+      "Integración múltiple: integrales dobles y triples; cambios de coordenadas (polares, cilíndricas, esféricas)",
+      "Operadores diferenciales: gradiente, divergencia, rotacional; integrales de línea y de superficie; teorema de Gauss y Stokes"
+    ],
+    "chapters": [
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      },
+      {
+        "title": "Curvas",
+        "from": "calculo-vectorial: Curvas"
+      },
+      {
+        "title": "Integrales de Línea",
+        "from": "calculo-vectorial: Integrales de Línea"
+      },
+      {
+        "title": "Integrales de Superficie",
+        "from": "calculo-vectorial: Integrales de Superficie"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-multivariable",
+      "calculo-vectorial"
+    ]
+  },
+  {
+    "id": "udp-ing-comercial-matematica-i",
+    "title": "Matemática I (UDP s/n)",
+    "code": "s/n",
+    "semester": 1,
+    "university_name": "Universidad Diego Portales",
+    "axes": [
+      "Progresiones aritméticas y geométricas; sumatorias",
+      "Funciones reales: dominio, recorrido, composición; funciones lineales, cuadráticas, exponenciales, logarítmicas (énfasis aplicado a economía)",
+      "Concepto de límite y continuidad de funciones de una variable",
+      "Derivada: definición, reglas de derivación, regla de la cadena, derivadas implícitas",
+      "Aplicaciones de la derivada: optimización (máximos y mínimos), análisis marginal, elasticidad",
+      "Argumentación matemática y modelación de problemas económicos/administrativos"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      },
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo",
+      "calculo-diferencial"
+    ]
+  },
+  {
+    "id": "udp-ing-comercial-matematicas-ii",
+    "title": "Matemáticas II (UDP s/n)",
+    "code": "s/n",
+    "semester": 2,
+    "university_name": "Universidad Diego Portales",
+    "axes": [
+      "Series numéricas: convergencia, criterios",
+      "Derivadas avanzadas (orden superior, Taylor) y aplicaciones a optimización univariada",
+      "Integral indefinida y definida: técnicas (sustitución, por partes, fracciones parciales)",
+      "Aplicaciones de la integral: cálculo de áreas, excedente del consumidor/productor, valor presente de flujos continuos",
+      "Modelación matemática de problemas de economía y administración con funciones de una variable"
+    ],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      },
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-diferencial",
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "udp-ing-comercial-matematicas-iii",
+    "title": "Matemáticas III (UDP s/n)",
+    "code": "s/n",
+    "semester": 3,
+    "university_name": "Universidad Diego Portales",
+    "axes": [
+      "Aplicaciones avanzadas de la integral (continúa S2): integrales impropias, valor presente continuo",
+      "Álgebra lineal: matrices, operaciones, determinantes, inversa, sistemas de ecuaciones lineales (Gauss/Gauss-Jordan)",
+      "Espacios vectoriales: combinaciones lineales, independencia, base, dimensión",
+      "Transformaciones lineales; valores y vectores propios (introducción)",
+      "Series (continuación) y aplicaciones a series geométricas en finanzas",
+      "Modelación matricial de problemas económicos"
+    ],
+    "chapters": [
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      },
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "algebra-lineal",
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "udp-ing-comercial-matematicas-para-economia",
+    "title": "Matemáticas para Economía (UDP s/n)",
+    "code": "s/n",
+    "semester": 7,
+    "university_name": "Universidad Diego Portales",
+    "axes": [
+      "Cálculo en varias variables: derivadas parciales, gradiente, regla de la cadena multivariable",
+      "Optimización multivariable sin restricciones (Hessiano, condiciones de 2do orden)",
+      "Optimización con restricciones: multiplicadores de Lagrange (igualdad), Karush-Kuhn-Tucker (desigualdad)",
+      "Funciones cóncavas/convexas; teorema de la envolvente",
+      "Estática comparativa; aplicaciones a teoría del consumidor y del productor",
+      "Programación dinámica introductoria (opcional)"
+    ],
+    "chapters": [
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-multivariable"
+    ]
+  }
+]

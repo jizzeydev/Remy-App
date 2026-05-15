@@ -1,0 +1,469 @@
+[
+  {
+    "id": "uai-plan-comun-algebra",
+    "title": "Álgebra (UAI)",
+    "code": null,
+    "semester": 1,
+    "university_name": "Universidad Adolfo Ibáñez",
+    "axes": [
+      "Lógica y conjuntos (proposiciones, álgebra de conjuntos, cuantificadores)",
+      "Números reales (axiomas, demostraciones, inducción)",
+      "Números naturales (sucesiones, progresiones, sumatorias, productoria, combinatoria, binomio de Newton)",
+      "Trigonometría (funciones, identidades, ecuaciones trigonométricas)",
+      "Geometría analítica (vectores, producto punto/cruz, rectas, planos, distancias en el espacio)",
+      "Números complejos (operaciones, forma polar, raíces)",
+      "Polinomios (división sintética, raíces, teorema del resto, fracciones parciales)"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      },
+      {
+        "title": "El Lenguaje Matemático",
+        "from": "intro-al-algebra: El Lenguaje Matemático"
+      },
+      {
+        "title": "Números Naturales",
+        "from": "intro-al-algebra: Números Naturales"
+      },
+      {
+        "title": "Geometría Analítica",
+        "from": "intro-al-algebra: Geometría Analítica"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo",
+      "intro-al-algebra"
+    ]
+  },
+  {
+    "id": "uai-plan-comun-calculo-diferencial",
+    "title": "Cálculo Diferencial (UAI)",
+    "code": null,
+    "semester": 1,
+    "university_name": "Universidad Adolfo Ibáñez",
+    "axes": [
+      "Números reales e inecuaciones",
+      "Funciones: dominio, recorrido, transformaciones, inyectivas, inversas, polinomiales, exponenciales, logarítmicas",
+      "Límites (finitos, al infinito, continuidad, TVI)",
+      "Derivadas: definición, reglas, derivadas implícitas",
+      "Aplicaciones: razón de cambio, máx/mín, TVM, L'Hôpital, graficación"
+    ],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-diferencial"
+    ]
+  },
+  {
+    "id": "uai-plan-comun-calculo-integral",
+    "title": "Cálculo Integral (UAI)",
+    "code": null,
+    "semester": 2,
+    "university_name": "Universidad Adolfo Ibáñez",
+    "axes": [
+      "Antiderivadas, integral indefinida, TFC, sustitución, partes, fracciones parciales, sustitución trigonométrica",
+      "Aplicaciones: área entre curvas, volúmenes (discos, cascarones), curvas parametrizadas, polares",
+      "Integrales impropias (tipo I y II, comparación)",
+      "Sucesiones y series (criterios, series de potencias, radio/intervalo, Taylor)"
+    ],
+    "chapters": [
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "uai-plan-comun-algebra-lineal",
+    "title": "Álgebra Lineal (UAI)",
+    "code": null,
+    "semester": 2,
+    "university_name": "Universidad Adolfo Ibáñez",
+    "axes": [
+      "Matrices y sistemas (Gauss-Jordan, homogéneos, por bloques, inversa, elementales)",
+      "Determinantes",
+      "Espacios y subespacios vectoriales (combinación e independencia lineal, bases, dimensión, coordenadas, cambio de base, subespacios fundamentales)",
+      "Transformaciones lineales (kernel, imagen, inyec/sobre, matriz asociada)",
+      "Diagonalización (valores/vectores propios, cadenas de Markov)",
+      "Análisis vectorial (Gram-Schmidt, complemento/proyección ortogonal, mínimos cuadrados)"
+    ],
+    "chapters": [
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": [
+      "algebra-lineal"
+    ]
+  },
+  {
+    "id": "uai-plan-comun-calculo-multivariables",
+    "title": "Cálculo Multivariables (UAI)",
+    "code": null,
+    "semester": 3,
+    "university_name": "Universidad Adolfo Ibáñez",
+    "axes": [
+      "Funciones de varias variables (superficies cuadráticas, límites, continuidad, derivadas parciales, diferenciabilidad)",
+      "Plano tangente, aproximaciones lineales, regla de la cadena, derivación implícita",
+      "Derivadas direccionales, máx/mín, Lagrange",
+      "Integrales dobles (cambio de región, polares, masa y centro de masa)",
+      "Integrales triples (cilíndricas, esféricas, cambios de variable)",
+      "Cálculo vectorial (integrales de línea, Green, rotacional, divergencia, integrales de superficie, Stokes, teorema de la divergencia)"
+    ],
+    "chapters": [
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      },
+      {
+        "title": "Curvas",
+        "from": "calculo-vectorial: Curvas"
+      },
+      {
+        "title": "Integrales de Línea",
+        "from": "calculo-vectorial: Integrales de Línea"
+      },
+      {
+        "title": "Integrales de Superficie",
+        "from": "calculo-vectorial: Integrales de Superficie"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-multivariable",
+      "calculo-vectorial"
+    ]
+  },
+  {
+    "id": "uai-plan-comun-ecuaciones-diferenciales",
+    "title": "Ecuaciones Diferenciales (UAI)",
+    "code": null,
+    "semester": 4,
+    "university_name": "Universidad Adolfo Ibáñez",
+    "axes": [
+      "EDO 1er orden (separable, lineal, exacta, factor integrante, homogénea, Bernoulli, Ricatti, reducible)",
+      "Modelos con ED 1er orden",
+      "ED orden superior (coeficientes constantes, Cauchy-Euler, coef. indeterminados, variación de parámetros, masa-resorte)",
+      "Sistemas de ED",
+      "Transformada de Laplace (propiedades, traslación, escalón, convolución, Delta de Dirac)",
+      "Soluciones por series (puntos ordinarios, singulares regulares, Bessel)",
+      "Serie de Fourier"
+    ],
+    "chapters": [
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      }
+    ],
+    "base_course_ids": [
+      "ecuaciones-diferenciales"
+    ]
+  },
+  {
+    "id": "uai-icom-matematicas-avanzadas-i",
+    "title": "Matemáticas Avanzadas I (UAI)",
+    "code": null,
+    "semester": 1,
+    "university_name": "Universidad Adolfo Ibáñez",
+    "axes": [
+      "Lógica y conjuntos. Números naturales y reales (inducción, sucesiones, progresiones, sumatorias)",
+      "Axiomas de orden, demostraciones, inecuaciones (con valor absoluto), axioma del supremo",
+      "Funciones (dominio, imagen, composición, inversas, log/exp, gráficos, modelación)",
+      "Matrices y sistemas (Gauss-Jordan, homogéneos, por bloques, inversa, elementales)",
+      "Determinantes",
+      "Espacios vectoriales, subespacios, combinación y dependencia lineal"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      },
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      },
+      {
+        "title": "El Lenguaje Matemático",
+        "from": "intro-al-algebra: El Lenguaje Matemático"
+      },
+      {
+        "title": "Números Naturales",
+        "from": "intro-al-algebra: Números Naturales"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo",
+      "algebra-lineal",
+      "intro-al-algebra"
+    ]
+  },
+  {
+    "id": "uai-icom-matematicas-avanzadas-ii",
+    "title": "Matemáticas Avanzadas II (UAI)",
+    "code": null,
+    "semester": 2,
+    "university_name": "Universidad Adolfo Ibáñez",
+    "axes": [
+      "Sistemas de ecuaciones lineales (repaso)",
+      "Límites (normales, trigonométricos, al infinito, laterales, continuidad, teoremas)",
+      "Derivadas (definición, reglas, recta tangente, análisis marginal, derivación implícita)",
+      "Aplicaciones de derivadas (extremos, crecimiento, optimización, L'Hôpital)",
+      "Integrales (sustitución, partes, Riemann, TFC)",
+      "Aplicaciones integrales (área entre curvas, excedentes, impropias, criterios de convergencia)",
+      "Funciones de probabilidad"
+    ],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      },
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-diferencial",
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "uai-negocios-tech-algebra-lineal-y-optimizacion",
+    "title": "Álgebra Lineal y Optimización (UAI)",
+    "code": null,
+    "semester": 1,
+    "university_name": "Universidad Adolfo Ibáñez",
+    "axes": [
+      "Matrices y sistemas lineales",
+      "Espacios vectoriales básicos",
+      "Introducción a optimización lineal",
+      "Aplicaciones a negocios"
+    ],
+    "chapters": [
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": [
+      "algebra-lineal"
+    ]
+  }
+]

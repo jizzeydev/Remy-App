@@ -1,0 +1,442 @@
+[
+  {
+    "id": "utfsm-plan-comun-ing-civil-mate10-algebra-y-geometria",
+    "title": "Álgebra y Geometría (UTFSM MATE10)",
+    "code": "MATE10",
+    "semester": 1,
+    "university_name": "Universidad Técnica Federico Santa María",
+    "axes": [
+      "Fundamentos del Lenguaje Matemático (lógica, conjuntos, álgebra de reales, geometría escolar)",
+      "Trigonometría del triángulo (ángulos, razones, identidades, teoremas seno/coseno, modelación)",
+      "Geometría Analítica (cartesiano, recta, cónicas centradas y trasladadas)",
+      "Polinomios (números complejos, álgebra de polinomios, división, raíces, multiplicidad, teoremas)",
+      "Inducción Matemática (principio, sumatoria, factorial, progresiones aritméticas y geométricas, binomio, combinatoria)"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      },
+      {
+        "title": "El Lenguaje Matemático",
+        "from": "intro-al-algebra: El Lenguaje Matemático"
+      },
+      {
+        "title": "Números Naturales",
+        "from": "intro-al-algebra: Números Naturales"
+      },
+      {
+        "title": "Geometría Analítica",
+        "from": "intro-al-algebra: Geometría Analítica"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo",
+      "intro-al-algebra"
+    ]
+  },
+  {
+    "id": "utfsm-plan-comun-ing-civil-mat070-introduccion-al-calculo",
+    "title": "Introducción al Cálculo (UTFSM MAT070)",
+    "code": "MAT070",
+    "semester": 1,
+    "university_name": "Universidad Técnica Federico Santa María",
+    "axes": [
+      "Funciones reales (dominio, recorrido, paridad, composición, inyectividad, sobreyectividad, inversas)",
+      "Funciones elementales (polinomiales, racionales, trigonométricas, exp, log)",
+      "Límites (ε-δ, álgebra, laterales, al infinito, asíntotas)",
+      "Continuidad (tipos de discontinuidad, propiedades, TVI)",
+      "Derivada (definición como límite, interpretación geométrica, reglas, funciones elementales, regla de la cadena)",
+      "Aplicaciones (recta tangente, máx/mín locales, crecimiento, concavidad, análisis introductorio)"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      },
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo",
+      "calculo-diferencial"
+    ]
+  },
+  {
+    "id": "utfsm-plan-comun-ing-civil-calculo-en-una-variable",
+    "title": "Cálculo en una Variable (UTFSM)",
+    "code": null,
+    "semester": 2,
+    "university_name": "Universidad Técnica Federico Santa María",
+    "axes": [
+      "Derivadas (profundización, implícita, orden superior)",
+      "Aplicaciones (TVM, L'Hôpital, análisis completo, optimización, aproximación lineal, Taylor)",
+      "Integrales (Riemann, TFC 1° y 2°, primitivas)",
+      "Técnicas de integración (sustitución, partes, fracciones parciales, sust. trigonométrica)",
+      "Aplicaciones de la integral (áreas, volúmenes — discos, arandelas, capas; longitud, centros de masa)",
+      "Integrales impropias (convergencia, comparación)"
+    ],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      },
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-diferencial",
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "utfsm-plan-comun-ing-civil-mate20-algebra-lineal",
+    "title": "Álgebra Lineal (UTFSM MATE20)",
+    "code": "MATE20",
+    "semester": 2,
+    "university_name": "Universidad Técnica Federico Santa María",
+    "axes": [
+      "Matrices y sistemas (nxm, tipos, álgebra, transpuesta, elementales, rango, escalonamiento, inversa, determinantes, adjunta, Cramer)",
+      "Geometría Vectorial (vectores plano/espacio, producto punto/cruz, proyecciones, rectas y planos)",
+      "Espacios Vectoriales (estructura, subespacios, espacio generado, independencia, base, dimensión, producto interior, ortogonalidad, Gram-Schmidt, bases ortonormales)",
+      "Transformaciones Lineales (núcleo, imagen, matriz asociada)",
+      "Valores y Vectores Propios (operadores, diagonalización, formas lineales/bilineales/cuadráticas)"
+    ],
+    "chapters": [
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": [
+      "algebra-lineal"
+    ]
+  },
+  {
+    "id": "utfsm-plan-comun-ing-civil-calculo-en-varias-variables",
+    "title": "Cálculo en Varias Variables (UTFSM)",
+    "code": null,
+    "semester": 3,
+    "university_name": "Universidad Técnica Federico Santa María",
+    "axes": [
+      "Topología en Rⁿ (distancias, normas, abiertos/cerrados — nociones básicas)",
+      "Funciones de varias variables (gráficas, conjuntos de nivel, límites, continuidad)",
+      "Cálculo diferencial en Rⁿ (parciales, direccionales, gradiente, plano tangente, regla de la cadena)",
+      "Máximos y mínimos (puntos críticos, Hessiana, Lagrange)",
+      "Integrales múltiples (dobles, triples, Fubini, cambio de variables)",
+      "Coordenadas curvilíneas (polares, cilíndricas, esféricas, Jacobiano, centros de masa, momentos)"
+    ],
+    "chapters": [
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-multivariable"
+    ]
+  },
+  {
+    "id": "utfsm-plan-comun-ing-civil-ecuaciones-diferenciales-edo-edp",
+    "title": "Ecuaciones Diferenciales (EDO + EDP) (UTFSM)",
+    "code": null,
+    "semester": 3,
+    "university_name": "Universidad Técnica Federico Santa María",
+    "axes": [
+      "EDO 1er orden (separables, lineales, exactas, factor integrante, Bernoulli, existencia y unicidad, modelación)",
+      "EDO lineales orden superior (homogéneas/no homogéneas, Wronskiano, coef. constantes, indeterminados, variación de parámetros, Euler-Cauchy)",
+      "Transformada de Laplace (definición, propiedades, tabla, ED lineales, Heaviside, Delta, convolución)",
+      "Sistemas de ED (lineales, matriz fundamental, métodos)",
+      "Introducción a EDP (calor, onda, Laplace, separación de variables, series de Fourier — intro)"
+    ],
+    "chapters": [
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      }
+    ],
+    "base_course_ids": [
+      "ecuaciones-diferenciales"
+    ]
+  },
+  {
+    "id": "utfsm-ing-comercial-mate25-calculo-diferencial",
+    "title": "Cálculo Diferencial (UTFSM MATE25)",
+    "code": "MATE25",
+    "semester": 2,
+    "university_name": "Universidad Técnica Federico Santa María",
+    "axes": [
+      "Derivada (definición, reglas, funciones elementales, cadena)",
+      "Aplicaciones (análisis, optimización)",
+      "Funciones de varias variables (parciales, gradiente)",
+      "Diferenciación multivariable (regla de la cadena)",
+      "Optimización con/sin restricciones (Lagrange, aplicaciones económicas)"
+    ],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      },
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-diferencial",
+      "calculo-multivariable"
+    ]
+  },
+  {
+    "id": "utfsm-ing-comercial-mate26-calculo-integral",
+    "title": "Cálculo Integral (UTFSM MATE26)",
+    "code": "MATE26",
+    "semester": 3,
+    "university_name": "Universidad Técnica Federico Santa María",
+    "axes": [
+      "Integral (definida, TFC, primitivas)",
+      "Aplicaciones (áreas, volúmenes, economía)",
+      "EDO 1er y 2do orden (separables, lineales, coef. constantes)",
+      "Integración múltiple (dobles, aplicaciones)"
+    ],
+    "chapters": [
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      },
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-integral",
+      "calculo-diferencial"
+    ]
+  },
+  {
+    "id": "utfsm-ing-civil-matematica-calculo-avanzado-variable-compleja",
+    "title": "Cálculo Avanzado y Variable Compleja (UTFSM)",
+    "code": null,
+    "semester": 4,
+    "university_name": "Universidad Técnica Federico Santa María",
+    "axes": [
+      "Cálculo vectorial (campos, integrales de línea/superficie, Green, Stokes, divergencia)",
+      "Series de Fourier (coeficientes, convergencia, transformada)",
+      "Variable compleja (analíticas, Cauchy-Riemann, Laurent, residuos)"
+    ],
+    "chapters": [
+      {
+        "title": "Curvas",
+        "from": "calculo-vectorial: Curvas"
+      },
+      {
+        "title": "Integrales de Línea",
+        "from": "calculo-vectorial: Integrales de Línea"
+      },
+      {
+        "title": "Integrales de Superficie",
+        "from": "calculo-vectorial: Integrales de Superficie"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-vectorial"
+    ]
+  }
+]

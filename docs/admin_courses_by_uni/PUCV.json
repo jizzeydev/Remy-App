@@ -1,0 +1,1015 @@
+[
+  {
+    "id": "pucv-plan-comun-ing-civil-mat1001-fundamentos-de-matematicas-para-ingenieria",
+    "title": "Fundamentos de Matemáticas para Ingeniería (PUCV — Plan Común Ingeniería Civil (EIC))",
+    "code": "MAT1001",
+    "semester": 1,
+    "university_name": "Pontificia Universidad Católica de Valparaíso",
+    "axes": [
+      "Transición matemática escolar a universitaria: números reales, valor absoluto, intervalos, inecuaciones",
+      "Álgebra elemental: potencias, raíces, productos notables, factorización, ecuaciones",
+      "Funciones: definición, dominio y recorrido, composición, inversa, polinomiales, racionales",
+      "Funciones exponenciales y logarítmicas: propiedades, ecuaciones",
+      "Trigonometría: razones, identidades, ecuaciones trigonométricas, teoremas seno/coseno",
+      "Geometría analítica: recta, circunferencia, parábola, elipse, hipérbola"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo"
+    ]
+  },
+  {
+    "id": "pucv-plan-comun-ing-civil-mat1002-calculo-diferencial-e-integral",
+    "title": "Cálculo Diferencial e Integral (PUCV — Plan Común Ingeniería Civil (EIC))",
+    "code": "MAT1002",
+    "semester": 2,
+    "university_name": "Pontificia Universidad Católica de Valparaíso",
+    "axes": [
+      "Límites y continuidad de funciones reales de variable real",
+      "Derivadas: definición, reglas, regla de la cadena, derivación implícita",
+      "Aplicaciones de la derivada: optimización, razón de cambio, análisis de funciones, L'Hôpital",
+      "Integral indefinida y técnicas (sustitución, partes, fracciones parciales, sustitución trigonométrica)",
+      "Integral definida: Teorema Fundamental del Cálculo",
+      "Aplicaciones de la integral: áreas, volúmenes de revolución, longitud de arco"
+    ],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      },
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-diferencial",
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "pucv-plan-comun-ing-civil-mat1004-algebra-lineal",
+    "title": "Álgebra Lineal (PUCV — Plan Común Ingeniería Civil (EIC))",
+    "code": "MAT1004",
+    "semester": 2,
+    "university_name": "Pontificia Universidad Católica de Valparaíso",
+    "axes": [
+      "Matrices y sistemas de ecuaciones lineales: Gauss-Jordan, matriz inversa",
+      "Determinantes: propiedades, regla de Cramer",
+      "Geometría vectorial en R² y R³: vectores, producto punto, producto cruz, rectas y planos",
+      "Espacios vectoriales: subespacios, base, dimensión",
+      "Transformaciones lineales",
+      "Valores y vectores propios (introducción)"
+    ],
+    "chapters": [
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": [
+      "algebra-lineal"
+    ]
+  },
+  {
+    "id": "pucv-plan-comun-ing-civil-mat1003-calculo-en-varias-variables",
+    "title": "Cálculo en Varias Variables (PUCV — Plan Común Ingeniería Civil (EIC))",
+    "code": "MAT1003",
+    "semester": 3,
+    "university_name": "Pontificia Universidad Católica de Valparaíso",
+    "axes": [
+      "Funciones de varias variables: dominio, recorrido, gráficos, curvas de nivel",
+      "Límites y continuidad en R² y R³",
+      "Derivadas parciales, derivada direccional, gradiente",
+      "Plano tangente y aproximación lineal",
+      "Regla de la cadena para funciones de varias variables",
+      "Optimización: máximos/mínimos, multiplicadores de Lagrange",
+      "Integrales dobles (cartesianas, polares) y triples (cartesianas, cilíndricas, esféricas)",
+      "Aplicaciones: cálculo de volúmenes, centroides"
+    ],
+    "chapters": [
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-multivariable"
+    ]
+  },
+  {
+    "id": "pucv-plan-comun-ing-civil-mat1005-ecuaciones-diferenciales",
+    "title": "Ecuaciones Diferenciales (PUCV — Plan Común Ingeniería Civil (EIC))",
+    "code": "MAT1005",
+    "semester": 4,
+    "university_name": "Pontificia Universidad Católica de Valparaíso",
+    "axes": [
+      "EDO de primer orden: separables, lineales, exactas, factor integrante, Bernoulli",
+      "EDO lineales de orden superior con coeficientes constantes: homogéneas y no homogéneas",
+      "Métodos: coeficientes indeterminados, variación de parámetros, Wronskiano, Teorema de Abel",
+      "Sistemas de EDO lineales: valores propios, matriz exponencial",
+      "Transformada de Laplace y aplicaciones (probable, no verificado al 100%)",
+      "Aplicaciones: mecánica (oscilaciones), circuitos RLC, modelos de población"
+    ],
+    "chapters": [
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      }
+    ],
+    "base_course_ids": [
+      "ecuaciones-diferenciales"
+    ]
+  },
+  {
+    "id": "pucv-ing-comercial-calculo-i",
+    "title": "Cálculo I (PUCV)",
+    "code": null,
+    "semester": 1,
+    "university_name": "Pontificia Universidad Católica de Valparaíso",
+    "axes": [
+      "Funciones reales de variable real: dominio, recorrido, gráficos",
+      "Funciones exponenciales y logarítmicas con aplicaciones económicas",
+      "Límites y continuidad",
+      "Derivadas y reglas de derivación",
+      "Aplicaciones de la derivada: análisis marginal, elasticidad, optimización en economía",
+      "Introducción a la integral (técnicas básicas y aplicaciones a área bajo demanda/oferta)"
+    ],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      },
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-diferencial",
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "pucv-ing-comercial-introduccion-al-algebra-lineal",
+    "title": "Introducción al Álgebra Lineal (PUCV)",
+    "code": null,
+    "semester": 1,
+    "university_name": "Pontificia Universidad Católica de Valparaíso",
+    "axes": [
+      "Vectores y operaciones",
+      "Matrices, operaciones, matriz inversa",
+      "Sistemas de ecuaciones lineales: Gauss, Cramer",
+      "Determinantes",
+      "Espacios vectoriales (introducción)",
+      "Aplicaciones: modelos input-output, programación lineal introductoria"
+    ],
+    "chapters": [
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": [
+      "algebra-lineal"
+    ]
+  },
+  {
+    "id": "pucv-ing-comercial-calculo-ii",
+    "title": "Cálculo II (PUCV)",
+    "code": null,
+    "semester": 2,
+    "university_name": "Pontificia Universidad Católica de Valparaíso",
+    "axes": [
+      "Integrales: técnicas y aplicaciones económicas (excedente del consumidor/productor)",
+      "Funciones de varias variables",
+      "Derivadas parciales y aplicaciones (productividad marginal, utilidad)",
+      "Optimización en varias variables: máximos/mínimos, multiplicadores de Lagrange",
+      "Integrales múltiples (introducción)"
+    ],
+    "chapters": [
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      },
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-integral",
+      "calculo-multivariable"
+    ]
+  },
+  {
+    "id": "pucv-licenciatura-matematicas-algebra",
+    "title": "Álgebra (PUCV)",
+    "code": null,
+    "semester": 1,
+    "university_name": "Pontificia Universidad Católica de Valparaíso",
+    "axes": [
+      "Lógica proposicional y cuantificadores",
+      "Conjuntos y funciones",
+      "Inducción matemática y principio del buen orden",
+      "Números complejos: forma binómica, polar, raíces",
+      "Polinomios: división, raíces, teorema fundamental del álgebra"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      },
+      {
+        "title": "El Lenguaje Matemático",
+        "from": "intro-al-algebra: El Lenguaje Matemático"
+      },
+      {
+        "title": "Números Naturales",
+        "from": "intro-al-algebra: Números Naturales"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo",
+      "intro-al-algebra"
+    ]
+  },
+  {
+    "id": "pucv-licenciatura-matematicas-geometria-analitica-y-vectorial",
+    "title": "Geometría Analítica y Vectorial (PUCV)",
+    "code": null,
+    "semester": 1,
+    "university_name": "Pontificia Universidad Católica de Valparaíso",
+    "axes": [
+      "Sistema cartesiano, recta, distancia",
+      "Cónicas (circunferencia, parábola, elipse, hipérbola)",
+      "Vectores en R² y R³",
+      "Productos punto y cruz",
+      "Rectas y planos en el espacio"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo"
+    ]
+  },
+  {
+    "id": "pucv-licenciatura-matematicas-calculo-ii",
+    "title": "Cálculo II (PUCV)",
+    "code": null,
+    "semester": 2,
+    "university_name": "Pontificia Universidad Católica de Valparaíso",
+    "axes": [
+      "Técnicas de integración avanzadas",
+      "Aplicaciones de la integral (volúmenes, longitud, áreas paramétricas)",
+      "Integrales impropias",
+      "Sucesiones y series numéricas (criterios de convergencia)",
+      "Series de potencias y Taylor"
+    ],
+    "chapters": [
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "pucv-licenciatura-matematicas-algebra-lineal-i",
+    "title": "Álgebra Lineal I (PUCV)",
+    "code": null,
+    "semester": 2,
+    "university_name": "Pontificia Universidad Católica de Valparaíso",
+    "axes": [
+      "Espacios vectoriales abstractos: base, dimensión",
+      "Transformaciones lineales y matrices",
+      "Determinantes (definición formal)",
+      "Sistemas de ecuaciones lineales",
+      "Valores y vectores propios"
+    ],
+    "chapters": [
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": [
+      "algebra-lineal"
+    ]
+  },
+  {
+    "id": "pucv-licenciatura-matematicas-calculo-en-varias-variables-calculo-iii",
+    "title": "Cálculo en Varias Variables (Cálculo III) (PUCV)",
+    "code": null,
+    "semester": 3,
+    "university_name": "Pontificia Universidad Católica de Valparaíso",
+    "axes": [
+      "Funciones R^n → R^m",
+      "Derivadas parciales, gradiente, diferencial",
+      "Regla de la cadena",
+      "Optimización: multiplicadores de Lagrange",
+      "Integrales múltiples (cambio de variable, jacobiano)"
+    ],
+    "chapters": [
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-multivariable"
+    ]
+  },
+  {
+    "id": "pucv-licenciatura-matematicas-ecuaciones-diferenciales",
+    "title": "Ecuaciones Diferenciales (PUCV)",
+    "code": null,
+    "semester": 3,
+    "university_name": "Pontificia Universidad Católica de Valparaíso",
+    "axes": [
+      "EDO de primer orden",
+      "EDO lineales de orden superior",
+      "Sistemas de EDO",
+      "Transformada de Laplace",
+      "Aplicaciones"
+    ],
+    "chapters": [
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      }
+    ],
+    "base_course_ids": [
+      "ecuaciones-diferenciales"
+    ]
+  },
+  {
+    "id": "pucv-licenciatura-matematicas-calculo-iv-calculo-vectorial",
+    "title": "Cálculo IV (Cálculo Vectorial) (PUCV)",
+    "code": null,
+    "semester": 4,
+    "university_name": "Pontificia Universidad Católica de Valparaíso",
+    "axes": [
+      "Curvas parametrizadas en R^n",
+      "Integrales de línea",
+      "Campos vectoriales, rotacional, divergencia",
+      "Teoremas de Green, Stokes, divergencia (Gauss)",
+      "Superficies parametrizadas"
+    ],
+    "chapters": [
+      {
+        "title": "Curvas",
+        "from": "calculo-vectorial: Curvas"
+      },
+      {
+        "title": "Integrales de Línea",
+        "from": "calculo-vectorial: Integrales de Línea"
+      },
+      {
+        "title": "Integrales de Superficie",
+        "from": "calculo-vectorial: Integrales de Superficie"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-vectorial"
+    ]
+  },
+  {
+    "id": "pucv-licenciatura-fisica-mat1115-calculo-i",
+    "title": "Cálculo I (PUCV MAT1115)",
+    "code": "MAT1115",
+    "semester": 1,
+    "university_name": "Pontificia Universidad Católica de Valparaíso",
+    "axes": [
+      "Números reales e inecuaciones",
+      "Funciones: dominio, recorrido, polinomiales, trigonométricas, exp/log",
+      "Límites y continuidad",
+      "Derivadas y aplicaciones",
+      "Integrales: TFC, técnicas básicas"
+    ],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      },
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-diferencial",
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "pucv-licenciatura-fisica-mat1118-algebra",
+    "title": "Álgebra (PUCV MAT1118)",
+    "code": "MAT1118",
+    "semester": 1,
+    "university_name": "Pontificia Universidad Católica de Valparaíso",
+    "axes": [
+      "Lógica y conjuntos",
+      "Inducción y sumatoria",
+      "Números complejos",
+      "Polinomios y ecuaciones algebraicas",
+      "Combinatoria (introducción)"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      },
+      {
+        "title": "El Lenguaje Matemático",
+        "from": "intro-al-algebra: El Lenguaje Matemático"
+      },
+      {
+        "title": "Números Naturales",
+        "from": "intro-al-algebra: Números Naturales"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo",
+      "intro-al-algebra"
+    ]
+  },
+  {
+    "id": "pucv-licenciatura-fisica-mat1127-calculo-ii",
+    "title": "Cálculo II (PUCV MAT1127)",
+    "code": "MAT1127",
+    "semester": 2,
+    "university_name": "Pontificia Universidad Católica de Valparaíso",
+    "axes": [
+      "Técnicas avanzadas de integración",
+      "Aplicaciones de la integral (áreas, volúmenes, longitud, polares)",
+      "Integrales impropias",
+      "Sucesiones y series numéricas",
+      "Series de potencias y Taylor"
+    ],
+    "chapters": [
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "pucv-licenciatura-fisica-mat1129-algebra-lineal-y-ecuaciones-diferenciales",
+    "title": "Álgebra Lineal y Ecuaciones Diferenciales (PUCV MAT1129)",
+    "code": "MAT1129",
+    "semester": 2,
+    "university_name": "Pontificia Universidad Católica de Valparaíso",
+    "axes": [
+      "Matrices, sistemas, determinantes",
+      "Espacios vectoriales, base, dimensión",
+      "Transformaciones lineales, valores propios",
+      "EDO de primer orden (introducción)",
+      "EDO lineales de orden superior (introducción)"
+    ],
+    "chapters": [
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      },
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      }
+    ],
+    "base_course_ids": [
+      "algebra-lineal",
+      "ecuaciones-diferenciales"
+    ]
+  },
+  {
+    "id": "pucv-licenciatura-fisica-mat1210-calculo-iii",
+    "title": "Cálculo III (PUCV MAT1210)",
+    "code": "MAT1210",
+    "semester": 3,
+    "university_name": "Pontificia Universidad Católica de Valparaíso",
+    "axes": [
+      "Cálculo de varias variables",
+      "Derivadas parciales, gradiente",
+      "Optimización, Lagrange",
+      "Integrales múltiples, cambio de variable",
+      "Coordenadas curvilíneas"
+    ],
+    "chapters": [
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-multivariable"
+    ]
+  },
+  {
+    "id": "pucv-licenciatura-fisica-mat1220-ecuaciones-diferenciales",
+    "title": "Ecuaciones Diferenciales (PUCV MAT1220)",
+    "code": "MAT1220",
+    "semester": 3,
+    "university_name": "Pontificia Universidad Católica de Valparaíso",
+    "axes": [
+      "EDO de primer orden (separables, lineales, exactas, Bernoulli)",
+      "EDO lineales de orden superior",
+      "Sistemas de EDO",
+      "Transformada de Laplace",
+      "Aplicaciones físicas"
+    ],
+    "chapters": [
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      }
+    ],
+    "base_course_ids": [
+      "ecuaciones-diferenciales"
+    ]
+  },
+  {
+    "id": "pucv-licenciatura-fisica-mat1221-calculo-iv",
+    "title": "Cálculo IV (PUCV MAT1221)",
+    "code": "MAT1221",
+    "semester": 4,
+    "university_name": "Pontificia Universidad Católica de Valparaíso",
+    "axes": [
+      "Curvas paramétricas",
+      "Integrales de línea y superficie",
+      "Campos vectoriales, rotacional, divergencia",
+      "Teoremas de Green, Stokes, divergencia"
+    ],
+    "chapters": [
+      {
+        "title": "Curvas",
+        "from": "calculo-vectorial: Curvas"
+      },
+      {
+        "title": "Integrales de Línea",
+        "from": "calculo-vectorial: Integrales de Línea"
+      },
+      {
+        "title": "Integrales de Superficie",
+        "from": "calculo-vectorial: Integrales de Superficie"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-vectorial"
+    ]
+  }
+]

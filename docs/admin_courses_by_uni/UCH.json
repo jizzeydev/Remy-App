@@ -1,0 +1,810 @@
+[
+  {
+    "id": "uch-plan-comun-fcfm-ma1001-introduccion-al-calculo",
+    "title": "Introducción al Cálculo (UCH MA1001)",
+    "code": "MA1001",
+    "semester": 1,
+    "university_name": "Universidad de Chile",
+    "axes": [
+      "Números reales (igualdad, orden, valor absoluto, inecuaciones lineales/cuadráticas, factorización)",
+      "Geometría analítica (cartesiano, rectas, circunferencias, parábolas, elipses, hipérbolas, excentricidad)",
+      "Funciones de una variable (definición, dominio, paridad, crecimiento, composición, inyectividad, inversas)",
+      "Trigonometría (funciones, identidades, ecuaciones)",
+      "Límites (de sucesiones, de funciones, asíntotas)",
+      "Derivadas (definición, reglas básicas — introducción)"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo"
+    ]
+  },
+  {
+    "id": "uch-plan-comun-fcfm-ma1101-introduccion-al-algebra",
+    "title": "Introducción al Álgebra (UCH MA1101)",
+    "code": "MA1101",
+    "semester": 1,
+    "university_name": "Universidad de Chile",
+    "axes": [
+      "Conjuntos (potencia, particiones, álgebra, cuantificadores)",
+      "Funciones (definición formal, composición)",
+      "Relaciones (propiedades, conjunto cociente, división entera)",
+      "Relaciones de orden",
+      "Axiomas de cuerpos (campos), campos ordenados",
+      "Números reales (axioma del supremo, completitud)",
+      "Conjuntos finitos e infinitos, cardinalidad",
+      "Números complejos (operaciones, polar, raíces)"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      },
+      {
+        "title": "El Lenguaje Matemático",
+        "from": "intro-al-algebra: El Lenguaje Matemático"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo",
+      "intro-al-algebra"
+    ]
+  },
+  {
+    "id": "uch-plan-comun-fcfm-ma1002-calculo-diferencial-e-integral",
+    "title": "Cálculo Diferencial e Integral (UCH MA1002)",
+    "code": "MA1002",
+    "semester": 2,
+    "university_name": "Universidad de Chile",
+    "axes": [
+      "Continuidad (subsucesiones, convergencia, discontinuidades, álgebra, TVI, Weierstrass, continuidad uniforme)",
+      "Derivadas (diferenciabilidad formal, reglas, derivada de la inversa, teoremas del valor medio)",
+      "Aplicaciones (máx/mín, análisis, L'Hôpital, Taylor orden 1)",
+      "Integrales (primitivas, TFC 1° y 2°, sustitución, partes, fracciones parciales, sust. trigonométrica)",
+      "Aplicaciones de la integral (áreas, volúmenes de revolución, centros de masa)",
+      "Series de potencias (derivadas e integrales de funciones no elementales)",
+      "Curvas en el espacio (longitud, curvatura, torsión)"
+    ],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      },
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-diferencial",
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "uch-plan-comun-fcfm-ma1102-algebra-lineal",
+    "title": "Álgebra Lineal (UCH MA1102)",
+    "code": "MA1102",
+    "semester": 2,
+    "university_name": "Universidad de Chile",
+    "axes": [
+      "Matrices y sistemas (operaciones, particulares/elementales/triangulares, escalonamiento, Gauss, inversa, factorización LU)",
+      "Espacios vectoriales (subespacios, independencia, generadores, base, dimensión, suma directa)",
+      "Geometría lineal en Rⁿ (vectores, rectas, planos, paramétricas/cartesianas, producto interno, norma, producto cruz, proyecciones ortogonales)",
+      "Transformaciones lineales (núcleo, imagen, teorema núcleo-imagen, matriz representante, rango, cambio de base)",
+      "Valores y vectores propios (determinante, polinomio característico, diagonalización)",
+      "Ortogonalidad (Gram-Schmidt, matrices simétricas, formas cuadráticas, cónicas, mínimos cuadrados, Jacobiana)"
+    ],
+    "chapters": [
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": [
+      "algebra-lineal"
+    ]
+  },
+  {
+    "id": "uch-plan-comun-fcfm-ma2001-calculo-en-varias-variables",
+    "title": "Cálculo en Varias Variables (UCH MA2001)",
+    "code": "MA2001",
+    "semester": 3,
+    "university_name": "Universidad de Chile",
+    "axes": [
+      "Topología en Rⁿ (distancias, normas, bolas, sucesiones, abiertos/cerrados/compactos)",
+      "Funciones de varias variables (grafos, conjuntos de nivel, límites, continuidad)",
+      "Cálculo diferencial en Rⁿ (direccionales, parciales, Fréchet, Jacobiana, regla de la cadena, gradiente, plano tangente)",
+      "Teoremas función inversa e implícita, punto fijo",
+      "Derivadas de orden superior (Schwartz, Hessiana, Taylor multivariable)",
+      "Máx/mín (puntos críticos, 2do orden, convexas, Lagrange)",
+      "Integral de Riemann en Rⁿ (particiones, propiedades)",
+      "Fubini, cambio de variables (iteradas, polares, cilíndricas, esféricas, centros de masa, momentos de inercia)"
+    ],
+    "chapters": [
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-multivariable"
+    ]
+  },
+  {
+    "id": "uch-plan-comun-fcfm-ma2601-ecuaciones-diferenciales-ordinarias",
+    "title": "Ecuaciones Diferenciales Ordinarias (UCH MA2601)",
+    "code": "MA2601",
+    "semester": 3,
+    "university_name": "Universidad de Chile",
+    "axes": [
+      "EDO 1er orden (campo vectorial, curva integral, separables, reducción de orden, homogéneas, lineales con factor integrante, Bernoulli, Ricatti, modelación, existencia y unicidad, Runge-Kutta)",
+      "Ecuaciones lineales de orden superior (Wronskiano, orden 2 homogéneas/vibraciones mecánicas, variación de parámetros, Función de Green, condiciones de borde, series de potencias / Frobenius, orden n homogéneas/no homogéneas, Euler-Cauchy, coef. indeterminados)",
+      "Transformada de Laplace (definición, fórmulas, ED lineales, convolución, Heaviside, Delta de Dirac)",
+      "Sistemas lineales (existencia/unicidad, matriz fundamental, exponencial, asintótico, diagramas de fase 2×2, variación de parámetros)",
+      "Sistemas autónomos no lineales (hamiltonianos, conservación de energía, péndulo no lineal, estabilidad puntos críticos, Lotka-Volterra, Lyapunov)"
+    ],
+    "chapters": [
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      }
+    ],
+    "base_course_ids": [
+      "ecuaciones-diferenciales"
+    ]
+  },
+  {
+    "id": "uch-plan-comun-fcfm-ma2002-calculo-avanzado-y-aplicaciones",
+    "title": "Cálculo Avanzado y Aplicaciones (UCH MA2002)",
+    "code": "MA2002",
+    "semester": 4,
+    "university_name": "Universidad de Chile",
+    "axes": [
+      "Cálculo vectorial (campos escalares/vectoriales, gradiente, sistemas coordenados ortogonales, divergencia, rotor, Laplaciano, integrales de línea y superficie)",
+      "Teoremas de integración vectorial (Gauss, Green, Stokes, conservativos, circulaciones, flujos)",
+      "Variable compleja (derivada compleja, Cauchy-Riemann, series de potencias, Laurent, polos, residuos, integrales complejas)",
+      "Series y Transformada de Fourier (funciones periódicas, coeficientes, convergencia, transformada, convolución, pares/impares)"
+    ],
+    "chapters": [
+      {
+        "title": "Curvas",
+        "from": "calculo-vectorial: Curvas"
+      },
+      {
+        "title": "Integrales de Línea",
+        "from": "calculo-vectorial: Integrales de Línea"
+      },
+      {
+        "title": "Integrales de Superficie",
+        "from": "calculo-vectorial: Integrales de Superficie"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-vectorial"
+    ]
+  },
+  {
+    "id": "uch-fen-metodos-matematicos-i",
+    "title": "Métodos Matemáticos I (UCH)",
+    "code": null,
+    "semester": 1,
+    "university_name": "Universidad de Chile",
+    "axes": [
+      "Lógica y proposiciones (lógica proposicional, álgebra de proposiciones)",
+      "Conjuntos (operaciones)",
+      "Inecuaciones y valor absoluto",
+      "Geometría analítica (casos aplicados)",
+      "Funciones (definiciones, composición, inversas)",
+      "Sumatorias (definiciones, inducción, fracciones parciales, combinatoria)",
+      "Límites (introducción)",
+      "Derivadas (definición, álgebra, funciones elementales)"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      },
+      {
+        "title": "El Lenguaje Matemático",
+        "from": "intro-al-algebra: El Lenguaje Matemático"
+      },
+      {
+        "title": "Números Naturales",
+        "from": "intro-al-algebra: Números Naturales"
+      },
+      {
+        "title": "Geometría Analítica",
+        "from": "intro-al-algebra: Geometría Analítica"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo",
+      "intro-al-algebra"
+    ]
+  },
+  {
+    "id": "uch-fen-metodos-matematicos-ii",
+    "title": "Métodos Matemáticos II (UCH)",
+    "code": null,
+    "semester": 2,
+    "university_name": "Universidad de Chile",
+    "axes": [
+      "Funciones multivariadas y derivadas",
+      "Métodos de derivación con restricciones",
+      "Álgebra lineal (matrices y operaciones)",
+      "Metodologías aplicadas"
+    ],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      },
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-diferencial",
+      "algebra-lineal"
+    ]
+  },
+  {
+    "id": "uch-fen-metodos-matematicos-iii",
+    "title": "Métodos Matemáticos III (UCH)",
+    "code": null,
+    "semester": 3,
+    "university_name": "Universidad de Chile",
+    "axes": [
+      "Derivadas y aplicaciones",
+      "Optimización con y sin restricciones",
+      "Programación lineal (PPL)",
+      "Método simplex"
+    ],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-diferencial"
+    ]
+  },
+  {
+    "id": "uch-iicg-fen-metodos-matematicos-iv",
+    "title": "Métodos Matemáticos IV (UCH)",
+    "code": null,
+    "semester": 4,
+    "university_name": "Universidad de Chile",
+    "axes": [
+      "Métodos cuantitativos avanzados",
+      "Integrales y aplicaciones",
+      "Modelos matemáticos para gestión"
+    ],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      },
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-diferencial",
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "uch-ciencias-calculo-i",
+    "title": "Cálculo I (UCH)",
+    "code": null,
+    "semester": 1,
+    "university_name": "Universidad de Chile",
+    "axes": [
+      "Números reales",
+      "Funciones",
+      "Límites",
+      "Continuidad",
+      "Derivadas",
+      "Aplicaciones"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      },
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo",
+      "calculo-diferencial"
+    ]
+  },
+  {
+    "id": "uch-ciencias-algebra-i",
+    "title": "Álgebra I (UCH)",
+    "code": null,
+    "semester": 1,
+    "university_name": "Universidad de Chile",
+    "axes": [
+      "Lógica",
+      "Conjuntos",
+      "Relaciones",
+      "Funciones",
+      "Números (naturales, enteros, racionales, reales, complejos)"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      },
+      {
+        "title": "El Lenguaje Matemático",
+        "from": "intro-al-algebra: El Lenguaje Matemático"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo",
+      "intro-al-algebra"
+    ]
+  },
+  {
+    "id": "uch-ciencias-calculo-ii",
+    "title": "Cálculo II (UCH)",
+    "code": null,
+    "semester": 2,
+    "university_name": "Universidad de Chile",
+    "axes": [
+      "Integrales",
+      "Técnicas",
+      "Series",
+      "Aplicaciones"
+    ],
+    "chapters": [
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "uch-ciencias-algebra-lineal",
+    "title": "Álgebra Lineal (UCH)",
+    "code": null,
+    "semester": 2,
+    "university_name": "Universidad de Chile",
+    "axes": [
+      "Matrices",
+      "Sistemas",
+      "Espacios vectoriales",
+      "Transformaciones lineales",
+      "Valores propios"
+    ],
+    "chapters": [
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": [
+      "algebra-lineal"
+    ]
+  },
+  {
+    "id": "uch-ciencias-calculo-iii-varias-variables",
+    "title": "Cálculo III en Varias Variables (UCH)",
+    "code": null,
+    "semester": 3,
+    "university_name": "Universidad de Chile",
+    "axes": [
+      "Funciones de varias variables",
+      "Derivadas parciales",
+      "Integrales múltiples",
+      "Lagrange"
+    ],
+    "chapters": [
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-multivariable"
+    ]
+  },
+  {
+    "id": "uch-ciencias-ecuaciones-diferenciales",
+    "title": "Ecuaciones Diferenciales (UCH)",
+    "code": null,
+    "semester": 4,
+    "university_name": "Universidad de Chile",
+    "axes": [
+      "EDO",
+      "Métodos de resolución",
+      "Laplace",
+      "Sistemas"
+    ],
+    "chapters": [
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      }
+    ],
+    "base_course_ids": [
+      "ecuaciones-diferenciales"
+    ]
+  }
+]

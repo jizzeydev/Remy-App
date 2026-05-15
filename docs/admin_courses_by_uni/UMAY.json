@@ -1,0 +1,509 @@
+[
+  {
+    "id": "umay-plan-comun-algebra",
+    "title": "Álgebra (UMAY)",
+    "code": "",
+    "semester": 1,
+    "university_name": "Universidad Mayor",
+    "axes": [
+      "Lógica proposicional, cuantificadores e inducción matemática",
+      "Conjuntos numéricos: naturales, enteros, racionales, reales y complejos",
+      "Polinomios y factorización",
+      "Ecuaciones e inecuaciones (lineales, cuadráticas, racionales, con valor absoluto)",
+      "Funciones: dominio, recorrido, composición, función inversa",
+      "Funciones exponencial, logarítmica y trigonométricas",
+      "Trigonometría plana e identidades",
+      "Geometría analítica básica (rectas y cónicas)"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      },
+      {
+        "title": "El Lenguaje Matemático",
+        "from": "intro-al-algebra: El Lenguaje Matemático"
+      },
+      {
+        "title": "Números Naturales",
+        "from": "intro-al-algebra: Números Naturales"
+      },
+      {
+        "title": "Geometría Analítica",
+        "from": "intro-al-algebra: Geometría Analítica"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo",
+      "intro-al-algebra"
+    ]
+  },
+  {
+    "id": "umay-plan-comun-calculo",
+    "title": "Cálculo (UMAY)",
+    "code": "",
+    "semester": 1,
+    "university_name": "Universidad Mayor",
+    "axes": [
+      "Números reales, inecuaciones y valor absoluto",
+      "Funciones reales, gráficos y transformaciones",
+      "Límites de funciones y continuidad",
+      "Derivadas y reglas de derivación",
+      "Derivadas de funciones elementales (polinómicas, trigonométricas, exp, log)",
+      "Aplicaciones de la derivada: razón de cambio, optimización, L'Hôpital, graficación"
+    ],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      },
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-diferencial",
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "umay-plan-comun-calculo-integral",
+    "title": "Cálculo integral (UMAY)",
+    "code": "",
+    "semester": 2,
+    "university_name": "Universidad Mayor",
+    "axes": [
+      "Antiderivada e integral indefinida",
+      "Integral definida y Teorema Fundamental del Cálculo",
+      "Técnicas de integración (sustitución, partes, fracciones parciales, sustitución trigonométrica)",
+      "Aplicaciones (áreas, volúmenes, longitud de arco, valor promedio)",
+      "Integrales impropias",
+      "Sucesiones y series numéricas (criterios de convergencia)",
+      "Series de potencias y series de Taylor"
+    ],
+    "chapters": [
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "umay-plan-comun-algebra-lineal",
+    "title": "Álgebra lineal (UMAY)",
+    "code": "",
+    "semester": 3,
+    "university_name": "Universidad Mayor",
+    "axes": [
+      "Sistemas de ecuaciones lineales y método de Gauss-Jordan",
+      "Matrices: álgebra, inversa, rango",
+      "Determinantes y propiedades",
+      "Espacios y subespacios vectoriales",
+      "Bases, dimensión y coordenadas",
+      "Transformaciones lineales y matriz asociada",
+      "Producto interno, ortogonalidad y proceso de Gram-Schmidt",
+      "Valores y vectores propios; diagonalización"
+    ],
+    "chapters": [
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": [
+      "algebra-lineal"
+    ]
+  },
+  {
+    "id": "umay-plan-comun-ecuaciones-diferenciales",
+    "title": "Ecuaciones diferenciales (UMAY)",
+    "code": "",
+    "semester": 3,
+    "university_name": "Universidad Mayor",
+    "axes": [
+      "EDO de primer orden (separables, lineales, exactas, factor integrante, Bernoulli)",
+      "EDO lineales de segundo orden a coeficientes constantes",
+      "Método de coeficientes indeterminados y variación de parámetros",
+      "Sistemas de ecuaciones diferenciales lineales",
+      "Transformada de Laplace y aplicaciones",
+      "Soluciones por series (introducción)",
+      "Aplicaciones (vibraciones, circuitos RLC, mezclas)"
+    ],
+    "chapters": [
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      }
+    ],
+    "base_course_ids": [
+      "ecuaciones-diferenciales"
+    ]
+  },
+  {
+    "id": "umay-plan-comun-calculo-multivariable",
+    "title": "Cálculo multivariable (UMAY)",
+    "code": "",
+    "semester": 3,
+    "university_name": "Universidad Mayor",
+    "axes": [
+      "Funciones de varias variables y superficies",
+      "Derivadas parciales, gradiente y derivada direccional",
+      "Regla de la cadena multivariable",
+      "Máximos y mínimos; multiplicadores de Lagrange",
+      "Integrales dobles y triples; cambio de variables",
+      "Coordenadas polares, cilíndricas y esféricas",
+      "Campos vectoriales, integrales de línea y de superficie (introducción)",
+      "Teoremas de Green, Stokes y de la divergencia (si se incluyen)"
+    ],
+    "chapters": [
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      },
+      {
+        "title": "Curvas",
+        "from": "calculo-vectorial: Curvas"
+      },
+      {
+        "title": "Integrales de Línea",
+        "from": "calculo-vectorial: Integrales de Línea"
+      },
+      {
+        "title": "Integrales de Superficie",
+        "from": "calculo-vectorial: Integrales de Superficie"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-multivariable",
+      "calculo-vectorial"
+    ]
+  },
+  {
+    "id": "umay-ing-comercial-algebra-i",
+    "title": "Álgebra I (UMAY)",
+    "code": "",
+    "semester": 1,
+    "university_name": "Universidad Mayor",
+    "axes": [
+      "Conjuntos numéricos, operatoria",
+      "Polinomios y factorización",
+      "Ecuaciones e inecuaciones",
+      "Funciones lineales, cuadráticas, exponenciales, logarítmicas",
+      "Aplicaciones en negocios"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      },
+      {
+        "title": "El Lenguaje Matemático",
+        "from": "intro-al-algebra: El Lenguaje Matemático"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo",
+      "intro-al-algebra"
+    ]
+  },
+  {
+    "id": "umay-ing-comercial-calculo-i",
+    "title": "Cálculo I (UMAY)",
+    "code": "",
+    "semester": 1,
+    "university_name": "Universidad Mayor",
+    "axes": [
+      "Límites y continuidad",
+      "Derivadas",
+      "Aplicaciones (optimización, costo marginal, ingreso marginal)",
+      "Introducción a la integral"
+    ],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      },
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-diferencial",
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "umay-ing-comercial-algebra-ii",
+    "title": "Álgebra II (UMAY)",
+    "code": "",
+    "semester": 2,
+    "university_name": "Universidad Mayor",
+    "axes": [
+      "Matrices, determinantes",
+      "Sistemas de ecuaciones lineales",
+      "Espacios vectoriales (intro)",
+      "Aplicaciones a problemas de negocios"
+    ],
+    "chapters": [
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": [
+      "algebra-lineal"
+    ]
+  },
+  {
+    "id": "umay-ing-comercial-calculo-ii",
+    "title": "Cálculo II (UMAY)",
+    "code": "",
+    "semester": 2,
+    "university_name": "Universidad Mayor",
+    "axes": [
+      "Integrales y técnicas",
+      "Aplicaciones (excedente del consumidor/productor)",
+      "Funciones de varias variables (introducción)",
+      "Derivadas parciales y optimización (Lagrange)"
+    ],
+    "chapters": [
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      },
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-integral",
+      "calculo-multivariable"
+    ]
+  }
+]

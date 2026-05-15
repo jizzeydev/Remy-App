@@ -1,0 +1,534 @@
+[
+  {
+    "id": "unab-ing-civil-calculo-diferencial",
+    "title": "Cálculo Diferencial (UNAB)",
+    "code": "",
+    "semester": 2,
+    "university_name": "Universidad Andrés Bello",
+    "axes": [
+      "Análisis y aplicación del concepto de límite",
+      "Continuidad",
+      "Derivadas",
+      "Reglas de derivación",
+      "Aplicaciones de la derivada",
+      "Matrices (introducción)"
+    ],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-diferencial"
+    ]
+  },
+  {
+    "id": "unab-ing-civil-calculo-integral",
+    "title": "Cálculo Integral (UNAB)",
+    "code": "",
+    "semester": 3,
+    "university_name": "Universidad Andrés Bello",
+    "axes": [
+      "Elementos principales del cálculo integral",
+      "Sucesiones y series",
+      "Series de potencias para representar funciones",
+      "Ecuaciones de rectas y planos en R3",
+      "Continuidad y derivadas de funciones de varias variables",
+      "Cálculo de extremos de funciones"
+    ],
+    "chapters": [
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      },
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-integral",
+      "calculo-multivariable"
+    ]
+  },
+  {
+    "id": "unab-ing-civil-sistema-y-ecuaciones-diferenciales-lineales",
+    "title": "Sistema y Ecuaciones Diferenciales Lineales (UNAB)",
+    "code": "",
+    "semester": 4,
+    "university_name": "Universidad Andrés Bello",
+    "axes": [
+      "Modelado de problemas con ecuaciones diferenciales",
+      "Métodos de solución de EDO de primer orden",
+      "EDO de segundo orden",
+      "Sistemas de ecuaciones diferenciales lineales",
+      "Aplicaciones en ingeniería"
+    ],
+    "chapters": [
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      },
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": [
+      "ecuaciones-diferenciales",
+      "algebra-lineal"
+    ]
+  },
+  {
+    "id": "unab-ing-civil-matematicas-avanzadas-i",
+    "title": "Matemáticas Avanzadas I (UNAB)",
+    "code": "",
+    "semester": 5,
+    "university_name": "Universidad Andrés Bello",
+    "axes": [
+      "Integrales de línea",
+      "Integrales de superficie",
+      "Teoremas integrales (Green, Stokes, divergencia)",
+      "Integrales múltiples",
+      "Cambio de variables",
+      "Ecuaciones diferenciales parciales (introducción)"
+    ],
+    "chapters": [
+      {
+        "title": "Curvas",
+        "from": "calculo-vectorial: Curvas"
+      },
+      {
+        "title": "Integrales de Línea",
+        "from": "calculo-vectorial: Integrales de Línea"
+      },
+      {
+        "title": "Integrales de Superficie",
+        "from": "calculo-vectorial: Integrales de Superficie"
+      },
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-vectorial",
+      "calculo-multivariable"
+    ]
+  },
+  {
+    "id": "unab-ing-civil-industrial-introduccion-a-las-matematicas",
+    "title": "Introducción a las Matemáticas (UNAB)",
+    "code": "",
+    "semester": 1,
+    "university_name": "Universidad Andrés Bello",
+    "axes": [
+      "Bases necesarias de matemáticas para ingeniería",
+      "Punto de partida común para cursos posteriores",
+      "Operatoria con números reales",
+      "Ecuaciones e inecuaciones",
+      "Funciones y polinomios"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo"
+    ]
+  },
+  {
+    "id": "unab-ing-civil-industrial-calculo-integral",
+    "title": "Cálculo Integral (UNAB)",
+    "code": "",
+    "semester": 3,
+    "university_name": "Universidad Andrés Bello",
+    "axes": [
+      "Elementos principales del cálculo integral",
+      "Métodos de integración",
+      "Aplicación a diferentes funciones"
+    ],
+    "chapters": [
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "unab-ing-civil-industrial-sistemas-y-ecuaciones-diferenciales-lineales",
+    "title": "Sistemas y Ecuaciones Diferenciales Lineales (UNAB)",
+    "code": "",
+    "semester": 4,
+    "university_name": "Universidad Andrés Bello",
+    "axes": [
+      "Modelado matemático con ecuaciones diferenciales",
+      "Métodos de solución de EDO",
+      "Sistemas lineales"
+    ],
+    "chapters": [
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      },
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": [
+      "ecuaciones-diferenciales",
+      "algebra-lineal"
+    ]
+  },
+  {
+    "id": "unab-ing-comercial-matematica-i",
+    "title": "Matemática I (UNAB)",
+    "code": "",
+    "semester": 1,
+    "university_name": "Universidad Andrés Bello",
+    "axes": [
+      "Álgebra elemental",
+      "Lógica y conjuntos",
+      "Geometría analítica",
+      "Suma y progresiones",
+      "Técnicas de factorización",
+      "Resolución de ecuaciones",
+      "Operaciones con polinomios"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      },
+      {
+        "title": "El Lenguaje Matemático",
+        "from": "intro-al-algebra: El Lenguaje Matemático"
+      },
+      {
+        "title": "Geometría Analítica",
+        "from": "intro-al-algebra: Geometría Analítica"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo",
+      "intro-al-algebra"
+    ]
+  },
+  {
+    "id": "unab-ing-comercial-matematica-ii",
+    "title": "Matemática II (UNAB)",
+    "code": "",
+    "semester": 2,
+    "university_name": "Universidad Andrés Bello",
+    "axes": [
+      "Cálculo en una variable",
+      "Inecuaciones",
+      "Funciones, límites y derivadas",
+      "Aplicaciones en negocios y economía"
+    ],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      },
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-diferencial",
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "unab-ing-comercial-matematica-iii",
+    "title": "Matemática III (UNAB)",
+    "code": "",
+    "semester": 3,
+    "university_name": "Universidad Andrés Bello",
+    "axes": [
+      "Cálculo en varias variables (derivadas parciales, gradientes)",
+      "Cálculo integral (1var y multivariable)",
+      "Programación lineal",
+      "Aplicaciones en negocios y economía"
+    ],
+    "chapters": [
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      },
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-integral",
+      "calculo-multivariable"
+    ]
+  }
+]

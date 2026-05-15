@@ -1,0 +1,965 @@
+[
+  {
+    "id": "udec-plan-comun-calculo-i-aplicado-a-la-ingenieria",
+    "title": "Cálculo I Aplicado a la Ingeniería (UDEC 500107)",
+    "code": "500107",
+    "semester": 1,
+    "university_name": "Universidad de Concepción",
+    "axes": [
+      "Límites: definición, álgebra de límites, límites laterales, infinitos y al infinito, asíntotas",
+      "Continuidad de funciones reales (en punto, en intervalos, propiedades, teorema del valor intermedio)",
+      "Derivada: definición, interpretación geométrica y física, reglas, regla de la cadena, derivación implícita, derivadas de funciones trigonométricas inversas",
+      "Aplicaciones de la derivada: teorema del valor medio, máximos y mínimos, trazado de curvas, regla de L'Hôpital",
+      "Integral de Riemann, antiderivadas, Teorema Fundamental del Cálculo, métodos de integración, integrales impropias",
+      "Aplicaciones de la integral: áreas, volúmenes de revolución, longitud de curvas",
+      "Funciones logarítmica, exponencial e hiperbólicas; coordenadas polares"
+    ],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      },
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-diferencial",
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "udec-plan-comun-algebra-i-aplicado-a-la-ingenieria",
+    "title": "Álgebra I Aplicado a la Ingeniería (UDEC 500108)",
+    "code": "500108",
+    "semester": 1,
+    "university_name": "Universidad de Concepción",
+    "axes": [
+      "Sistemas de ecuaciones lineales, eliminación gaussiana, factorización triangular",
+      "Matrices: operaciones, inversa, determinantes y propiedades",
+      "Vectores, rectas y planos en R³",
+      "Espacios vectoriales y subespacios; bases y dimensión",
+      "Transformaciones lineales; valores y vectores propios; diagonalización",
+      "Espacios con producto interior, ortogonalidad, Gram-Schmidt",
+      "Formas bilineales y cuadráticas"
+    ],
+    "chapters": [
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": [
+      "algebra-lineal"
+    ]
+  },
+  {
+    "id": "udec-plan-comun-calculo-ii-aplicado-a-la-ingenieria",
+    "title": "Cálculo II Aplicado a la Ingeniería (UDEC 500207)",
+    "code": "500207",
+    "semester": 2,
+    "university_name": "Universidad de Concepción",
+    "axes": [
+      "Técnicas y aplicaciones de la integración: área entre curvas, volúmenes (discos, arandelas, secciones), longitud de arco, área de superficies de revolución",
+      "Coordenadas polares y áreas en polares",
+      "Sucesiones y series reales: convergencia, criterios de la integral, comparación, alternantes, cociente, raíz",
+      "Series de potencias; derivación e integración término a término",
+      "Series y teorema de Taylor; aplicaciones",
+      "Integrales impropias y funciones especiales (Gamma; introducción a la transformada de Laplace)",
+      "Curvas en el plano y el espacio: parametrización, derivación e integración de funciones vectoriales"
+    ],
+    "chapters": [
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      },
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-integral",
+      "calculo-diferencial"
+    ]
+  },
+  {
+    "id": "udec-plan-comun-algebra-ii-aplicado-a-la-ingenieria",
+    "title": "Álgebra II Aplicado a la Ingeniería (UDEC 500208)",
+    "code": "500208",
+    "semester": 2,
+    "university_name": "Universidad de Concepción",
+    "axes": [
+      "Espacios vectoriales avanzados; cambio de base",
+      "Diagonalización; valores y vectores propios; subespacios invariantes",
+      "Productos interiores; ortogonalidad; proceso de Gram-Schmidt",
+      "Formas cuadráticas; reducción canónica (introducción a forma de Jordan)"
+    ],
+    "chapters": [
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": [
+      "algebra-lineal"
+    ]
+  },
+  {
+    "id": "udec-ing-civil-informatica-matematicas-discretas",
+    "title": "Matemáticas Discretas (UDEC 501252)",
+    "code": "501252",
+    "semester": 4,
+    "university_name": "Universidad de Concepción",
+    "axes": [
+      "Lógica proposicional y de predicados",
+      "Conjuntos, relaciones y funciones",
+      "Combinatoria y conteo",
+      "Teoría de grafos",
+      "Recursión e inducción",
+      "Complejidad combinatoria"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      },
+      {
+        "title": "El Lenguaje Matemático",
+        "from": "intro-al-algebra: El Lenguaje Matemático"
+      },
+      {
+        "title": "Números Naturales",
+        "from": "intro-al-algebra: Números Naturales"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo",
+      "intro-al-algebra"
+    ]
+  },
+  {
+    "id": "udec-ing-comercial-calculo-i",
+    "title": "Cálculo I (UDEC 525157)",
+    "code": "525157",
+    "semester": 1,
+    "university_name": "Universidad de Concepción",
+    "axes": [
+      "Números reales: desigualdades, valor absoluto",
+      "Geometría analítica: distancia, rectas, cónicas (circunferencia, elipse, hipérbola, parábola)",
+      "Límites y continuidad: definición, propiedades, límites laterales, asíntotas, teorema del valor intermedio",
+      "Derivadas: definición, reglas, regla de la cadena, derivadas de orden superior, derivación implícita",
+      "Aplicaciones de la derivada: TVM, criterios de 1ª y 2ª derivada, máximos/mínimos, optimización",
+      "Aplicaciones a la economía: costo, demanda e ingreso marginal; elasticidad de demanda",
+      "Derivadas de funciones inversas (exp/log/trig), regla de L'Hôpital"
+    ],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      },
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-diferencial",
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "udec-ing-comercial-algebra-i",
+    "title": "Álgebra I (UDEC 525155)",
+    "code": "525155",
+    "semester": 1,
+    "university_name": "Universidad de Concepción",
+    "axes": [
+      "Lógica proposicional, conjuntos, conjuntos numéricos",
+      "Inducción matemática, teorema del binomio, progresiones aritmética y geométrica",
+      "Funciones reales: inyectiva, sobreyectiva, biyectiva, inversa, composición; aplicaciones económicas",
+      "Funciones exponencial y logarítmica; aplicaciones a crecimiento/decrecimiento",
+      "Funciones circulares (trigonometría)",
+      "Números complejos: forma polar, teorema de De Moivre",
+      "Polinomios y fracciones parciales",
+      "Matemática financiera elemental (interés simple/compuesto, rentas, amortización)"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      },
+      {
+        "title": "El Lenguaje Matemático",
+        "from": "intro-al-algebra: El Lenguaje Matemático"
+      },
+      {
+        "title": "Números Naturales",
+        "from": "intro-al-algebra: Números Naturales"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo",
+      "intro-al-algebra"
+    ]
+  },
+  {
+    "id": "udec-ing-comercial-calculo-ii",
+    "title": "Cálculo II (UDEC 525xxx)",
+    "code": "525xxx",
+    "semester": 2,
+    "university_name": "Universidad de Concepción",
+    "axes": [
+      "Integral indefinida y definida; teorema fundamental del cálculo",
+      "Métodos de integración (sustitución, por partes)",
+      "Aplicaciones económicas del cálculo integral (excedente del consumidor/productor)",
+      "Series numéricas: criterios de convergencia",
+      "Series de potencias; series de Taylor y Maclaurin",
+      "Integración y derivación de series de potencias; integración numérica aproximada"
+    ],
+    "chapters": [
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      },
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-integral",
+      "calculo-diferencial"
+    ]
+  },
+  {
+    "id": "udec-ing-comercial-algebra-ii",
+    "title": "Álgebra II (UDEC 525xxx)",
+    "code": "525xxx",
+    "semester": 2,
+    "university_name": "Universidad de Concepción",
+    "axes": [
+      "Matrices: operaciones, determinantes, rango, equivalencia, sistemas lineales",
+      "Vectores en R² y R³: producto escalar/vectorial, rectas y planos",
+      "Espacios vectoriales: subespacios, base, dimensión, suma directa",
+      "Producto interior, Gram-Schmidt, bases ortogonales",
+      "Diagonalización de matrices; matrices definidas positivas",
+      "Transformaciones lineales: kernel, imagen, matriz asociada, valores y vectores propios"
+    ],
+    "chapters": [
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": [
+      "algebra-lineal"
+    ]
+  },
+  {
+    "id": "udec-ing-comercial-calculo-iii",
+    "title": "Cálculo III (UDEC 525xxx)",
+    "code": "525xxx",
+    "semester": 3,
+    "university_name": "Universidad de Concepción",
+    "axes": [
+      "Funciones de varias variables: gráficos, curvas de nivel, límites y continuidad",
+      "Derivadas parciales y direccionales; aplicaciones empresariales",
+      "Derivadas de orden superior, teorema de Taylor, matriz Jacobiana",
+      "Máximos/mínimos libres y condicionados; matriz Hessiana; multiplicadores de Lagrange",
+      "Ecuaciones diferenciales de 1er orden y aplicaciones a economía/finanzas",
+      "Ecuaciones en diferencias finitas",
+      "Integrales dobles, iteradas, triples y aplicaciones"
+    ],
+    "chapters": [
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      },
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-multivariable",
+      "ecuaciones-diferenciales"
+    ]
+  },
+  {
+    "id": "udec-lic-matematica-algebra-y-trigonometria",
+    "title": "Álgebra y Trigonometría (UDEC 527103)",
+    "code": "527103",
+    "semester": 1,
+    "university_name": "Universidad de Concepción",
+    "axes": [
+      "Lógica y teoría de conjuntos: proposiciones, tablas de verdad, cuantificadores",
+      "Operatoria con reales: axiomas de cuerpo y orden, naturales, inducción, técnicas de conteo, binomio",
+      "Plano cartesiano y geometría analítica: rectas, cónicas, simetrías",
+      "Relaciones y funciones: composición, inversa",
+      "Funciones circulares: trigonometría, identidades, ecuaciones e inecuaciones, resolución de triángulos",
+      "Funciones logarítmica y exponencial"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      },
+      {
+        "title": "El Lenguaje Matemático",
+        "from": "intro-al-algebra: El Lenguaje Matemático"
+      },
+      {
+        "title": "Números Naturales",
+        "from": "intro-al-algebra: Números Naturales"
+      },
+      {
+        "title": "Geometría Analítica",
+        "from": "intro-al-algebra: Geometría Analítica"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo",
+      "intro-al-algebra"
+    ]
+  },
+  {
+    "id": "udec-lic-matematica-calculo-diferencial-e-integral",
+    "title": "Cálculo Diferencial e Integral (UDEC 527104)",
+    "code": "527104",
+    "semester": 2,
+    "university_name": "Universidad de Concepción",
+    "axes": [
+      "Presentación axiomática de los reales (cuerpo, orden, completitud)",
+      "Límite, continuidad, derivada en una variable; reglas, derivación implícita, derivadas de orden superior",
+      "Aplicaciones de la derivada: TVM, trazado de curvas, optimización, L'Hôpital",
+      "Integral de Riemann; teorema fundamental; métodos de integración; integrales impropias",
+      "Integración numérica (trapecio, Simpson); aplicaciones (áreas, volúmenes, longitud de arco)",
+      "Logaritmo, exponencial, hiperbólicas, trigonométricas inversas",
+      "Ecuaciones paramétricas y coordenadas polares"
+    ],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      },
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-diferencial",
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "udec-lic-matematica-algebra-lineal",
+    "title": "Álgebra Lineal (UDEC 527108)",
+    "code": "527108",
+    "semester": 2,
+    "university_name": "Universidad de Concepción",
+    "axes": [
+      "Vectores, rectas y planos en R³",
+      "Matrices, determinantes",
+      "Espacios vectoriales: independencia, base, dimensión, suma directa",
+      "Producto interior, desigualdad de Cauchy-Schwarz, proceso de Gram-Schmidt",
+      "Aplicaciones lineales: núcleo, imagen, isomorfismo, rango",
+      "Diagonalización: polinomio característico, valores y vectores propios, subespacios invariantes"
+    ],
+    "chapters": [
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": [
+      "algebra-lineal"
+    ]
+  },
+  {
+    "id": "udec-lic-matematica-calculo-iii",
+    "title": "Cálculo III (UDEC 521227)",
+    "code": "521227",
+    "semester": 3,
+    "university_name": "Universidad de Concepción",
+    "axes": [
+      "Límite y continuidad de funciones de varias variables",
+      "Cálculo diferencial en varias variables",
+      "Teoremas de la función inversa e implícita",
+      "Extremos libres y condicionados (multiplicadores de Lagrange)",
+      "Integrales dependientes de un parámetro; integración múltiple (acotada e impropia)",
+      "Cálculo vectorial: integrales de línea y superficie, campos conservativos, teoremas de Green, Gauss y Stokes"
+    ],
+    "chapters": [
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      },
+      {
+        "title": "Curvas",
+        "from": "calculo-vectorial: Curvas"
+      },
+      {
+        "title": "Integrales de Línea",
+        "from": "calculo-vectorial: Integrales de Línea"
+      },
+      {
+        "title": "Integrales de Superficie",
+        "from": "calculo-vectorial: Integrales de Superficie"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-multivariable",
+      "calculo-vectorial"
+    ]
+  },
+  {
+    "id": "udec-lic-matematica-ecuaciones-diferenciales-ordinarias",
+    "title": "Ecuaciones Diferenciales Ordinarias (UDEC 527218)",
+    "code": "527218",
+    "semester": 3,
+    "university_name": "Universidad de Concepción",
+    "axes": [
+      "EDO de primer orden: variables separables, exactas, factor integrante, lineales, coeficientes homogéneos; aplicaciones (circuitos, poblaciones)",
+      "EDO lineales de orden superior: Wronskiano, coeficientes constantes, variación de parámetros, aniquiladores",
+      "Transformada de Laplace",
+      "Sistemas de EDO lineales de primer orden"
+    ],
+    "chapters": [
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      }
+    ],
+    "base_course_ids": [
+      "ecuaciones-diferenciales"
+    ]
+  },
+  {
+    "id": "udec-lic-matematica-fundamentos-de-algebra-lineal",
+    "title": "Fundamentos de Álgebra Lineal (UDEC 527207)",
+    "code": "527207",
+    "semester": 3,
+    "university_name": "Universidad de Concepción",
+    "axes": [
+      "Espacios vectoriales abstractos; cambio de base",
+      "Transformaciones lineales; formas canónicas (Jordan)",
+      "Espacios duales",
+      "Formas bilineales; teorema de Sylvester"
+    ],
+    "chapters": [
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": [
+      "algebra-lineal"
+    ]
+  },
+  {
+    "id": "udec-lic-fisica-ecuaciones-diferenciales-ordinarias",
+    "title": "Ecuaciones Diferenciales Ordinarias (UDEC — Licenciatura en Física (Ciencias Físicas))",
+    "code": "521218",
+    "semester": 3,
+    "university_name": "Universidad de Concepción",
+    "axes": [
+      "EDO de primer orden: separables, exactas, lineales, Bernoulli, Ricatti, Clairaut, Lagrange",
+      "EDO lineales de orden superior: Wronskiano, coeficientes constantes, variación de parámetros, función de Green, Euler-Cauchy",
+      "Transformada de Laplace: Heaviside, delta de Dirac, convolución"
+    ],
+    "chapters": [
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      }
+    ],
+    "base_course_ids": [
+      "ecuaciones-diferenciales"
+    ]
+  },
+  {
+    "id": "udec-lic-fisica-fisica-matematica-i",
+    "title": "Física Matemática I (UDEC — Licenciatura en Física (Ciencias Físicas))",
+    "code": "510231",
+    "semester": 3,
+    "university_name": "Universidad de Concepción",
+    "axes": [
+      "Cálculo multivariable: campos escalares y vectoriales, derivadas parciales, regla de la cadena, integrales múltiples",
+      "Sistemas coordenados curvilíneos (cilíndricas, esféricas)",
+      "Análisis vectorial: gradiente, divergencia, rotacional, teoremas de Gauss y Stokes, ecuación de Poisson y Helmholtz",
+      "Series infinitas: tests de convergencia, Taylor, función gamma, Stirling",
+      "Series de Fourier: aplicaciones, fenómeno de Gibbs"
+    ],
+    "chapters": [
+      {
+        "title": "Curvas",
+        "from": "calculo-vectorial: Curvas"
+      },
+      {
+        "title": "Integrales de Línea",
+        "from": "calculo-vectorial: Integrales de Línea"
+      },
+      {
+        "title": "Integrales de Superficie",
+        "from": "calculo-vectorial: Integrales de Superficie"
+      },
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-vectorial",
+      "calculo-multivariable"
+    ]
+  },
+  {
+    "id": "udec-astronomia-ecuaciones-diferenciales",
+    "title": "Ecuaciones Diferenciales (UDEC 525223)",
+    "code": "525223",
+    "semester": 3,
+    "university_name": "Universidad de Concepción",
+    "axes": [
+      "Definición de EDO y EDP; problemas con valores iniciales",
+      "EDO de primer orden y de orden superior",
+      "Transformada de Laplace",
+      "Sistemas de EDO lineales"
+    ],
+    "chapters": [
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      }
+    ],
+    "base_course_ids": [
+      "ecuaciones-diferenciales"
+    ]
+  }
+]

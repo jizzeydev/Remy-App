@@ -1,0 +1,1120 @@
+[
+  {
+    "id": "usach-plan-comun-calculo-i-para-ingenieria",
+    "title": "Cálculo I para Ingeniería (USACH 10101)",
+    "code": "10101",
+    "semester": 1,
+    "university_name": "Universidad de Santiago",
+    "axes": [
+      "Números reales: axiomas de cuerpo y orden, valor absoluto, inecuaciones lineales, cuadráticas y con módulo",
+      "Funciones reales de variable real: dominio, recorrido, composición, función inversa, gráficos; funciones polinomiales, racionales, exponencial, logarítmica y trigonométricas",
+      "Límites y continuidad: definición formal (epsilon-delta), límites laterales, indeterminaciones, teorema del sándwich, límites trigonométricos notables, asíntotas",
+      "Derivada: definición, interpretación geométrica y cinemática, reglas de derivación, regla de la cadena, derivación implícita, derivadas de orden superior",
+      "Aplicaciones de la derivada: monotonía, extremos, concavidad, puntos de inflexión, regla de L'Hôpital, problemas de optimización, razones de cambio relacionadas",
+      "Integral indefinida: antiderivada, técnicas básicas (sustitución, partes), integrales trigonométricas",
+      "Integral definida: sumas de Riemann, Teorema Fundamental del Cálculo, cambio de variable",
+      "Aplicaciones de la integral: cálculo de áreas, volúmenes de revolución (discos, capas), longitud de arco, trabajo"
+    ],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      },
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-diferencial",
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "usach-plan-comun-algebra-i-para-ingenieria",
+    "title": "Álgebra I para Ingeniería (USACH 10102)",
+    "code": "10102",
+    "semester": 1,
+    "university_name": "Universidad de Santiago",
+    "axes": [
+      "Lógica proposicional y cuantificadores: conectivos, tablas de verdad, equivalencias, métodos de demostración (directa, contrarrecíproca, contradicción, inducción)",
+      "Teoría de conjuntos: operaciones, cardinalidad, producto cartesiano, relaciones binarias, relaciones de equivalencia y orden",
+      "Funciones: inyectividad, sobreyectividad, biyectividad, composición e inversa",
+      "Números complejos: forma binómica, polar y exponencial; operaciones, raíces n-ésimas, fórmula de De Moivre",
+      "Polinomios: división, raíces, teorema fundamental del álgebra, factorización en R y C",
+      "Sumatorias y progresiones: aritméticas, geométricas, principio de inducción matemática",
+      "Combinatoria: principios de conteo, permutaciones, variaciones, combinaciones, teorema del binomio"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      },
+      {
+        "title": "El Lenguaje Matemático",
+        "from": "intro-al-algebra: El Lenguaje Matemático"
+      },
+      {
+        "title": "Números Naturales",
+        "from": "intro-al-algebra: Números Naturales"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo",
+      "intro-al-algebra"
+    ]
+  },
+  {
+    "id": "usach-plan-comun-calculo-ii-para-ingenieria",
+    "title": "Cálculo II para Ingeniería (USACH 10112)",
+    "code": "10112",
+    "semester": 2,
+    "university_name": "Universidad de Santiago",
+    "axes": [
+      "Técnicas avanzadas de integración: fracciones parciales, sustituciones trigonométricas, integrales impropias",
+      "Sucesiones: convergencia, monotonía, sucesiones acotadas, teoremas de convergencia",
+      "Series numéricas: criterios de convergencia (comparación, razón, raíz, integral, Leibniz), convergencia absoluta y condicional",
+      "Series de potencias: radio e intervalo de convergencia, derivación e integración término a término",
+      "Series de Taylor y Maclaurin: aproximación polinómica, error de Lagrange, expansiones notables",
+      "Funciones de varias variables: dominio, límites, continuidad, gráficos, curvas y superficies de nivel",
+      "Cálculo diferencial multivariable: derivadas parciales, diferencial total, regla de la cadena, derivada direccional, gradiente",
+      "Optimización multivariable: extremos libres, puntos críticos, criterio del Hessiano, multiplicadores de Lagrange"
+    ],
+    "chapters": [
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      },
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-integral",
+      "calculo-diferencial"
+    ]
+  },
+  {
+    "id": "usach-plan-comun-algebra-ii-para-ingenieria",
+    "title": "Álgebra II para Ingeniería (USACH 10113)",
+    "code": "10113",
+    "semester": 2,
+    "university_name": "Universidad de Santiago",
+    "axes": [
+      "Matrices: operaciones, propiedades, matriz inversa, transposición, determinantes y sus propiedades",
+      "Sistemas de ecuaciones lineales: eliminación gaussiana, regla de Cramer, espacios solución",
+      "Espacios vectoriales: definición, subespacios, combinación lineal, independencia lineal, base y dimensión",
+      "Transformaciones lineales: definición, matriz asociada, núcleo e imagen, isomorfismos",
+      "Producto interno y espacios euclidianos: ortogonalidad, proceso de Gram-Schmidt, proyección ortogonal",
+      "Diagonalización: valores y vectores propios, polinomio característico, matrices diagonalizables, aplicaciones",
+      "Formas cuadráticas (introducción)"
+    ],
+    "chapters": [
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": [
+      "algebra-lineal"
+    ]
+  },
+  {
+    "id": "usach-plan-comun-calculo-iii-para-ingenieria",
+    "title": "Cálculo III para Ingeniería (USACH 10146)",
+    "code": "10146",
+    "semester": 3,
+    "university_name": "Universidad de Santiago",
+    "axes": [
+      "Integrales múltiples: integrales dobles en coordenadas cartesianas y polares, cambio de variable, jacobiano",
+      "Integrales triples en coordenadas cartesianas, cilíndricas y esféricas; aplicaciones a volumen, masa, centroide",
+      "Funciones vectoriales y curvas en el espacio: parametrización, longitud de arco, triedro de Frenet, curvatura",
+      "Campos vectoriales: gradiente, divergencia, rotor, interpretación física",
+      "Integrales de línea: campos escalares y vectoriales, trabajo, circulación, independencia del camino, campos conservativos",
+      "Teorema de Green en el plano",
+      "Integrales de superficie: parametrización, área, flujo de un campo vectorial",
+      "Teoremas de Stokes y de la divergencia (Gauss); aplicaciones físicas"
+    ],
+    "chapters": [
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      },
+      {
+        "title": "Curvas",
+        "from": "calculo-vectorial: Curvas"
+      },
+      {
+        "title": "Integrales de Línea",
+        "from": "calculo-vectorial: Integrales de Línea"
+      },
+      {
+        "title": "Integrales de Superficie",
+        "from": "calculo-vectorial: Integrales de Superficie"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-multivariable",
+      "calculo-vectorial"
+    ]
+  },
+  {
+    "id": "usach-plan-comun-ecuaciones-diferenciales-para-ingenieria",
+    "title": "Ecuaciones Diferenciales para Ingeniería (USACH 10122)",
+    "code": "10122",
+    "semester": 3,
+    "university_name": "Universidad de Santiago",
+    "axes": [
+      "EDO de primer orden: variables separables, lineales, exactas, factor integrante, sustituciones (Bernoulli, homogéneas)",
+      "Aplicaciones de EDO de primer orden: crecimiento/decaimiento, enfriamiento, mezclas, circuitos RC y RL",
+      "EDO lineales de orden superior con coeficientes constantes: homogéneas y no homogéneas, método de coeficientes indeterminados, variación de parámetros",
+      "Sistemas de EDO lineales: método matricial, valores y vectores propios, exponencial de matriz",
+      "Transformada de Laplace: definición, propiedades, transformadas inversas, resolución de EDO con condiciones iniciales, función escalón y delta de Dirac",
+      "Series de potencias como método de solución (puntos ordinarios y singulares regulares)",
+      "Introducción a EDP: ecuación del calor, ecuación de onda, método de separación de variables, series de Fourier (introducción)"
+    ],
+    "chapters": [
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      }
+    ],
+    "base_course_ids": [
+      "ecuaciones-diferenciales"
+    ]
+  },
+  {
+    "id": "usach-ingenieria-comercial-algebra-lineal",
+    "title": "Álgebra Lineal (USACH 351409)",
+    "code": "351409",
+    "semester": 2,
+    "university_name": "Universidad de Santiago",
+    "axes": [
+      "Vectores en R^n: operaciones, norma, producto punto, ángulos y proyecciones",
+      "Números complejos: forma binómica, polar y exponencial; operaciones",
+      "Matrices: tipos, operaciones, transpuesta, inversa y matriz adjunta",
+      "Determinantes: cálculo por cofactores, propiedades, regla de Cramer",
+      "Sistemas de ecuaciones lineales: método de Gauss, Gauss-Jordan y aplicaciones",
+      "Espacios vectoriales: independencia lineal, base y dimensión (nivel introductorio)",
+      "Autovalores y autovectores: ecuación característica, similaridad y diagonalización",
+      "Ortogonalidad en R^n: bases ortonormales, proceso de Gram-Schmidt; aplicaciones en economía"
+    ],
+    "chapters": [
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": [
+      "algebra-lineal"
+    ]
+  },
+  {
+    "id": "usach-civil-informatica-calculo-ii-para-ingenieria",
+    "title": "Cálculo II para Ingeniería (USACH 10107)",
+    "code": "10107",
+    "semester": 2,
+    "university_name": "Universidad de Santiago",
+    "axes": [
+      "Integral indefinida: antiderivadas, primitivas, propiedades",
+      "Técnicas de integración: sustitución, integración por partes, sustitución trigonométrica, fracciones parciales, sustituciones racionales y de funciones trigonométricas",
+      "Integral definida: sumas de Riemann, Teorema Fundamental del Cálculo (1ª y 2ª parte)",
+      "Aplicaciones de la integral: áreas entre curvas, volúmenes (discos, anillos, capas cilíndricas), longitud de arco, áreas de superficies de revolución, centros de masa, trabajo",
+      "Integrales impropias: tipo I (intervalos no acotados) y tipo II (integrando no acotado), criterios de convergencia",
+      "Sucesiones y series numéricas: convergencia, criterios (comparación, razón, raíz, integral, Leibniz para alternadas), convergencia absoluta y condicional",
+      "Series de potencias: radio e intervalo de convergencia, derivación e integración término a término",
+      "Series de Taylor y Maclaurin: desarrollos de funciones elementales, polinomios de Taylor y aproximaciones"
+    ],
+    "chapters": [
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      },
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-integral",
+      "calculo-diferencial"
+    ]
+  },
+  {
+    "id": "usach-civil-informatica-algebra-ii-para-ingenieria",
+    "title": "Álgebra II para Ingeniería (USACH 10108)",
+    "code": "10108",
+    "semester": 2,
+    "university_name": "Universidad de Santiago",
+    "axes": [
+      "Matrices: definiciones, operaciones (suma, producto por escalar, producto matricial), matriz transpuesta, inversa, traza",
+      "Sistemas de ecuaciones lineales: método de Gauss-Jordan, matriz escalonada, soluciones únicas/infinitas/inconsistentes, rango",
+      "Determinantes: definición, propiedades, expansión por cofactores, regla de Cramer, adjunta",
+      "Espacios vectoriales: definiciones, subespacios, combinaciones lineales, dependencia e independencia, bases y dimensión",
+      "Transformaciones lineales: definición, núcleo, imagen, matriz asociada, cambio de base",
+      "Producto interior y ortogonalidad: producto punto, norma, ángulos, ortogonalización de Gram-Schmidt, proyecciones",
+      "Valores y vectores propios: polinomio característico, diagonalización, diagonalización ortogonal de matrices simétricas",
+      "Aplicaciones: formas cuadráticas, secciones cónicas, dinámica de sistemas"
+    ],
+    "chapters": [
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": [
+      "algebra-lineal"
+    ]
+  },
+  {
+    "id": "usach-civil-informatica-calculo-iii-para-ingenieria",
+    "title": "Cálculo III para Ingeniería (USACH 10129)",
+    "code": "10129",
+    "semester": 3,
+    "university_name": "Universidad de Santiago",
+    "axes": [
+      "Geometría en R³: rectas, planos, superficies cuadráticas",
+      "Funciones de varias variables: dominio, rango, curvas y superficies de nivel, límites y continuidad en R^n",
+      "Derivadas parciales: definición, derivadas parciales de orden superior, teorema de Clairaut",
+      "Diferenciabilidad: matriz Jacobiana, derivada direccional, gradiente, regla de la cadena",
+      "Optimización: máximos y mínimos locales, criterio de la matriz Hessiana, multiplicadores de Lagrange (con restricciones de igualdad)",
+      "Integrales múltiples: integrales dobles en regiones planas, integrales triples, cambios de orden de integración",
+      "Coordenadas curvilíneas: polares, cilíndricas, esféricas, Jacobianos del cambio de variable",
+      "Cálculo vectorial: curvas en R^n, integrales de línea, campos vectoriales, rotacional, divergencia, teorema de Green, teorema de Stokes, teorema de la divergencia"
+    ],
+    "chapters": [
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      },
+      {
+        "title": "Curvas",
+        "from": "calculo-vectorial: Curvas"
+      },
+      {
+        "title": "Integrales de Línea",
+        "from": "calculo-vectorial: Integrales de Línea"
+      },
+      {
+        "title": "Integrales de Superficie",
+        "from": "calculo-vectorial: Integrales de Superficie"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-multivariable",
+      "calculo-vectorial"
+    ]
+  },
+  {
+    "id": "usach-civil-informatica-ecuaciones-diferenciales-y-metodos-numericos",
+    "title": "Ecuaciones Diferenciales y Métodos Numéricos (USACH 10123)",
+    "code": "10123",
+    "semester": 4,
+    "university_name": "Universidad de Santiago",
+    "axes": [
+      "EDO de primer orden: variables separables, lineales, exactas, factor integrante, homogéneas, Bernoulli, aplicaciones (crecimiento, decaimiento, mezclas)",
+      "EDO lineales de orden superior: coeficientes constantes (homogéneas y no homogéneas), método de coeficientes indeterminados, variación de parámetros, Cauchy-Euler",
+      "Sistemas de EDO lineales: solución matricial usando valores y vectores propios",
+      "Transformada de Laplace: definición, propiedades, transformada inversa, función escalón, función de Dirac, convolución, aplicación a EDO con condiciones iniciales",
+      "Métodos numéricos — sistemas de ecuaciones lineales: eliminación de Gauss, factorización LU, métodos iterativos (Jacobi, Gauss-Seidel)",
+      "Métodos numéricos — ecuaciones no lineales: bisección, Newton-Raphson, secante, punto fijo",
+      "Interpolación y aproximación: Lagrange, diferencias divididas de Newton, splines",
+      "Integración y diferenciación numérica: regla del trapecio, Simpson, cuadraturas",
+      "Solución numérica de EDO: Euler, Runge-Kutta"
+    ],
+    "chapters": [
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      }
+    ],
+    "base_course_ids": [
+      "ecuaciones-diferenciales"
+    ]
+  },
+  {
+    "id": "usach-lic-matematica-calculo-i",
+    "title": "Cálculo I (USACH — Licenciatura en Matemática USACH (vía plan de Ingeniería Matemática))",
+    "code": "",
+    "semester": 1,
+    "university_name": "Universidad de Santiago",
+    "axes": [
+      "Números reales y desigualdades: valor absoluto, intervalos",
+      "Funciones reales de variable real: dominio, recorrido, álgebra de funciones, composición e inversa",
+      "Límites: definición epsilon-delta, propiedades, límites laterales e infinitos, asíntotas",
+      "Continuidad: tipos de discontinuidad, teorema del valor intermedio, Bolzano",
+      "Derivada: definición, interpretación geométrica y física, reglas de derivación, regla de la cadena",
+      "Aplicaciones de la derivada: rectas tangentes, razones de cambio, máximos/mínimos, optimización, L'Hôpital",
+      "Teoremas del cálculo diferencial: Rolle, valor medio, Taylor",
+      "Graficación de funciones usando primera y segunda derivada"
+    ],
+    "chapters": [
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      },
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-diferencial",
+      "calculo-integral"
+    ]
+  },
+  {
+    "id": "usach-lic-matematica-algebra-i",
+    "title": "Álgebra I (USACH — Licenciatura en Matemática USACH (vía plan de Ingeniería Matemática))",
+    "code": "",
+    "semester": 1,
+    "university_name": "Universidad de Santiago",
+    "axes": [
+      "Nociones elementales de lógica matemática y teoría de conjuntos",
+      "Números naturales e inducción matemática",
+      "Relaciones y funciones: dominio, recorrido, composición, biyectividad",
+      "Nociones básicas de trigonometría plana: identidades, ecuaciones",
+      "Geometría analítica: rectas, cónicas en el plano",
+      "Grupos: definición, ejemplos, subgrupos, homomorfismos",
+      "Anillos: definición y ejemplos básicos",
+      "Complementos de números complejos, polinomios y matrices elementales"
+    ],
+    "chapters": [
+      {
+        "title": "Fundamentos",
+        "from": "precalculo: Fundamentos"
+      },
+      {
+        "title": "Funciones",
+        "from": "precalculo: Funciones"
+      },
+      {
+        "title": "Funciones Polinomiales y Racionales",
+        "from": "precalculo: Funciones Polinomiales y Racionales"
+      },
+      {
+        "title": "Funciones Exponenciales y Logarítmicas",
+        "from": "precalculo: Funciones Exponenciales y Logarítmicas"
+      },
+      {
+        "title": "Funciones Trigonométricas",
+        "from": "precalculo: Funciones Trigonométricas"
+      },
+      {
+        "title": "Trigonometría Analítica",
+        "from": "precalculo: Trigonometría Analítica"
+      },
+      {
+        "title": "Números Complejos",
+        "from": "precalculo: Números Complejos"
+      },
+      {
+        "title": "Sucesiones y Series",
+        "from": "precalculo: Sucesiones y Series"
+      },
+      {
+        "title": "El Lenguaje Matemático",
+        "from": "intro-al-algebra: El Lenguaje Matemático"
+      },
+      {
+        "title": "Números Naturales",
+        "from": "intro-al-algebra: Números Naturales"
+      },
+      {
+        "title": "Geometría Analítica",
+        "from": "intro-al-algebra: Geometría Analítica"
+      }
+    ],
+    "base_course_ids": [
+      "precalculo",
+      "intro-al-algebra"
+    ]
+  },
+  {
+    "id": "usach-lic-matematica-calculo-ii",
+    "title": "Cálculo II (USACH — Licenciatura en Matemática USACH (vía plan de Ingeniería Matemática))",
+    "code": "",
+    "semester": 2,
+    "university_name": "Universidad de Santiago",
+    "axes": [
+      "Integral indefinida: técnicas de integración (sustitución, por partes, fracciones parciales, sustitución trigonométrica)",
+      "Integral definida: suma de Riemann, Teorema Fundamental del Cálculo",
+      "Aplicaciones de la integral: áreas planas, volúmenes (discos, capas, casquetes), longitud de arco, superficies de revolución",
+      "Integrales impropias: convergencia",
+      "Coordenadas polares y paramétricas",
+      "Sucesiones y series numéricas: convergencia, criterios (comparación, razón, raíz, integral, alternadas)",
+      "Series de potencias, radio e intervalo de convergencia",
+      "Series de Taylor y Maclaurin"
+    ],
+    "chapters": [
+      {
+        "title": "Integrales",
+        "from": "calculo-integral: Integrales"
+      },
+      {
+        "title": "Métodos de Integración",
+        "from": "calculo-integral: Métodos de Integración"
+      },
+      {
+        "title": "Aplicaciones de la Integral",
+        "from": "calculo-integral: Aplicaciones de la Integral"
+      },
+      {
+        "title": "Límites y Continuidad",
+        "from": "calculo-diferencial: Límites y Continuidad"
+      },
+      {
+        "title": "Derivadas",
+        "from": "calculo-diferencial: Derivadas"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas",
+        "from": "calculo-diferencial: Aplicaciones de las Derivadas"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-integral",
+      "calculo-diferencial"
+    ]
+  },
+  {
+    "id": "usach-lic-matematica-algebra-ii",
+    "title": "Álgebra II (USACH — Licenciatura en Matemática USACH (vía plan de Ingeniería Matemática))",
+    "code": "",
+    "semester": 2,
+    "university_name": "Universidad de Santiago",
+    "axes": [
+      "Espacios vectoriales: definición, ejemplos, subespacios, generación e independencia lineal",
+      "Bases y dimensión, coordenadas, cambio de base",
+      "Transformaciones lineales: núcleo, imagen, teorema de la dimensión, matriz asociada",
+      "Matrices y sistemas de ecuaciones lineales: eliminación de Gauss-Jordan, rango",
+      "Determinantes: propiedades, regla de Cramer, matriz adjunta e inversa",
+      "Valores y vectores propios: polinomio característico, diagonalización",
+      "Espacios con producto interno: ortogonalidad, Gram-Schmidt, proyecciones",
+      "Formas cuadráticas y diagonalización ortogonal (introducción)"
+    ],
+    "chapters": [
+      {
+        "title": "Espacio",
+        "from": "algebra-lineal: Espacio"
+      },
+      {
+        "title": "Sistemas de Ecuaciones",
+        "from": "algebra-lineal: Sistemas de Ecuaciones"
+      },
+      {
+        "title": "Álgebra de Matrices",
+        "from": "algebra-lineal: Álgebra de Matrices"
+      },
+      {
+        "title": "Determinantes",
+        "from": "algebra-lineal: Determinantes"
+      },
+      {
+        "title": "Espacios y Subespacios Vectoriales",
+        "from": "algebra-lineal: Espacios y Subespacios Vectoriales"
+      },
+      {
+        "title": "Valores y Vectores Propios",
+        "from": "algebra-lineal: Valores y Vectores Propios"
+      },
+      {
+        "title": "Ortogonalidad",
+        "from": "algebra-lineal: Ortogonalidad"
+      },
+      {
+        "title": "Matrices Simétricas",
+        "from": "algebra-lineal: Matrices Simétricas"
+      }
+    ],
+    "base_course_ids": [
+      "algebra-lineal"
+    ]
+  },
+  {
+    "id": "usach-lic-matematica-calculo-iii",
+    "title": "Cálculo III (USACH — Licenciatura en Matemática USACH (vía plan de Ingeniería Matemática))",
+    "code": "",
+    "semester": 3,
+    "university_name": "Universidad de Santiago",
+    "axes": [
+      "Funciones de varias variables: gráficas, curvas y superficies de nivel, límites y continuidad",
+      "Derivadas parciales, diferencial total, regla de la cadena, derivada direccional, gradiente",
+      "Plano tangente y aproximación lineal",
+      "Máximos y mínimos: criterio de la segunda derivada, multiplicadores de Lagrange",
+      "Integrales dobles: en regiones rectangulares y generales, cambio a polares",
+      "Integrales triples: en cartesianas, cilíndricas y esféricas",
+      "Aplicaciones: áreas, volúmenes, centros de masa, momentos de inercia",
+      "Cambio de variables y jacobiano"
+    ],
+    "chapters": [
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      },
+      {
+        "title": "Curvas",
+        "from": "calculo-vectorial: Curvas"
+      },
+      {
+        "title": "Integrales de Línea",
+        "from": "calculo-vectorial: Integrales de Línea"
+      },
+      {
+        "title": "Integrales de Superficie",
+        "from": "calculo-vectorial: Integrales de Superficie"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-multivariable",
+      "calculo-vectorial"
+    ]
+  },
+  {
+    "id": "usach-lic-matematica-ecuaciones-diferenciales",
+    "title": "Ecuaciones Diferenciales (USACH — Licenciatura en Matemática USACH (vía plan de Ingeniería Matemática))",
+    "code": "",
+    "semester": 4,
+    "university_name": "Universidad de Santiago",
+    "axes": [
+      "EDO de primer orden: variables separables, exactas, lineales, factor integrante, Bernoulli",
+      "Aplicaciones: crecimiento, decaimiento, mezclas, circuitos RC, ley de Newton del enfriamiento",
+      "EDO lineales de orden superior: coeficientes constantes, homogéneas y no homogéneas",
+      "Métodos: coeficientes indeterminados, variación de parámetros",
+      "Sistemas de EDO lineales: matrices fundamentales, exponencial de matrices",
+      "Transformada de Laplace y aplicaciones a EDO con condiciones iniciales",
+      "Soluciones por series de potencias, puntos ordinarios y singulares regulares",
+      "Introducción a series de Fourier (a veces incluido)"
+    ],
+    "chapters": [
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      }
+    ],
+    "base_course_ids": [
+      "ecuaciones-diferenciales"
+    ]
+  },
+  {
+    "id": "usach-lic-matematica-calculo-de-ecuaciones-diferenciales",
+    "title": "Cálculo de Ecuaciones Diferenciales (USACH — Licenciatura en Matemática USACH (vía plan de Ingeniería Matemática))",
+    "code": "",
+    "semester": 5,
+    "university_name": "Universidad de Santiago",
+    "axes": [
+      "Ecuaciones en derivadas parciales (EDP) de primer orden: características",
+      "EDP lineales de segundo orden: clasificación (elípticas, parabólicas, hiperbólicas)",
+      "Ecuación del calor: separación de variables, series de Fourier",
+      "Ecuación de onda: solución de d'Alembert, condiciones de borde",
+      "Ecuación de Laplace y Poisson: problema de Dirichlet y Neumann",
+      "Funciones especiales: Bessel, Legendre, armónicos esféricos",
+      "Transformadas integrales (Fourier, Laplace) aplicadas a EDP",
+      "Introducción a problemas no lineales y métodos numéricos"
+    ],
+    "chapters": [
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      }
+    ],
+    "base_course_ids": [
+      "ecuaciones-diferenciales"
+    ]
+  },
+  {
+    "id": "usach-lic-fisica-calculo-vectorial",
+    "title": "Cálculo Vectorial (USACH — Licenciatura en Física Aplicada USACH (vía plan de Ingeniería Física))",
+    "code": "",
+    "semester": 3,
+    "university_name": "Universidad de Santiago",
+    "axes": [
+      "Funciones vectoriales y curvas en el espacio",
+      "Funciones de varias variables: límites, continuidad, derivadas parciales",
+      "Gradiente, divergencia, rotacional, laplaciano",
+      "Plano tangente, derivada direccional, regla de la cadena multivariable",
+      "Optimización multivariable: Lagrange",
+      "Integrales dobles y triples: cambio de coordenadas (polares, cilíndricas, esféricas)",
+      "Integrales de línea y de superficie",
+      "Teoremas integrales: Green, Stokes, divergencia (Gauss)"
+    ],
+    "chapters": [
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      },
+      {
+        "title": "Curvas",
+        "from": "calculo-vectorial: Curvas"
+      },
+      {
+        "title": "Integrales de Línea",
+        "from": "calculo-vectorial: Integrales de Línea"
+      },
+      {
+        "title": "Integrales de Superficie",
+        "from": "calculo-vectorial: Integrales de Superficie"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-multivariable",
+      "calculo-vectorial"
+    ]
+  },
+  {
+    "id": "usach-lic-fisica-ecuaciones-diferenciales",
+    "title": "Ecuaciones Diferenciales (USACH — Licenciatura en Física Aplicada USACH (vía plan de Ingeniería Física))",
+    "code": "",
+    "semester": 3,
+    "university_name": "Universidad de Santiago",
+    "axes": [
+      "EDO de primer orden: variables separables, exactas, lineales, Bernoulli",
+      "Aplicaciones físicas (decaimiento, RC, RL, Newton del enfriamiento)",
+      "EDO lineales de orden superior con coeficientes constantes",
+      "Métodos: coeficientes indeterminados, variación de parámetros",
+      "Sistemas de EDO lineales: matrices fundamentales",
+      "Transformada de Laplace y aplicaciones",
+      "Soluciones por series de potencias",
+      "Introducción a problemas de Sturm-Liouville"
+    ],
+    "chapters": [
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      }
+    ],
+    "base_course_ids": [
+      "ecuaciones-diferenciales"
+    ]
+  },
+  {
+    "id": "usach-civil-electrica-ecuaciones-diferenciales-para-ingenieria-electrica",
+    "title": "Ecuaciones Diferenciales para Ingeniería Eléctrica (USACH)",
+    "code": "",
+    "semester": 3,
+    "university_name": "Universidad de Santiago",
+    "axes": [
+      "EDO lineales de primer y segundo orden con aplicaciones a circuitos RC, RL, RLC",
+      "Transformada de Laplace y análisis de circuitos en dominio s",
+      "Sistemas de EDO lineales y aplicación a redes eléctricas",
+      "Series y transformada de Fourier para señales eléctricas",
+      "EDP: ecuación de onda y del calor aplicadas a líneas de transmisión",
+      "Métodos numéricos básicos para EDO en simulación de circuitos"
+    ],
+    "chapters": [
+      {
+        "title": "EDO de Primer Orden",
+        "from": "ecuaciones-diferenciales: EDO de Primer Orden"
+      },
+      {
+        "title": "EDO de Orden Superior",
+        "from": "ecuaciones-diferenciales: EDO de Orden Superior"
+      },
+      {
+        "title": "Sistemas de Ecuaciones Diferenciales",
+        "from": "ecuaciones-diferenciales: Sistemas de Ecuaciones Diferenciales"
+      },
+      {
+        "title": "Transformada de Laplace",
+        "from": "ecuaciones-diferenciales: Transformada de Laplace"
+      }
+    ],
+    "base_course_ids": [
+      "ecuaciones-diferenciales"
+    ]
+  },
+  {
+    "id": "usach-civil-quimica-calculo-avanzado-para-ingenieria-de-procesos",
+    "title": "Cálculo Avanzado para Ingeniería de Procesos (USACH)",
+    "code": "",
+    "semester": 3,
+    "university_name": "Universidad de Santiago",
+    "axes": [
+      "Funciones de varias variables: derivadas parciales, gradiente, regla de la cadena",
+      "Optimización multivariable: multiplicadores de Lagrange",
+      "Integrales múltiples y cambios de coordenadas",
+      "Cálculo vectorial: divergencia, rotor, teoremas integrales",
+      "Series de Fourier",
+      "Aplicaciones a ingeniería de procesos: balance vectorial"
+    ],
+    "chapters": [
+      {
+        "title": "Series y Sucesiones",
+        "from": "calculo-multivariable: Series y Sucesiones"
+      },
+      {
+        "title": "Espacio",
+        "from": "calculo-multivariable: Espacio"
+      },
+      {
+        "title": "Funciones de Varias Variables",
+        "from": "calculo-multivariable: Funciones de Varias Variables"
+      },
+      {
+        "title": "Derivadas Parciales",
+        "from": "calculo-multivariable: Derivadas Parciales"
+      },
+      {
+        "title": "Aplicaciones de las Derivadas Parciales",
+        "from": "calculo-multivariable: Aplicaciones de las Derivadas Parciales"
+      },
+      {
+        "title": "Integrales Múltiples",
+        "from": "calculo-multivariable: Integrales Múltiples"
+      },
+      {
+        "title": "Aplicaciones de Integrales Múltiples",
+        "from": "calculo-multivariable: Aplicaciones de Integrales Múltiples"
+      },
+      {
+        "title": "Curvas",
+        "from": "calculo-vectorial: Curvas"
+      },
+      {
+        "title": "Integrales de Línea",
+        "from": "calculo-vectorial: Integrales de Línea"
+      },
+      {
+        "title": "Integrales de Superficie",
+        "from": "calculo-vectorial: Integrales de Superficie"
+      }
+    ],
+    "base_course_ids": [
+      "calculo-multivariable",
+      "calculo-vectorial"
+    ]
+  }
+]

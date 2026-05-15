@@ -1,0 +1,178 @@
+{
+  "verified_courses": [
+    {
+      "id": "utfsm-plan-comun-ing-civil-mate10-algebra-y-geometria",
+      "code": "MATE10",
+      "verified": true,
+      "source_url": "https://github.com/sjvasconcello/USM-MATE10",
+      "gaps": ["Trigonometría del triángulo no cubierta por ch-ia-trigonometria", "Álgebra de polinomios no cubierta por ch-ia-polinomios"],
+      "suggested_chapters_to_link": ["ch-ia-trigonometria", "ch-ia-polinomios"]
+    },
+    {
+      "id": "utfsm-plan-comun-ing-civil-mat070-introduccion-al-calculo",
+      "code": "MAT070",
+      "verified": true,
+      "source_url": "https://www.studocu.com/cl/course/universidad-tecnica-federico-santa-maria/introduccion-al-calculo/5439287",
+      "gaps": [],
+      "suggested_chapters_to_link": []
+    },
+    {
+      "id": "utfsm-plan-comun-ing-civil-calculo-en-una-variable",
+      "code": null,
+      "verified": true,
+      "source_url": "https://www.studocu.com/cl/document/universidad-tecnica-federico-santa-maria/matematicas-2/syllabus-mat0212/11221935",
+      "gaps": [],
+      "suggested_chapters_to_link": []
+    },
+    {
+      "id": "utfsm-plan-comun-ing-civil-mate20-algebra-lineal",
+      "code": "MATE20",
+      "verified": true,
+      "source_url": "https://matematica.usm.cl/wp-content/uploads/2018/05/MATE20-%C3%81lgebra-Lineal.pdf",
+      "gaps": ["Geometría vectorial (rectas y planos R²/R³) reforzable con geometría analítica"],
+      "suggested_chapters_to_link": ["ch-ia-geometria-analitica"]
+    },
+    {
+      "id": "utfsm-plan-comun-ing-civil-calculo-en-varias-variables",
+      "code": null,
+      "verified": true,
+      "source_url": "https://www.studocu.com/cl/document/universidad-tecnica-federico-santa-maria/matematicas-3/syllabus-mat023/11221937",
+      "gaps": [],
+      "suggested_chapters_to_link": []
+    },
+    {
+      "id": "utfsm-plan-comun-ing-civil-ecuaciones-diferenciales-edo-edp",
+      "code": null,
+      "verified": true,
+      "source_url": "https://apuntesutfsm.wordpress.com/buscar-ramo-por-semestre/4-semestre/mat024/",
+      "gaps": ["Introducción a EDP (calor, onda, Laplace), separación de variables y series de Fourier no están cubiertas por ningún chapter base de Remy"],
+      "suggested_chapters_to_link": []
+    },
+    {
+      "id": "utfsm-ing-comercial-mate25-calculo-diferencial",
+      "code": "MATE25",
+      "verified": true,
+      "source_url": "https://matematica.usm.cl/wp-content/uploads/2018/05/MATE25-C%C3%A1lculo-Diferencial.pdf",
+      "gaps": [],
+      "suggested_chapters_to_link": []
+    },
+    {
+      "id": "utfsm-ing-comercial-mate26-calculo-integral",
+      "code": "MATE26",
+      "verified": true,
+      "source_url": "https://www.studocu.com/cl/course/universidad-tecnica-federico-santa-maria/calculo-integral/5130909",
+      "gaps": ["EDO 1er y 2do orden listadas en axes pero no enlazadas a chapters de ecuaciones-diferenciales", "Integración múltiple (axes) no cubierta por chapters actuales"],
+      "suggested_chapters_to_link": ["ch-ed-edo-primer-orden", "ch-ed-edo-orden-superior", "ch-integrales-multiples", "ch-aplicaciones-integrales-multiples"]
+    },
+    {
+      "id": "utfsm-ing-civil-matematica-calculo-avanzado-variable-compleja",
+      "code": null,
+      "verified": true,
+      "source_url": "https://apuntesutfsm.wordpress.com/buscar-ramo-por-semestre/4-semestre/mat024/",
+      "gaps": ["Series de Fourier y Variable compleja (analíticas, Cauchy-Riemann, Laurent, residuos) no están en ningún base course de Remy"],
+      "suggested_chapters_to_link": []
+    },
+    {
+      "id": "udd-plan-comun-algebra",
+      "code": null,
+      "verified": true,
+      "source_url": "https://www.udd.cl/wp-content/uploads/2021/02/programa-de-algebra.pdf",
+      "gaps": ["Matrices y determinantes (axe) no enlazadas a chapters de algebra-lineal", "Sistemas de ecuaciones lineales (Gauss-Jordan) no enlazado a chapters de algebra-lineal", "Álgebra de polinomios reforzable con intro-al-algebra"],
+      "suggested_chapters_to_link": ["ch-al-algebra-matrices", "ch-al-determinantes", "ch-al-sistemas-ecuaciones", "ch-ia-polinomios"]
+    },
+    {
+      "id": "udd-plan-comun-introduccion-al-calculo",
+      "code": null,
+      "verified": true,
+      "source_url": "https://www.udd.cl/wp-content/uploads/2015/10/CALCULO-I.pdf",
+      "gaps": [],
+      "suggested_chapters_to_link": []
+    },
+    {
+      "id": "udd-plan-comun-geometria",
+      "code": null,
+      "verified": true,
+      "source_url": "https://www.udd.cl/internacional/catalogo-cursos-ingenieria-plan-comun/",
+      "gaps": ["Geometría analítica plana (rectas, cónicas) no enlazada a chapter específico", "Vectores en R² R³ + rectas y planos no enlazados a chapters de algebra-lineal o intro-al-algebra"],
+      "suggested_chapters_to_link": ["ch-ia-geometria-analitica", "ch-al-espacio"]
+    },
+    {
+      "id": "udd-plan-comun-calculo-diferencial",
+      "code": null,
+      "verified": true,
+      "source_url": "https://www.udd.cl/cursos-internacionales/iim114m/",
+      "gaps": [],
+      "suggested_chapters_to_link": []
+    },
+    {
+      "id": "udd-plan-comun-algebra-lineal",
+      "code": null,
+      "verified": true,
+      "source_url": "https://www.udd.cl/wp-content/uploads/2015/04/Algebra-Lineal-IIM126A.pdf",
+      "gaps": [],
+      "suggested_chapters_to_link": []
+    },
+    {
+      "id": "udd-plan-comun-calculo-integral",
+      "code": null,
+      "verified": true,
+      "source_url": "https://www.udd.cl/cursos-internacionales/iim124a/",
+      "gaps": ["Sucesiones y series numéricas listadas en axes pero no enlazadas a chapter (sucesiones/series)"],
+      "suggested_chapters_to_link": ["ch-series-sucesiones", "ch-prec-sucesiones-series"]
+    },
+    {
+      "id": "udd-plan-comun-calculo-multivariable",
+      "code": null,
+      "verified": true,
+      "source_url": "https://www.udd.cl/relaciones-internacionales/files/2014/10/Calculo-Multivariable.pdf",
+      "gaps": [],
+      "suggested_chapters_to_link": []
+    },
+    {
+      "id": "udd-plan-comun-ecuaciones-diferenciales",
+      "code": null,
+      "verified": true,
+      "source_url": "https://www.udd.cl/internacional/catalogo-cursos-ingenieria-plan-comun/",
+      "gaps": [],
+      "suggested_chapters_to_link": []
+    },
+    {
+      "id": "udd-ing-comercial-calculo",
+      "code": null,
+      "verified": true,
+      "source_url": "https://www.udd.cl/wp-content/uploads/2015/10/CALCULO-I.pdf",
+      "gaps": [],
+      "suggested_chapters_to_link": []
+    },
+    {
+      "id": "udd-ncd-matematica-avanzada",
+      "code": null,
+      "verified": true,
+      "source_url": "https://www.udd.cl/mallas/ncd.pdf",
+      "gaps": ["Sin contenido oficial detallado público de la asignatura; verificación basada en malla y descripción del programa NCD"],
+      "suggested_chapters_to_link": []
+    },
+    {
+      "id": "udd-quimica-farmacia-matematicas",
+      "code": null,
+      "verified": true,
+      "source_url": "https://www.udd.cl/mallas/quimicayfarmacia.pdf",
+      "gaps": [],
+      "suggested_chapters_to_link": []
+    },
+    {
+      "id": "udd-quimica-farmacia-calculo",
+      "code": null,
+      "verified": true,
+      "source_url": "https://www.udd.cl/mallas/quimicayfarmacia.pdf",
+      "gaps": ["Axe menciona 'Integrales aplicadas' pero no se enlazan chapters de calculo-integral"],
+      "suggested_chapters_to_link": ["ch-integrales", "ch-metodos-integracion", "ch-aplicaciones-integral"]
+    }
+  ],
+  "unverified_courses": [
+    {"id": "udd-biomedicina-matematica-aplicada-i", "reason": "Malla curricular pública existe pero no se encontró programa oficial detallado de la asignatura"},
+    {"id": "udd-biomedicina-matematica-aplicada-ii", "reason": "Malla curricular pública existe pero no se encontró programa oficial detallado de la asignatura"},
+    {"id": "udd-biomedicina-matematica-aplicada-iii", "reason": "Malla curricular pública existe pero no se encontró programa oficial detallado de la asignatura"},
+    {"id": "udd-biomedicina-matematica-aplicada-iv", "reason": "Malla curricular pública existe pero no se encontró programa oficial detallado de la asignatura"}
+  ]
+}

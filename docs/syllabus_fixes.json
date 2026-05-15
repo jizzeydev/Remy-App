@@ -1,0 +1,358 @@
+{
+  "_comment": "Fixes detectados por 8 agentes verificando syllabi oficiales de cada universidad. Cada entry es un curso con chapters faltantes a linkear desde cursos base de Remy. El script scripts/apply_syllabus_gaps.py los aplica con idempotencia (skipea los ya linkeados).",
+  "fixes": [
+    {
+      "course_id": "utfsm-plan-comun-ing-civil-mate10-algebra-y-geometria",
+      "source_url": "https://matematica.usm.cl/wp-content/uploads/2018/05/MATE10.pdf",
+      "chapters_to_link": ["ch-ia-trigonometria", "ch-ia-polinomios"],
+      "note": "Programa MATE10 oficial enfatiza trigonometría del triángulo + álgebra de polinomios"
+    },
+    {
+      "course_id": "utfsm-plan-comun-ing-civil-mate20-algebra-lineal",
+      "source_url": "https://matematica.usm.cl/wp-content/uploads/2018/05/MATE20-Algebra-Lineal.pdf",
+      "chapters_to_link": ["ch-ia-geometria-analitica"],
+      "note": "Geometría vectorial: rectas y planos R²/R³"
+    },
+    {
+      "course_id": "utfsm-ing-comercial-mate26-calculo-integral",
+      "source_url": "https://www.studocu.com/cl/course/universidad-tecnica-federico-santa-maria/calculo-integral",
+      "chapters_to_link": ["ch-ed-edo-primer-orden", "ch-ed-edo-orden-superior", "ch-integrales-multiples", "ch-aplicaciones-integrales-multiples"],
+      "note": "MATE26 incluye EDO 1er/2do orden + integración múltiple"
+    },
+    {
+      "course_id": "udd-plan-comun-algebra",
+      "source_url": "https://www.udd.cl/wp-content/uploads/2021/02/programa-de-algebra.pdf",
+      "chapters_to_link": ["ch-al-algebra-matrices", "ch-al-determinantes", "ch-al-sistemas-ecuaciones", "ch-ia-polinomios"],
+      "note": "UDD Álgebra cubre matrices/determinantes/sistemas + polinomios universitarios"
+    },
+    {
+      "course_id": "udd-plan-comun-geometria",
+      "source_url": "https://www.udd.cl/internacional/catalogo-cursos-ingenieria-plan-comun/",
+      "chapters_to_link": ["ch-ia-geometria-analitica", "ch-al-espacio"],
+      "note": "Geometría analítica + vectores en R²/R³"
+    },
+    {
+      "course_id": "udd-plan-comun-calculo-integral",
+      "source_url": "https://www.udd.cl/cursos-internacionales/iim124a/",
+      "chapters_to_link": ["ch-series-sucesiones", "ch-prec-sucesiones-series"],
+      "note": "Sucesiones y series numéricas en programa"
+    },
+    {
+      "course_id": "udd-quimica-farmacia-calculo",
+      "source_url": "https://www.udd.cl/mallas/quimicayfarmacia.pdf",
+      "chapters_to_link": ["ch-integrales", "ch-metodos-integracion", "ch-aplicaciones-integral"],
+      "note": "Programa incluye integrales aplicadas"
+    },
+    {
+      "course_id": "uai-plan-comun-algebra",
+      "source_url": "http://syllabi.uai.cl/",
+      "chapters_to_link": ["ch-ia-polinomios", "ch-ia-trigonometria"],
+      "note": "Polinomios universitarios + trigonometría con identidades/ecuaciones"
+    },
+    {
+      "course_id": "uai-plan-comun-calculo-diferencial",
+      "source_url": "http://syllabi.uai.cl/students/view-unit-page/alpha/MAT105",
+      "chapters_to_link": ["ch-ic-desigualdades", "ch-ic-funciones-reales", "ch-ic-exp-log"],
+      "note": "Repaso de inecuaciones + funciones reales + exp/log como base"
+    },
+    {
+      "course_id": "uai-plan-comun-calculo-integral",
+      "source_url": "https://www.studocu.com/cl/document/universidad-adolfo-ibanez/calculo-integral",
+      "chapters_to_link": ["ch-series-sucesiones"],
+      "note": "Sucesiones, series, Taylor"
+    },
+    {
+      "course_id": "uai-icom-matematicas-avanzadas-i",
+      "source_url": "https://www.studocu.com/cl/course/universidad-adolfo-ibanez/matematicas-avanzadas-i",
+      "chapters_to_link": ["ch-ic-desigualdades"],
+      "note": "Inecuaciones con valor absoluto + axioma del supremo"
+    },
+    {
+      "course_id": "uai-icom-matematicas-avanzadas-ii",
+      "source_url": "https://www.studocu.com/cl/document/universidad-adolfo-ibanez/matematicas-avanzadas-ii",
+      "chapters_to_link": ["ch-ic-desigualdades", "ch-ic-funciones-reales"],
+      "note": "Repaso inecuaciones + funciones reales"
+    },
+    {
+      "course_id": "uandes-plan-comun-ing-algebra-e-introduccion-al-calculo",
+      "source_url": "https://www.studocu.com/cl/course/universidad-de-los-andes-chile/algebra-e-introduccion-al-calculo",
+      "chapters_to_link": ["ch-ic-desigualdades", "ch-ia-polinomios", "ch-ia-trigonometria", "ch-limites-continuidad"],
+      "note": "Programa incluye desigualdades, polinomios, trigonometría e intro a límites"
+    },
+    {
+      "course_id": "uandes-plan-comun-ing-calculo-i",
+      "source_url": "https://www.studocu.com/cl/course/universidad-de-los-andes-chile/calculo-i",
+      "chapters_to_link": ["ch-integrales"],
+      "note": "Programa incluye introducción a la integral"
+    },
+    {
+      "course_id": "uandes-ing-comercial-algebra",
+      "source_url": "https://wuolah.com/facultad-ciencias-economicas-empresariales-campus-/ingenieria-comercial",
+      "chapters_to_link": ["ch-ic-desigualdades", "ch-al-sistemas-ecuaciones", "ch-al-algebra-matrices", "ch-al-determinantes"],
+      "note": "Desigualdades + matrices/determinantes/sistemas"
+    },
+    {
+      "course_id": "uch-plan-comun-fcfm-ma1001-introduccion-al-calculo",
+      "source_url": "https://ucampus.uchile.cl/m/fcfm_catalogo/programa?id=12398",
+      "chapters_to_link": ["ch-limites-continuidad", "ch-derivadas"],
+      "note": "MA1001 introduce límites + derivadas al final del semestre"
+    },
+    {
+      "course_id": "uch-plan-comun-fcfm-ma1101-introduccion-al-algebra",
+      "source_url": "https://plancomun.dim.uchile.cl/wp-content/uploads/2021/04/tut_alg_2021.pdf",
+      "chapters_to_link": ["ch-ia-naturales"],
+      "note": "Sumatorias e inducción en MA1101"
+    },
+    {
+      "course_id": "uch-plan-comun-fcfm-ma1002-calculo-diferencial-e-integral",
+      "source_url": "https://ucampus.uchile.cl/m/fcfm_catalogo/programa?id=3459",
+      "chapters_to_link": ["ch-series-sucesiones", "ch-curvas"],
+      "note": "MA1002 incluye series de potencias y curvas en el espacio"
+    },
+    {
+      "course_id": "uch-plan-comun-fcfm-ma2002-calculo-avanzado-y-aplicaciones",
+      "source_url": "https://ucampus.uchile.cl/m/fcfm_catalogo/programa?id=13266",
+      "chapters_to_link": ["ch-integrales-multiples", "ch-aplicaciones-integrales-multiples"],
+      "note": "MA2002 usa integrales triples para Gauss/Stokes"
+    },
+    {
+      "course_id": "uch-fen-metodos-matematicos-i",
+      "source_url": "https://malla2020.fen.uchile.cl/wp-content/uploads/2020/03/malla_ic.pdf",
+      "chapters_to_link": ["ch-limites-continuidad", "ch-derivadas"],
+      "note": "MM I FEN incluye intro a límites y derivadas"
+    },
+    {
+      "course_id": "uch-fen-metodos-matematicos-ii",
+      "source_url": "https://malla2020.fen.uchile.cl/wp-content/uploads/2020/03/malla_ic.pdf",
+      "chapters_to_link": ["ch-funciones-varias-variables", "ch-derivadas-parciales", "ch-aplicaciones-parciales"],
+      "note": "MM II FEN incluye funciones multivariadas + derivadas parciales"
+    },
+    {
+      "course_id": "uch-fen-metodos-matematicos-iii",
+      "source_url": "https://admisionfen.cl/malla-icce/",
+      "chapters_to_link": ["ch-aplicaciones-parciales", "ch-funciones-varias-variables", "ch-derivadas-parciales"],
+      "note": "MM III FEN incluye optimización con Lagrange"
+    },
+    {
+      "course_id": "uch-ciencias-algebra-i",
+      "source_url": "https://matematicas.ciencias.uchile.cl/programas/licenciatura/programa-de-estudio/",
+      "chapters_to_link": ["ch-ia-naturales"],
+      "note": "Inducción y números naturales en Lic. Mat Ciencias Álgebra I"
+    },
+    {
+      "course_id": "uch-ciencias-calculo-ii",
+      "source_url": "https://sites.google.com/a/u.uchile.cl/matematicas-ciencias/calculo-ii",
+      "chapters_to_link": ["ch-series-sucesiones"],
+      "note": "Series numéricas y de potencias"
+    },
+    {
+      "course_id": "udec-plan-comun-calculo-i-aplicado-a-la-ingenieria",
+      "source_url": "http://www2.udec.cl/~jsandova/cal1.htm",
+      "chapters_to_link": ["ch-prec-trig-analitica", "ch-prec-exp-log"],
+      "note": "Coordenadas polares + funciones hiperbólicas"
+    },
+    {
+      "course_id": "udec-plan-comun-calculo-ii-aplicado-a-la-ingenieria",
+      "source_url": "https://www.studocu.com/cl/document/universidad-de-concepcion/calculo-i-y-ii/syllabus-cal-ii-udec",
+      "chapters_to_link": ["ch-series-sucesiones", "ch-curvas", "ch-prec-sucesiones-series", "ch-prec-trig-analitica"],
+      "note": "Series, Taylor, curvas paramétricas, polares"
+    },
+    {
+      "course_id": "udec-ing-civil-informatica-matematicas-discretas",
+      "source_url": "https://wiki.inf.udec.cl/malla-antigua/segundo-anio/semestre-4/matematicas-discretas",
+      "chapters_to_link": ["ch-ia-lenguaje", "ch-ia-naturales"],
+      "note": "Lógica + naturales para matemática discreta"
+    },
+    {
+      "course_id": "udec-ing-comercial-calculo-i",
+      "source_url": "https://www.studocu.com/cl/document/universidad-de-concepcion/calculo-i-y-ii/syllabus-calculo-1-525157",
+      "chapters_to_link": ["ch-ia-geometria-analitica", "ch-ic-desigualdades", "ch-prec-fundamentos"],
+      "note": "Geometría analítica de cónicas + desigualdades + reales"
+    },
+    {
+      "course_id": "udec-ing-comercial-algebra-i",
+      "source_url": "https://www.faceaudec.cl/pdf/ico2024.pdf",
+      "chapters_to_link": ["ch-ia-geometria-analitica"],
+      "note": "Refuerzo geometría analítica"
+    },
+    {
+      "course_id": "udec-ing-comercial-calculo-ii",
+      "source_url": "https://www.faceaudec.cl/pdf/ico2024.pdf",
+      "chapters_to_link": ["ch-series-sucesiones", "ch-prec-sucesiones-series"],
+      "note": "Series numéricas, de potencias, Taylor en economía"
+    },
+    {
+      "course_id": "udec-lic-matematica-calculo-diferencial-e-integral",
+      "source_url": "https://www.geofisica.udec.cl/wp-content/uploads/2012/09/calculo-dif-e-integral.pdf",
+      "chapters_to_link": ["ch-curvas", "ch-prec-trig-analitica"],
+      "note": "Curvas paramétricas + polares"
+    },
+    {
+      "course_id": "udec-lic-fisica-fisica-matematica-i",
+      "source_url": "https://www.dgeo.udec.cl/wp-content/uploads/2012/09/fisica-mat-1.pdf",
+      "chapters_to_link": ["ch-prec-sucesiones-series"],
+      "note": "Series + funciones especiales (gap parcial — Fourier no está en Remy)"
+    },
+    {
+      "course_id": "unab-ing-civil-calculo-diferencial",
+      "source_url": "https://www.unab.cl/carreras/mallas/ing_civil.pdf",
+      "chapters_to_link": ["ch-al-algebra-matrices"],
+      "note": "Programa incluye introducción a matrices"
+    },
+    {
+      "course_id": "unab-ing-civil-calculo-integral",
+      "source_url": "https://www.unab.cl/carreras/mallas/ing_civil.pdf",
+      "chapters_to_link": ["ch-curvas", "ch-integrales-linea", "ch-integrales-superficie"],
+      "note": "Integrales de línea y superficie + Green/Stokes"
+    },
+    {
+      "course_id": "unab-ing-civil-industrial-introduccion-a-las-matematicas",
+      "source_url": "https://www.unab.cl/carreras/mallas/ing_civil_industrial.pdf",
+      "chapters_to_link": ["ch-ic-desigualdades"],
+      "note": "Ecuaciones e inecuaciones"
+    },
+    {
+      "course_id": "unab-ing-comercial-matematica-i",
+      "source_url": "https://www.unab.cl/admision/carreras/ingenieria-comercial/",
+      "chapters_to_link": ["ch-ia-naturales"],
+      "note": "Sumatorias, progresiones, binomio"
+    },
+    {
+      "course_id": "unab-ing-comercial-matematica-ii",
+      "source_url": "https://www.unab.cl/admision/carreras/ingenieria-comercial/",
+      "chapters_to_link": ["ch-ic-desigualdades"],
+      "note": "Inecuaciones en programa"
+    },
+    {
+      "course_id": "uss-plan-comun-introduccion-al-calculo",
+      "source_url": "https://carreras.uss.cl/content/uploads/malla-ing-civil-plan-comun-2021.pdf",
+      "chapters_to_link": ["ch-ia-geometria-analitica", "ch-limites-continuidad"],
+      "note": "Cónicas + intro a límites"
+    },
+    {
+      "course_id": "uss-plan-comun-taller-de-aptitudes-logicas-y-matematicas",
+      "source_url": "https://carreras.uss.cl/content/uploads/malla-ing-civil-plan-comun-2021.pdf",
+      "chapters_to_link": ["ch-ia-lenguaje", "ch-ia-geometria-analitica"],
+      "note": "Lógica + geometría euclidiana"
+    },
+    {
+      "course_id": "usach-plan-comun-algebra-i-para-ingenieria",
+      "source_url": "http://algebra1.dmcc.usach.cl/",
+      "chapters_to_link": ["ch-ia-geometria-analitica"],
+      "note": "Geometría analítica (rectas, cónicas)"
+    },
+    {
+      "course_id": "usach-plan-comun-calculo-ii-para-ingenieria",
+      "source_url": "http://calculo2.dmcc.usach.cl/",
+      "chapters_to_link": ["ch-prec-sucesiones-series", "ch-series-sucesiones", "ch-funciones-varias-variables", "ch-derivadas-parciales", "ch-aplicaciones-parciales"],
+      "note": "Series + cálculo multivariable + Lagrange"
+    },
+    {
+      "course_id": "usach-ingenieria-comercial-algebra-lineal",
+      "source_url": "https://fae.usach.cl/cica/programas/351409.pdf",
+      "chapters_to_link": ["ch-prec-numeros-complejos"],
+      "note": "Números complejos en programa"
+    },
+    {
+      "course_id": "usach-civil-informatica-calculo-ii-para-ingenieria",
+      "source_url": "http://apuntesusach.blogspot.com/2015/10/peps-10107-calculo-2-para-ingenieria.html",
+      "chapters_to_link": ["ch-prec-sucesiones-series", "ch-series-sucesiones"],
+      "note": "Sucesiones, series numéricas, Taylor"
+    },
+    {
+      "course_id": "usach-lic-matematica-calculo-ii",
+      "source_url": "https://www.ingemat.usach.cl/niveles/nivel-i/",
+      "chapters_to_link": ["ch-prec-sucesiones-series", "ch-series-sucesiones"],
+      "note": "Sucesiones, series, Taylor"
+    },
+    {
+      "course_id": "udp-plan-comun-ing-civil-calculo-diferencial-e-integral",
+      "source_url": "https://eit.udp.cl/cms/wp-content/uploads/2026/01/07_CBM1103.pdf",
+      "chapters_to_link": ["ch-prec-sucesiones-series", "ch-series-sucesiones"],
+      "note": "CBM1103 incluye series (Fourier no está en Remy)"
+    },
+    {
+      "course_id": "udp-ing-comercial-matematica-i",
+      "source_url": "https://administracionyeconomia.udp.cl/cms/wp-content/uploads/2022/01/Ingenieria-Comercial.pdf",
+      "chapters_to_link": ["ch-ia-naturales"],
+      "note": "Sumatorias, progresiones aritméticas y geométricas"
+    },
+    {
+      "course_id": "udp-ing-comercial-matematicas-ii",
+      "source_url": "https://administracionyeconomia.udp.cl/cms/wp-content/uploads/2022/01/Ingenieria-Comercial.pdf",
+      "chapters_to_link": ["ch-prec-sucesiones-series", "ch-series-sucesiones"],
+      "note": "Series numéricas + Taylor"
+    },
+    {
+      "course_id": "udp-ing-comercial-matematicas-iii",
+      "source_url": "https://administracionyeconomia.udp.cl/cms/wp-content/uploads/2022/01/Ingenieria-Comercial.pdf",
+      "chapters_to_link": ["ch-prec-sucesiones-series"],
+      "note": "Series geométricas en finanzas"
+    },
+    {
+      "course_id": "umay-plan-comun-calculo-integral",
+      "source_url": "https://www.studocu.com/cl/course/universidad-mayor/calculo-integral",
+      "chapters_to_link": ["ch-prec-sucesiones-series", "ch-series-sucesiones"],
+      "note": "Sucesiones, series, Taylor"
+    },
+    {
+      "course_id": "pucv-plan-comun-ing-civil-mat1001-fundamentos-de-matematicas-para-ingenieria",
+      "source_url": "https://eic.pucv.cl/wp-content/uploads/2023/01/1-MAT1001-Fundamentos-de-Matematicas-para-Ingenieria-FIN.pdf",
+      "chapters_to_link": ["ch-al-sistemas-ecuaciones"],
+      "note": "MAT1001 incluye sistemas de ecuaciones lineales 2-3 variables"
+    },
+    {
+      "course_id": "pucv-plan-comun-ing-civil-mat1003-calculo-en-varias-variables",
+      "source_url": "https://eic.pucv.cl/wp-content/uploads/2023/01/3-MAT1003-Calculo-en-varias-variables-FIN.pdf",
+      "chapters_to_link": ["ch-curvas", "ch-integrales-linea", "ch-integrales-superficie"],
+      "note": "MAT1003 incluye Green/Stokes/Gauss + integrales línea/superficie"
+    },
+    {
+      "course_id": "pucv-plan-comun-ing-civil-mat1005-ecuaciones-diferenciales",
+      "source_url": "https://eic.pucv.cl/wp-content/uploads/2023/01/4-MAT1005-Ecuaciones-diferenciales-FIN.pdf",
+      "chapters_to_link": ["ch-series-sucesiones"],
+      "note": "Sucesiones y series (Fourier pendiente, no hay chapter)"
+    },
+    {
+      "course_id": "pucv-licenciatura-fisica-mat1115-calculo-i",
+      "source_url": "https://fis.ucv.cl/wp-content/uploads/2020/11/MAT1115-Calculo-1.pdf",
+      "chapters_to_link": ["ch-prec-fundamentos", "ch-prec-funciones", "ch-prec-exp-log", "ch-prec-trigonometria"],
+      "note": "MAT1115 es SOLO Cálculo Diferencial — reforzar números reales/funciones/exp-log/trig. NOTA: el curso tiene chapters de Integrales incorrectamente; revisar manualmente para excluir."
+    },
+    {
+      "course_id": "pucv-licenciatura-fisica-mat1118-algebra",
+      "source_url": "https://fis.ucv.cl/wp-content/uploads/2020/11/MAT1118-Algebra.pdf",
+      "chapters_to_link": ["ch-al-espacio", "ch-al-sistemas-ecuaciones", "ch-al-algebra-matrices", "ch-al-determinantes"],
+      "note": "MAT1118 incluye geometría vectorial R²/R³ + matrices/determinantes/sistemas"
+    },
+    {
+      "course_id": "pucv-licenciatura-fisica-mat1127-calculo-ii",
+      "source_url": "https://fis.ucv.cl/wp-content/uploads/2020/11/MAT1127-Calculo-2.pdf",
+      "chapters_to_link": ["ch-prec-sucesiones-series", "ch-series-sucesiones"],
+      "note": "Series + Taylor + criterios de convergencia"
+    },
+    {
+      "course_id": "pucv-licenciatura-fisica-mat1210-calculo-iii",
+      "source_url": "https://fis.ucv.cl/wp-content/uploads/2020/11/MAT1210-Calculo-3.pdf",
+      "chapters_to_link": ["ch-curvas", "ch-integrales-linea", "ch-integrales-superficie"],
+      "note": "MAT1210 incluye Green/Stokes/divergencia + integrales línea/superficie"
+    },
+    {
+      "course_id": "pucv-licenciatura-fisica-mat1221-calculo-iv",
+      "source_url": "https://fis.ucv.cl/wp-content/uploads/2020/11/MAT1221-Calculo-4.pdf",
+      "chapters_to_link": ["ch-prec-numeros-complejos"],
+      "note": "ALERTA: MAT1221 PUCV es Variable Compleja + Fourier + EDP, no Cálculo Vectorial. Remy lo mapea mal. Solo se puede agregar ch-prec-numeros-complejos. Curso requiere remapping manual completo."
+    }
+  ],
+  "gaps_without_base_chapter": [
+    "Variable Compleja (Cauchy-Riemann, Laurent, residuos): UCh MA2002, UTFSM MAT024",
+    "Series y Transformada de Fourier: UCh MA2002, UTFSM EDO+EDP, UDP CBM1103, UMAY varios",
+    "EDP (calor, onda, Laplace, separación de variables): UTFSM EDO+EDP, USACH varios EDO",
+    "Programación Lineal / Simplex: UCh MM III, UANDES Optimización, UNAB Comercial Mat III, UAI Negocios&Tech",
+    "Funciones de Probabilidad: UAI Mat Avanzadas II",
+    "Métodos Numéricos: USACH Civil Informática Métodos Numéricos",
+    "Álgebra Abstracta (grupos, anillos): USACH Lic Mat Álgebra I",
+    "Matemática Financiera (interés, rentas): UDEC Ing Comercial",
+    "Optimización avanzada (KKT, programación dinámica): UDP Mat para Economía"
+  ]
+}
