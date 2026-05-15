@@ -26,21 +26,11 @@ from routes import admin_analytics as admin_analytics_routes
 from routes import images as images_routes
 from routes import achievements as achievements_routes
 from routes import meta_pixel as meta_pixel_routes
-from routes import admin_llm_usage as admin_llm_usage_routes
-from routes import pdfs as pdfs_routes
-from routes import summaries as summaries_routes
-from routes import flashcards as flashcards_routes
-from routes import exercises as exercises_routes
-from routes import quizzes as quizzes_routes
-from routes import chat_tutor as chat_tutor_routes
+# NOTE: las routes/servicios del feature de IA (admin_llm_usage, pdfs, summaries,
+# flashcards, exercises, quizzes, chat_tutor + sus services spend_tracker /
+# pdf_ingest) viven sólo en local — no están commiteados al repo. Cuando se
+# committeen, restaurar los imports + inits + include_router más abajo.
 from services.image_storage import init_image_storage
-from services.spend_tracker import init_spend_tracker
-from services.pdf_ingest import init_pdf_ingest
-from services.summaries import init_summaries
-from services.flashcards import init_flashcards
-from services.exercises import init_exercises
-from services.quizzes import init_quizzes
-from services.chat_tutor import init_chat_tutor
 from services import achievements as ach_service
 
 ROOT_DIR = Path(__file__).parent
@@ -64,18 +54,9 @@ meta_pixel_routes.set_db(db)
 # Initialize image storage with GridFS
 init_image_storage(db)
 
-# Initialize LLM SpendTracker (cap invisible por usuario/mes)
-init_spend_tracker(db)
-
-# Initialize AI feature services. ORDEN IMPORTA: pdf_ingest primero porque los
-# servicios derivados (summaries, flashcards, exercises, quizzes) registran
-# hooks de cleanup en pdf_ingest a través de register_delete_hook().
-init_pdf_ingest(db)
-init_summaries(db)
-init_flashcards(db)
-init_exercises(db)
-init_quizzes(db)
-init_chat_tutor(db)
+# NOTE: inits del feature de IA (spend_tracker, pdf_ingest, summaries,
+# flashcards, exercises, quizzes, chat_tutor) viven sólo en local —
+# restaurar cuando se committeen los servicios al repo.
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
@@ -2825,13 +2806,8 @@ app.include_router(admin_analytics_routes.router)
 app.include_router(images_routes.router)
 app.include_router(achievements_routes.router, prefix="/api")
 app.include_router(meta_pixel_routes.router)
-app.include_router(admin_llm_usage_routes.router)
-app.include_router(pdfs_routes.router)
-app.include_router(summaries_routes.router)
-app.include_router(flashcards_routes.router)
-app.include_router(exercises_routes.router)
-app.include_router(quizzes_routes.router)
-app.include_router(chat_tutor_routes.router)
+# NOTE: include_router del feature de IA — restaurar cuando los services
+# correspondientes se committeen al repo.
 
 # Import and include new routers
 from routes import library_universities as library_universities_routes
