@@ -1279,6 +1279,29 @@ async def verify_admin(username: str = Depends(verify_admin_token)):
     return {"username": username, "verified": True}
 
 # Get all courses for admin (including hidden ones)
+@admin_router.get("/courses-question-counts")
+async def admin_courses_question_counts(_: str = Depends(verify_admin_token)):
+    """Cuenta de preguntas por curso en 1 sola aggregation.
+
+    Reemplaza el patrón viejo del frontend de AdminQuestions que hacía
+    1 request a /admin/questions?course_id=X por cada curso (185 round-trips
+    a backend, cada uno disparando más queries Mongo internas).
+
+    Devuelve {course_id: count}. Cuenta solo las preguntas registradas con
+    `course_id` directo en la collection (sin resolver chapters linkeados).
+    Para AdminQuestions esa cuenta es la que se muestra en el listado de
+    cursos antes de entrar a uno específico.
+    """
+    pipeline = [
+        {"$match": {"course_id": {"$ne": None}}},
+        {"$group": {"_id": "$course_id", "count": {"$sum": 1}}},
+    ]
+    out: dict = {}
+    async for row in db.questions.aggregate(pipeline):
+        out[row["_id"]] = row["count"]
+    return out
+
+
 @admin_router.get("/courses-stats")
 async def admin_courses_stats(_: str = Depends(verify_admin_token)):
     """Stats agregados (chapters + lessons) por curso, en 2 queries.
@@ -1717,30 +1740,116 @@ Límites,Límites Notables,medio,"Si $\\lim_{x \\to 0} \\frac{\\sin(x)}{x} = L$,
 
 
 # Chapters endpoints
+async def _enrich_chapters_with_template_info(chapters: list) -> list:
+    """Batch-resuelve template_info para chapters linkeados. Antes hacía 2
+    find_one por cada chapter linkeado (1 chapter template + 1 course),
+    causando N+1 al abrir el editor de un curso con 10+ chapters."""
+    linked_template_ids = [
+        ch.get("template_chapter_id") for ch in chapters if ch.get("template_chapter_id")
+    ]
+    template_by_id: dict = {}
+    template_course_titles: dict = {}
+    if linked_template_ids:
+        templates = await db.chapters.find(
+            {"id": {"$in": linked_template_ids}}, {"_id": 0}
+        ).to_list(500)
+        template_by_id = {t["id"]: t for t in templates}
+        course_ids = list({t.get("course_id") for t in templates if t.get("course_id")})
+        if course_ids:
+            async for c in db.courses.find(
+                {"id": {"$in": course_ids}}, {"_id": 0, "id": 1, "title": 1, "university_id": 1}
+            ):
+                template_course_titles[c["id"]] = {
+                    "title": c.get("title"),
+                    "is_general": c.get("university_id") is None,
+                }
+    for ch in chapters:
+        if isinstance(ch.get("created_at"), str):
+            try:
+                ch["created_at"] = datetime.fromisoformat(ch["created_at"])
+            except Exception:
+                pass
+        tid = ch.get("template_chapter_id")
+        if tid and tid in template_by_id:
+            t = template_by_id[tid]
+            tcourse = template_course_titles.get(t.get("course_id"))
+            ch["template_info"] = {
+                "chapter_title": t.get("title"),
+                "course_title": tcourse.get("title") if tcourse else None,
+                "is_general": tcourse.get("is_general") if tcourse else True,
+            }
+            ch["is_linked"] = True
+        else:
+            ch["is_linked"] = False
+    return chapters
+
+
 @admin_router.get("/courses/{course_id}/chapters")
 async def get_course_chapters(course_id: str, _: str = Depends(verify_admin_token)):
     chapters = await db.chapters.find({"course_id": course_id}, {"_id": 0}).sort("order", 1).to_list(100)
-    
-    for chapter in chapters:
-        if isinstance(chapter.get('created_at'), str):
-            chapter['created_at'] = datetime.fromisoformat(chapter['created_at'])
-        
-        # If linked to a template, get template info
-        template_id = chapter.get('template_chapter_id')
-        if template_id:
-            template = await db.chapters.find_one({"id": template_id}, {"_id": 0})
-            if template:
-                # Get template's course info
-                template_course = await db.courses.find_one({"id": template.get('course_id')}, {"_id": 0, "title": 1, "university_id": 1})
-                chapter['template_info'] = {
-                    "chapter_title": template.get('title'),
-                    "course_title": template_course.get('title') if template_course else None,
-                    "is_general": template_course.get('university_id') is None if template_course else True
-                }
-                chapter['is_linked'] = True
-        else:
-            chapter['is_linked'] = False
-    
+    return await _enrich_chapters_with_template_info(chapters)
+
+
+@admin_router.get("/courses/{course_id}/chapters-with-lessons")
+async def get_course_chapters_with_lessons(course_id: str, _: str = Depends(verify_admin_token)):
+    """Devuelve chapters de un curso con sus lessons embebidas, en una sola
+    request total. Reemplaza el patrón viejo del frontend de pedir
+    /courses/{id}/chapters + N requests a /chapters/{id}/lessons.
+
+    Para chapters linkeados (template_chapter_id seteado), las lessons se
+    leen del template (con exclude_lesson_ids respetado) — esto reproduce
+    el comportamiento del endpoint /chapters/{chapter_id}/lessons sin
+    necesidad de hacerlo por separado."""
+    chapters = await db.chapters.find({"course_id": course_id}, {"_id": 0}).sort("order", 1).to_list(100)
+    await _enrich_chapters_with_template_info(chapters)
+
+    # Resolución batch de lessons. 3 queries totales:
+    #   1) lessons de chapters NO linkeados (cursos generales o chapters propios).
+    #   2) lessons de chapters template (para los linkeados, sin overrides).
+    #   3) lessons LOCALES en chapters linkeados (overrides via template_lesson_id
+    #      + pure locals que se agregan a chapters heredados).
+    own_chapter_ids = [ch["id"] for ch in chapters if not ch.get("template_chapter_id")]
+    linked_chapter_ids = [ch["id"] for ch in chapters if ch.get("template_chapter_id")]
+    template_ids = list({ch["template_chapter_id"] for ch in chapters if ch.get("template_chapter_id")})
+
+    own_lessons: dict = {}
+    if own_chapter_ids:
+        async for l in db.lessons.find({"chapter_id": {"$in": own_chapter_ids}}, {"_id": 0}).sort("order", 1):
+            own_lessons.setdefault(l["chapter_id"], []).append(l)
+    template_lessons: dict = {}
+    if template_ids:
+        async for l in db.lessons.find({"chapter_id": {"$in": template_ids}}, {"_id": 0}).sort("order", 1):
+            template_lessons.setdefault(l["chapter_id"], []).append(l)
+    local_in_linked: dict = {}  # chapter_id → list of local lessons in that linked chapter
+    if linked_chapter_ids:
+        async for l in db.lessons.find({"chapter_id": {"$in": linked_chapter_ids}}, {"_id": 0}):
+            local_in_linked.setdefault(l["chapter_id"], []).append(l)
+
+    for ch in chapters:
+        tid = ch.get("template_chapter_id")
+        if not tid:
+            ch["lessons"] = own_lessons.get(ch["id"], [])
+            continue
+        excluded = set(ch.get("excluded_lesson_ids") or [])
+        templates = [l for l in template_lessons.get(tid, []) if l["id"] not in excluded]
+        locals_here = local_in_linked.get(ch["id"], [])
+        overrides_by_template = {l["template_lesson_id"]: l for l in locals_here if l.get("template_lesson_id")}
+        pure_locals = [l for l in locals_here if not l.get("template_lesson_id")]
+
+        merged = []
+        for tl in templates:
+            override = overrides_by_template.get(tl["id"])
+            if override:
+                if override.get("order") is None:
+                    override["order"] = tl.get("order", 0)
+                override["overrides_template"] = True
+                merged.append(override)
+            else:
+                tl["inherited_from_template"] = True
+                merged.append(tl)
+        pure_locals.sort(key=lambda l: l.get("order", 0))
+        merged.extend(pure_locals)
+        ch["lessons"] = merged
     return chapters
 
 @admin_router.post("/chapters", response_model=Chapter)
@@ -2182,42 +2291,63 @@ async def unlink_chapter(
 async def get_template_chapters(_: str = Depends(verify_admin_token)):
     """Get all chapters (with their lessons) from General courses.
 
-    Includes lesson list per chapter so the granular link dialog in the admin
-    UI can render checkboxes per lesson without N+1 follow-up calls.
+    Optimizado en 4 queries totales (antes hacía N+M round-trips: 1 find de
+    lessons y 1 count_documents de questions por cada capítulo, ~180 RTT con
+    9 cursos × ~10 chapters cada uno).
     """
     general_courses = await db.courses.find(
         {"$or": [{"university_id": None}, {"university_id": {"$exists": False}}]},
-        {"_id": 0}
+        {"_id": 0, "id": 1, "title": 1, "category": 1},
     ).to_list(100)
+    general_ids = [c["id"] for c in general_courses]
+
+    chapters = await db.chapters.find(
+        {"course_id": {"$in": general_ids}},
+        {"_id": 0},
+    ).sort("order", 1).to_list(1000)
+    chapter_ids = [ch["id"] for ch in chapters]
+
+    # 1 query batched: todas las lessons de los chapters templates, agrupadas
+    # luego en memoria por chapter_id.
+    lessons_by_chapter: dict = {}
+    if chapter_ids:
+        async for l in db.lessons.find(
+            {"chapter_id": {"$in": chapter_ids}},
+            {"_id": 0, "id": 1, "title": 1, "order": 1, "duration_minutes": 1, "chapter_id": 1},
+        ).sort("order", 1):
+            lessons_by_chapter.setdefault(l["chapter_id"], []).append({
+                "id": l["id"], "title": l.get("title"),
+                "order": l.get("order"), "duration_minutes": l.get("duration_minutes"),
+            })
+
+    # 1 aggregation: counts de preguntas por chapter_id.
+    q_counts: dict = {}
+    if chapter_ids:
+        pipeline = [
+            {"$match": {"chapter_id": {"$in": chapter_ids}}},
+            {"$group": {"_id": "$chapter_id", "count": {"$sum": 1}}},
+        ]
+        async for row in db.questions.aggregate(pipeline):
+            q_counts[row["_id"]] = row["count"]
+
+    # Agrupar chapters por course_id en memoria.
+    chapters_by_course: dict = {}
+    for ch in chapters:
+        ch["lessons"] = lessons_by_chapter.get(ch["id"], [])
+        ch["lesson_count"] = len(ch["lessons"])
+        ch["question_count"] = q_counts.get(ch["id"], 0)
+        chapters_by_course.setdefault(ch["course_id"], []).append(ch)
 
     result = []
     for course in general_courses:
-        chapters = await db.chapters.find(
-            {"course_id": course["id"]},
-            {"_id": 0}
-        ).sort("order", 1).to_list(100)
-
-        for chapter in chapters:
-            # Lightweight lesson list (id + title + order + duration) so the
-            # link dialog can show per-lesson checkboxes.
-            chapter_lessons = await db.lessons.find(
-                {"chapter_id": chapter["id"]},
-                {"_id": 0, "id": 1, "title": 1, "order": 1, "duration_minutes": 1}
-            ).sort("order", 1).to_list(500)
-            question_count = await db.questions.count_documents({"chapter_id": chapter["id"]})
-            chapter["lessons"] = chapter_lessons
-            chapter["lesson_count"] = len(chapter_lessons)
-            chapter["question_count"] = question_count
-
         result.append({
             "course": {
                 "id": course["id"],
                 "title": course["title"],
-                "category": course.get("category")
+                "category": course.get("category"),
             },
-            "chapters": chapters
+            "chapters": chapters_by_course.get(course["id"], []),
         })
-
     return result
 
 # Import chapters from another course (for content splitting/reuse)

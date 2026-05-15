@@ -5,6 +5,7 @@ from pydantic import BaseModel, EmailStr
 from datetime import datetime, timezone, timedelta
 from typing import Optional, List
 from jose import JWTError, jwt
+import asyncio
 import logging
 import uuid
 import os
@@ -164,42 +165,41 @@ async def list_users(
 
 @router.get("/stats")
 async def get_user_stats(_: str = Depends(verify_admin_token)):
-    """Get user and subscription statistics"""
-    
-    # Total users
-    total_users = await db.users.count_documents({})
-    
-    # Users by subscription status
-    active_subs = await db.users.count_documents({"subscription_status": "active"})
-    inactive_users = await db.users.count_documents({"subscription_status": "inactive"})
-    cancelled_subs = await db.users.count_documents({"subscription_status": "cancelled"})
-    expired_subs = await db.users.count_documents({"subscription_status": "expired"})
-    
-    # Users by subscription type
-    mercadopago_users = await db.users.count_documents({
-        "subscription_status": "active",
-        "subscription_type": "mercadopago"
-    })
-    manual_users = await db.users.count_documents({
-        "subscription_status": "active",
-        "subscription_type": "manual"
-    })
-    
-    # Users by auth provider
-    google_users = await db.users.count_documents({"auth_provider": "google"})
-    email_users = await db.users.count_documents({"auth_provider": "email"})
-    
-    # Recent registrations (last 7 days)
-    week_ago = datetime.now(timezone.utc) - timedelta(days=7)
-    recent_users = await db.users.count_documents({
-        "created_at": {"$gte": week_ago.isoformat()}
-    })
+    """Get user and subscription statistics.
 
-    # Active trials (trial_active flag — date-expiry is reconciled on /me).
-    trial_users = await db.users.count_documents({
-        "trial_active": True,
-        "subscription_status": {"$in": [None, "inactive", "expired", "cancelled"]}
-    })
+    Las 11 cuentas corren en paralelo con asyncio.gather (antes eran await
+    secuenciales, ~50-150ms × 11 = ~550-1650ms desde Render hacia Atlas).
+    """
+    week_ago = datetime.now(timezone.utc) - timedelta(days=7)
+
+    (
+        total_users,
+        active_subs,
+        inactive_users,
+        cancelled_subs,
+        expired_subs,
+        mercadopago_users,
+        manual_users,
+        google_users,
+        email_users,
+        recent_users,
+        trial_users,
+    ) = await asyncio.gather(
+        db.users.count_documents({}),
+        db.users.count_documents({"subscription_status": "active"}),
+        db.users.count_documents({"subscription_status": "inactive"}),
+        db.users.count_documents({"subscription_status": "cancelled"}),
+        db.users.count_documents({"subscription_status": "expired"}),
+        db.users.count_documents({"subscription_status": "active", "subscription_type": "mercadopago"}),
+        db.users.count_documents({"subscription_status": "active", "subscription_type": "manual"}),
+        db.users.count_documents({"auth_provider": "google"}),
+        db.users.count_documents({"auth_provider": "email"}),
+        db.users.count_documents({"created_at": {"$gte": week_ago.isoformat()}}),
+        db.users.count_documents({
+            "trial_active": True,
+            "subscription_status": {"$in": [None, "inactive", "expired", "cancelled"]}
+        }),
+    )
 
     return {
         "total_users": total_users,

@@ -972,33 +972,24 @@ const AdminQuestions = () => {
   const fetchData = async () => {
     try {
       const token = localStorage.getItem('admin_token');
-      
-      // Fetch courses and universities in parallel
-      const [coursesRes, unisRes] = await Promise.all([
-        axios.get(`${ADMIN_API}/courses`, {
-          headers: { Authorization: `Bearer ${token}` }
-        }),
-        axios.get(`${API}/admin/library-universities`, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
+      const auth = { headers: { Authorization: `Bearer ${token}` } };
+
+      // 3 requests en paralelo: cursos, universidades y conteos de preguntas.
+      // Antes había un Promise.all sobre los 185 cursos pidiendo
+      // /admin/questions?course_id=X uno por uno → ~185 round-trips, cada
+      // uno disparando find internos en el backend. Ahora 1 sola aggregation.
+      const [coursesRes, unisRes, countsRes] = await Promise.all([
+        axios.get(`${ADMIN_API}/courses`, auth),
+        axios.get(`${API}/admin/library-universities`, auth),
+        axios.get(`${ADMIN_API}/courses-question-counts`, auth).catch(() => ({ data: {} })),
       ]);
-      
+
       setUniversities(unisRes.data);
-      
-      // Get question count for each course
-      const coursesWithCounts = await Promise.all(
-        coursesRes.data.map(async (course) => {
-          try {
-            const questionsRes = await axios.get(`${ADMIN_API}/questions?course_id=${course.id}`, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            return { ...course, questionCount: questionsRes.data.length };
-          } catch {
-            return { ...course, questionCount: 0 };
-          }
-        })
-      );
-      
+      const counts = countsRes.data || {};
+      const coursesWithCounts = coursesRes.data.map((c) => ({
+        ...c,
+        questionCount: counts[c.id] || 0,
+      }));
       setCourses(coursesWithCounts);
     } catch (error) {
       console.error('Error fetching data:', error);

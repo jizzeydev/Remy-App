@@ -118,21 +118,13 @@ const CourseContentEditor = () => {
   const fetchChapters = async () => {
     try {
       const token = localStorage.getItem('admin_token');
-      const response = await axios.get(`${ADMIN_API}/courses/${courseId}/chapters`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      // Fetch lessons for each chapter
-      const chaptersWithLessons = await Promise.all(
-        response.data.map(async (chapter) => {
-          const lessonsResponse = await axios.get(`${ADMIN_API}/chapters/${chapter.id}/lessons`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          return { ...chapter, lessons: lessonsResponse.data };
-        })
+      // 1 sola request: el endpoint devuelve chapters + lessons embebidas.
+      // Antes hacíamos 1 (chapters) + N (lessons por chapter) requests.
+      const response = await axios.get(
+        `${ADMIN_API}/courses/${courseId}/chapters-with-lessons`,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      
-      setChapters(chaptersWithLessons);
+      setChapters(response.data);
     } catch (error) {
       console.error('Error fetching chapters:', error);
       toast.error('Error al cargar capítulos');
