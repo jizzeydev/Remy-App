@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, BookOpen, GraduationCap, Layers, Search, Building2, Copy, Filter } from 'lucide-react';
+import { Plus, Edit, Trash2, BookOpen, GraduationCap, Search, Building2, Copy, Filter } from 'lucide-react';
 import InlineMd from '@/components/course/InlineMd';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -22,7 +22,6 @@ const AdminCourses = () => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState([]);
-  const [coursesStats, setCoursesStats] = useState({});
   const [universities, setUniversities] = useState([]);
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -89,21 +88,13 @@ const AdminCourses = () => {
   const fetchCourses = async () => {
     try {
       const token = localStorage.getItem('admin_token');
-      const auth = { headers: { Authorization: `Bearer ${token}` } };
-      // Cargar cursos primero — la UI ya puede pintar la tabla.
-      const response = await axios.get(`${ADMIN_API}/courses`, auth);
+      const response = await axios.get(`${ADMIN_API}/courses`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       setCourses(response.data);
-
-      // Stats en una sola request bulk al backend. Antes hacíamos
-      // 1+N+M requests secuenciales (~1900 round-trips para 185 cursos)
-      // que freezeaban el navegador. Ahora 1 request → ~200ms.
-      try {
-        const statsRes = await axios.get(`${ADMIN_API}/courses-stats`, auth);
-        setCoursesStats(statsRes.data || {});
-      } catch (e) {
-        console.error('Error fetching course stats:', e);
-        setCoursesStats({});
-      }
+      // Las stats (capítulos / lecciones) se cargan recién cuando el admin
+      // entra al editor de contenido del curso (CourseContentEditor). En el
+      // listado eran ruido y costaban ~1900 round-trips para 185 cursos.
     } catch (error) {
       console.error('Error fetching courses:', error);
       toast.error('Error al cargar cursos');
@@ -434,7 +425,6 @@ const AdminCourses = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCourses.map((course) => {
-            const stats = coursesStats[course.id] || { chapters: 0, lessons: 0 };
             return (
               <Card key={course.id} className="hover:shadow-lg transition-shadow" data-testid={`course-card-${course.id}`}>
                 <CardHeader className="pb-3">
@@ -455,18 +445,6 @@ const AdminCourses = () => {
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 line-clamp-2">
                     <InlineMd>{course.description}</InlineMd>
                   </p>
-                  
-                  {/* Stats */}
-                  <div className="flex items-center gap-4 mb-4 text-sm text-slate-500">
-                    <div className="flex items-center gap-1">
-                      <Layers size={14} />
-                      <span>{stats.chapters} capítulos</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <BookOpen size={14} />
-                      <span>{stats.lessons} lecciones</span>
-                    </div>
-                  </div>
                   
                   <div className="flex flex-col gap-2">
                     <Button
